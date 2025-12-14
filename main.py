@@ -20,45 +20,47 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# --- SELETOR SNIPER DE MODELO ---
-def configurar_modelo_sniper():
-    print("🔫 Iniciando Seletor Sniper de Modelos...")
+# --- CONFIGURAÇÃO AUTOMÁTICA DE MODELO (A SALVAÇÃO) ---
+def configurar_modelo():
+    print("🤖 PERGUNTANDO AO GOOGLE QUAIS MODELOS EXISTEM...")
     try:
-        candidatos = []
-        # 1. Lista tudo o que a sua chave tem acesso
+        modelos_disponiveis = []
+        # Lista tudo o que a sua conta tem acesso
         for m in genai.list_models():
             if 'generateContent' in m.supported_generation_methods:
-                candidatos.append(m.name)
+                modelos_disponiveis.append(m.name)
         
-        print(f"📋 Modelos encontrados na conta: {candidatos}")
+        print(f"📋 LISTA OFICIAL ENCONTRADA: {modelos_disponiveis}")
 
-        # 2. Tenta achar o 1.5 Flash (A melhor opção)
-        # Procura por algo que tenha '1.5' E 'flash' no nome
-        for modelo in candidatos:
-            if '1.5' in modelo and 'flash' in modelo:
-                print(f"✅ Alvo encontrado: {modelo}")
-                return genai.GenerativeModel(modelo)
+        # Tenta pegar o melhor modelo disponível na lista (Ordem de preferência)
+        preferidos = [
+            'models/gemini-1.5-flash',      # O melhor (rápido e cota alta)
+            'models/gemini-1.5-flash-001',  # Variação do nome
+            'models/gemini-1.5-flash-latest',
+            'models/gemini-pro',            # O clássico
+            'models/gemini-1.0-pro'
+        ]
+
+        for preferido in preferidos:
+            if preferido in modelos_disponiveis:
+                print(f"✅ MODELO ESCOLHIDO: {preferido}")
+                return genai.GenerativeModel(preferido)
+
+        # Se nenhum dos preferidos existir, pega o primeiro da lista que não seja o '2.5' (que tem pouca cota)
+        for m in modelos_disponiveis:
+            if '2.5' not in m: 
+                print(f"⚠️ USANDO MODELO DE RESERVA: {m}")
+                return genai.GenerativeModel(m)
         
-        # 3. Se não achar, tenta o 1.0 Pro (O clássico estável)
-        for modelo in candidatos:
-            if 'gemini-pro' in modelo and '1.5' not in modelo: # Evita 1.5 Pro que é pesado
-                print(f"✅ Alvo Secundário encontrado: {modelo}")
-                return genai.GenerativeModel(modelo)
+        # Último caso
+        return genai.GenerativeModel('gemini-pro')
 
-        # 4. Último recurso: Pega o primeiro da lista (mesmo que seja o 2.5)
-        if candidatos:
-            print(f"⚠️ Usando último recurso: {candidatos[0]}")
-            return genai.GenerativeModel(candidatos[0])
-            
     except Exception as e:
-        print(f"❌ Erro ao listar modelos: {e}")
-    
-    # Fallback manual se a listagem falhar total
-    print("⚠️ Falha total na listagem. Tentando 'gemini-1.5-flash' cego...")
-    return genai.GenerativeModel('gemini-1.5-flash')
+        print(f"❌ ERRO AO LISTAR MODELOS: {e}")
+        return genai.GenerativeModel('gemini-pro')
 
 # Inicializa o modelo
-model = configurar_modelo_sniper()
+model = configurar_modelo()
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
