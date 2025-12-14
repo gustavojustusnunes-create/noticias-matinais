@@ -6,8 +6,7 @@ import yfinance as yf
 import time
 import json
 import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-from google.oauth2.service_account import Credentials
+from google.oauth2.service_account import Credentials # A única que precisamos!
 from datetime import datetime
 import pytz
 from email.mime.multipart import MIMEMultipart
@@ -22,10 +21,14 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-flash-latest')
 
-# --- CONEXÃO COM A PLANILHA (NOVA PARTE!) ---
+# --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
     try:
         # Pega o JSON do Segredo do GitHub
+        if "GCP_JSON" not in os.environ:
+            print("❌ Erro: Segredo GCP_JSON não encontrado no GitHub.")
+            return []
+            
         info_json = json.loads(os.environ["GCP_JSON"])
         
         scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -86,7 +89,7 @@ def buscar_e_resumir_noticias():
                 prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
                 resp = model.generate_content(prompt)
                 resumos_prontos[categoria] = resp.text
-                time.sleep(2) # Pausa para não estourar a API
+                time.sleep(2) 
             except: pass
             
     return resumos_prontos
@@ -104,25 +107,22 @@ def enviar_email(destinatario, nome, html_corpo, assunto):
     server.send_message(msg)
     server.quit()
 
-# --- BLOCO PRINCIPAL (A MÁGICA ACONTECE AQUI) ---
+# --- BLOCO PRINCIPAL ---
 usuarios = conectar_planilha()
 if not usuarios:
     print("⚠️ Ninguém na lista ou erro na planilha.")
     exit()
 
-# 1. Busca tudo de uma vez (para não gastar IA à toa)
 html_mercado = obter_dados_mercado()
 noticias_do_dia = buscar_e_resumir_noticias()
 data_hoje = obter_data_hoje()
 
-# 2. Distribui para cada assinante
 print(f"📧 Iniciando envios para {len(usuarios)} pessoas...")
 
 for pessoa in usuarios:
     nome = pessoa['Nome']
     email = pessoa['Email']
     
-    # Monta o HTML personalizado
     html_final = f"""
     <html><body style="font-family:Arial; color:#333;">
     <div style="max-width:600px; margin:0 auto;">
@@ -130,27 +130,22 @@ for pessoa in usuarios:
         <p style="text-align:center; color:#888;">Seu resumo de {data_hoje}</p>
     """
     
-    # Adiciona Mercado se a pessoa pediu (coluna Mercado = 'Sim')
     if pessoa.get('Mercado') == 'Sim':
         html_final += html_mercado
         if '💰 Mercado & Finanças' in noticias_do_dia:
             html_final += f"<h3>💰 Giro do Mercado</h3>{noticias_do_dia['💰 Mercado & Finanças']}"
 
-    # Adiciona Tech
     if pessoa.get('Tech') == 'Sim' and '📱 Tech & Inovação' in noticias_do_dia:
         html_final += f"<h3>📱 Tecnologia</h3>{noticias_do_dia['📱 Tech & Inovação']}"
 
-    # Adiciona Motos (Obrigatório para o Founder rsrs)
     if pessoa.get('Motos') == 'Sim' and '🏍️ Motos & Estradas' in noticias_do_dia:
         html_final += f"<h3>🏍️ Duas Rodas</h3>{noticias_do_dia['🏍️ Motos & Estradas']}"
 
-    # Adiciona Fofoca
     if pessoa.get('Fofoca') == 'Sim' and '✨ Fofoca & Lazer' in noticias_do_dia:
         html_final += f"<h3>✨ Variedades</h3>{noticias_do_dia['✨ Fofoca & Lazer']}"
         
     html_final += "<br><hr><p style='font-size:12px; text-align:center;'>Enviado por Gustavo AI News</p></div></body></html>"
     
-    # Envia!
     try:
         enviar_email(email, nome, html_final, f"☕ Briefing do {nome} - {data_hoje}")
         print(f"✅ Enviado para {nome} ({email})")
