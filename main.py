@@ -20,12 +20,14 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# --- DEFINIÇÃO DO MODELO ---
-# Baseado no seu log, o modelo estável disponível é o 2.0 Flash.
-# Usamos o nome completo para evitar erros.
-nome_modelo = 'models/gemini-2.0-flash' 
-print(f"🤖 Configurando IA com o modelo: {nome_modelo}")
-model = genai.GenerativeModel(nome_modelo)
+# --- SELEÇÃO DE MODELO (MODO SOBREVIVÊNCIA) ---
+# Vamos tentar o modelo "Lite" que apareceu na sua lista. 
+# Modelos Lite costumam ser liberados no Free Tier.
+NOME_MODELO_PRINCIPAL = 'models/gemini-2.0-flash-lite-preview-02-05'
+NOME_MODELO_RESERVA = 'models/gemini-pro-latest'
+
+print(f"🤖 Configurando IA com o modelo LITE: {NOME_MODELO_PRINCIPAL}")
+model = genai.GenerativeModel(NOME_MODELO_PRINCIPAL)
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
@@ -97,20 +99,22 @@ def buscar_e_resumir_noticias():
                 print(f"   🤖 Resumindo {categoria}...")
                 prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
                 
-                # Tenta gerar
+                # Tenta gerar com o modelo Principal (Lite)
                 try:
                     resp = model.generate_content(prompt)
                     resumos_prontos[categoria] = resp.text
                     print(f"     ✅ Resumo OK!")
                 except Exception as e_ia:
-                    print(f"     ⚠️ Erro no modelo principal: {e_ia}. Tentando 'gemini-flash-latest'...")
-                    # Backup se o 2.0 falhar
-                    bkp_model = genai.GenerativeModel('models/gemini-flash-latest')
+                    print(f"     ⚠️ Erro no Lite: {e_ia}. Tentando '{NOME_MODELO_RESERVA}'...")
+                    # Backup: Tenta o PRO Latest
+                    bkp_model = genai.GenerativeModel(NOME_MODELO_RESERVA)
                     resp = bkp_model.generate_content(prompt)
                     resumos_prontos[categoria] = resp.text
                     print(f"     ✅ Resumo OK (Backup)!")
 
-                time.sleep(5) 
+                # DELAY AUMENTADO PARA 30s (O Google pediu >20s no erro)
+                print("     ⏳ Pausa de 30s para não estourar cota...")
+                time.sleep(30) 
             except Exception as e:
                 print(f"     ❌ Erro fatal na IA: {e}")
             
