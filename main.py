@@ -19,7 +19,8 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 
 # Configura a IA
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-flash-latest')
+# MUDANÇA AQUI: Usando a versão 1.5 que tem cota de 1.500/dia (a 2.5 só tem 20/dia)
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
@@ -94,12 +95,7 @@ def buscar_e_resumir_noticias():
                 resp = model.generate_content(prompt)
                 resumos_prontos[categoria] = resp.text
                 print(f"     ✅ Resumo de {categoria} OK!")
-                
-                # --- AQUI ESTÁ A CORREÇÃO MÁGICA ---
-                print("     😴 Descansando 15 segundos para não estourar a cota...")
-                time.sleep(15) 
-                # -----------------------------------
-                
+                time.sleep(5) # Delay de segurança (5s é suficiente pro 1.5)
             except Exception as e:
                 print(f"     ❌ Erro na IA (Gemini) para {categoria}: {e}")
             
