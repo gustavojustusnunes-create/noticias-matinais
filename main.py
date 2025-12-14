@@ -20,9 +20,47 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# MUDANÇA FINAL: Usando o nome técnico completo (CPF do modelo)
-# Isso evita erros de apelido e garante a cota alta.
-model = genai.GenerativeModel('gemini-1.5-flash-001')
+# --- FUNÇÃO DE SELEÇÃO INTELIGENTE DE MODELO ---
+def configurar_modelo():
+    print("🤖 Verificando modelos disponíveis na sua conta...")
+    try:
+        # Pede pro Google listar o que tem disponível
+        modelos_disponiveis = []
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                modelos_disponiveis.append(m.name)
+        
+        print(f"📋 Modelos encontrados: {modelos_disponiveis}")
+        
+        # Lista de preferência (do melhor pro "pior")
+        preferencias = [
+            'models/gemini-1.5-flash',
+            'models/gemini-1.5-flash-001',
+            'models/gemini-1.5-pro',
+            'models/gemini-pro',
+            'models/gemini-1.0-pro'
+        ]
+        
+        # Tenta achar o melhor
+        for pref in preferencias:
+            if pref in modelos_disponiveis:
+                print(f"✅ Modelo escolhido automaticamente: {pref}")
+                return genai.GenerativeModel(pref)
+        
+        # Se não achar nenhum da lista, pega o primeiro que aparecer
+        if modelos_disponiveis:
+            print(f"⚠️ Usando modelo de fallback: {modelos_disponiveis[0]}")
+            return genai.GenerativeModel(modelos_disponiveis[0])
+            
+    except Exception as e:
+        print(f"❌ Erro ao listar modelos: {e}")
+    
+    # Se tudo der errado, tenta o clássico na força bruta
+    print("⚠️ Tentando forçar 'gemini-pro'...")
+    return genai.GenerativeModel('gemini-pro')
+
+# Inicializa o modelo usando a função inteligente
+model = configurar_modelo()
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
@@ -99,7 +137,7 @@ def buscar_e_resumir_noticias():
                 print(f"     ✅ Resumo de {categoria} OK!")
                 time.sleep(5) # Delay de segurança
             except Exception as e:
-                print(f"     ❌ Erro na IA (Gemini) para {categoria}: {e}")
+                print(f"     ❌ Erro na IA: {e}")
             
     return resumos_prontos
 
