@@ -20,28 +20,21 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# --- SELEÇÃO DE MODELO (MODO SOBREVIVÊNCIA) ---
-# Vamos tentar o modelo "Lite" que apareceu na sua lista. 
-# Modelos Lite costumam ser liberados no Free Tier.
-NOME_MODELO_PRINCIPAL = 'models/gemini-2.0-flash-lite-preview-02-05'
-NOME_MODELO_RESERVA = 'models/gemini-pro-latest'
-
-print(f"🤖 Configurando IA com o modelo LITE: {NOME_MODELO_PRINCIPAL}")
-model = genai.GenerativeModel(NOME_MODELO_PRINCIPAL)
+# --- DEFINIÇÃO DOS MODELOS ---
+# 1. Principal: O modelo novo e rápido (Limite 20/dia)
+MODELO_PRINCIPAL = 'models/gemini-2.5-flash'
+# 2. Reserva: Um modelo diferente (Gemma) para tentar salvar o dia
+MODELO_RESERVA = 'models/gemma-3-12b-it'
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
     try:
         if "GCP_JSON" not in os.environ:
-            print("❌ Erro: Segredo GCP_JSON não encontrado no GitHub.")
             return []
-            
         info_json = json.loads(os.environ["GCP_JSON"])
-        
         scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         creds = Credentials.from_service_account_info(info_json, scopes=scope)
         client = gspread.authorize(creds)
-        
         sheet = client.open("noticias_db").sheet1
         return sheet.get_all_records()
     except Exception as e:
@@ -79,44 +72,59 @@ def obter_dados_mercado():
         print(f"⚠️ Erro no Mercado: {e}")
         return ""
 
+def gerar_resumo(prompt):
+    """Tenta gerar resumo usando Principal -> Reserva -> Falha Graciosa"""
+    try:
+        # Tenta Modelo Principal
+        model = genai.GenerativeModel(MODELO_PRINCIPAL)
+        resp = model.generate_content(prompt)
+        return resp.text
+    except Exception as e1:
+        print(f"     ⚠️ Principal falhou ({e1}). Tentando reserva...")
+        try:
+            # Tenta Modelo Reserva (Gemma)
+            model_bkp = genai.GenerativeModel(MODELO_RESERVA)
+            resp = model_bkp.generate_content(prompt)
+            return resp.text
+        except Exception as e2:
+            print(f"     ❌ Reserva também falhou. Entregando sem resumo.")
+            # Se tudo falhar, retorna um texto padrão para não quebrar o email
+            return "<i>(O sistema de IA está descansando agora. Confira os links originais acima!)</i>"
+
 def buscar_e_resumir_noticias():
     print("🕵️‍♂️ Buscando e Resumindo Notícias...")
     resumos_prontos = {}
     
     for categoria, urls in fontes.items():
         lista_titulos = []
+        html_links = "<ul>" # Prepara uma lista manual de links caso a IA falhe
+        
         for url in urls:
             try:
                 print(f"   - Lendo: {url}")
                 feed = feedparser.parse(url)
                 for entry in feed.entries[:4]:
                     lista_titulos.append(f"- {entry.title} ({entry.link})")
+                    html_links += f"<li><a href='{entry.link}'>{entry.title}</a></li>"
             except Exception as e:
                 print(f"     ❌ Erro ao ler feed {url}: {e}")
         
+        html_links += "</ul>"
+        
         if lista_titulos:
-            try:
-                print(f"   🤖 Resumindo {categoria}...")
-                prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
+            print(f"   🤖 Resumindo {categoria}...")
+            prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
+            
+            texto_ia = gerar_resumo(prompt)
+            
+            # Se a IA devolveu o erro padrão, colocamos a lista de links manuais
+            if "O sistema de IA está descansando" in texto_ia:
+                resumos_prontos[categoria] = html_links + "<br>" + texto_ia
+            else:
+                resumos_prontos[categoria] = texto_ia
                 
-                # Tenta gerar com o modelo Principal (Lite)
-                try:
-                    resp = model.generate_content(prompt)
-                    resumos_prontos[categoria] = resp.text
-                    print(f"     ✅ Resumo OK!")
-                except Exception as e_ia:
-                    print(f"     ⚠️ Erro no Lite: {e_ia}. Tentando '{NOME_MODELO_RESERVA}'...")
-                    # Backup: Tenta o PRO Latest
-                    bkp_model = genai.GenerativeModel(NOME_MODELO_RESERVA)
-                    resp = bkp_model.generate_content(prompt)
-                    resumos_prontos[categoria] = resp.text
-                    print(f"     ✅ Resumo OK (Backup)!")
-
-                # DELAY AUMENTADO PARA 30s (O Google pediu >20s no erro)
-                print("     ⏳ Pausa de 30s para não estourar cota...")
-                time.sleep(30) 
-            except Exception as e:
-                print(f"     ❌ Erro fatal na IA: {e}")
+            print(f"     ✅ Categoria {categoria} processada.")
+            time.sleep(5) 
             
     return resumos_prontos
 
