@@ -20,9 +20,9 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# MUDANÇA FINAL: Usando o 'gemini-pro' (o clássico que nunca falha)
-# Ele tem 60 requisições por minuto grátis. É mais que suficiente!
-model = genai.GenerativeModel('gemini-pro')
+# MUDANÇA FINAL: Usando o nome técnico completo (CPF do modelo)
+# Isso evita erros de apelido e garante a cota alta.
+model = genai.GenerativeModel('gemini-1.5-flash-001')
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
