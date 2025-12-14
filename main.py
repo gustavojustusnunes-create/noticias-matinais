@@ -19,8 +19,10 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 
 # Configura a IA
 genai.configure(api_key=API_KEY)
-# MUDANÇA AQUI: Usando a versão 1.5 que tem cota de 1.500/dia (a 2.5 só tem 20/dia)
-model = genai.GenerativeModel('gemini-1.5-flash')
+
+# MUDANÇA FINAL: Usando o 'gemini-pro' (o clássico que nunca falha)
+# Ele tem 60 requisições por minuto grátis. É mais que suficiente!
+model = genai.GenerativeModel('gemini-pro')
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
@@ -95,7 +97,7 @@ def buscar_e_resumir_noticias():
                 resp = model.generate_content(prompt)
                 resumos_prontos[categoria] = resp.text
                 print(f"     ✅ Resumo de {categoria} OK!")
-                time.sleep(5) # Delay de segurança (5s é suficiente pro 1.5)
+                time.sleep(5) # Delay de segurança
             except Exception as e:
                 print(f"     ❌ Erro na IA (Gemini) para {categoria}: {e}")
             
