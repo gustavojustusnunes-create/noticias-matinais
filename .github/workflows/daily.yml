@@ -1,0 +1,29 @@
+name: Briefing Diário
+
+on:
+  schedule:
+    # Roda todos os dias às 10:00 UTC (07:00 Brasil)
+    - cron: '0 10 * * *'
+  workflow_dispatch: # Permite um botão para rodar manualmente agora
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código
+        uses: actions/checkout@v3
+
+      - name: Instalar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Rodar Robô
+        env:
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        run: python main.py
