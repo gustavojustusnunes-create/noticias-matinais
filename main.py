@@ -20,10 +20,45 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# --- DEFINIÇÃO DO MODELO (AQUI ESTÁ O SEGREDO) ---
-# Vamos usar o 1.5 Flash que tem cota alta (1500/dia).
-# O nome exato que funciona melhor é 'gemini-1.5-flash'
-model = genai.GenerativeModel('gemini-1.5-flash')
+# --- SELETOR SNIPER DE MODELO ---
+def configurar_modelo_sniper():
+    print("🔫 Iniciando Seletor Sniper de Modelos...")
+    try:
+        candidatos = []
+        # 1. Lista tudo o que a sua chave tem acesso
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                candidatos.append(m.name)
+        
+        print(f"📋 Modelos encontrados na conta: {candidatos}")
+
+        # 2. Tenta achar o 1.5 Flash (A melhor opção)
+        # Procura por algo que tenha '1.5' E 'flash' no nome
+        for modelo in candidatos:
+            if '1.5' in modelo and 'flash' in modelo:
+                print(f"✅ Alvo encontrado: {modelo}")
+                return genai.GenerativeModel(modelo)
+        
+        # 3. Se não achar, tenta o 1.0 Pro (O clássico estável)
+        for modelo in candidatos:
+            if 'gemini-pro' in modelo and '1.5' not in modelo: # Evita 1.5 Pro que é pesado
+                print(f"✅ Alvo Secundário encontrado: {modelo}")
+                return genai.GenerativeModel(modelo)
+
+        # 4. Último recurso: Pega o primeiro da lista (mesmo que seja o 2.5)
+        if candidatos:
+            print(f"⚠️ Usando último recurso: {candidatos[0]}")
+            return genai.GenerativeModel(candidatos[0])
+            
+    except Exception as e:
+        print(f"❌ Erro ao listar modelos: {e}")
+    
+    # Fallback manual se a listagem falhar total
+    print("⚠️ Falha total na listagem. Tentando 'gemini-1.5-flash' cego...")
+    return genai.GenerativeModel('gemini-1.5-flash')
+
+# Inicializa o modelo
+model = configurar_modelo_sniper()
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
@@ -38,7 +73,6 @@ def conectar_planilha():
         creds = Credentials.from_service_account_info(info_json, scopes=scope)
         client = gspread.authorize(creds)
         
-        # Abre a planilha e pega todos os dados
         sheet = client.open("noticias_db").sheet1
         return sheet.get_all_records()
     except Exception as e:
@@ -86,32 +120,22 @@ def buscar_e_resumir_noticias():
             try:
                 print(f"   - Lendo: {url}")
                 feed = feedparser.parse(url)
-                for entry in feed.entries[:4]: # Pega 4 de cada site
+                for entry in feed.entries[:4]:
                     lista_titulos.append(f"- {entry.title} ({entry.link})")
             except Exception as e:
                 print(f"     ❌ Erro ao ler feed {url}: {e}")
         
         if lista_titulos:
             try:
-                print(f"   🤖 Resumindo {categoria} com IA...")
+                print(f"   🤖 Resumindo {categoria}...")
                 prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
                 
-                # TENTA GERAR O CONTEÚDO
-                try:
-                    resp = model.generate_content(prompt)
-                    resumos_prontos[categoria] = resp.text
-                    print(f"     ✅ Resumo de {categoria} OK!")
-                except Exception as e_ia:
-                    # Se der erro (404 ou 429), tenta o modelo de emergência (gemini-pro)
-                    print(f"     ⚠️ Erro no 1.5 Flash: {e_ia}. Tentando modelo clássico...")
-                    modelo_backup = genai.GenerativeModel('gemini-pro')
-                    resp = modelo_backup.generate_content(prompt)
-                    resumos_prontos[categoria] = resp.text
-                    print(f"     ✅ Resumo de {categoria} OK (com Backup)!")
-
-                time.sleep(5) # Delay de segurança
+                resp = model.generate_content(prompt)
+                resumos_prontos[categoria] = resp.text
+                print(f"     ✅ Resumo OK!")
+                time.sleep(5) 
             except Exception as e:
-                print(f"     ❌ Erro fatal na IA para {categoria}: {e}")
+                print(f"     ❌ Erro na IA: {e}")
             
     return resumos_prontos
 
