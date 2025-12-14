@@ -24,22 +24,18 @@ model = genai.GenerativeModel('gemini-flash-latest')
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
     try:
-        # Pega o JSON do Segredo do GitHub
         if "GCP_JSON" not in os.environ:
             print("❌ Erro: Segredo GCP_JSON não encontrado no GitHub.")
             return []
             
         info_json = json.loads(os.environ["GCP_JSON"])
-        
         scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
         creds = Credentials.from_service_account_info(info_json, scopes=scope)
         client = gspread.authorize(creds)
-        
-        # Abre a planilha e pega todos os dados
         sheet = client.open("noticias_db").sheet1
         return sheet.get_all_records()
     except Exception as e:
-        print(f"Erro ao ler planilha: {e}")
+        print(f"❌ Erro ao ler planilha: {e}")
         return []
 
 # --- FONTES DE NOTÍCIAS ---
@@ -63,13 +59,14 @@ def obter_dados_mercado():
         dolar = dados.tickers['BRL=X'].history(period='1d')['Close'].iloc[-1]
         euro = dados.tickers['EURBRL=X'].history(period='1d')['Close'].iloc[-1]
         btc = dados.tickers['BTC-USD'].history(period='1d')['Close'].iloc[-1]
-        
         return f"""
         <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
             <b>DÓLAR:</b> R$ {dolar:.2f} | <b>EURO:</b> R$ {euro:.2f} | <b>BITCOIN:</b> ${btc:,.0f}
         </div>
         """
-    except: return ""
+    except Exception as e:
+        print(f"⚠️ Erro no Mercado: {e}")
+        return ""
 
 def buscar_e_resumir_noticias():
     print("🕵️‍♂️ Buscando e Resumindo Notícias...")
@@ -79,18 +76,27 @@ def buscar_e_resumir_noticias():
         lista_titulos = []
         for url in urls:
             try:
+                print(f"   - Lendo: {url}")
                 feed = feedparser.parse(url)
-                for entry in feed.entries[:4]: # Pega 4 de cada site
+                if not feed.entries:
+                    print(f"     ⚠️ Feed vazio ou erro de leitura: {url}")
+                for entry in feed.entries[:4]:
                     lista_titulos.append(f"- {entry.title} ({entry.link})")
-            except: pass
+            except Exception as e:
+                print(f"     ❌ Erro ao ler feed {url}: {e}")
         
         if lista_titulos:
             try:
+                print(f"   🤖 Resumindo {categoria} com IA...")
                 prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
                 resp = model.generate_content(prompt)
                 resumos_prontos[categoria] = resp.text
+                print(f"     ✅ Resumo de {categoria} OK!")
                 time.sleep(2) 
-            except: pass
+            except Exception as e:
+                print(f"     ❌ Erro na IA (Gemini) para {categoria}: {e}")
+        else:
+            print(f"   ⚠️ Nenhuma notícia encontrada para {categoria}")
             
     return resumos_prontos
 
@@ -114,7 +120,7 @@ if not usuarios:
     exit()
 
 html_mercado = obter_dados_mercado()
-noticias_do_dia = buscar_e_resumir_noticias()
+noticias_do_dia = buscar_e_resumir_noticias() # Agora vai mostrar os erros!
 data_hoje = obter_data_hoje()
 
 print(f"📧 Iniciando envios para {len(usuarios)} pessoas...")
