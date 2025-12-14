@@ -2,9 +2,8 @@ name: Briefing Diário
 
 on:
   schedule:
-    # Roda todos os dias às 10:00 UTC (07:00 Brasil)
-    - cron: '0 10 * * *'
-  workflow_dispatch: # Permite um botão para rodar manualmente agora
+    - cron: '0 10 * * *' # Roda todo dia às 07:00 Brasil
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,7 +15,7 @@ jobs:
       - name: Instalar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.11'  # ATUALIZADO PARA 3.11
 
       - name: Instalar dependências
         run: pip install -r requirements.txt
