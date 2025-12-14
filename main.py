@@ -20,47 +20,10 @@ MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 # Configura a IA
 genai.configure(api_key=API_KEY)
 
-# --- FUNÇÃO DE SELEÇÃO INTELIGENTE DE MODELO ---
-def configurar_modelo():
-    print("🤖 Verificando modelos disponíveis na sua conta...")
-    try:
-        # Pede pro Google listar o que tem disponível
-        modelos_disponiveis = []
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                modelos_disponiveis.append(m.name)
-        
-        print(f"📋 Modelos encontrados: {modelos_disponiveis}")
-        
-        # Lista de preferência (do melhor pro "pior")
-        preferencias = [
-            'models/gemini-1.5-flash',
-            'models/gemini-1.5-flash-001',
-            'models/gemini-1.5-pro',
-            'models/gemini-pro',
-            'models/gemini-1.0-pro'
-        ]
-        
-        # Tenta achar o melhor
-        for pref in preferencias:
-            if pref in modelos_disponiveis:
-                print(f"✅ Modelo escolhido automaticamente: {pref}")
-                return genai.GenerativeModel(pref)
-        
-        # Se não achar nenhum da lista, pega o primeiro que aparecer
-        if modelos_disponiveis:
-            print(f"⚠️ Usando modelo de fallback: {modelos_disponiveis[0]}")
-            return genai.GenerativeModel(modelos_disponiveis[0])
-            
-    except Exception as e:
-        print(f"❌ Erro ao listar modelos: {e}")
-    
-    # Se tudo der errado, tenta o clássico na força bruta
-    print("⚠️ Tentando forçar 'gemini-pro'...")
-    return genai.GenerativeModel('gemini-pro')
-
-# Inicializa o modelo usando a função inteligente
-model = configurar_modelo()
+# --- DEFINIÇÃO DO MODELO (AQUI ESTÁ O SEGREDO) ---
+# Vamos usar o 1.5 Flash que tem cota alta (1500/dia).
+# O nome exato que funciona melhor é 'gemini-1.5-flash'
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 # --- CONEXÃO COM A PLANILHA ---
 def conectar_planilha():
@@ -132,12 +95,23 @@ def buscar_e_resumir_noticias():
             try:
                 print(f"   🤖 Resumindo {categoria} com IA...")
                 prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
-                resp = model.generate_content(prompt)
-                resumos_prontos[categoria] = resp.text
-                print(f"     ✅ Resumo de {categoria} OK!")
+                
+                # TENTA GERAR O CONTEÚDO
+                try:
+                    resp = model.generate_content(prompt)
+                    resumos_prontos[categoria] = resp.text
+                    print(f"     ✅ Resumo de {categoria} OK!")
+                except Exception as e_ia:
+                    # Se der erro (404 ou 429), tenta o modelo de emergência (gemini-pro)
+                    print(f"     ⚠️ Erro no 1.5 Flash: {e_ia}. Tentando modelo clássico...")
+                    modelo_backup = genai.GenerativeModel('gemini-pro')
+                    resp = modelo_backup.generate_content(prompt)
+                    resumos_prontos[categoria] = resp.text
+                    print(f"     ✅ Resumo de {categoria} OK (com Backup)!")
+
                 time.sleep(5) # Delay de segurança
             except Exception as e:
-                print(f"     ❌ Erro na IA: {e}")
+                print(f"     ❌ Erro fatal na IA para {categoria}: {e}")
             
     return resumos_prontos
 
