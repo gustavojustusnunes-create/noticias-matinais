@@ -16,7 +16,7 @@ jobs:
     - name: Instalar Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.11' # <--- ATUALIZADO PARA 3.11 (A CORREÇÃO MÁGICA)
 
     - name: Instalar dependências
       run: |
@@ -27,5 +27,5 @@ jobs:
         GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         EMAIL_USER: ${{ secrets.EMAIL_USER }}
         EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-        GCP_JSON: ${{ secrets.GCP_JSON }} # <--- AQUI ESTAVA FALTANDO!
+        GCP_JSON: ${{ secrets.GCP_JSON }}
       run: python main.py
