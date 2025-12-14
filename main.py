@@ -6,16 +6,18 @@ import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# --- PEGA AS SENHAS DO COFRE DO GITHUB ---
+# --- PEGA AS SENHAS DO COFRE DO GITHUB (NÃO MUDE ISSO) ---
 API_KEY = os.environ["GEMINI_KEY"]
 MEU_EMAIL = os.environ["EMAIL_USER"]
+# Atenção: O nome aqui tem que ser EMAIL_PASSWORD para bater com o segredo que criamos
 MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
 DESTINATARIO = MEU_EMAIL 
 
 # Configura a IA
 genai.configure(api_key=API_KEY)
-# Usando o modelo padrão que funciona bem em servidores
+# O modelo correto para sua chave:
 model = genai.GenerativeModel('gemini-flash-latest')
+
 fontes = {
     '💰 Mercado & Finanças': ['https://www.infomoney.com.br/feed/', 'https://braziljournal.com/feed/'],
     '📱 Tech & Inovação': ['https://rss.tecmundo.com.br/feed', 'https://olhardigital.com.br/feed/'],
