@@ -2,11 +2,12 @@ import os
 import smtplib
 import feedparser
 import google.generativeai as genai
+import yfinance as yf # Nova biblioteca financeira
 import time
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# --- PEGA AS SENHAS DO COFRE DO GITHUB ---
+# --- CONFIGURAÇÕES ---
 API_KEY = os.environ["GEMINI_KEY"]
 MEU_EMAIL = os.environ["EMAIL_USER"]
 MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
@@ -14,10 +15,7 @@ DESTINATARIO = MEU_EMAIL
 
 # Configura a IA
 genai.configure(api_key=API_KEY)
-
-# --- AQUI ESTAVA O ERRO, AGORA ESTÁ CORRIGIDO ---
-# Sua chave só aceita este modelo específico:
-model = genai.GenerativeModel('gemini-flash-latest') 
+model = genai.GenerativeModel('gemini-flash-latest')
 
 fontes = {
     '💰 Mercado & Finanças': ['https://www.infomoney.com.br/feed/', 'https://braziljournal.com/feed/'],
@@ -25,6 +23,36 @@ fontes = {
     '✨ Fofoca & Fama': ['https://revistaquem.globo.com/rss/quem/', 'https://www.metropoles.com/colunas/leo-dias/feed'],
     '🌍 Notícias Gerais': ['https://g1.globo.com/rss/g1/']
 }
+
+def obter_dados_mercado():
+    print("📈 Consultando a Bolsa de Valores...")
+    try:
+        # Tickers: Dólar, Euro, Petrobras, Bitcoin
+        tickers = ['BRL=X', 'EURBRL=X', 'PETR4.SA', 'BTC-USD']
+        dados = yf.Tickers(' '.join(tickers))
+        
+        # Pega o preço atual (ou último fechamento)
+        dolar = dados.tickers['BRL=X'].history(period='1d')['Close'].iloc[-1]
+        euro = dados.tickers['EURBRL=X'].history(period='1d')['Close'].iloc[-1]
+        petro = dados.tickers['PETR4.SA'].history(period='1d')['Close'].iloc[-1]
+        btc = dados.tickers['BTC-USD'].history(period='1d')['Close'].iloc[-1]
+        
+        # Formata o HTML bonitinho
+        html_mercado = f"""
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e9ecef;">
+            <h3 style="margin-top: 0; color: #2c3e50; text-align: center;">📊 Painel de Mercado</h3>
+            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; text-align: center;">
+                <div style="margin: 5px;">🇺🇸 <b>Dólar:</b> R$ {dolar:.2f}</div>
+                <div style="margin: 5px;">🇪🇺 <b>Euro:</b> R$ {euro:.2f}</div>
+                <div style="margin: 5px;">🛢️ <b>Petrobras:</b> R$ {petro:.2f}</div>
+                <div style="margin: 5px;">₿ <b>Bitcoin:</b> US$ {btc:,.0f}</div>
+            </div>
+        </div>
+        """
+        return html_mercado
+    except Exception as e:
+        print(f"Erro no mercado: {e}")
+        return ""
 
 def buscar_noticias():
     print("🕵️‍♂️ Buscando notícias...")
@@ -40,19 +68,23 @@ def buscar_noticias():
         noticias_agrupadas[categoria] = lista
     return noticias_agrupadas
 
-def gerar_html_e_enviar(dados):
-    html = """
+def gerar_html_e_enviar(dados, html_mercado):
+    # Cabeçalho do HTML
+    html = f"""
     <!DOCTYPE html><html><head><style>
-    body{font-family:Helvetica,sans-serif;background:#f4f4f4;padding:20px}
-    .box{max-width:600px;margin:0 auto;background:#fff;padding:30px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.1)}
-    h1{text-align:center;color:#333;border-bottom:2px solid #333;padding-bottom:10px}
-    h2{color:#d32f2f;margin-top:20px;text-transform:uppercase;font-size:18px}
-    li{margin-bottom:10px;line-height:1.5;color:#555}
-    a{color:#007bff;text-decoration:none;font-weight:bold}
-    .footer{text-align:center;font-size:12px;color:#999;margin-top:30px}
+    body{{font-family:'Segoe UI', Helvetica, sans-serif; background:#f4f4f4; padding:20px}}
+    .box{{max-width:600px; margin:0 auto; background:#fff; padding:30px; border-radius:10px; box-shadow:0 0 15px rgba(0,0,0,0.1)}}
+    h1{{text-align:center; color:#333; border-bottom:3px solid #007bff; padding-bottom:15px; margin-bottom:25px}}
+    h2{{color:#2c3e50; margin-top:25px; border-left: 5px solid #007bff; padding-left: 10px; text-transform:uppercase; font-size:18px}}
+    li{{margin-bottom:12px; line-height:1.6; color:#555}}
+    a{{color:#007bff; text-decoration:none; font-weight:bold}}
+    a:hover{{text-decoration:underline}}
+    .footer{{text-align:center; font-size:12px; color:#999; margin-top:40px; border-top: 1px solid #eee; padding-top: 20px}}
     </style></head><body><div class="box">
-    <h1>📰 BRIEFING DO GUSTAVO</h1>
-    <p style="text-align:center;color:#666">Seu resumo diário automático.</p>
+    
+    <h1>☕ BRIEFING MATINAL</h1>
+    
+    {html_mercado} <p style="text-align:center; color:#666; font-style:italic;">Aqui está o resumo do que importa hoje.</p>
     """
     
     tem_conteudo = False
@@ -61,30 +93,31 @@ def gerar_html_e_enviar(dados):
         try:
             # Prompt para a IA
             prompt = f"""
-            Você é um editor web. Resuma estas notícias de {cat} para HTML:
-            {' '.join(items)}
+            Você é um editor experiente. Resuma estas notícias de {cat} para HTML.
+            Conteúdo: {' '.join(items)}
             
-            Regras:
-            1. Use tags <ul> e <li>.
-            2. Coloque emojis no início de cada <li>.
-            3. Escolha o melhor link e coloque em uma tag <a href="...">Leia mais</a> no final do item.
-            4. NÃO use ```html ou markdown, retorne apenas o código HTML puro.
+            Regras de formatação:
+            1. Use tags <ul> para a lista e <li> para cada item.
+            2. Comece cada <li> com um emoji adequado ao tema da notícia.
+            3. Seja direto e objetivo (bullet points curtos).
+            4. No final de cada item, coloque o link original dentro de uma tag <a href="...">[Ler mais]</a>.
+            5. Retorne APENAS o HTML da lista.
             """
             
             resp = model.generate_content(prompt)
             html += f"<h2>{cat}</h2>{resp.text}"
             tem_conteudo = True
-            time.sleep(10) # Pausa de segurança
+            time.sleep(5) 
         except Exception as e:
             print(f"Erro em {cat}: {e}")
 
-    html += '<div class="footer">Gerado via GitHub Actions • Gemini AI</div></div></body></html>'
+    html += '<div class="footer">Gerado automaticamente por Gustavo AI • Powered by Gemini & Yahoo Finance</div></div></body></html>'
 
     if tem_conteudo:
         msg = MIMEMultipart()
         msg['From'] = MEU_EMAIL
         msg['To'] = DESTINATARIO
-        msg['Subject'] = "☕ Seu Briefing Diário Chegou!"
+        msg['Subject'] = "☕ Seu Briefing: Mercado, Tech e Notícias"
         msg.attach(MIMEText(html, 'html'))
         
         server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -96,6 +129,7 @@ def gerar_html_e_enviar(dados):
     else:
         print("⚠️ Nenhuma notícia encontrada para enviar.")
 
-# Execução
-dados = buscar_noticias()
-gerar_html_e_enviar(dados)
+# Execução Principal
+painel_financeiro = obter_dados_mercado()
+dados_noticias = buscar_noticias()
+gerar_html_e_enviar(dados_noticias, painel_financeiro)
