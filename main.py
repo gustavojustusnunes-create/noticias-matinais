@@ -15,8 +15,7 @@ DESTINATARIO = MEU_EMAIL
 # Configura a IA
 genai.configure(api_key=API_KEY)
 # Usando o modelo padrão que funciona bem em servidores
-model = genai.GenerativeModel('gemini-1.5-flash') 
-
+model = genai.GenerativeModel('gemini-flash-latest')
 fontes = {
     '💰 Mercado & Finanças': ['https://www.infomoney.com.br/feed/', 'https://braziljournal.com/feed/'],
     '📱 Tech & Inovação': ['https://rss.tecmundo.com.br/feed', 'https://olhardigital.com.br/feed/'],
