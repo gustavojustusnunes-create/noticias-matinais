@@ -6,7 +6,7 @@ import yfinance as yf
 import time
 import json
 import gspread
-from google.oauth2.service_account import Credentials # A única que precisamos!
+from google.oauth2.service_account import Credentials
 from datetime import datetime
 import pytz
 from email.mime.multipart import MIMEMultipart
