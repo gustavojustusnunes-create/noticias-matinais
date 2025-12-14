@@ -1,17 +1,29 @@
 import streamlit as st
+import gspread
+from google.oauth2.service_account import Credentials
+import json
 
-# Configuração da Página
-st.set_page_config(
-    page_title="Briefing Personalizado",
-    page_icon="☕",
-    layout="centered"
-)
+# --- CONFIGURAÇÃO DA PÁGINA ---
+st.set_page_config(page_title="Briefing Personalizado", page_icon="☕", layout="centered")
 
-# Título e Subtítulo
+# --- CONEXÃO COM O GOOGLE SHEETS ---
+def conectar_banco():
+    try:
+        # Pega a chave dos segredos do Streamlit
+        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        json_key = json.loads(st.secrets["gcp_service_account"]["json_key"])
+        credentials = Credentials.from_service_account_info(json_key, scopes=scopes)
+        client = gspread.authorize(credentials)
+        # Abre a planilha pelo nome
+        return client.open("noticias_db").sheet1
+    except Exception as e:
+        st.error(f"Erro ao conectar no banco de dados: {e}")
+        return None
+
+# --- INTERFACE DO SITE ---
 st.title("☕ Seu Briefing Matinal")
-st.write("Receba notícias resumidas por IA, direto no seu e-mail, todos os dias às 07:00.")
+st.write("Receba notícias resumidas por IA, personalizadas para você, todos os dias às 07:00.")
 
-# Formulário de Inscrição
 with st.form("cadastro"):
     nome = st.text_input("Seu Nome:")
     email = st.text_input("Seu E-mail:")
@@ -19,7 +31,6 @@ with st.form("cadastro"):
     st.write("---")
     st.write("### 🗞️ O que você quer receber?")
     
-    # As opções de escolha
     col1, col2 = st.columns(2)
     with col1:
         tema_mercado = st.checkbox("💰 Mercado & Finanças")
@@ -28,20 +39,29 @@ with st.form("cadastro"):
         tema_motos = st.checkbox("🏍️ Motos & Estradas")
         tema_fofoca = st.checkbox("✨ Fofoca & Lazer")
         
-    st.write("")
     submitted = st.form_submit_button("✅ Inscrever-me Gratuitamente")
 
     if submitted:
-        if email:
-            # Por enquanto só mostramos na tela, depois vamos salvar no banco
-            st.success(f"Show, {nome}! Você receberá o briefing no e-mail: {email}")
-            st.json({
-                "Nome": nome,
-                "E-mail": email,
-                "Temas": [tema_mercado, tema_tech, tema_motos, tema_fofoca]
-            })
+        if not email or not nome:
+            st.warning("Por favor, preencha nome e e-mail!")
         else:
-            st.error("Por favor, preencha o seu e-mail!")
-
-st.markdown("---")
-st.caption("Desenvolvido por Gustavo AI • Powered by Gemini")
+            sheet = conectar_banco()
+            if sheet:
+                # Cria a linha de dados: Nome, Email, Merc, Tech, Motos, Fofoca (True/False)
+                # Converter True/False para "Sim"/"Não" fica mais bonito na planilha
+                dados = [
+                    nome, 
+                    email, 
+                    "Sim" if tema_mercado else "Não",
+                    "Sim" if tema_tech else "Não",
+                    "Sim" if tema_motos else "Não",
+                    "Sim" if tema_fofoca else "Não"
+                ]
+                
+                # Salva no Google Sheets
+                try:
+                    sheet.append_row(dados)
+                    st.success(f"Show, {nome}! Você está inscrito! 🚀")
+                    st.balloons() # Solta balões na tela!
+                except Exception as e:
+                    st.error("Erro ao salvar sua inscrição. Tente novamente.")
