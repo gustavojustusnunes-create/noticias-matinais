@@ -23,7 +23,8 @@ if not GEMINI_KEY:
 
 # Configura a IA
 genai.configure(api_key=GEMINI_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# ALTERADO PARA GEMINI-PRO (Mais compatível)
+model = genai.GenerativeModel('gemini-pro')
 
 # Fontes de Notícias
 RSS_FEEDS = {
@@ -180,9 +181,7 @@ def main():
         
         conteudos_usuario = {}
         
-        # --- AQUI ESTAVA O PROBLEMA, AGORA CORRIGIDO ---
-        # Mapeamento exato conforme sua planilha (image_336f8c.png)
-        # Chave Planilha : Chave RSS
+        # Mapeamento conforme sua planilha (image_336f8c.png)
         mapa = {
             "Mercado": "Mercado",
             "Tech": "Tech",
@@ -192,15 +191,13 @@ def main():
 
         tem_conteudo = False
         for coluna_planilha, chave_rss in mapa.items():
-            # Verifica se a coluna existe e se está marcada como Sim
             if usuario.get(coluna_planilha) == "Sim":
                 tem_conteudo = True
                 
-                # Gera o resumo IA se ainda não existir
                 if chave_rss not in cache_resumos:
                     print(f"   🤖 Gerando resumo IA inédito para: {chave_rss}")
                     cache_resumos[chave_rss] = buscar_e_resumir(chave_rss)
-                    time.sleep(1) # Pausa dramática para não sobrecarregar a API
+                    time.sleep(1) 
                 
                 conteudos_usuario[chave_rss] = cache_resumos[chave_rss]
 
