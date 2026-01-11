@@ -1,7 +1,8 @@
 import os
 import smtplib
 import feedparser
-import google.generativeai as genai
+from google import genai # Nova importação
+from google.genai import types # Tipos para segurança
 import gspread
 from google.oauth2.service_account import Credentials
 from email.mime.text import MIMEText
@@ -21,10 +22,9 @@ if not GEMINI_KEY:
     print("ERRO CRÍTICO: Chave GEMINI_KEY não encontrada.")
     exit(1)
 
-# Configura a IA
-genai.configure(api_key=GEMINI_KEY)
-# ALTERADO PARA GEMINI-PRO (Mais compatível)
-model = genai.GenerativeModel('gemini-pro')
+# --- NOVA CONFIGURAÇÃO DA IA (google-genai) ---
+# A nova SDK usa um 'Client' direto.
+client = genai.Client(api_key=GEMINI_KEY)
 
 # Fontes de Notícias
 RSS_FEEDS = {
@@ -68,7 +68,12 @@ def buscar_e_resumir(tema):
     """
 
     try:
-        response = model.generate_content(prompt)
+        # --- NOVA CHAMADA DE API ---
+        # A sintaxe mudou para models.generate_content
+        response = client.models.generate_content(
+            model="gemini-1.5-flash", # Agora podemos usar o Flash tranquilamente
+            contents=prompt
+        )
         return response.text
     except Exception as e:
         print(f"⚠️ Erro na IA para {tema}: {e}")
@@ -158,7 +163,7 @@ def enviar_email(destinatario, nome, html_content):
 # --- 5. EXECUÇÃO PRINCIPAL ---
 
 def main():
-    print("🚀 Iniciando motor de notícias...")
+    print("🚀 Iniciando motor de notícias (v2.0 - Nova SDK)...")
     
     sheet = conectar_banco()
     if not sheet:
@@ -173,7 +178,6 @@ def main():
         nome = usuario['Nome']
         email = usuario['Email']
         
-        # Pula linhas vazias
         if not email or not nome:
             continue
 
@@ -181,7 +185,7 @@ def main():
         
         conteudos_usuario = {}
         
-        # Mapeamento conforme sua planilha (image_336f8c.png)
+        # Mapeamento conforme sua planilha
         mapa = {
             "Mercado": "Mercado",
             "Tech": "Tech",
