@@ -10,13 +10,12 @@ from datetime import datetime
 import json
 
 # --- 1. CONFIGURAÇÕES DE AMBIENTE ---
-# Ajustado para bater EXATAMENTE com seu GitHub Secrets
 GEMINI_KEY = os.environ.get("GEMINI_KEY")
 GCP_JSON = os.environ.get("GCP_JSON") 
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD") 
 
-# Validação de Segurança (Opcional, mas boa prática)
+# Validação de Segurança
 if not GEMINI_KEY:
     print("ERRO CRÍTICO: Chave GEMINI_KEY não encontrada.")
     exit(1)
@@ -25,7 +24,7 @@ if not GEMINI_KEY:
 genai.configure(api_key=GEMINI_KEY)
 model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Fontes de Notícias (RSS) - Adicione mais se quiser
+# Fontes de Notícias
 RSS_FEEDS = {
     "Mercado": "https://www.infomoney.com.br/feed/",
     "Tech": "https://rss.tecmundo.com.br/feed",
@@ -33,32 +32,23 @@ RSS_FEEDS = {
     "Fofoca": "https://revistaquem.globo.com/rss/quem/"
 }
 
-# --- 2. INTELIGÊNCIA ARTIFICIAL (Curadoria) ---
+# --- 2. INTELIGÊNCIA ARTIFICIAL ---
 
 def buscar_e_resumir(tema):
-    """
-    1. Baixa o RSS do tema.
-    2. Pede pra IA ler e criar um resumo com personalidade.
-    """
     url = RSS_FEEDS.get(tema)
     if not url:
         return "<p>Fonte não configurada.</p>"
 
-    # Lê o feed RSS
     feed = feedparser.parse(url)
     if not feed.entries:
         return "<p>Nenhuma notícia encontrada hoje.</p>"
 
-    top_noticias = feed.entries[:5] # Analisa apenas as 5 mais recentes
+    top_noticias = feed.entries[:5]
     
-    # Prepara o texto cru para a IA ler
     texto_cru = ""
     for entry in top_noticias:
-        titulo = entry.title
-        link = entry.link
-        texto_cru += f"- {titulo}: {link}\n"
+        texto_cru += f"- {entry.title}: {entry.link}\n"
 
-    # O Prompt (Instrução para o 'Editor IA')
     prompt = f"""
     Você é um editor de newsletter matinal para um público jovem e ocupado.
     Analise estas manchetes sobre {tema}:
@@ -69,10 +59,10 @@ def buscar_e_resumir(tema):
     2. Use um tom leve, direto e "smart".
     3. Use <b>negrito</b> para destacar empresas ou valores importantes.
     4. Adicione 1 emoji relevante no início do título.
-    5. NÃO use saudações como "Bom dia" aqui (isso vai no cabeçalho do email).
+    5. NÃO use saudações como "Bom dia".
     6. No final, crie uma lista <ul> simples com os links originais, com o texto "Ler na íntegra".
     
-    Responda apenas com o HTML do conteúdo (sem tags <html> ou <body>).
+    Responda apenas com o HTML do conteúdo.
     """
 
     try:
@@ -80,11 +70,10 @@ def buscar_e_resumir(tema):
         return response.text
     except Exception as e:
         print(f"⚠️ Erro na IA para {tema}: {e}")
-        # Fallback: Se a IA falhar, entrega a lista crua
         lista_html = "<ul>" + "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in top_noticias]) + "</ul>"
         return f"<p>Resumo indisponível. Manchetes do dia:</p>{lista_html}"
 
-# --- 3. MONTAGEM DO EMAIL (Design) ---
+# --- 3. MONTAGEM DO EMAIL ---
 
 def gerar_html_final(nome, conteudos):
     blocos_html = ""
@@ -112,24 +101,19 @@ def gerar_html_final(nome, conteudos):
     </head>
     <body style="font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
         <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            
             <div style="background-color: #2c3e50; padding: 30px 20px; text-align: center;">
                 <h1 style="color: #ffffff; margin: 0; font-size: 24px;">☕ Briefing Matinal</h1>
                 <p style="color: #bdc3c7; margin-top: 10px; font-size: 14px;">{data_hoje}</p>
             </div>
-
             <div style="padding: 30px 20px 10px 20px; text-align: center;">
                 <p style="font-size: 18px; color: #333;">Bom dia, <b>{nome}</b>!</p>
                 <p style="color: #666; font-size: 14px;">Aqui está o resumo inteligente do que importa pra você hoje.</p>
             </div>
-
             <div style="padding: 20px;">
                 {blocos_html}
             </div>
-
             <div style="background-color: #eee; padding: 20px; text-align: center; font-size: 12px; color: #888;">
                 <p>Enviado automaticamente pelo seu Sistema de Notícias IA.</p>
-                <p>Deseja mudar suas preferências? <a href="#" style="color: #007bff;">Acesse o App</a>.</p>
             </div>
         </div>
     </body>
@@ -137,12 +121,13 @@ def gerar_html_final(nome, conteudos):
     """
     return html
 
-# --- 4. ENVIO E CONEXÃO ---
+# --- 4. ENVIO E CONEXÃO (CORRIGIDO AQUI) ---
 
 def conectar_banco():
     try:
         creds_dict = json.loads(GCP_JSON)
-        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+        # ADICIONADO O SCOPE DE DRIVE NOVAMENTE:
+        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
         return client.open("noticias_db").sheet1
@@ -181,22 +166,18 @@ def main():
     usuarios = sheet.get_all_records()
     print(f"📋 {len(usuarios)} usuários encontrados.")
 
-    # Cache para economizar chamadas de IA (se 10 pessoas querem 'Mercado', gera 1 vez só)
     cache_resumos = {} 
 
     for usuario in usuarios:
         nome = usuario['Nome']
         email = usuario['Email']
         
-        # Pula linhas vazias se houver
         if not email:
             continue
 
         print(f"🔄 Processando para: {nome}...")
         
         conteudos_usuario = {}
-        
-        # Mapeamento: Coluna na Planilha -> Chave no RSS
         mapa = {
             "Mercado & Finanças": "Mercado",
             "Tech & Inovação": "Tech",
@@ -204,12 +185,10 @@ def main():
             "Fofoca & Lazer": "Fofoca"
         }
 
-        # Verifica o que o usuário marcou como 'Sim'
         tem_conteudo = False
         for coluna, chave in mapa.items():
             if usuario.get(coluna) == "Sim":
                 tem_conteudo = True
-                # Se ainda não geramos esse resumo hoje, gera agora
                 if chave not in cache_resumos:
                     print(f"   🤖 Gerando resumo IA inédito para: {chave}")
                     cache_resumos[chave] = buscar_e_resumir(chave)
