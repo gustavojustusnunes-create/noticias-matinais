@@ -2,186 +2,227 @@ import os
 import smtplib
 import feedparser
 import google.generativeai as genai
-import yfinance as yf
-import time
-import json
 import gspread
 from google.oauth2.service_account import Credentials
-from datetime import datetime
-import pytz
-from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
+import json
 
-# --- CONFIGURAÇÕES E SEGREDOS ---
-API_KEY = os.environ["GEMINI_KEY"]
-MEU_EMAIL = os.environ["EMAIL_USER"]
-MINHA_SENHA_APP = os.environ["EMAIL_PASSWORD"]
+# --- 1. CONFIGURAÇÕES DE AMBIENTE ---
+# Ajustado para bater EXATAMENTE com seu GitHub Secrets
+GEMINI_KEY = os.environ.get("GEMINI_KEY")
+GCP_JSON = os.environ.get("GCP_JSON") 
+EMAIL_SENDER = os.environ.get("EMAIL_USER")
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD") 
+
+# Validação de Segurança (Opcional, mas boa prática)
+if not GEMINI_KEY:
+    print("ERRO CRÍTICO: Chave GEMINI_KEY não encontrada.")
+    exit(1)
 
 # Configura a IA
-genai.configure(api_key=API_KEY)
+genai.configure(api_key=GEMINI_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash')
 
-# --- DEFINIÇÃO DOS MODELOS ---
-# 1. Principal: O modelo novo e rápido (Limite 20/dia)
-MODELO_PRINCIPAL = 'models/gemini-2.5-flash'
-# 2. Reserva: Um modelo diferente (Gemma) para tentar salvar o dia
-MODELO_RESERVA = 'models/gemma-3-12b-it'
-
-# --- CONEXÃO COM A PLANILHA ---
-def conectar_planilha():
-    try:
-        if "GCP_JSON" not in os.environ:
-            return []
-        info_json = json.loads(os.environ["GCP_JSON"])
-        scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-        creds = Credentials.from_service_account_info(info_json, scopes=scope)
-        client = gspread.authorize(creds)
-        sheet = client.open("noticias_db").sheet1
-        return sheet.get_all_records()
-    except Exception as e:
-        print(f"❌ Erro ao ler planilha: {e}")
-        return []
-
-# --- FONTES DE NOTÍCIAS ---
-fontes = {
-    '🏍️ Motos & Estradas': ['https://www.motociclismoonline.com.br/feed/', 'https://motor1.uol.com.br/rss/category/motos/'],
-    '💰 Mercado & Finanças': ['https://www.infomoney.com.br/feed/', 'https://braziljournal.com/feed/'],
-    '📱 Tech & Inovação': ['https://rss.tecmundo.com.br/feed', 'https://olhardigital.com.br/feed/'],
-    '✨ Fofoca & Lazer': ['https://vogue.globo.com/rss/vogue/gente', 'https://revistaquem.globo.com/rss/quem/']
+# Fontes de Notícias (RSS) - Adicione mais se quiser
+RSS_FEEDS = {
+    "Mercado": "https://www.infomoney.com.br/feed/",
+    "Tech": "https://rss.tecmundo.com.br/feed",
+    "Motos": "https://www.motociclismoonline.com.br/feed/", 
+    "Fofoca": "https://revistaquem.globo.com/rss/quem/"
 }
 
-def obter_data_hoje():
-    fuso_br = pytz.timezone('America/Sao_Paulo')
-    agora = datetime.now(fuso_br)
-    return f"{agora.day}/{agora.month}/{agora.year}"
+# --- 2. INTELIGÊNCIA ARTIFICIAL (Curadoria) ---
 
-def obter_dados_mercado():
-    print("📈 Consultando Mercado...")
-    try:
-        tickers = ['BRL=X', 'EURBRL=X', 'PETR4.SA', 'BTC-USD']
-        dados = yf.Tickers(' '.join(tickers))
-        dolar = dados.tickers['BRL=X'].history(period='1d')['Close'].iloc[-1]
-        euro = dados.tickers['EURBRL=X'].history(period='1d')['Close'].iloc[-1]
-        btc = dados.tickers['BTC-USD'].history(period='1d')['Close'].iloc[-1]
-        
-        return f"""
-        <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px; text-align:center;">
-            <b>DÓLAR:</b> R$ {dolar:.2f} | <b>EURO:</b> R$ {euro:.2f} | <b>BITCOIN:</b> ${btc:,.0f}
-        </div>
-        """
-    except Exception as e:
-        print(f"⚠️ Erro no Mercado: {e}")
-        return ""
-
-def gerar_resumo(prompt):
-    """Tenta gerar resumo usando Principal -> Reserva -> Falha Graciosa"""
-    try:
-        # Tenta Modelo Principal
-        model = genai.GenerativeModel(MODELO_PRINCIPAL)
-        resp = model.generate_content(prompt)
-        return resp.text
-    except Exception as e1:
-        print(f"     ⚠️ Principal falhou ({e1}). Tentando reserva...")
-        try:
-            # Tenta Modelo Reserva (Gemma)
-            model_bkp = genai.GenerativeModel(MODELO_RESERVA)
-            resp = model_bkp.generate_content(prompt)
-            return resp.text
-        except Exception as e2:
-            print(f"     ❌ Reserva também falhou. Entregando sem resumo.")
-            # Se tudo falhar, retorna um texto padrão para não quebrar o email
-            return "<i>(O sistema de IA está descansando agora. Confira os links originais acima!)</i>"
-
-def buscar_e_resumir_noticias():
-    print("🕵️‍♂️ Buscando e Resumindo Notícias...")
-    resumos_prontos = {}
-    
-    for categoria, urls in fontes.items():
-        lista_titulos = []
-        html_links = "<ul>" # Prepara uma lista manual de links caso a IA falhe
-        
-        for url in urls:
-            try:
-                print(f"   - Lendo: {url}")
-                feed = feedparser.parse(url)
-                for entry in feed.entries[:4]:
-                    lista_titulos.append(f"- {entry.title} ({entry.link})")
-                    html_links += f"<li><a href='{entry.link}'>{entry.title}</a></li>"
-            except Exception as e:
-                print(f"     ❌ Erro ao ler feed {url}: {e}")
-        
-        html_links += "</ul>"
-        
-        if lista_titulos:
-            print(f"   🤖 Resumindo {categoria}...")
-            prompt = f"Resuma para newsletter HTML (lista <ul> com emojis). Foque no essencial: {' '.join(lista_titulos)}"
-            
-            texto_ia = gerar_resumo(prompt)
-            
-            # Se a IA devolveu o erro padrão, colocamos a lista de links manuais
-            if "O sistema de IA está descansando" in texto_ia:
-                resumos_prontos[categoria] = html_links + "<br>" + texto_ia
-            else:
-                resumos_prontos[categoria] = texto_ia
-                
-            print(f"     ✅ Categoria {categoria} processada.")
-            time.sleep(5) 
-            
-    return resumos_prontos
-
-def enviar_email(destinatario, nome, html_corpo, assunto):
-    msg = MIMEMultipart()
-    msg['From'] = MEU_EMAIL
-    msg['To'] = destinatario
-    msg['Subject'] = assunto
-    msg.attach(MIMEText(html_corpo, 'html'))
-
-    server = smtplib.SMTP('smtp.gmail.com', 587)
-    server.starttls()
-    server.login(MEU_EMAIL, MINHA_SENHA_APP)
-    server.send_message(msg)
-    server.quit()
-
-# --- BLOCO PRINCIPAL ---
-usuarios = conectar_planilha()
-if not usuarios:
-    print("⚠️ Ninguém na lista ou erro na planilha.")
-    exit()
-
-html_mercado = obter_dados_mercado()
-noticias_do_dia = buscar_e_resumir_noticias() 
-data_hoje = obter_data_hoje()
-
-print(f"📧 Iniciando envios para {len(usuarios)} pessoas...")
-
-for pessoa in usuarios:
-    nome = pessoa['Nome']
-    email = pessoa['Email']
-    
-    html_final = f"""
-    <html><body style="font-family:Arial; color:#333;">
-    <div style="max-width:600px; margin:0 auto;">
-        <h1 style="background:#2c3e50; color:#fff; padding:20px; text-align:center;">Bom dia, {nome}! ☕</h1>
-        <p style="text-align:center; color:#888;">Seu resumo de {data_hoje}</p>
+def buscar_e_resumir(tema):
     """
+    1. Baixa o RSS do tema.
+    2. Pede pra IA ler e criar um resumo com personalidade.
+    """
+    url = RSS_FEEDS.get(tema)
+    if not url:
+        return "<p>Fonte não configurada.</p>"
+
+    # Lê o feed RSS
+    feed = feedparser.parse(url)
+    if not feed.entries:
+        return "<p>Nenhuma notícia encontrada hoje.</p>"
+
+    top_noticias = feed.entries[:5] # Analisa apenas as 5 mais recentes
     
-    if pessoa.get('Mercado') == 'Sim':
-        html_final += html_mercado
-        if '💰 Mercado & Finanças' in noticias_do_dia:
-            html_final += f"<h3>💰 Giro do Mercado</h3>{noticias_do_dia['💰 Mercado & Finanças']}"
+    # Prepara o texto cru para a IA ler
+    texto_cru = ""
+    for entry in top_noticias:
+        titulo = entry.title
+        link = entry.link
+        texto_cru += f"- {titulo}: {link}\n"
 
-    if pessoa.get('Tech') == 'Sim' and '📱 Tech & Inovação' in noticias_do_dia:
-        html_final += f"<h3>📱 Tecnologia</h3>{noticias_do_dia['📱 Tech & Inovação']}"
+    # O Prompt (Instrução para o 'Editor IA')
+    prompt = f"""
+    Você é um editor de newsletter matinal para um público jovem e ocupado.
+    Analise estas manchetes sobre {tema}:
+    {texto_cru}
 
-    if pessoa.get('Motos') == 'Sim' and '🏍️ Motos & Estradas' in noticias_do_dia:
-        html_final += f"<h3>🏍️ Duas Rodas</h3>{noticias_do_dia['🏍️ Motos & Estradas']}"
-
-    if pessoa.get('Fofoca') == 'Sim' and '✨ Fofoca & Lazer' in noticias_do_dia:
-        html_final += f"<h3>✨ Variedades</h3>{noticias_do_dia['✨ Fofoca & Lazer']}"
-        
-    html_final += "<br><hr><p style='font-size:12px; text-align:center;'>Enviado por Gustavo AI News</p></div></body></html>"
+    Sua missão:
+    1. Escreva um resumo único de 2 parágrafos curtos conectando as notícias.
+    2. Use um tom leve, direto e "smart".
+    3. Use <b>negrito</b> para destacar empresas ou valores importantes.
+    4. Adicione 1 emoji relevante no início do título.
+    5. NÃO use saudações como "Bom dia" aqui (isso vai no cabeçalho do email).
+    6. No final, crie uma lista <ul> simples com os links originais, com o texto "Ler na íntegra".
     
+    Responda apenas com o HTML do conteúdo (sem tags <html> ou <body>).
+    """
+
     try:
-        enviar_email(email, nome, html_final, f"☕ Briefing do {nome} - {data_hoje}")
-        print(f"✅ Enviado para {nome} ({email})")
+        response = model.generate_content(prompt)
+        return response.text
     except Exception as e:
-        print(f"❌ Erro ao enviar para {nome}: {e}")
+        print(f"⚠️ Erro na IA para {tema}: {e}")
+        # Fallback: Se a IA falhar, entrega a lista crua
+        lista_html = "<ul>" + "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in top_noticias]) + "</ul>"
+        return f"<p>Resumo indisponível. Manchetes do dia:</p>{lista_html}"
+
+# --- 3. MONTAGEM DO EMAIL (Design) ---
+
+def gerar_html_final(nome, conteudos):
+    blocos_html = ""
+    for tema, texto in conteudos.items():
+        if texto:
+            blocos_html += f"""
+            <div style="margin-bottom: 30px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <div style="background-color: #007bff; color: white; padding: 8px 15px; font-weight: bold; text-transform: uppercase; font-size: 14px;">
+                    {tema}
+                </div>
+                <div style="padding: 20px; color: #444; line-height: 1.6;">
+                    {texto}
+                </div>
+            </div>
+            """
+
+    data_hoje = datetime.now().strftime("%d/%m/%Y")
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
+        <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+            
+            <div style="background-color: #2c3e50; padding: 30px 20px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">☕ Briefing Matinal</h1>
+                <p style="color: #bdc3c7; margin-top: 10px; font-size: 14px;">{data_hoje}</p>
+            </div>
+
+            <div style="padding: 30px 20px 10px 20px; text-align: center;">
+                <p style="font-size: 18px; color: #333;">Bom dia, <b>{nome}</b>!</p>
+                <p style="color: #666; font-size: 14px;">Aqui está o resumo inteligente do que importa pra você hoje.</p>
+            </div>
+
+            <div style="padding: 20px;">
+                {blocos_html}
+            </div>
+
+            <div style="background-color: #eee; padding: 20px; text-align: center; font-size: 12px; color: #888;">
+                <p>Enviado automaticamente pelo seu Sistema de Notícias IA.</p>
+                <p>Deseja mudar suas preferências? <a href="#" style="color: #007bff;">Acesse o App</a>.</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return html
+
+# --- 4. ENVIO E CONEXÃO ---
+
+def conectar_banco():
+    try:
+        creds_dict = json.loads(GCP_JSON)
+        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        client = gspread.authorize(creds)
+        return client.open("noticias_db").sheet1
+    except Exception as e:
+        print(f"Erro crítico no banco de dados: {e}")
+        return None
+
+def enviar_email(destinatario, nome, html_content):
+    msg = MIMEMultipart()
+    msg['From'] = f"Briefing IA <{EMAIL_SENDER}>"
+    msg['To'] = destinatario
+    msg['Subject'] = f"☕ Seu Briefing Matinal - {datetime.now().strftime('%d/%m')}"
+
+    msg.attach(MIMEText(html_content, 'html'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_SENDER, destinatario, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Erro de SMTP ao enviar para {destinatario}: {e}")
+        return False
+
+# --- 5. EXECUÇÃO PRINCIPAL ---
+
+def main():
+    print("🚀 Iniciando motor de notícias...")
+    
+    sheet = conectar_banco()
+    if not sheet:
+        return
+
+    usuarios = sheet.get_all_records()
+    print(f"📋 {len(usuarios)} usuários encontrados.")
+
+    # Cache para economizar chamadas de IA (se 10 pessoas querem 'Mercado', gera 1 vez só)
+    cache_resumos = {} 
+
+    for usuario in usuarios:
+        nome = usuario['Nome']
+        email = usuario['Email']
+        
+        # Pula linhas vazias se houver
+        if not email:
+            continue
+
+        print(f"🔄 Processando para: {nome}...")
+        
+        conteudos_usuario = {}
+        
+        # Mapeamento: Coluna na Planilha -> Chave no RSS
+        mapa = {
+            "Mercado & Finanças": "Mercado",
+            "Tech & Inovação": "Tech",
+            "Motos & Estradas": "Motos",
+            "Fofoca & Lazer": "Fofoca"
+        }
+
+        # Verifica o que o usuário marcou como 'Sim'
+        tem_conteudo = False
+        for coluna, chave in mapa.items():
+            if usuario.get(coluna) == "Sim":
+                tem_conteudo = True
+                # Se ainda não geramos esse resumo hoje, gera agora
+                if chave not in cache_resumos:
+                    print(f"   🤖 Gerando resumo IA inédito para: {chave}")
+                    cache_resumos[chave] = buscar_e_resumir(chave)
+                
+                conteudos_usuario[chave] = cache_resumos[chave]
+
+        if tem_conteudo:
+            html = gerar_html_final(nome, conteudos_usuario)
+            sucesso = enviar_email(email, nome, html)
+            if sucesso:
+                print(f"   ✅ Email enviado com sucesso!")
+        else:
+            print(f"   ⚠️ Usuário sem temas selecionados.")
+
+if __name__ == "__main__":
+    main()
