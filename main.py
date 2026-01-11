@@ -8,6 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import json
+import time
 
 # --- 1. CONFIGURAÇÕES DE AMBIENTE ---
 GEMINI_KEY = os.environ.get("GEMINI_KEY")
@@ -35,6 +36,7 @@ RSS_FEEDS = {
 # --- 2. INTELIGÊNCIA ARTIFICIAL ---
 
 def buscar_e_resumir(tema):
+    print(f"      ...Lendo notícias de {tema}...")
     url = RSS_FEEDS.get(tema)
     if not url:
         return "<p>Fonte não configurada.</p>"
@@ -50,17 +52,16 @@ def buscar_e_resumir(tema):
         texto_cru += f"- {entry.title}: {entry.link}\n"
 
     prompt = f"""
-    Você é um editor de newsletter matinal para um público jovem e ocupado.
+    Você é um editor de newsletter matinal.
     Analise estas manchetes sobre {tema}:
     {texto_cru}
 
     Sua missão:
-    1. Escreva um resumo único de 2 parágrafos curtos conectando as notícias.
-    2. Use um tom leve, direto e "smart".
-    3. Use <b>negrito</b> para destacar empresas ou valores importantes.
-    4. Adicione 1 emoji relevante no início do título.
-    5. NÃO use saudações como "Bom dia".
-    6. No final, crie uma lista <ul> simples com os links originais, com o texto "Ler na íntegra".
+    1. Escreva um resumo único de 2 parágrafos curtos.
+    2. Use um tom leve, direto e inteligente.
+    3. Use <b>negrito</b> para destaques importantes.
+    4. Adicione 1 emoji no início.
+    5. Termine com uma lista <ul> simples dos links originais.
     
     Responda apenas com o HTML do conteúdo.
     """
@@ -107,13 +108,13 @@ def gerar_html_final(nome, conteudos):
             </div>
             <div style="padding: 30px 20px 10px 20px; text-align: center;">
                 <p style="font-size: 18px; color: #333;">Bom dia, <b>{nome}</b>!</p>
-                <p style="color: #666; font-size: 14px;">Aqui está o resumo inteligente do que importa pra você hoje.</p>
+                <p style="color: #666; font-size: 14px;">Aqui está o resumo do que rola no mundo.</p>
             </div>
             <div style="padding: 20px;">
                 {blocos_html}
             </div>
             <div style="background-color: #eee; padding: 20px; text-align: center; font-size: 12px; color: #888;">
-                <p>Enviado automaticamente pelo seu Sistema de Notícias IA.</p>
+                <p>Gerado por IA • {data_hoje}</p>
             </div>
         </div>
     </body>
@@ -121,12 +122,11 @@ def gerar_html_final(nome, conteudos):
     """
     return html
 
-# --- 4. ENVIO E CONEXÃO (CORRIGIDO AQUI) ---
+# --- 4. ENVIO E CONEXÃO ---
 
 def conectar_banco():
     try:
         creds_dict = json.loads(GCP_JSON)
-        # ADICIONADO O SCOPE DE DRIVE NOVAMENTE:
         scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
@@ -172,28 +172,37 @@ def main():
         nome = usuario['Nome']
         email = usuario['Email']
         
-        if not email:
+        # Pula linhas vazias
+        if not email or not nome:
             continue
 
         print(f"🔄 Processando para: {nome}...")
         
         conteudos_usuario = {}
+        
+        # --- AQUI ESTAVA O PROBLEMA, AGORA CORRIGIDO ---
+        # Mapeamento exato conforme sua planilha (image_336f8c.png)
+        # Chave Planilha : Chave RSS
         mapa = {
-            "Mercado & Finanças": "Mercado",
-            "Tech & Inovação": "Tech",
-            "Motos & Estradas": "Motos",
-            "Fofoca & Lazer": "Fofoca"
+            "Mercado": "Mercado",
+            "Tech": "Tech",
+            "Motos": "Motos",
+            "Fofoca": "Fofoca"
         }
 
         tem_conteudo = False
-        for coluna, chave in mapa.items():
-            if usuario.get(coluna) == "Sim":
+        for coluna_planilha, chave_rss in mapa.items():
+            # Verifica se a coluna existe e se está marcada como Sim
+            if usuario.get(coluna_planilha) == "Sim":
                 tem_conteudo = True
-                if chave not in cache_resumos:
-                    print(f"   🤖 Gerando resumo IA inédito para: {chave}")
-                    cache_resumos[chave] = buscar_e_resumir(chave)
                 
-                conteudos_usuario[chave] = cache_resumos[chave]
+                # Gera o resumo IA se ainda não existir
+                if chave_rss not in cache_resumos:
+                    print(f"   🤖 Gerando resumo IA inédito para: {chave_rss}")
+                    cache_resumos[chave_rss] = buscar_e_resumir(chave_rss)
+                    time.sleep(1) # Pausa dramática para não sobrecarregar a API
+                
+                conteudos_usuario[chave_rss] = cache_resumos[chave_rss]
 
         if tem_conteudo:
             html = gerar_html_final(nome, conteudos_usuario)
@@ -201,7 +210,7 @@ def main():
             if sucesso:
                 print(f"   ✅ Email enviado com sucesso!")
         else:
-            print(f"   ⚠️ Usuário sem temas selecionados.")
+            print(f"   ⚠️ {nome} não tem temas marcados como 'Sim'.")
 
 if __name__ == "__main__":
     main()
