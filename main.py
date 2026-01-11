@@ -1,8 +1,8 @@
 import os
 import smtplib
 import feedparser
-from google import genai # Nova importação
-from google.genai import types # Tipos para segurança
+from google import genai 
+from google.genai import types 
 import gspread
 from google.oauth2.service_account import Credentials
 from email.mime.text import MIMEText
@@ -22,9 +22,12 @@ if not GEMINI_KEY:
     print("ERRO CRÍTICO: Chave GEMINI_KEY não encontrada.")
     exit(1)
 
-# --- NOVA CONFIGURAÇÃO DA IA (google-genai) ---
-# A nova SDK usa um 'Client' direto.
-client = genai.Client(api_key=GEMINI_KEY)
+# --- NOVA CONFIGURAÇÃO DA IA ---
+try:
+    client = genai.Client(api_key=GEMINI_KEY)
+except Exception as e:
+    print(f"Erro ao configurar cliente IA: {e}")
+    exit(1)
 
 # Fontes de Notícias
 RSS_FEEDS = {
@@ -68,17 +71,18 @@ def buscar_e_resumir(tema):
     """
 
     try:
-        # --- NOVA CHAMADA DE API ---
-        # A sintaxe mudou para models.generate_content
+        # --- CORREÇÃO AQUI: USANDO VERSÃO ESPECÍFICA ---
+        # Trocamos 'gemini-1.5-flash' por 'gemini-1.5-flash-001' para evitar o erro 404
         response = client.models.generate_content(
-            model="gemini-1.5-flash", # Agora podemos usar o Flash tranquilamente
+            model="gemini-1.5-flash-001", 
             contents=prompt
         )
         return response.text
     except Exception as e:
         print(f"⚠️ Erro na IA para {tema}: {e}")
+        # Fallback elegante
         lista_html = "<ul>" + "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in top_noticias]) + "</ul>"
-        return f"<p>Resumo indisponível. Manchetes do dia:</p>{lista_html}"
+        return f"<p>Resumo indisponível (Erro IA). Manchetes do dia:</p>{lista_html}"
 
 # --- 3. MONTAGEM DO EMAIL ---
 
@@ -163,7 +167,7 @@ def enviar_email(destinatario, nome, html_content):
 # --- 5. EXECUÇÃO PRINCIPAL ---
 
 def main():
-    print("🚀 Iniciando motor de notícias (v2.0 - Nova SDK)...")
+    print("🚀 Iniciando motor de notícias (v2.1 - Fix Modelo)...")
     
     sheet = conectar_banco()
     if not sheet:
@@ -185,7 +189,6 @@ def main():
         
         conteudos_usuario = {}
         
-        # Mapeamento conforme sua planilha
         mapa = {
             "Mercado": "Mercado",
             "Tech": "Tech",
