@@ -1,7 +1,4 @@
-feedparser
-google-genai
-yfinance
-pytz
-streamlit
+google-generativeai
 gspread
 google-auth
+feedparser
