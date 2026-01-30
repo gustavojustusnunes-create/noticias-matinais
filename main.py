@@ -36,7 +36,7 @@ def configurar_ia():
     
     try:
         genai.configure(api_key=GEMINI_KEY)
-        # Usamos 'gemini-1.5-flash' pois é o alias estável (aponta sempre para a versão mais atual)
+        # Usamos 'gemini-1.5-flash' pois é o alias estável
         model = genai.GenerativeModel('gemini-1.5-flash')
         return model
     except Exception as e:
@@ -145,4 +145,74 @@ def enviar_email(destinatario, nome, html_content):
         msg['From'] = f"Briefing IA <{EMAIL_SENDER}>"
         msg['To'] = destinatario
         msg['Subject'] = f"☕ Resumo: {datetime.now().strftime('%d/%m')}"
-        msg.attach(MIMEText
+        
+        # --- A CORREÇÃO ESTÁ AQUI: Dois parênteses no final ---
+        msg.attach(MIMEText(html_content, 'html')) 
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_SENDER, destinatario, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"❌ Erro de SMTP para {destinatario}: {e}")
+        return False
+
+# --- 4. EXECUTOR PRINCIPAL ---
+
+def main():
+    print("🚀 Iniciando Motor de Newsletter (v2.3 Fix)...")
+    
+    # Inicializações
+    model = configurar_ia()
+    sheet = conectar_banco()
+    
+    if not sheet:
+        print("Encerrando por falha no banco.")
+        return
+
+    usuarios = sheet.get_all_records()
+    print(f"📋 {len(usuarios)} usuários na base.")
+
+    # Cache para não gastar tokens gerando o mesmo resumo para pessoas diferentes
+    cache_resumos = {}
+
+    for usuario in usuarios:
+        nome = usuario.get('Nome')
+        email = usuario.get('Email')
+        
+        if not nome or not email:
+            continue
+
+        print(f"🔄 Processando: {nome}...")
+        
+        conteudos_usuario = {}
+        # Mapeamento: Nome da Coluna no Sheets -> Chave no RSS_FEEDS
+        mapa_temas = ["Mercado", "Tech", "Motos", "Fofoca"]
+
+        for tema in mapa_temas:
+            # Verifica se o usuário marcou "Sim" na coluna
+            if usuario.get(tema, '').strip().lower() == "sim":
+                
+                # Verifica Cache
+                if tema not in cache_resumos:
+                    print(f"   🤖 Gerando resumo inédito: {tema}")
+                    cache_resumos[tema] = buscar_e_resumir(model, tema)
+                    time.sleep(2) # Respeitar Rate Limit da API
+                
+                conteudos_usuario[tema] = cache_resumos[tema]
+
+        if conteudos_usuario:
+            html_final = gerar_template_email(nome, conteudos_usuario)
+            if enviar_email(email, nome, html_final):
+                print(f"   ✅ Enviado para {email}")
+            else:
+                print(f"   ❌ Falha no envio para {email}")
+        else:
+            print(f"   ℹ️ {nome} não possui interesses ativos.")
+
+    print("🏁 Processo finalizado.")
+
+if __name__ == "__main__":
+    main()
