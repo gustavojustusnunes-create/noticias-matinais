@@ -1,8 +1,7 @@
 import os
 import smtplib
 import feedparser
-from google import genai 
-from google.genai import types 
+import google.generativeai as genai
 import gspread
 from google.oauth2.service_account import Credentials
 from email.mime.text import MIMEText
@@ -10,26 +9,16 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import json
 import time
+import sys
 
-# --- 1. CONFIGURAÇÕES DE AMBIENTE ---
+# --- 1. CONFIGURAÇÕES E CONSTANTES ---
+# Carregando variáveis de ambiente
 GEMINI_KEY = os.environ.get("GEMINI_KEY")
-GCP_JSON = os.environ.get("GCP_JSON") 
+GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
-EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD") 
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
-# Validação de Segurança
-if not GEMINI_KEY:
-    print("ERRO CRÍTICO: Chave GEMINI_KEY não encontrada.")
-    exit(1)
-
-# --- NOVA CONFIGURAÇÃO DA IA ---
-try:
-    client = genai.Client(api_key=GEMINI_KEY)
-except Exception as e:
-    print(f"Erro ao configurar cliente IA: {e}")
-    exit(1)
-
-# Fontes de Notícias
+# Configuração de Fontes
 RSS_FEEDS = {
     "Mercado": "https://www.infomoney.com.br/feed/",
     "Tech": "https://rss.tecmundo.com.br/feed",
@@ -37,184 +26,123 @@ RSS_FEEDS = {
     "Fofoca": "https://revistaquem.globo.com/rss/quem/"
 }
 
-# --- 2. INTELIGÊNCIA ARTIFICIAL ---
+# --- 2. SERVIÇOS DE INFRAESTRUTURA ---
 
-def buscar_e_resumir(tema):
-    print(f"      ...Lendo notícias de {tema}...")
-    url = RSS_FEEDS.get(tema)
-    if not url:
-        return "<p>Fonte não configurada.</p>"
-
-    feed = feedparser.parse(url)
-    if not feed.entries:
-        return "<p>Nenhuma notícia encontrada hoje.</p>"
-
-    top_noticias = feed.entries[:5]
+def configurar_ia():
+    """Inicializa o cliente do Gemini com tratamento de erro."""
+    if not GEMINI_KEY:
+        print("❌ ERRO CRÍTICO: GEMINI_KEY não encontrada.")
+        sys.exit(1)
     
-    texto_cru = ""
-    for entry in top_noticias:
-        texto_cru += f"- {entry.title}: {entry.link}\n"
-
-    prompt = f"""
-    Você é um editor de newsletter matinal.
-    Analise estas manchetes sobre {tema}:
-    {texto_cru}
-
-    Sua missão:
-    1. Escreva um resumo único de 2 parágrafos curtos.
-    2. Use um tom leve, direto e inteligente.
-    3. Use <b>negrito</b> para destaques importantes.
-    4. Adicione 1 emoji no início.
-    5. Termine com uma lista <ul> simples dos links originais.
-    
-    Responda apenas com o HTML do conteúdo.
-    """
-
     try:
-        # --- CORREÇÃO AQUI: USANDO VERSÃO ESPECÍFICA ---
-        # Trocamos 'gemini-1.5-flash' por 'gemini-1.5-flash-001' para evitar o erro 404
-        response = client.models.generate_content(
-            model="gemini-1.5-flash-001", 
-            contents=prompt
-        )
-        return response.text
+        genai.configure(api_key=GEMINI_KEY)
+        # Usamos 'gemini-1.5-flash' pois é o alias estável (aponta sempre para a versão mais atual)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        return model
     except Exception as e:
-        print(f"⚠️ Erro na IA para {tema}: {e}")
-        # Fallback elegante
-        lista_html = "<ul>" + "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in top_noticias]) + "</ul>"
-        return f"<p>Resumo indisponível (Erro IA). Manchetes do dia:</p>{lista_html}"
-
-# --- 3. MONTAGEM DO EMAIL ---
-
-def gerar_html_final(nome, conteudos):
-    blocos_html = ""
-    for tema, texto in conteudos.items():
-        if texto:
-            blocos_html += f"""
-            <div style="margin-bottom: 30px; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                <div style="background-color: #007bff; color: white; padding: 8px 15px; font-weight: bold; text-transform: uppercase; font-size: 14px;">
-                    {tema}
-                </div>
-                <div style="padding: 20px; color: #444; line-height: 1.6;">
-                    {texto}
-                </div>
-            </div>
-            """
-
-    data_hoje = datetime.now().strftime("%d/%m/%Y")
-    
-    html = f"""
-    <!DOCTYPE html>
-    <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body style="font-family: Helvetica, Arial, sans-serif; background-color: #f4f4f9; margin: 0; padding: 20px;">
-        <div style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <div style="background-color: #2c3e50; padding: 30px 20px; text-align: center;">
-                <h1 style="color: #ffffff; margin: 0; font-size: 24px;">☕ Briefing Matinal</h1>
-                <p style="color: #bdc3c7; margin-top: 10px; font-size: 14px;">{data_hoje}</p>
-            </div>
-            <div style="padding: 30px 20px 10px 20px; text-align: center;">
-                <p style="font-size: 18px; color: #333;">Bom dia, <b>{nome}</b>!</p>
-                <p style="color: #666; font-size: 14px;">Aqui está o resumo do que rola no mundo.</p>
-            </div>
-            <div style="padding: 20px;">
-                {blocos_html}
-            </div>
-            <div style="background-color: #eee; padding: 20px; text-align: center; font-size: 12px; color: #888;">
-                <p>Gerado por IA • {data_hoje}</p>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    return html
-
-# --- 4. ENVIO E CONEXÃO ---
+        print(f"❌ Erro ao configurar IA: {e}")
+        sys.exit(1)
 
 def conectar_banco():
+    """Conecta ao Google Sheets via Service Account."""
+    if not GCP_JSON:
+        print("❌ ERRO CRÍTICO: GCP_JSON não encontrado.")
+        sys.exit(1)
+
     try:
         creds_dict = json.loads(GCP_JSON)
         scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
+        # Abre a primeira planilha encontrada ou pelo nome específico
         return client.open("noticias_db").sheet1
     except Exception as e:
-        print(f"Erro crítico no banco de dados: {e}")
+        print(f"❌ Erro ao conectar no Banco de Dados: {e}")
         return None
 
-def enviar_email(destinatario, nome, html_content):
-    msg = MIMEMultipart()
-    msg['From'] = f"Briefing IA <{EMAIL_SENDER}>"
-    msg['To'] = destinatario
-    msg['Subject'] = f"☕ Seu Briefing Matinal - {datetime.now().strftime('%d/%m')}"
+# --- 3. LÓGICA DE NEGÓCIO (CORE) ---
 
-    msg.attach(MIMEText(html_content, 'html'))
-
-    try:
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, destinatario, msg.as_string())
-        server.quit()
-        return True
-    except Exception as e:
-        print(f"Erro de SMTP ao enviar para {destinatario}: {e}")
-        return False
-
-# --- 5. EXECUÇÃO PRINCIPAL ---
-
-def main():
-    print("🚀 Iniciando motor de notícias (v2.1 - Fix Modelo)...")
+def buscar_e_resumir(model, tema):
+    """Lê RSS, processa e envia para a IA resumir."""
+    print(f"      ...Lendo notícias de {tema}...")
+    url = RSS_FEEDS.get(tema)
     
-    sheet = conectar_banco()
-    if not sheet:
-        return
-
-    usuarios = sheet.get_all_records()
-    print(f"📋 {len(usuarios)} usuários encontrados.")
-
-    cache_resumos = {} 
-
-    for usuario in usuarios:
-        nome = usuario['Nome']
-        email = usuario['Email']
+    try:
+        feed = feedparser.parse(url)
+        if not feed.entries:
+            return "<p>Nenhuma notícia relevante encontrada hoje.</p>"
         
-        if not email or not nome:
-            continue
+        # Pega as top 5 notícias
+        top_noticias = feed.entries[:5]
+        texto_cru = "\n".join([f"- {entry.title}: {entry.link}" for entry in top_noticias])
 
-        print(f"🔄 Processando para: {nome}...")
+        prompt = f"""
+        Atue como um editor sênior de newsletter.
+        Tema: {tema}
+        Notícias:
+        {texto_cru}
+
+        Instruções:
+        1. Crie um resumo consolidado de 2 parágrafos.
+        2. Tom de voz: Profissional, mas conversacional (Smart Brevity).
+        3. Destaque termos chave em <b>negrito</b>.
+        4. Comece com um emoji relevante ao tema.
+        5. Ao final, liste os links originais em uma tag <ul> HTML simples.
         
-        conteudos_usuario = {}
+        Saída: Apenas o HTML (sem markdown ```html).
+        """
+
+        response = model.generate_content(prompt)
+        return response.text
+
+    except Exception as e:
+        print(f"⚠️ Erro na geração de conteúdo para {tema}: {e}")
+        # Fallback: Retorna apenas os links se a IA falhar
+        lista_links = "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in feed.entries[:3]])
+        return f"<p>Erro momentâneo na IA. Seguem as manchetes:</p><ul>{lista_links}</ul>"
+
+def gerar_template_email(nome, conteudos_html):
+    """Monta o HTML final do e-mail com design responsivo básico."""
+    blocos = ""
+    for tema, html_tema in conteudos_html.items():
+        cor_header = "#007bff" # Azul padrão
+        if tema == "Mercado": cor_header = "#28a745"
+        if tema == "Fofoca": cor_header = "#e83e8c"
         
-        mapa = {
-            "Mercado": "Mercado",
-            "Tech": "Tech",
-            "Motos": "Motos",
-            "Fofoca": "Fofoca"
-        }
+        blocos += f"""
+        <div style="margin-bottom: 25px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: {cor_header}; color: white; padding: 10px 15px; font-weight: bold; font-family: sans-serif;">
+                {tema}
+            </div>
+            <div style="padding: 15px; background-color: #fff; color: #333; line-height: 1.5; font-family: sans-serif;">
+                {html_tema}
+            </div>
+        </div>
+        """
 
-        tem_conteudo = False
-        for coluna_planilha, chave_rss in mapa.items():
-            if usuario.get(coluna_planilha) == "Sim":
-                tem_conteudo = True
-                
-                if chave_rss not in cache_resumos:
-                    print(f"   🤖 Gerando resumo IA inédito para: {chave_rss}")
-                    cache_resumos[chave_rss] = buscar_e_resumir(chave_rss)
-                    time.sleep(1) 
-                
-                conteudos_usuario[chave_rss] = cache_resumos[chave_rss]
+    data_hoje = datetime.now().strftime("%d/%m/%Y")
+    
+    return f"""
+    <html>
+    <body style="background-color: #f4f4f9; padding: 20px; font-family: sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px;">
+            <h2 style="text-align: center; color: #333;">☕ Seu Briefing Diário • {data_hoje}</h2>
+            <p>Bom dia, <b>{nome}</b>! Aqui está sua curadoria exclusiva.</p>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+            {blocos}
+            <p style="text-align: center; color: #888; font-size: 12px; margin-top: 30px;">
+                Gerado automaticamente por IA System v2.1
+            </p>
+        </div>
+    </body>
+    </html>
+    """
 
-        if tem_conteudo:
-            html = gerar_html_final(nome, conteudos_usuario)
-            sucesso = enviar_email(email, nome, html)
-            if sucesso:
-                print(f"   ✅ Email enviado com sucesso!")
-        else:
-            print(f"   ⚠️ {nome} não tem temas marcados como 'Sim'.")
-
-if __name__ == "__main__":
-    main()
+def enviar_email(destinatario, nome, html_content):
+    """Dispara o e-mail via SMTP."""
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = f"Briefing IA <{EMAIL_SENDER}>"
+        msg['To'] = destinatario
+        msg['Subject'] = f"☕ Resumo: {datetime.now().strftime('%d/%m')}"
+        msg.attach(MIMEText
