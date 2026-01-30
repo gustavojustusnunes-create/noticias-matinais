@@ -2,8 +2,8 @@ name: Briefing Diário
 
 on:
   schedule:
-    - cron: '0 10 * * *' # Roda todo dia às 07:00 Brasil (10:00 UTC)
-  workflow_dispatch: # Permite rodar manualmente clicando no botão
+    - cron: '0 10 * * *' # Roda todo dia as 07:00 Brasil
+  workflow_dispatch: # Botão manual
 
 jobs:
   build:
@@ -16,15 +16,12 @@ jobs:
     - name: Instalar Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11' 
+        python-version: '3.11'
 
-    - name: Instalar dependências e atualizar
+    - name: Instalar Dependências (Forçado)
       run: |
         python -m pip install --upgrade pip
-        # Instala o básico
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-        # AQUI ESTÁ A CORREÇÃO: Força a atualização para suportar o Gemini 1.5 Flash
-        pip install --upgrade google-generativeai gspread feedparser google-auth
+        pip install google-generativeai gspread feedparser google-auth oauth2client
 
     - name: Rodar Robô
       env:
