@@ -16,11 +16,15 @@ jobs:
     - name: Instalar Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11' # <--- ATUALIZADO PARA 3.11 (A CORREÇÃO MÁGICA)
+        python-version: '3.11' 
 
-    - name: Instalar dependências
+    - name: Instalar dependências e atualizar
       run: |
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        # Instala o básico
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        # AQUI ESTÁ A CORREÇÃO: Força a atualização para suportar o Gemini 1.5 Flash
+        pip install --upgrade google-generativeai gspread feedparser google-auth
 
     - name: Rodar Robô
       env:
