@@ -2,8 +2,8 @@ name: Briefing Diário
 
 on:
   schedule:
-    - cron: '0 10 * * *' # Roda todo dia as 07:00 Brasil
-  workflow_dispatch: # Botão manual
+    - cron: '0 10 * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,20 +18,12 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instalar Dependências (Modo Cirúrgico)
+    - name: Instalar Dependências (Leves)
       run: |
-        # 1. Garante que o pip é o do Python 3.11
         python -m pip install --upgrade pip
-        
-        # 2. Remove qualquer lixo anterior
-        python -m pip uninstall -y google-generativeai google-genai
-        
-        # 3. Instala a versão RECENTE (>0.8.0) explicitamente
-        python -m pip install "google-generativeai>=0.8.3" gspread feedparser google-auth oauth2client
-        
-        # 4. PROVA REAL: Imprime a versão antes de rodar o robô
-        echo "🔍 Versão instalada (Deve ser 0.8.x ou superior):"
-        python -c "import google.generativeai; print(google.generativeai.__version__)"
+        # REMOVEMOS google-generativeai DA LISTA
+        # Instalamos apenas requests (padrão) e as libs de apoio
+        pip install requests gspread feedparser google-auth oauth2client
 
     - name: Rodar Robô
       env:
