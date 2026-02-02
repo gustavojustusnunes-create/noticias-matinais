@@ -18,13 +18,13 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instalar Dependências (Modo Seguro)
+    - name: Instalar Dependências (Forçado)
       run: |
         python -m pip install --upgrade pip
-        # AQUI O SEGREDO: Instalamos direto e forçamos a atualização
+        # AQUI O SEGREDO: Instalamos direto e forçamos a atualização (ignorando o arquivo de texto)
         pip install --upgrade google-generativeai gspread feedparser google-auth oauth2client
-        # Confirmação visual no log
-        pip list | grep google-generativeai
+        # Confirmação visual no log para termos certeza da versão
+        pip show google-generativeai
 
     - name: Rodar Robô
       env:
