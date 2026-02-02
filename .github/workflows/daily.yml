@@ -18,14 +18,17 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instalar Dependências (Correção de Versão)
+    - name: Instalar Dependências (Limpeza Nuclear)
       run: |
         python -m pip install --upgrade pip
-        # O SEGRED0: --no-cache-dir (baixa do zero) e >=0.8.0 (exige versão 2024/2025)
-        pip install --no-cache-dir "google-generativeai>=0.8.0" gspread feedparser google-auth oauth2client
+        # 1. Removemos qualquer lixo antigo que esteja causando conflito
+        pip uninstall -y google-generativeai google-genai generative-ai
         
-        # Prova real no log
-        echo "🔍 Verificando versão instalada:"
+        # 2. Instalamos a versão BLINDADA (acima da 0.8.0) sem usar cache
+        pip install --no-cache-dir "google-generativeai>=0.8.3" gspread feedparser google-auth oauth2client
+        
+        # 3. Prova Real: Mostra no log qual versão ficou
+        echo "🔍 VERSÃO INSTALADA:"
         pip show google-generativeai
 
     - name: Rodar Robô
