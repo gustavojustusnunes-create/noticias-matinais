@@ -18,10 +18,13 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instalar Dependências (Forçado)
+    - name: Instalar Dependências (Modo Seguro)
       run: |
         python -m pip install --upgrade pip
-        pip install google-generativeai gspread feedparser google-auth oauth2client
+        # AQUI O SEGREDO: Instalamos direto e forçamos a atualização
+        pip install --upgrade google-generativeai gspread feedparser google-auth oauth2client
+        # Confirmação visual no log
+        pip list | grep google-generativeai
 
     - name: Rodar Robô
       env:
