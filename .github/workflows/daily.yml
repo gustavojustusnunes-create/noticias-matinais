@@ -18,18 +18,20 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instalar Dependências (Limpeza Nuclear)
+    - name: Instalar Dependências (Modo Cirúrgico)
       run: |
+        # 1. Garante que o pip é o do Python 3.11
         python -m pip install --upgrade pip
-        # 1. Removemos qualquer lixo antigo que esteja causando conflito
-        pip uninstall -y google-generativeai google-genai generative-ai
         
-        # 2. Instalamos a versão BLINDADA (acima da 0.8.0) sem usar cache
-        pip install --no-cache-dir "google-generativeai>=0.8.3" gspread feedparser google-auth oauth2client
+        # 2. Remove qualquer lixo anterior
+        python -m pip uninstall -y google-generativeai google-genai
         
-        # 3. Prova Real: Mostra no log qual versão ficou
-        echo "🔍 VERSÃO INSTALADA:"
-        pip show google-generativeai
+        # 3. Instala a versão RECENTE (>0.8.0) explicitamente
+        python -m pip install "google-generativeai>=0.8.3" gspread feedparser google-auth oauth2client
+        
+        # 4. PROVA REAL: Imprime a versão antes de rodar o robô
+        echo "🔍 Versão instalada (Deve ser 0.8.x ou superior):"
+        python -c "import google.generativeai; print(google.generativeai.__version__)"
 
     - name: Rodar Robô
       env:
