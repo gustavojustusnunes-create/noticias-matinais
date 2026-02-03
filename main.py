@@ -1,7 +1,7 @@
 import os
 import smtplib
 import feedparser
-import requests  # <--- MUDANÇA: Usaremos requests direto
+import requests  # Usando requests direto para evitar problemas de versão
 import gspread
 from google.oauth2.service_account import Credentials
 from email.mime.text import MIMEText
@@ -67,7 +67,7 @@ def chamar_gemini_api(prompt):
             try:
                 texto = dados['candidates'][0]['content']['parts'][0]['text']
                 return texto
-            exceptKeyError:
+            except KeyError: # <--- CORRIGIDO AQUI (Adicionado espaço)
                 return f"<p>Erro ao ler resposta da IA.</p>"
         else:
             print(f"⚠️ Erro HTTP {response.status_code}: {response.text}")
