@@ -11,8 +11,7 @@ import json
 import time
 import sys
 
-# --- 1. CONFIGURAÇÕES (COM LIMPEZA DE CHAVE) ---
-# O .strip() remove espaços e 'enters' que ficam invisíveis na chave
+# --- 1. CONFIGURAÇÕES ---
 GEMINI_KEY = os.environ.get("GEMINI_KEY", "").strip()
 GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
@@ -41,38 +40,23 @@ def conectar_banco():
         print(f"❌ Erro Banco: {e}")
         return None
 
-# --- 3. DIAGNÓSTICO E IA ---
-
-def testar_conexao_google():
-    """Verifica quais modelos estão disponíveis para esta Chave."""
-    print(f"🔍 [Diagnóstico] Testando chave (Inicia com: {GEMINI_KEY[:5]}...)...")
-    url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_KEY}"
-    
-    try:
-        response = requests.get(url, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            modelos = [m['name'].replace('models/', '') for m in data.get('models', []) if 'generateContent' in m.get('supportedGenerationMethods', [])]
-            print(f"   ✅ Sucesso! Modelos disponíveis: {modelos[:3]}... (+{len(modelos)-3})")
-            return True
-        else:
-            print(f"   ❌ Erro de Permissão/API: {response.status_code}")
-            print(f"   ⚠️ Detalhe do Google: {response.text}")
-            return False
-    except Exception as e:
-        print(f"   ❌ Erro de Conexão no teste: {e}")
-        return False
+# --- 3. INTELIGÊNCIA ARTIFICIAL (Atualizado para v2.0) ---
 
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
 
-    # Tenta o modelo padrão e um de backup
-    modelos = ["gemini-1.5-flash", "gemini-pro"]
+    # AQUI ESTÁ A CORREÇÃO: Usamos os modelos que o log mostrou disponíveis
+    modelos = [
+        "gemini-2.0-flash",       # Tentativa 1: O mais rápido da nova geração
+        "gemini-2.0-flash-exp",   # Tentativa 2: Experimental
+        "gemini-1.5-flash-latest" # Tentativa 3: Fallback legado
+    ]
     
     headers = {'Content-Type': 'application/json'}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
     for modelo in modelos:
+        # Nota: Mantivemos v1beta pois é onde esses modelos costumam habitar
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
         
         try:
@@ -84,8 +68,8 @@ def chamar_gemini_api(prompt):
                 except:
                     return f"<p>Erro leitura JSON ({modelo})</p>"
             else:
-                # Mostra o erro real se falhar
-                print(f"   ⚠️ Falha em {modelo} ({response.status_code}): {response.text[:200]}...") 
+                # Se falhar, tenta o próximo silenciosamente (apenas loga)
+                print(f"   ⚠️ {modelo} falhou ({response.status_code}). Tentando próximo...") 
                 continue
 
         except Exception as e:
@@ -104,7 +88,15 @@ def buscar_e_resumir(tema):
         
         top = feed.entries[:5]
         texto = "\n".join([f"- {e.title}: {e.link}" for e in top])
-        prompt = f"Resuma estas notícias de {tema} em 2 parágrafos HTML (sem markdown) com links no final:\n{texto}"
+        
+        prompt = f"""
+        Atue como editor de newsletter. 
+        Resuma estas notícias de {tema} em 2 parágrafos HTML (sem markdown, apenas tags <p>, <b>, etc).
+        Seja leve e direto. Comece com um emoji.
+        No final, liste os links originais em <ul>.
+        Notícias:
+        {texto}
+        """
         
         resumo = chamar_gemini_api(prompt)
         
@@ -154,13 +146,8 @@ def enviar_email(destinatario, html):
 # --- MAIN ---
 
 def main():
-    print("🚀 Iniciando (Modo Raio-X v2)...")
+    print("🚀 Iniciando Motor (v3.0 - Gemini 2.0)...")
     
-    # Passo 0: Diagnóstico da API
-    api_ok = testar_conexao_google()
-    if not api_ok:
-        print("🚨 O Diagnóstico falhou. Verifique o erro acima antes de continuar.")
-
     sheet = conectar_banco()
     if not sheet: return
 
@@ -180,7 +167,7 @@ def main():
             if usr.get(tema, '').lower() == "sim":
                 if tema not in cache:
                     cache[tema] = buscar_e_resumir(tema)
-                    time.sleep(1)
+                    time.sleep(1) # Respeitar rate limit
                 conteudos[tema] = cache[tema]
 
         if conteudos and enviar_email(email, gerar_template_email(nome, conteudos)):
