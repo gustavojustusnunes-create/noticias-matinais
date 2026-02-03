@@ -11,8 +11,8 @@ import json
 import time
 import sys
 
-# --- 1. CONFIGURAÇÕES ---
-# .strip() remove espaços e quebras de linha invisíveis (Erro comum em Secrets)
+# --- 1. CONFIGURAÇÕES (COM LIMPEZA DE CHAVE) ---
+# O .strip() remove espaços e 'enters' que ficam invisíveis na chave
 GEMINI_KEY = os.environ.get("GEMINI_KEY", "").strip()
 GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
@@ -45,7 +45,7 @@ def conectar_banco():
 
 def testar_conexao_google():
     """Verifica quais modelos estão disponíveis para esta Chave."""
-    print("🔍 [Diagnóstico] Testando chave e listando modelos...")
+    print(f"🔍 [Diagnóstico] Testando chave (Inicia com: {GEMINI_KEY[:5]}...)...")
     url = f"https://generativelanguage.googleapis.com/v1beta/models?key={GEMINI_KEY}"
     
     try:
@@ -57,7 +57,7 @@ def testar_conexao_google():
             return True
         else:
             print(f"   ❌ Erro de Permissão/API: {response.status_code}")
-            print(f"   ⚠️ Detalhe: {response.text}")
+            print(f"   ⚠️ Detalhe do Google: {response.text}")
             return False
     except Exception as e:
         print(f"   ❌ Erro de Conexão no teste: {e}")
@@ -66,14 +66,9 @@ def testar_conexao_google():
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
 
-    # Lista ampliada de tentativas
-    modelos = [
-        "gemini-1.5-flash",
-        "gemini-1.5-flash-latest",
-        "gemini-pro", 
-        "gemini-1.0-pro"
-    ]
-
+    # Tenta o modelo padrão e um de backup
+    modelos = ["gemini-1.5-flash", "gemini-pro"]
+    
     headers = {'Content-Type': 'application/json'}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
@@ -88,10 +83,9 @@ def chamar_gemini_api(prompt):
                     return response.json()['candidates'][0]['content']['parts'][0]['text']
                 except:
                     return f"<p>Erro leitura JSON ({modelo})</p>"
-            
-            # AGORA VAMOS VER O ERRO REAL NO LOG
-            elif response.status_code != 200:
-                print(f"   ⚠️ Falha em {modelo} ({response.status_code}): {response.text[:100]}...") 
+            else:
+                # Mostra o erro real se falhar
+                print(f"   ⚠️ Falha em {modelo} ({response.status_code}): {response.text[:200]}...") 
                 continue
 
         except Exception as e:
@@ -110,9 +104,8 @@ def buscar_e_resumir(tema):
         
         top = feed.entries[:5]
         texto = "\n".join([f"- {e.title}: {e.link}" for e in top])
-
         prompt = f"Resuma estas notícias de {tema} em 2 parágrafos HTML (sem markdown) com links no final:\n{texto}"
-
+        
         resumo = chamar_gemini_api(prompt)
         
         if resumo:
@@ -161,12 +154,12 @@ def enviar_email(destinatario, html):
 # --- MAIN ---
 
 def main():
-    print("🚀 Iniciando (Modo Raio-X)...")
+    print("🚀 Iniciando (Modo Raio-X v2)...")
     
     # Passo 0: Diagnóstico da API
     api_ok = testar_conexao_google()
     if not api_ok:
-        print("🚨 ALERTA: A IA provavelmente vai falhar. Verifique a chave no passo acima.")
+        print("🚨 O Diagnóstico falhou. Verifique o erro acima antes de continuar.")
 
     sheet = conectar_banco()
     if not sheet: return
