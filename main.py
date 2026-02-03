@@ -1,7 +1,7 @@
 import os
 import smtplib
 import feedparser
-import requests  # Usando requests direto para evitar problemas de versão
+import requests
 import gspread
 from google.oauth2.service_account import Credentials
 from email.mime.text import MIMEText
@@ -40,17 +40,26 @@ def conectar_banco():
         print(f"❌ Erro ao conectar no Banco de Dados: {e}")
         return None
 
-# --- 3. LÓGICA DE NEGÓCIO (API PURA) ---
+# --- 3. LÓGICA DE NEGÓCIO (API PURA COM FALLBACK) ---
 
 def chamar_gemini_api(prompt):
-    """Faz uma chamada POST direta para a API do Google (bypass SDK)."""
+    """
+    Tenta chamar a API do Google usando múltiplos modelos.
+    Se o primeiro falhar (404), tenta o próximo da lista.
+    """
     if not GEMINI_KEY:
         print("❌ Sem chave de API.")
         return None
 
-    # Endpoint oficial da API v1beta
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
-    
+    # Lista de tentativas (do mais novo para o mais estável)
+    modelos_para_tentar = [
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-flash-001",
+        "gemini-1.5-pro",
+        "gemini-pro"
+    ]
+
     headers = {'Content-Type': 'application/json'}
     payload = {
         "contents": [{
@@ -58,23 +67,36 @@ def chamar_gemini_api(prompt):
         }]
     }
 
-    try:
-        response = requests.post(url, headers=headers, json=payload, timeout=30)
+    for modelo in modelos_para_tentar:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
         
-        if response.status_code == 200:
-            dados = response.json()
-            # Extrai o texto da resposta JSON complexa do Google
-            try:
-                texto = dados['candidates'][0]['content']['parts'][0]['text']
-                return texto
-            except KeyError: # <--- CORRIGIDO AQUI (Adicionado espaço)
-                return f"<p>Erro ao ler resposta da IA.</p>"
-        else:
-            print(f"⚠️ Erro HTTP {response.status_code}: {response.text}")
-            return None
-    except Exception as e:
-        print(f"⚠️ Erro de conexão: {e}")
-        return None
+        try:
+            # print(f"      Trying model: {modelo}...") # Debug opcional
+            response = requests.post(url, headers=headers, json=payload, timeout=30)
+            
+            if response.status_code == 200:
+                dados = response.json()
+                try:
+                    texto = dados['candidates'][0]['content']['parts'][0]['text']
+                    return texto
+                except KeyError:
+                    return f"<p>Erro ao ler resposta da IA ({modelo}).</p>"
+            
+            elif response.status_code == 404:
+                # Se der 404, apenas continua para o próximo loop (próximo modelo)
+                continue
+            
+            else:
+                print(f"⚠️ Erro HTTP {response.status_code} com {modelo}: {response.text}")
+                # Outros erros (500, 400) podem ser fatais, mas vamos tentar o próximo por garantia
+                continue
+
+        except Exception as e:
+            print(f"⚠️ Erro de conexão com {modelo}: {e}")
+            continue
+
+    print("❌ Falha: Nenhum modelo disponível funcionou.")
+    return None
 
 def buscar_e_resumir(tema):
     print(f"      ...Lendo notícias de {tema}...")
@@ -102,15 +124,15 @@ def buscar_e_resumir(tema):
         5. Retorne APENAS o HTML.
         """
 
-        # Chamada direta
+        # Chamada direta com fallback
         resumo = chamar_gemini_api(prompt)
         
         if resumo:
             return resumo
         else:
-            # Fallback se a API falhar
+            # Fallback se TODAS as IAs falharem
             lista_links = "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in top_noticias])
-            return f"<p>IA indisponível. Manchetes:</p><ul>{lista_links}</ul>"
+            return f"<p>IA indisponível no momento. Manchetes:</p><ul>{lista_links}</ul>"
 
     except Exception as e:
         print(f"⚠️ Erro geral em {tema}: {e}")
@@ -160,7 +182,7 @@ def enviar_email(destinatario, nome, html_content):
 # --- 4. EXECUTOR PRINCIPAL ---
 
 def main():
-    print("🚀 Iniciando Motor (Modo API Pura)...")
+    print("🚀 Iniciando Motor (Modo API Multi-Modelo)...")
     
     sheet = conectar_banco()
     if not sheet: return
