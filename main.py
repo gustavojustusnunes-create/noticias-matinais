@@ -40,13 +40,17 @@ def conectar_banco():
         print(f"❌ Erro Banco: {e}")
         return None
 
-# --- 3. INTELIGÊNCIA ARTIFICIAL (Com Retry Logic) ---
+# --- 3. INTELIGÊNCIA ARTIFICIAL (Atualizado para v2.5) ---
 
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
 
-    # Focamos no modelo que sabemos que existe (vimos no log anterior)
-    modelos = ["gemini-2.0-flash", "gemini-2.0-flash-exp"]
+    # AQUI ESTÁ O TRUNFO: Priorizamos o 2.5 que apareceu no seu log
+    modelos = [
+        "gemini-2.5-flash",       # Prioridade 1: Estrada Vazia
+        "gemini-2.0-flash",       # Prioridade 2: O anterior (que estava dando 429)
+        "gemini-2.0-flash-lite-preview-02-05" # Prioridade 3: Versão leve
+    ]
     
     headers = {'Content-Type': 'application/json'}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
@@ -54,7 +58,7 @@ def chamar_gemini_api(prompt):
     for modelo in modelos:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
         
-        # Tenta até 3 vezes o mesmo modelo se der erro de "Muitas Requisições" (429)
+        # Tenta até 3 vezes se der erro de "Muitas Requisições"
         for tentativa in range(1, 4):
             try:
                 response = requests.post(url, headers=headers, json=payload, timeout=30)
@@ -66,16 +70,15 @@ def chamar_gemini_api(prompt):
                         return f"<p>Erro leitura JSON ({modelo})</p>"
                 
                 elif response.status_code == 429:
-                    # AQUI ESTÁ A MÁGICA: Se der erro de limite, espera e tenta de novo
-                    tempo_espera = 20 * tentativa # Espera 20s, depois 40s...
-                    print(f"   ⏳ {modelo} sobrecarregado (429). Esperando {tempo_espera}s para tentar de novo...")
+                    # Backoff Exponencial Agressivo: 30s, 60s, 90s
+                    tempo_espera = 30 * tentativa 
+                    print(f"   ⏳ {modelo} lotado (429). Esperando {tempo_espera}s...")
                     time.sleep(tempo_espera)
-                    continue # Volta para o início do loop de tentativas
+                    continue 
                 
                 elif response.status_code == 404:
-                    # Se não existe, nem adianta tentar de novo, pula para o próximo modelo
                     print(f"   ⚠️ {modelo} não encontrado (404).")
-                    break 
+                    break # Pula pro próximo modelo da lista
 
                 else:
                     print(f"   ⚠️ Falha em {modelo} ({response.status_code}).")
@@ -83,7 +86,7 @@ def chamar_gemini_api(prompt):
 
             except Exception as e:
                 print(f"   ⚠️ Erro rede {modelo}: {e}")
-                break # Se for erro de rede grave, melhor pular
+                break
 
     return None
 
@@ -100,9 +103,8 @@ def buscar_e_resumir(tema):
         
         prompt = f"""
         Atue como editor de newsletter. 
-        Resuma estas notícias de {tema} em 2 parágrafos HTML (sem markdown, apenas tags <p>, <b>, etc).
-        Seja leve e direto. Comece com um emoji.
-        No final, liste os links originais em <ul>.
+        Resuma estas notícias de {tema} em 2 parágrafos HTML curtos (sem markdown).
+        Comece com um emoji. Liste links no final <ul>.
         Notícias:
         {texto}
         """
@@ -113,7 +115,7 @@ def buscar_e_resumir(tema):
             return resumo
         else:
             links = "".join([f"<li><a href='{n.link}'>{n.title}</a></li>" for n in top])
-            return f"<p>IA indisponível (Rate Limit). Manchetes:</p><ul>{links}</ul>"
+            return f"<p>Limite de IA atingido. Manchetes:</p><ul>{links}</ul>"
 
     except Exception:
         return "<p>Erro no feed.</p>"
@@ -155,7 +157,7 @@ def enviar_email(destinatario, html):
 # --- MAIN ---
 
 def main():
-    print("🚀 Iniciando Motor (v3.1 - Anti-429 Rate Limit)...")
+    print("🚀 Iniciando Motor (v3.2 - Gemini 2.5 Priority)...")
     
     sheet = conectar_banco()
     if not sheet: return
@@ -176,9 +178,10 @@ def main():
             if usr.get(tema, '').lower() == "sim":
                 if tema not in cache:
                     cache[tema] = buscar_e_resumir(tema)
-                    # AUMENTO DE PAUSA: Espera 10 segundos entre temas para não estourar o limite
-                    print("      💤 Respirando 10s para a API...")
-                    time.sleep(10) 
+                    # PAUSA OBRIGATÓRIA: Forçamos 15s de descanso MESMO se der certo
+                    # Isso evita que o Google bloqueie a gente por velocidade
+                    print("      💤 Pausa de 15s entre temas...")
+                    time.sleep(15) 
                 conteudos[tema] = cache[tema]
 
         if conteudos and enviar_email(email, gerar_template_email(nome, conteudos)):
