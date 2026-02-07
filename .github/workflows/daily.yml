@@ -18,13 +18,12 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Instalar Dependências (Leves)
+    - name: Instalar Dependências (Com Módulo Financeiro)
       run: |
         python -m pip install --upgrade pip
-        # REMOVEMOS google-generativeai DA LISTA
-        # Instalamos apenas requests (padrão) e as libs de apoio
-        pip install requests gspread feedparser google-auth oauth2client
-
+        # Adicionamos 'yfinance' para pegar dados da bolsa
+        python -m pip install "google-generativeai>=0.8.3" requests yfinance gspread feedparser google-auth oauth2client
+ 
     - name: Rodar Robô
       env:
         GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
