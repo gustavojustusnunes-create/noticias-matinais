@@ -77,16 +77,20 @@ def obter_indicadores():
         """
     except: return ""
 
-# --- 3. EXTRATOR DE IMAGENS (A NOVA MÁGICA) ---
+# --- 3. EXTRATOR DE IMAGENS (MELHORADO) ---
 
 def extrair_imagem_rss(entry, tema):
-    """Tenta achar imagem no RSS. Se não achar, cria um Placeholder."""
+    """
+    Tenta achar imagem no RSS varrendo todos os campos possíveis.
+    """
     image_url = None
     
-    # 1. Tenta 'media_content' (Padrão RSS moderno)
+    # 1. Tenta 'media_content' (Padrão RSS moderno - G1 usa muito)
     if 'media_content' in entry:
-        media = entry.media_content[0]
-        if 'url' in media: image_url = media['url']
+        for media in entry.media_content:
+            if 'url' in media and ('image' in media.get('type', '') or 'jpg' in media['url'] or 'png' in media['url']):
+                image_url = media['url']
+                break
         
     # 2. Tenta 'links' (enclosures)
     if not image_url and 'links' in entry:
@@ -95,23 +99,37 @@ def extrair_imagem_rss(entry, tema):
                 image_url = link.get('href')
                 break
                 
-    # 3. Tenta achar tag <img src="..."> dentro da descrição HTML
-    if not image_url and 'summary' in entry:
-        img_match = re.search(r'<img[^>]+src="([^">]+)"', entry.summary)
-        if img_match: image_url = img_match.group(1)
-
-    # 4. Fallback: Se não achou nada, usa imagem gerada com o nome do TEMA
+    # 3. Varredura Profunda: Procura tag <img> dentro do content ou summary
     if not image_url:
-        # Usa placehold.co para gerar uma imagem elegante com o nome do tema
+        # Junta todo o texto possível para procurar
+        conteudo_total = ""
+        if 'content' in entry:
+            for c in entry.content: has_content = True; conteudo_total += c.value
+        if 'summary' in entry: conteudo_total += entry.summary
+        
+        # Regex para pegar o src da primeira imagem
+        img_match = re.search(r'<img[^>]+src="([^">]+)"', conteudo_total)
+        if img_match:
+            candidate = img_match.group(1)
+            # Filtra pixels de rastreamento (imagens muito pequenas ou estranhas)
+            if "doubleclick" not in candidate and "pixel" not in candidate:
+                image_url = candidate
+
+    # 4. Fallback: Placeholder elegante se falhar
+    if not image_url:
         cor_fundo = "333333"
-        if tema == "Mercado": cor_fundo = "27ae60"
-        if tema == "Tech": cor_fundo = "2980b9"
-        if tema == "Fofoca": cor_fundo = "8e44ad"
+        if tema == "Mercado": cor_fundo = "27ae60" # Verde
+        if tema == "Tech": cor_fundo = "2980b9"    # Azul
+        if tema == "Motos": cor_fundo = "e67e22"   # Laranja
+        if tema == "Fofoca": cor_fundo = "8e44ad"  # Roxo
+        if tema == "Politica": cor_fundo = "c0392b" # Vermelho
+        
+        # Gera uma imagem com o nome do tema
         image_url = f"https://placehold.co/600x200/{cor_fundo}/FFF?text={tema}&font=roboto"
         
     return image_url
 
-# --- 4. INTELIGÊNCIA ARTIFICIAL (DIVISÃO POR BLOCOS) ---
+# --- 4. INTELIGÊNCIA ARTIFICIAL (TEXTOS MAIS COMPLETOS) ---
 
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
@@ -145,23 +163,24 @@ def processar_tema(tema):
         # Pega as top 4 notícias
         entries = feed.entries[:4]
         
-        # Prepara dados para a IA
         input_text = ""
         for i, entry in enumerate(entries):
             input_text += f"Notícia {i+1}: {entry.title}\nLink: {entry.link}\n\n"
 
-        # Prompt focado em SPLIT (Separação)
+        # --- AQUI ESTÁ A MUDANÇA NO PROMPT PARA DAR MAIS CONTEÚDO ---
         prompt = f"""
         Atue como Editor Sênior do All News Journal.
-        Você recebeu {len(entries)} manchetes sobre {tema}.
         
-        Sua missão: Escrever um resumo curto e impactante para CADA notícia separadamente.
+        Tarefa: Analise estas {len(entries)} manchetes sobre {tema} e escreva resumos informativos.
         
-        Regras de Formatação (Rigoroso):
-        - Separe cada resumo com a string "|||" (três barras verticais).
-        - NÃO coloque títulos, nem links, nem introduções. Apenas o texto do resumo.
-        - Cada resumo deve ter no máximo 40 palavras.
-        - Use um tom profissional mas envolvente.
+        Regras de Escrita (Rigoroso):
+        1. Para CADA notícia, escreva entre 60 a 80 palavras.
+        2. Estrutura OBRIGATÓRIA:
+           - Use 2 frases/parágrafos curtos.
+           - A primeira frase explica O QUE aconteceu.
+           - A segunda frase explica O CONTEXTO ou POR QUE isso importa.
+        3. Separe cada resumo EXATAMENTE com a string "|||" (três barras verticais).
+        4. Sem títulos, sem 'leia mais', sem saudações. Apenas o texto denso e informativo.
         
         Input:
         {input_text}
@@ -171,13 +190,11 @@ def processar_tema(tema):
         
         if not resposta_ia: return None
         
-        # Divide a resposta da IA pelos separadores "|||"
         resumos = [r.strip() for r in resposta_ia.split('|||') if r.strip()]
         
-        # Monta a lista final de objetos (Foto + Título + Resumo + Link)
         noticias_finais = []
         for i, entry in enumerate(entries):
-            resumo_texto = resumos[i] if i < len(resumos) else "Clique para ler a matéria completa."
+            resumo_texto = resumos[i] if i < len(resumos) else "Confira os detalhes completos clicando no link abaixo."
             imagem = extrair_imagem_rss(entry, tema)
             
             noticias_finais.append({
@@ -193,7 +210,7 @@ def processar_tema(tema):
         print(f"Erro em {tema}: {e}")
         return None
 
-# --- 5. TEMPLATE (VISUAL DE CARDS) ---
+# --- 5. TEMPLATE (VISUAL DE CARDS V5.1) ---
 
 def gerar_html_final(nome, dados_usuario, painel_mercado):
     html = f"""
@@ -203,14 +220,14 @@ def gerar_html_final(nome, dados_usuario, painel_mercado):
             
             <div style="background:#111; color:#fff; padding:25px; text-align:center;">
                 <h1 style="margin:0; font-family:'Times New Roman', serif; letter-spacing:1px; font-size:28px;">ALL NEWS JOURNAL</h1>
-                <p style="margin:5px 0 0; font-size:11px; color:#888; text-transform:uppercase;">Briefing Visual • {datetime.now().strftime('%d/%m')}</p>
+                <p style="margin:5px 0 0; font-size:11px; color:#888; text-transform:uppercase;">Briefing Diário • {datetime.now().strftime('%d/%m')}</p>
             </div>
             
             {painel_mercado}
             
             <div style="padding:20px;">
                 <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">
-                    Bom dia, <b>{nome}</b>. Destaques visuais de hoje:
+                    Olá, <b>{nome}</b>. Aqui está o aprofundamento das principais notícias de hoje:
                 </p>
     """
 
@@ -222,31 +239,33 @@ def gerar_html_final(nome, dados_usuario, painel_mercado):
         if tema == "Fofoca": cor_tema = "#8e44ad"
         if tema == "Politica": cor_tema = "#c0392b"
         if tema == "Esportes": cor_tema = "#f1c40f"
+        if tema == "Ciencia": cor_tema = "#16a085"
+        if tema == "Mundo": cor_tema = "#34495e"
 
-        # Cabeçalho do Tema
         html += f"""
         <div style="margin-top:40px; margin-bottom:20px; border-bottom:2px solid {cor_tema}; padding-bottom:5px;">
             <span style="background:{cor_tema}; color:white; padding:5px 10px; font-size:12px; font-weight:bold; text-transform:uppercase;">{tema}</span>
         </div>
         """
 
-        # Loop das Notícias (Cards)
         for noti in noticias:
             html += f"""
-            <div style="margin-bottom:25px; background:white; border-bottom:1px solid #eee; padding-bottom:15px;">
+            <div style="margin-bottom:30px; background:white; border-bottom:1px solid #eee; padding-bottom:20px;">
                 <a href="{noti['link']}" style="text-decoration:none;">
-                    <img src="{noti['imagem']}" style="width:100%; height:180px; object-fit:cover; border-radius:6px; display:block;" alt="Imagem da notícia">
+                    <img src="{noti['imagem']}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; display:block; background-color:#eee;" alt="Imagem da notícia">
                 </a>
                 
-                <div style="padding-top:12px;">
+                <div style="padding-top:15px;">
                     <a href="{noti['link']}" style="text-decoration:none; color:#111;">
-                        <h3 style="margin:0 0 8px 0; font-size:18px; line-height:1.3;">{noti['titulo']}</h3>
+                        <h3 style="margin:0 0 10px 0; font-size:20px; line-height:1.3; font-weight:700;">{noti['titulo']}</h3>
                     </a>
-                    <p style="margin:0; font-size:14px; color:#666; line-height:1.5;">
+                    
+                    <p style="margin:0; font-size:15px; color:#444; line-height:1.6; text-align:justify;">
                         {noti['resumo']}
                     </p>
-                    <div style="margin-top:10px;">
-                        <a href="{noti['link']}" style="font-size:12px; color:{cor_tema}; font-weight:bold; text-decoration:none;">LER MATÉRIA COMPLETA →</a>
+                    
+                    <div style="margin-top:12px;">
+                        <a href="{noti['link']}" style="font-size:13px; color:{cor_tema}; font-weight:bold; text-decoration:none; border-bottom:1px solid {cor_tema};">LER MATÉRIA COMPLETA →</a>
                     </div>
                 </div>
             </div>
@@ -265,7 +284,7 @@ def gerar_html_final(nome, dados_usuario, painel_mercado):
 def enviar_email(destinatario, html):
     try:
         msg = MIMEMultipart()
-        msg['Subject'] = f"📸 All News Visual - {datetime.now().strftime('%d/%m')}"
+        msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
         msg['From'] = EMAIL_SENDER
         msg['To'] = destinatario
         msg.attach(MIMEText(html, 'html'))
@@ -283,7 +302,7 @@ def enviar_email(destinatario, html):
 # --- MAIN ---
 
 def main():
-    print("🚀 Iniciando Motor Visual (v5.0)...")
+    print("🚀 Iniciando Motor (v5.1 - Imagens Profundas)...")
     
     sheet = conectar_banco()
     if not sheet: return
