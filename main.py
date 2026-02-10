@@ -2,7 +2,7 @@ import os
 import smtplib
 import feedparser
 import requests
-import yfinance as yf  # Nova lib para mercado financeiro
+import yfinance as yf
 import gspread
 from google.oauth2.service_account import Credentials
 from email.mime.text import MIMEText
@@ -10,7 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 import json
 import time
-import sys
+import re
 
 # --- 1. CONFIGURAÇÕES ---
 GEMINI_KEY = os.environ.get("GEMINI_KEY", "").strip()
@@ -18,19 +18,18 @@ GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
-# NOVAS FONTES E TEMAS
 RSS_FEEDS = {
     "Mercado": "https://www.infomoney.com.br/feed/",
     "Tech": "https://rss.tecmundo.com.br/feed",
     "Motos": "https://www.motociclismoonline.com.br/feed/", 
     "Fofoca": "https://revistaquem.globo.com/rss/quem/",
-    "Politica": "https://g1.globo.com/rss/g1/politica/",      # Novo
-    "Esportes": "https://ge.globo.com/rss/ge/",                # Novo
-    "Ciencia": "https://gizmodo.uol.com.br/category/ciencia/feed/", # Novo
-    "Mundo": "https://g1.globo.com/rss/g1/mundo/"              # Novo
+    "Politica": "https://g1.globo.com/rss/g1/politica/",
+    "Esportes": "https://ge.globo.com/rss/ge/",
+    "Ciencia": "https://gizmodo.uol.com.br/category/ciencia/feed/",
+    "Mundo": "https://g1.globo.com/rss/g1/mundo/"
 }
 
-# --- 2. SERVIÇOS DE INFRAESTRUTURA ---
+# --- 2. INFRAESTRUTURA ---
 
 def conectar_banco():
     if not GCP_JSON:
@@ -46,61 +45,77 @@ def conectar_banco():
         print(f"❌ Erro Banco: {e}")
         return None
 
-# --- 3. MÓDULO FINANCEIRO (NOVO) ---
-
 def obter_indicadores():
-    """Busca Dólar, Bitcoin e Ibovespa em tempo real."""
-    print("      💰 Coletando dados de mercado...")
+    """Painel financeiro compacto."""
     html_painel = ""
-    
     try:
-        # 1. Moedas via API Awesome (Mais rápido que yfinance para câmbio)
         resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL")
         if resp.status_code == 200:
             dados = resp.json()
             dolar = float(dados['USDBRL']['bid'])
-            btc = float(dados['BTCBRL']['bid'])
-            
-            # Formatação visual
             var_dolar = float(dados['USDBRL']['pctChange'])
             cor_dolar = "green" if var_dolar >= 0 else "red"
-            seta_dolar = "▲" if var_dolar >= 0 else "▼"
-
+            
             html_painel += f"""
-            <span style="margin-right: 15px;">🇺🇸 <b>USD:</b> R$ {dolar:.2f} <span style="color:{cor_dolar}; font-size:12px;">{seta_dolar} {var_dolar}%</span></span>
-            <span style="margin-right: 15px;">₿ <b>BTC:</b> R$ {btc:,.0f}</span>
+            <span style="margin: 0 10px;">🇺🇸 <b>USD:</b> {dolar:.2f} <span style="color:{cor_dolar}; font-size:11px;">{var_dolar}%</span></span>
             """
-
-        # 2. Ibovespa via YFinance
+            
         ibov = yf.Ticker("^BVSP")
         hist = ibov.history(period="2d")
         if len(hist) >= 2:
-            fechamento_ontem = hist['Close'].iloc[-2]
-            preco_agora = hist['Close'].iloc[-1]
-            var_ibov = ((preco_agora - fechamento_ontem) / fechamento_ontem) * 100
+            fechamento = hist['Close'].iloc[-1]
+            var_ibov = ((fechamento - hist['Close'].iloc[-2]) / hist['Close'].iloc[-2]) * 100
             cor_ibov = "green" if var_ibov >= 0 else "red"
-            seta_ibov = "▲" if var_ibov >= 0 else "▼"
-            
             html_painel += f"""
-            <span>🇧🇷 <b>IBOV:</b> {int(preco_agora)} pts <span style="color:{cor_ibov}; font-size:12px;">{seta_ibov} {var_ibov:.2f}%</span></span>
+            <span style="margin: 0 10px;">🇧🇷 <b>IBOV:</b> {int(fechamento)} <span style="color:{cor_ibov}; font-size:11px;">{var_ibov:.2f}%</span></span>
             """
             
         return f"""
-        <div style="background-color: #f8f9fa; border-bottom: 3px solid #000; padding: 15px; text-align: center; font-family: monospace; font-size: 14px; margin-bottom: 25px;">
+        <div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:10px; text-align:center; font-family:monospace; font-size:13px; color:#333;">
             {html_painel}
         </div>
         """
-    except Exception as e:
-        print(f"⚠️ Erro no painel financeiro: {e}")
-        return ""
+    except: return ""
 
-# --- 4. INTELIGÊNCIA ARTIFICIAL (TEXTOS MELHORES) ---
+# --- 3. EXTRATOR DE IMAGENS (A NOVA MÁGICA) ---
+
+def extrair_imagem_rss(entry, tema):
+    """Tenta achar imagem no RSS. Se não achar, cria um Placeholder."""
+    image_url = None
+    
+    # 1. Tenta 'media_content' (Padrão RSS moderno)
+    if 'media_content' in entry:
+        media = entry.media_content[0]
+        if 'url' in media: image_url = media['url']
+        
+    # 2. Tenta 'links' (enclosures)
+    if not image_url and 'links' in entry:
+        for link in entry.links:
+            if link.get('type', '').startswith('image/'):
+                image_url = link.get('href')
+                break
+                
+    # 3. Tenta achar tag <img src="..."> dentro da descrição HTML
+    if not image_url and 'summary' in entry:
+        img_match = re.search(r'<img[^>]+src="([^">]+)"', entry.summary)
+        if img_match: image_url = img_match.group(1)
+
+    # 4. Fallback: Se não achou nada, usa imagem gerada com o nome do TEMA
+    if not image_url:
+        # Usa placehold.co para gerar uma imagem elegante com o nome do tema
+        cor_fundo = "333333"
+        if tema == "Mercado": cor_fundo = "27ae60"
+        if tema == "Tech": cor_fundo = "2980b9"
+        if tema == "Fofoca": cor_fundo = "8e44ad"
+        image_url = f"https://placehold.co/600x200/{cor_fundo}/FFF?text={tema}&font=roboto"
+        
+    return image_url
+
+# --- 4. INTELIGÊNCIA ARTIFICIAL (DIVISÃO POR BLOCOS) ---
 
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
-    # Usando o modelo mais inteligente (2.5) e o 2.0 como backup
     modelos = ["gemini-2.5-flash", "gemini-2.0-flash"]
-    
     headers = {'Content-Type': 'application/json'}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
@@ -110,19 +125,16 @@ def chamar_gemini_api(prompt):
             try:
                 response = requests.post(url, headers=headers, json=payload, timeout=30)
                 if response.status_code == 200:
-                    try:
-                        return response.json()['candidates'][0]['content']['parts'][0]['text']
-                    except: return None
+                    return response.json()['candidates'][0]['content']['parts'][0]['text']
                 elif response.status_code == 429:
                     time.sleep(20 * tentativa)
                     continue
-                else:
-                    break
+                else: break
             except: break
     return None
 
-def buscar_e_resumir(tema):
-    print(f"      ...Processando {tema}...")
+def processar_tema(tema):
+    print(f"      ...Lendo feed de {tema}...")
     url = RSS_FEEDS.get(tema)
     if not url: return None
     
@@ -130,85 +142,130 @@ def buscar_e_resumir(tema):
         feed = feedparser.parse(url)
         if not feed.entries: return None
         
-        top = feed.entries[:6] # Lendo mais notícias para dar contexto
-        texto = "\n".join([f"- {e.title}: {e.link}" for e in top])
+        # Pega as top 4 notícias
+        entries = feed.entries[:4]
         
-        # PROMPT DE JORNALISTA SÊNIOR
+        # Prepara dados para a IA
+        input_text = ""
+        for i, entry in enumerate(entries):
+            input_text += f"Notícia {i+1}: {entry.title}\nLink: {entry.link}\n\n"
+
+        # Prompt focado em SPLIT (Separação)
         prompt = f"""
-        Você é o Editor-Chefe do 'All News Journal'.
-        Escreva uma coluna analítica sobre as notícias abaixo de {tema}.
+        Atue como Editor Sênior do All News Journal.
+        Você recebeu {len(entries)} manchetes sobre {tema}.
         
-        Estrutura Obrigatória (Use HTML):
-        1. Comece com um emoji e uma Manchete de Impacto (em <h3>).
-        2. Escreva 3 parágrafos bem desenvolvidos:
-           - Parágrafo 1: O Fato Principal (O que aconteceu?).
-           - Parágrafo 2: Contexto (Por que isso importa? Bastidores).
-           - Parágrafo 3: Impacto Futuro (O que esperar?).
-        3. Use <b>negrito</b> para destacar nomes e números importantes.
-        4. Finalize com "Fontes:" e uma lista <ul> com os links.
+        Sua missão: Escrever um resumo curto e impactante para CADA notícia separadamente.
         
-        Notícias base:
-        {texto}
+        Regras de Formatação (Rigoroso):
+        - Separe cada resumo com a string "|||" (três barras verticais).
+        - NÃO coloque títulos, nem links, nem introduções. Apenas o texto do resumo.
+        - Cada resumo deve ter no máximo 40 palavras.
+        - Use um tom profissional mas envolvente.
+        
+        Input:
+        {input_text}
         """
         
-        resumo = chamar_gemini_api(prompt)
-        if resumo: return resumo
-        else: return f"<p>Erro na IA.</p>"
+        resposta_ia = chamar_gemini_api(prompt)
+        
+        if not resposta_ia: return None
+        
+        # Divide a resposta da IA pelos separadores "|||"
+        resumos = [r.strip() for r in resposta_ia.split('|||') if r.strip()]
+        
+        # Monta a lista final de objetos (Foto + Título + Resumo + Link)
+        noticias_finais = []
+        for i, entry in enumerate(entries):
+            resumo_texto = resumos[i] if i < len(resumos) else "Clique para ler a matéria completa."
+            imagem = extrair_imagem_rss(entry, tema)
+            
+            noticias_finais.append({
+                "titulo": entry.title,
+                "link": entry.link,
+                "imagem": imagem,
+                "resumo": resumo_texto
+            })
+            
+        return noticias_finais
 
-    except Exception: return "<p>Erro no feed.</p>"
+    except Exception as e:
+        print(f"Erro em {tema}: {e}")
+        return None
 
-# --- 5. TEMPLATE E ENVIO (BRANDING NOVO) ---
+# --- 5. TEMPLATE (VISUAL DE CARDS) ---
 
-def gerar_template_email(nome, conteudos, painel_mercado):
+def gerar_html_final(nome, dados_usuario, painel_mercado):
     html = f"""
-    <html><body style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding:0; margin:0; background:#eeeeee;">
-    <div style="max-width:650px; margin:20px auto; background:white; border-radius:8px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-        
-        <div style="background-color: #1a1a1a; color: white; padding: 30px 20px; text-align: center;">
-            <h1 style="margin:0; font-family: 'Times New Roman', serif; font-size: 32px; letter-spacing: 1px;">ALL NEWS JOURNAL</h1>
-            <p style="margin:10px 0 0; color: #888; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Edição Diária • {datetime.now().strftime('%d/%m/%Y')}</p>
-        </div>
-
-        {painel_mercado}
-
-        <div style="padding: 20px 40px;">
-            <p style="font-size: 16px; color: #555;">Olá, <b>{nome}</b>. Aqui está sua curadoria de hoje:</p>
-            <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;">
+    <html>
+    <body style="margin:0; padding:0; background-color:#f0f2f5; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;">
+        <div style="max-width:600px; margin:0 auto; background:#ffffff;">
+            
+            <div style="background:#111; color:#fff; padding:25px; text-align:center;">
+                <h1 style="margin:0; font-family:'Times New Roman', serif; letter-spacing:1px; font-size:28px;">ALL NEWS JOURNAL</h1>
+                <p style="margin:5px 0 0; font-size:11px; color:#888; text-transform:uppercase;">Briefing Visual • {datetime.now().strftime('%d/%m')}</p>
+            </div>
+            
+            {painel_mercado}
+            
+            <div style="padding:20px;">
+                <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">
+                    Bom dia, <b>{nome}</b>. Destaques visuais de hoje:
+                </p>
     """
-    
-    for tema, texto in conteudos.items():
-        # Cores temáticas
-        cores = {
-            "Mercado": "#27ae60", "Tech": "#2980b9", "Motos": "#e67e22", 
-            "Fofoca": "#8e44ad", "Politica": "#c0392b", "Esportes": "#f1c40f",
-            "Ciencia": "#16a085", "Mundo": "#34495e"
-        }
-        cor = cores.get(tema, "#333")
-        
+
+    for tema, noticias in dados_usuario.items():
+        cor_tema = "#333"
+        if tema == "Mercado": cor_tema = "#27ae60"
+        if tema == "Tech": cor_tema = "#2980b9"
+        if tema == "Motos": cor_tema = "#e67e22"
+        if tema == "Fofoca": cor_tema = "#8e44ad"
+        if tema == "Politica": cor_tema = "#c0392b"
+        if tema == "Esportes": cor_tema = "#f1c40f"
+
+        # Cabeçalho do Tema
         html += f"""
-        <div style="margin-bottom: 40px;">
-            <div style="border-left: 5px solid {cor}; padding-left: 15px; margin-bottom: 15px;">
-                <span style="color: {cor}; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">{tema}</span>
-            </div>
-            <div style="color: #333; line-height: 1.6; font-size: 15px;">
-                {texto}
-            </div>
+        <div style="margin-top:40px; margin-bottom:20px; border-bottom:2px solid {cor_tema}; padding-bottom:5px;">
+            <span style="background:{cor_tema}; color:white; padding:5px 10px; font-size:12px; font-weight:bold; text-transform:uppercase;">{tema}</span>
         </div>
         """
-    
+
+        # Loop das Notícias (Cards)
+        for noti in noticias:
+            html += f"""
+            <div style="margin-bottom:25px; background:white; border-bottom:1px solid #eee; padding-bottom:15px;">
+                <a href="{noti['link']}" style="text-decoration:none;">
+                    <img src="{noti['imagem']}" style="width:100%; height:180px; object-fit:cover; border-radius:6px; display:block;" alt="Imagem da notícia">
+                </a>
+                
+                <div style="padding-top:12px;">
+                    <a href="{noti['link']}" style="text-decoration:none; color:#111;">
+                        <h3 style="margin:0 0 8px 0; font-size:18px; line-height:1.3;">{noti['titulo']}</h3>
+                    </a>
+                    <p style="margin:0; font-size:14px; color:#666; line-height:1.5;">
+                        {noti['resumo']}
+                    </p>
+                    <div style="margin-top:10px;">
+                        <a href="{noti['link']}" style="font-size:12px; color:{cor_tema}; font-weight:bold; text-decoration:none;">LER MATÉRIA COMPLETA →</a>
+                    </div>
+                </div>
+            </div>
+            """
+
     html += """
+            <div style="text-align:center; padding:30px; background:#fafafa; color:#aaa; font-size:11px;">
+                &copy; 2025 All News Journal.
+            </div>
         </div>
-        <div style="background-color: #f4f4f4; padding: 20px; text-align: center; color: #999; font-size: 11px;">
-            &copy; 2025 All News Journal Group. Gerado por IA.
-        </div>
-    </div></body></html>
+    </body>
+    </html>
     """
     return html
 
 def enviar_email(destinatario, html):
     try:
         msg = MIMEMultipart()
-        msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
+        msg['Subject'] = f"📸 All News Visual - {datetime.now().strftime('%d/%m')}"
         msg['From'] = EMAIL_SENDER
         msg['To'] = destinatario
         msg.attach(MIMEText(html, 'html'))
@@ -226,41 +283,35 @@ def enviar_email(destinatario, html):
 # --- MAIN ---
 
 def main():
-    print("🚀 Iniciando All News Journal (v4.0)...")
+    print("🚀 Iniciando Motor Visual (v5.0)...")
     
     sheet = conectar_banco()
     if not sheet: return
 
     usuarios = sheet.get_all_records()
-    print(f"📋 {len(usuarios)} assinantes.")
-    
-    # Cache global (notícias + mercado)
-    painel_financeiro = obter_indicadores()
-    cache_temas = {}
-
+    painel = obter_indicadores()
+    cache = {}
     todas_chaves = RSS_FEEDS.keys()
 
     for usr in usuarios:
         nome, email = usr.get('Nome'), usr.get('Email')
         if not nome or not email: continue
         
-        print(f"🔄 Gerando edição para: {nome}...")
-        conteudos_usr = {}
+        print(f"🔄 Montando jornal para: {nome}...")
+        conteudos = {}
         
         for tema in todas_chaves:
-            # Verifica se a coluna existe e se está marcada com Sim
-            pref = usr.get(tema, '')
-            if isinstance(pref, str) and pref.strip().lower() == "sim":
-                if tema not in cache_temas:
-                    cache_temas[tema] = buscar_e_resumir(tema)
-                    print("      💤 Pausa estratégica (12s)...")
-                    time.sleep(12)
-                conteudos_usr[tema] = cache_temas[tema]
+            if usr.get(tema, '').strip().lower() == "sim":
+                if tema not in cache:
+                    cache[tema] = processar_tema(tema)
+                    print("      💤 Pausa (10s)...")
+                    time.sleep(10)
+                conteudos[tema] = cache[tema]
 
-        if conteudos_usr:
-            html_final = gerar_template_email(nome, conteudos_usr, painel_financeiro)
-            if enviar_email(email, html_final):
-                print("   ✅ Jornal despachado.")
+        if conteudos:
+            html = gerar_html_final(nome, conteudos, painel)
+            if enviar_email(email, html):
+                print("   ✅ Despachado.")
 
 if __name__ == "__main__":
     main()
