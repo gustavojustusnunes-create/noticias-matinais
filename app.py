@@ -3,7 +3,7 @@ import feedparser
 import requests
 import pandas as pd
 from datetime import datetime
-import re
+import time
 
 # --- 1. CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -13,21 +13,20 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Estilo CSS Personalizado (Para ficar igual ao E-mail)
+# Estilo CSS (Modo Escuro/Claro automático)
 st.markdown("""
 <style>
-    .card {
-        background-color: #ffffff;
+    .stApp { margin-top: -30px; }
+    .card-container {
+        background-color: #262730; /* Fundo escuro padrão Streamlit */
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         margin-bottom: 20px;
-        border-left: 5px solid #333;
+        border: 1px solid #444;
     }
-    .card h3 { margin-top: 0; color: #111; }
-    .card a { text-decoration: none; color: #007bff; font-weight: bold; }
-    .card a:hover { text-decoration: underline; }
-    .metric-container { background-color: #f8f9fa; padding: 10px; border-radius: 5px; text-align: center; }
+    a { text-decoration: none; font-weight: bold; color: #4da6ff !important; }
+    a:hover { text-decoration: underline; }
+    h3 { margin-top: 0 !important; padding-top: 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -43,91 +42,114 @@ RSS_FEEDS = {
     "Mundo": "https://g1.globo.com/rss/g1/mundo/"
 }
 
-# --- 3. FUNÇÕES AUXILIARES ---
+# --- 3. FUNÇÕES ROBUSTAS ---
 
-@st.cache_data(ttl=3600) # Cache de 1 hora para não ficar lento
+@st.cache_data(ttl=900) # Cache de 15 min para não travar
+def pegar_cotacao():
+    try:
+        resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL", timeout=2)
+        if resp.status_code == 200:
+            return resp.json()
+    except:
+        return None
+    return None
+
+@st.cache_data(ttl=1800) # Cache de 30 min para notícias
 def buscar_noticias(tema):
     url = RSS_FEEDS.get(tema)
     if not url: return []
     
+    noticias = []
     try:
         feed = feedparser.parse(url)
-        noticias = []
-        for entry in feed.entries[:5]: # Top 5 notícias
-            # Tenta extrair imagem
-            img = "https://placehold.co/600x200/EEE/31343C?text=News&font=roboto"
-            if 'media_content' in entry:
-                img = entry.media_content[0]['url']
-            elif 'links' in entry:
-                for link in entry.links:
-                    if link.get('type', '').startswith('image/'):
-                        img = link.get('href'); break
-            
-            noticias.append({
-                "titulo": entry.title,
-                "link": entry.link,
-                "img": img,
-                "data": entry.get('published', '')[:16]
-            })
-        return noticias
-    except:
+        if not feed.entries: return []
+        
+        for entry in feed.entries[:6]: # Top 6 notícias
+            try:
+                # Lógica de Imagem (A mesma do robô de e-mail)
+                img = None
+                
+                # Tenta media_content
+                if 'media_content' in entry:
+                    for m in entry.media_content:
+                        if 'image' in m.get('type', '') or 'jpg' in m.get('url', ''):
+                            img = m['url']; break
+                
+                # Tenta links
+                if not img and 'links' in entry:
+                    for link in entry.links:
+                        if link.get('type', '').startswith('image/'):
+                            img = link.get('href'); break
+                
+                # Placeholder se não achar nada
+                if not img:
+                    cor = "333"
+                    if tema == "Mercado": cor = "27ae60"
+                    if tema == "Tech": cor = "2980b9"
+                    img = f"https://placehold.co/600x300/{cor}/FFF?text={tema}&font=roboto"
+
+                noticias.append({
+                    "titulo": entry.title,
+                    "link": entry.link,
+                    "img": img,
+                    "resumo": entry.get('summary', 'Clique para ler mais.')[:150] + "..."
+                })
+            except Exception as e:
+                continue # Se uma notícia der erro, pula para a próxima (não quebra o site)
+                
+    except Exception as e:
+        st.error(f"Erro ao ler feed: {e}")
         return []
+        
+    return noticias
 
-def pegar_cotacao():
-    try:
-        resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL")
-        return resp.json()
-    except: return None
+# --- 4. INTERFACE ---
 
-# --- 4. INTERFACE PRINCIPAL ---
-
-# Cabeçalho
-col1, col2 = st.columns([3, 1])
-with col1:
-    st.title("📰 All News Journal")
-    st.caption(f"Edição ao Vivo • {datetime.now().strftime('%d/%m/%Y')}")
-
-# Painel Financeiro (Sidebar ou Topo)
+# Topo: Cotações
 cotacoes = pegar_cotacao()
+col_metrics = st.columns(4)
+
 if cotacoes:
     usd = float(cotacoes['USDBRL']['bid'])
-    usd_var = float(cotacoes['USDBRL']['pctChange'])
+    var_usd = float(cotacoes['USDBRL']['pctChange'])
     btc = float(cotacoes['BTCBRL']['bid'])
+    var_btc = float(cotacoes['BTCBRL']['pctChange'])
     
-    col_a, col_b, col_c = st.columns(3)
-    col_a.metric("Dólar (USD)", f"R$ {usd:.2f}", f"{usd_var}%")
-    col_b.metric("Bitcoin (BTC)", f"R$ {btc/1000:.1f}k", f"{float(cotacoes['BTCBRL']['pctChange'])}%")
+    col_metrics[0].metric("🇺🇸 Dólar", f"R$ {usd:.2f}", f"{var_usd}%")
+    col_metrics[1].metric("₿ Bitcoin", f"R$ {btc/1000:.1f}k", f"{var_btc}%")
 
+# Título
+st.title("📰 All News Journal")
+st.markdown(f"**Edição em Tempo Real** • {datetime.now().strftime('%d/%m/%Y')}")
 st.divider()
 
-# Sidebar de Navegação
-st.sidebar.header("Filtros")
-tema_selecionado = st.sidebar.radio("Escolha o Caderno:", list(RSS_FEEDS.keys()))
+# Sidebar
+with st.sidebar:
+    st.header("Explorar")
+    tema_selecionado = st.radio("Selecione o Caderno:", list(RSS_FEEDS.keys()))
+    st.markdown("---")
+    if st.button("🔄 Atualizar Tudo"):
+        st.cache_data.clear()
 
-# Botão de Atualizar Manual
-if st.sidebar.button("🔄 Atualizar Feed"):
-    st.cache_data.clear()
-
-# --- 5. EXIBIÇÃO DAS NOTÍCIAS ---
-st.subheader(f"Destaques de {tema_selecionado}")
+# Área de Notícias
+st.subheader(f"Destaques: {tema_selecionado}")
 
 news = buscar_noticias(tema_selecionado)
 
 if news:
-    for n in news:
-        # Layout de Cartão
-        with st.container():
-            c1, c2 = st.columns([1, 2])
-            with c1:
+    # Grid de Notícias (2 colunas)
+    row1 = st.columns(2)
+    row2 = st.columns(2)
+    row3 = st.columns(2)
+    grid_slots = row1 + row2 + row3 # Lista de 6 slots
+    
+    for i, n in enumerate(news):
+        if i < len(grid_slots):
+            with grid_slots[i]:
+                # Cartão Visual
                 st.image(n['img'], use_column_width=True)
-            with c2:
-                st.markdown(f"### [{n['titulo']}]({n['link']})")
-                st.caption(f"Publicado em: {n['data']}")
-                st.write("Clique no título para ler a matéria completa na fonte original.")
-            st.divider()
+                st.markdown(f"#### [{n['titulo']}]({n['link']})")
+                st.caption(n['resumo'])
+                st.markdown("---")
 else:
-    st.warning("Não foi possível carregar as notícias deste tema no momento.")
-
-# Rodapé
-st.markdown("---")
-st.markdown("© 2025 All News Journal • Tecnologia Streamlit & Python")
+    st.info("Nenhuma notícia carregada. Tente atualizar a página.")
