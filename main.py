@@ -46,90 +46,120 @@ def conectar_banco():
         return None
 
 def obter_indicadores():
-    """Painel financeiro compacto."""
-    html_painel = ""
+    """
+    Painel financeiro blindado.
+    Tenta pegar Moedas e Bolsa separadamente para garantir que nada falte.
+    """
+    html_items = []
+    
+    # 1. TENTATIVA: DÓLAR E BITCOIN (AwesomeAPI)
     try:
-        resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL")
+        resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL", timeout=5)
         if resp.status_code == 200:
             dados = resp.json()
+            
+            # Dólar
             dolar = float(dados['USDBRL']['bid'])
             var_dolar = float(dados['USDBRL']['pctChange'])
-            cor_dolar = "green" if var_dolar >= 0 else "red"
+            cor_dolar = "green" if var_dolar <= 0 else "red" # Dólar caindo é bom (geralmente), ou ajuste conforme preferência
+            seta_dolar = "▼" if var_dolar <= 0 else "▲"
+            html_items.append(f"🇺🇸 <b>USD:</b> {dolar:.2f} <span style='color:{cor_dolar}; font-size:11px;'>{seta_dolar} {var_dolar}%</span>")
             
-            html_painel += f"""
-            <span style="margin: 0 10px;">🇺🇸 <b>USD:</b> {dolar:.2f} <span style="color:{cor_dolar}; font-size:11px;">{var_dolar}%</span></span>
-            """
-            
+            # Bitcoin
+            btc = float(dados['BTCBRL']['bid'])
+            var_btc = float(dados['BTCBRL']['pctChange'])
+            cor_btc = "green" if var_btc >= 0 else "red"
+            seta_btc = "▲" if var_btc >= 0 else "▼"
+            html_items.append(f"₿ <b>BTC:</b> {btc/1000:.1f}k <span style='color:{cor_btc}; font-size:11px;'>{seta_btc} {var_btc}%</span>")
+    except Exception as e:
+        print(f"⚠️ Erro ao pegar Moedas: {e}")
+
+    # 2. TENTATIVA: IBOVESPA (YFinance)
+    try:
         ibov = yf.Ticker("^BVSP")
         hist = ibov.history(period="2d")
         if len(hist) >= 2:
-            fechamento = hist['Close'].iloc[-1]
-            var_ibov = ((fechamento - hist['Close'].iloc[-2]) / hist['Close'].iloc[-2]) * 100
-            cor_ibov = "green" if var_ibov >= 0 else "red"
-            html_painel += f"""
-            <span style="margin: 0 10px;">🇧🇷 <b>IBOV:</b> {int(fechamento)} <span style="color:{cor_ibov}; font-size:11px;">{var_ibov:.2f}%</span></span>
-            """
+            fechamento_atual = hist['Close'].iloc[-1]
+            fechamento_anterior = hist['Close'].iloc[-2]
+            var_ibov = ((fechamento_atual - fechamento_anterior) / fechamento_anterior) * 100
             
-        return f"""
-        <div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:10px; text-align:center; font-family:monospace; font-size:13px; color:#333;">
-            {html_painel}
-        </div>
-        """
-    except: return ""
+            cor_ibov = "green" if var_ibov >= 0 else "red"
+            seta_ibov = "▲" if var_ibov >= 0 else "▼"
+            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(fechamento_atual)} <span style='color:{cor_ibov}; font-size:11px;'>{seta_ibov} {var_ibov:.2f}%</span>")
+    except Exception as e:
+        print(f"⚠️ Erro ao pegar Ibovespa: {e}")
 
-# --- 3. EXTRATOR DE IMAGENS (MELHORADO) ---
+    # Monta o HTML final com o que conseguiu capturar
+    if not html_items:
+        return "" # Se tudo falhar, não exibe nada (melhor que erro)
+
+    conteudo_painel = " &nbsp;&nbsp;|&nbsp;&nbsp; ".join(html_items)
+    
+    return f"""
+    <div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#333;">
+        {conteudo_painel}
+    </div>
+    """
+
+# --- 3. EXTRATOR DE IMAGENS (COM VALIDAÇÃO) ---
 
 def extrair_imagem_rss(entry, tema):
     """
-    Tenta achar imagem no RSS varrendo todos os campos possíveis.
+    Busca imagens e VALIDA se são arquivos reais (.jpg, .png, etc).
+    Se não achar ou for inválida, retorna o Placeholder colorido.
     """
     image_url = None
     
-    # 1. Tenta 'media_content' (Padrão RSS moderno - G1 usa muito)
+    # Lista de extensões válidas para evitar pixels de rastreamento
+    extensoes_validas = ('.jpg', '.jpeg', '.png', '.webp', '.gif')
+    
+    # 1. Tenta 'media_content' (G1, etc.)
     if 'media_content' in entry:
         for media in entry.media_content:
-            if 'url' in media and ('image' in media.get('type', '') or 'jpg' in media['url'] or 'png' in media['url']):
-                image_url = media['url']
+            url = media.get('url', '')
+            if url and any(ext in url.lower() for ext in extensoes_validas):
+                image_url = url
                 break
         
     # 2. Tenta 'links' (enclosures)
     if not image_url and 'links' in entry:
         for link in entry.links:
-            if link.get('type', '').startswith('image/'):
+            if link.get('type', '').startswith('image/') and any(ext in link.get('href', '').lower() for ext in extensoes_validas):
                 image_url = link.get('href')
                 break
                 
-    # 3. Varredura Profunda: Procura tag <img> dentro do content ou summary
+    # 3. Varredura no HTML (Regex)
     if not image_url:
-        # Junta todo o texto possível para procurar
         conteudo_total = ""
         if 'content' in entry:
-            for c in entry.content: has_content = True; conteudo_total += c.value
+            for c in entry.content: conteudo_total += c.value
         if 'summary' in entry: conteudo_total += entry.summary
         
-        # Regex para pegar o src da primeira imagem
-        img_match = re.search(r'<img[^>]+src="([^">]+)"', conteudo_total)
-        if img_match:
-            candidate = img_match.group(1)
-            # Filtra pixels de rastreamento (imagens muito pequenas ou estranhas)
-            if "doubleclick" not in candidate and "pixel" not in candidate:
-                image_url = candidate
+        # Procura qualquer tag <img src="...">
+        urls_encontradas = re.findall(r'<img[^>]+src="([^">]+)"', conteudo_total)
+        for url in urls_encontradas:
+            # Filtra lixo comum
+            if "doubleclick" not in url and "pixel" not in url and "facebook" not in url:
+                image_url = url
+                break
 
-    # 4. Fallback: Placeholder elegante se falhar
+    # 4. Fallback OBRIGATÓRIO (Placeholder Colorido)
     if not image_url:
         cor_fundo = "333333"
-        if tema == "Mercado": cor_fundo = "27ae60" # Verde
-        if tema == "Tech": cor_fundo = "2980b9"    # Azul
-        if tema == "Motos": cor_fundo = "e67e22"   # Laranja
-        if tema == "Fofoca": cor_fundo = "8e44ad"  # Roxo
-        if tema == "Politica": cor_fundo = "c0392b" # Vermelho
+        if tema == "Mercado": cor_fundo = "27ae60"
+        if tema == "Tech": cor_fundo = "2980b9"
+        if tema == "Motos": cor_fundo = "e67e22"
+        if tema == "Fofoca": cor_fundo = "8e44ad"
+        if tema == "Politica": cor_fundo = "c0392b"
+        if tema == "Esportes": cor_fundo = "f1c40f"
+        if tema == "Ciencia": cor_fundo = "16a085"
         
-        # Gera uma imagem com o nome do tema
+        # Gera imagem com texto (Placeholder)
         image_url = f"https://placehold.co/600x200/{cor_fundo}/FFF?text={tema}&font=roboto"
         
     return image_url
 
-# --- 4. INTELIGÊNCIA ARTIFICIAL (TEXTOS MAIS COMPLETOS) ---
+# --- 4. INTELIGÊNCIA ARTIFICIAL ---
 
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
@@ -160,27 +190,22 @@ def processar_tema(tema):
         feed = feedparser.parse(url)
         if not feed.entries: return None
         
-        # Pega as top 4 notícias
         entries = feed.entries[:4]
         
         input_text = ""
         for i, entry in enumerate(entries):
             input_text += f"Notícia {i+1}: {entry.title}\nLink: {entry.link}\n\n"
 
-        # --- AQUI ESTÁ A MUDANÇA NO PROMPT PARA DAR MAIS CONTEÚDO ---
         prompt = f"""
         Atue como Editor Sênior do All News Journal.
+        Analise estas {len(entries)} manchetes sobre {tema}.
         
-        Tarefa: Analise estas {len(entries)} manchetes sobre {tema} e escreva resumos informativos.
-        
-        Regras de Escrita (Rigoroso):
-        1. Para CADA notícia, escreva entre 60 a 80 palavras.
-        2. Estrutura OBRIGATÓRIA:
-           - Use 2 frases/parágrafos curtos.
-           - A primeira frase explica O QUE aconteceu.
-           - A segunda frase explica O CONTEXTO ou POR QUE isso importa.
-        3. Separe cada resumo EXATAMENTE com a string "|||" (três barras verticais).
-        4. Sem títulos, sem 'leia mais', sem saudações. Apenas o texto denso e informativo.
+        Escreva resumos informativos.
+        Regras:
+        1. Para CADA notícia, escreva entre 50 a 70 palavras.
+        2. Use 2 frases: Fato Principal + Contexto/Impacto.
+        3. Separe cada resumo EXATAMENTE com "|||".
+        4. Sem introduções.
         
         Input:
         {input_text}
@@ -194,7 +219,7 @@ def processar_tema(tema):
         
         noticias_finais = []
         for i, entry in enumerate(entries):
-            resumo_texto = resumos[i] if i < len(resumos) else "Confira os detalhes completos clicando no link abaixo."
+            resumo_texto = resumos[i] if i < len(resumos) else "Clique para ler a matéria completa."
             imagem = extrair_imagem_rss(entry, tema)
             
             noticias_finais.append({
@@ -210,7 +235,7 @@ def processar_tema(tema):
         print(f"Erro em {tema}: {e}")
         return None
 
-# --- 5. TEMPLATE (VISUAL DE CARDS V5.1) ---
+# --- 5. TEMPLATE ---
 
 def gerar_html_final(nome, dados_usuario, painel_mercado):
     html = f"""
@@ -227,7 +252,7 @@ def gerar_html_final(nome, dados_usuario, painel_mercado):
             
             <div style="padding:20px;">
                 <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">
-                    Olá, <b>{nome}</b>. Aqui está o aprofundamento das principais notícias de hoje:
+                    Bom dia, <b>{nome}</b>. Destaques da edição de hoje:
                 </p>
     """
 
@@ -254,16 +279,13 @@ def gerar_html_final(nome, dados_usuario, painel_mercado):
                 <a href="{noti['link']}" style="text-decoration:none;">
                     <img src="{noti['imagem']}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; display:block; background-color:#eee;" alt="Imagem da notícia">
                 </a>
-                
                 <div style="padding-top:15px;">
                     <a href="{noti['link']}" style="text-decoration:none; color:#111;">
                         <h3 style="margin:0 0 10px 0; font-size:20px; line-height:1.3; font-weight:700;">{noti['titulo']}</h3>
                     </a>
-                    
                     <p style="margin:0; font-size:15px; color:#444; line-height:1.6; text-align:justify;">
                         {noti['resumo']}
                     </p>
-                    
                     <div style="margin-top:12px;">
                         <a href="{noti['link']}" style="font-size:13px; color:{cor_tema}; font-weight:bold; text-decoration:none; border-bottom:1px solid {cor_tema};">LER MATÉRIA COMPLETA →</a>
                     </div>
@@ -302,7 +324,7 @@ def enviar_email(destinatario, html):
 # --- MAIN ---
 
 def main():
-    print("🚀 Iniciando Motor (v5.1 - Imagens Profundas)...")
+    print("🚀 Iniciando Motor (v5.2 - Blindado)...")
     
     sheet = conectar_banco()
     if not sheet: return
