@@ -46,13 +46,10 @@ def conectar_banco():
         return None
 
 def obter_indicadores():
-    """
-    Painel financeiro blindado.
-    Tenta pegar Moedas e Bolsa separadamente para garantir que nada falte.
-    """
+    """Painel financeiro blindado (Moedas + Bolsa)."""
     html_items = []
     
-    # 1. TENTATIVA: DÓLAR E BITCOIN (AwesomeAPI)
+    # 1. MOEDAS (AwesomeAPI)
     try:
         resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL", timeout=5)
         if resp.status_code == 200:
@@ -61,7 +58,7 @@ def obter_indicadores():
             # Dólar
             dolar = float(dados['USDBRL']['bid'])
             var_dolar = float(dados['USDBRL']['pctChange'])
-            cor_dolar = "green" if var_dolar <= 0 else "red" # Dólar caindo é bom (geralmente), ou ajuste conforme preferência
+            cor_dolar = "green" if var_dolar <= 0 else "red"
             seta_dolar = "▼" if var_dolar <= 0 else "▲"
             html_items.append(f"🇺🇸 <b>USD:</b> {dolar:.2f} <span style='color:{cor_dolar}; font-size:11px;'>{seta_dolar} {var_dolar}%</span>")
             
@@ -72,90 +69,66 @@ def obter_indicadores():
             seta_btc = "▲" if var_btc >= 0 else "▼"
             html_items.append(f"₿ <b>BTC:</b> {btc/1000:.1f}k <span style='color:{cor_btc}; font-size:11px;'>{seta_btc} {var_btc}%</span>")
     except Exception as e:
-        print(f"⚠️ Erro ao pegar Moedas: {e}")
+        print(f"⚠️ Erro Moedas: {e}")
 
-    # 2. TENTATIVA: IBOVESPA (YFinance)
+    # 2. IBOVESPA (YFinance)
     try:
         ibov = yf.Ticker("^BVSP")
         hist = ibov.history(period="2d")
         if len(hist) >= 2:
-            fechamento_atual = hist['Close'].iloc[-1]
-            fechamento_anterior = hist['Close'].iloc[-2]
-            var_ibov = ((fechamento_atual - fechamento_anterior) / fechamento_anterior) * 100
-            
+            atual = hist['Close'].iloc[-1]
+            anterior = hist['Close'].iloc[-2]
+            var_ibov = ((atual - anterior) / anterior) * 100
             cor_ibov = "green" if var_ibov >= 0 else "red"
             seta_ibov = "▲" if var_ibov >= 0 else "▼"
-            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(fechamento_atual)} <span style='color:{cor_ibov}; font-size:11px;'>{seta_ibov} {var_ibov:.2f}%</span>")
+            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual)} <span style='color:{cor_ibov}; font-size:11px;'>{seta_ibov} {var_ibov:.2f}%</span>")
     except Exception as e:
-        print(f"⚠️ Erro ao pegar Ibovespa: {e}")
+        print(f"⚠️ Erro Ibovespa: {e}")
 
-    # Monta o HTML final com o que conseguiu capturar
-    if not html_items:
-        return "" # Se tudo falhar, não exibe nada (melhor que erro)
+    if not html_items: return ""
+    return f"""<div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#333;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
 
-    conteudo_painel = " &nbsp;&nbsp;|&nbsp;&nbsp; ".join(html_items)
-    
-    return f"""
-    <div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#333;">
-        {conteudo_painel}
-    </div>
-    """
-
-# --- 3. EXTRATOR DE IMAGENS (COM VALIDAÇÃO) ---
+# --- 3. EXTRATOR DE IMAGENS (V5.3 - REGEX NINJA) ---
 
 def extrair_imagem_rss(entry, tema):
-    """
-    Busca imagens e VALIDA se são arquivos reais (.jpg, .png, etc).
-    Se não achar ou for inválida, retorna o Placeholder colorido.
-    """
     image_url = None
+    extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     
-    # Lista de extensões válidas para evitar pixels de rastreamento
-    extensoes_validas = ('.jpg', '.jpeg', '.png', '.webp', '.gif')
-    
-    # 1. Tenta 'media_content' (G1, etc.)
+    # 1. Media Content (Padrão Ouro)
     if 'media_content' in entry:
-        for media in entry.media_content:
-            url = media.get('url', '')
-            if url and any(ext in url.lower() for ext in extensoes_validas):
-                image_url = url
-                break
+        for m in entry.media_content:
+            if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
+                image_url = m['url']; break
         
-    # 2. Tenta 'links' (enclosures)
+    # 2. Enclosures/Links
     if not image_url and 'links' in entry:
         for link in entry.links:
-            if link.get('type', '').startswith('image/') and any(ext in link.get('href', '').lower() for ext in extensoes_validas):
-                image_url = link.get('href')
-                break
+            if link.get('type', '').startswith('image/') and any(ext in link.get('href', '').lower() for ext in extensoes):
+                image_url = link.get('href'); break
                 
-    # 3. Varredura no HTML (Regex)
+    # 3. Varredura HTML (AQUI A MELHORIA: Aceita aspas simples e duplas)
     if not image_url:
-        conteudo_total = ""
+        texto = ""
         if 'content' in entry:
-            for c in entry.content: conteudo_total += c.value
-        if 'summary' in entry: conteudo_total += entry.summary
+            for c in entry.content: texto += c.value
+        if 'summary' in entry: texto += entry.summary
         
-        # Procura qualquer tag <img src="...">
-        urls_encontradas = re.findall(r'<img[^>]+src="([^">]+)"', conteudo_total)
-        for url in urls_encontradas:
-            # Filtra lixo comum
-            if "doubleclick" not in url and "pixel" not in url and "facebook" not in url:
+        # Regex flexível: procura src="link" OU src='link'
+        matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', texto)
+        for url in matches:
+            if any(ext in url.lower() for ext in extensoes) and "pixel" not in url and "doubleclick" not in url:
                 image_url = url
                 break
 
-    # 4. Fallback OBRIGATÓRIO (Placeholder Colorido)
+    # 4. Fallback (Placeholder Temático)
     if not image_url:
-        cor_fundo = "333333"
-        if tema == "Mercado": cor_fundo = "27ae60"
-        if tema == "Tech": cor_fundo = "2980b9"
-        if tema == "Motos": cor_fundo = "e67e22"
-        if tema == "Fofoca": cor_fundo = "8e44ad"
-        if tema == "Politica": cor_fundo = "c0392b"
-        if tema == "Esportes": cor_fundo = "f1c40f"
-        if tema == "Ciencia": cor_fundo = "16a085"
-        
-        # Gera imagem com texto (Placeholder)
-        image_url = f"https://placehold.co/600x200/{cor_fundo}/FFF?text={tema}&font=roboto"
+        cores = {
+            "Mercado": "27ae60", "Tech": "2980b9", "Motos": "e67e22",
+            "Fofoca": "8e44ad", "Politica": "c0392b", "Esportes": "f1c40f",
+            "Ciencia": "16a085", "Mundo": "34495e"
+        }
+        cor = cores.get(tema, "333333")
+        image_url = f"https://placehold.co/600x200/{cor}/FFF?text={tema}&font=roboto"
         
     return image_url
 
@@ -169,14 +142,13 @@ def chamar_gemini_api(prompt):
 
     for modelo in modelos:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
-        for tentativa in range(1, 4):
+        for i in range(1, 4):
             try:
-                response = requests.post(url, headers=headers, json=payload, timeout=30)
-                if response.status_code == 200:
-                    return response.json()['candidates'][0]['content']['parts'][0]['text']
-                elif response.status_code == 429:
-                    time.sleep(20 * tentativa)
-                    continue
+                resp = requests.post(url, headers=headers, json=payload, timeout=30)
+                if resp.status_code == 200:
+                    return resp.json()['candidates'][0]['content']['parts'][0]['text']
+                elif resp.status_code == 429:
+                    time.sleep(20 * i); continue
                 else: break
             except: break
     return None
@@ -189,132 +161,90 @@ def processar_tema(tema):
     try:
         feed = feedparser.parse(url)
         if not feed.entries: return None
-        
         entries = feed.entries[:4]
         
-        input_text = ""
-        for i, entry in enumerate(entries):
-            input_text += f"Notícia {i+1}: {entry.title}\nLink: {entry.link}\n\n"
+        input_txt = ""
+        for i, e in enumerate(entries):
+            input_txt += f"Notícia {i+1}: {e.title}\nLink: {e.link}\n\n"
 
         prompt = f"""
-        Atue como Editor Sênior do All News Journal.
-        Analise estas {len(entries)} manchetes sobre {tema}.
-        
-        Escreva resumos informativos.
-        Regras:
-        1. Para CADA notícia, escreva entre 50 a 70 palavras.
-        2. Use 2 frases: Fato Principal + Contexto/Impacto.
-        3. Separe cada resumo EXATAMENTE com "|||".
-        4. Sem introduções.
-        
-        Input:
-        {input_text}
+        Atue como Editor Sênior. Analise estas manchetes de {tema}.
+        Para CADA notícia, escreva um resumo de 50-70 palavras.
+        Estrutura: Fato Principal + Contexto/Impacto.
+        Separe EXATAMENTE com "|||".
+        Sem introduções.
+        Input: {input_txt}
         """
         
-        resposta_ia = chamar_gemini_api(prompt)
+        resp_ia = chamar_gemini_api(prompt)
+        if not resp_ia: return None
         
-        if not resposta_ia: return None
+        resumos = [r.strip() for r in resp_ia.split('|||') if r.strip()]
         
-        resumos = [r.strip() for r in resposta_ia.split('|||') if r.strip()]
-        
-        noticias_finais = []
+        noticias = []
         for i, entry in enumerate(entries):
-            resumo_texto = resumos[i] if i < len(resumos) else "Clique para ler a matéria completa."
-            imagem = extrair_imagem_rss(entry, tema)
+            resumo = resumos[i] if i < len(resumos) else "Leia mais no link."
+            img = extrair_imagem_rss(entry, tema)
+            noticias.append({"titulo": entry.title, "link": entry.link, "imagem": img, "resumo": resumo})
             
-            noticias_finais.append({
-                "titulo": entry.title,
-                "link": entry.link,
-                "imagem": imagem,
-                "resumo": resumo_texto
-            })
-            
-        return noticias_finais
-
+        return noticias
     except Exception as e:
-        print(f"Erro em {tema}: {e}")
+        print(f"Erro {tema}: {e}")
         return None
 
 # --- 5. TEMPLATE ---
 
-def gerar_html_final(nome, dados_usuario, painel_mercado):
+def gerar_html_final(nome, dados, painel):
     html = f"""
-    <html>
-    <body style="margin:0; padding:0; background-color:#f0f2f5; font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;">
-        <div style="max-width:600px; margin:0 auto; background:#ffffff;">
-            
+    <html><body style="margin:0; padding:0; background:#f0f2f5; font-family:Helvetica, Arial;">
+        <div style="max-width:600px; margin:0 auto; background:#fff;">
             <div style="background:#111; color:#fff; padding:25px; text-align:center;">
-                <h1 style="margin:0; font-family:'Times New Roman', serif; letter-spacing:1px; font-size:28px;">ALL NEWS JOURNAL</h1>
-                <p style="margin:5px 0 0; font-size:11px; color:#888; text-transform:uppercase;">Briefing Diário • {datetime.now().strftime('%d/%m')}</p>
+                <h1 style="margin:0; font-family:'Times New Roman'; font-size:28px;">ALL NEWS JOURNAL</h1>
+                <p style="margin:5px 0 0; font-size:11px; color:#888; text-transform:uppercase;">Briefing • {datetime.now().strftime('%d/%m')}</p>
             </div>
-            
-            {painel_mercado}
-            
+            {painel}
             <div style="padding:20px;">
-                <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">
-                    Bom dia, <b>{nome}</b>. Destaques da edição de hoje:
-                </p>
+                <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">Bom dia, <b>{nome}</b>.</p>
     """
-
-    for tema, noticias in dados_usuario.items():
-        cor_tema = "#333"
-        if tema == "Mercado": cor_tema = "#27ae60"
-        if tema == "Tech": cor_tema = "#2980b9"
-        if tema == "Motos": cor_tema = "#e67e22"
-        if tema == "Fofoca": cor_tema = "#8e44ad"
-        if tema == "Politica": cor_tema = "#c0392b"
-        if tema == "Esportes": cor_tema = "#f1c40f"
-        if tema == "Ciencia": cor_tema = "#16a085"
-        if tema == "Mundo": cor_tema = "#34495e"
-
-        html += f"""
-        <div style="margin-top:40px; margin-bottom:20px; border-bottom:2px solid {cor_tema}; padding-bottom:5px;">
-            <span style="background:{cor_tema}; color:white; padding:5px 10px; font-size:12px; font-weight:bold; text-transform:uppercase;">{tema}</span>
-        </div>
-        """
-
-        for noti in noticias:
+    
+    for tema, items in dados.items():
+        cor = "333"
+        if tema == "Mercado": cor = "27ae60"
+        elif tema == "Tech": cor = "2980b9"
+        elif tema == "Motos": cor = "e67e22"
+        elif tema == "Fofoca": cor = "8e44ad"
+        elif tema == "Politica": cor = "c0392b"
+        elif tema == "Esportes": cor = "f1c40f"
+        elif tema == "Ciencia": cor = "16a085"
+        elif tema == "Mundo": cor = "34495e"
+        
+        html += f"""<div style="margin:40px 0 20px; border-bottom:2px solid #{cor};"><span style="background:#{cor}; color:#fff; padding:5px 10px; font-size:12px; font-weight:bold;">{tema.upper()}</span></div>"""
+        
+        for n in items:
             html += f"""
-            <div style="margin-bottom:30px; background:white; border-bottom:1px solid #eee; padding-bottom:20px;">
-                <a href="{noti['link']}" style="text-decoration:none;">
-                    <img src="{noti['imagem']}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; display:block; background-color:#eee;" alt="Imagem da notícia">
-                </a>
+            <div style="margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:20px;">
+                <a href="{n['link']}"><img src="{n['imagem']}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; background:#eee;"></a>
                 <div style="padding-top:15px;">
-                    <a href="{noti['link']}" style="text-decoration:none; color:#111;">
-                        <h3 style="margin:0 0 10px 0; font-size:20px; line-height:1.3; font-weight:700;">{noti['titulo']}</h3>
-                    </a>
-                    <p style="margin:0; font-size:15px; color:#444; line-height:1.6; text-align:justify;">
-                        {noti['resumo']}
-                    </p>
-                    <div style="margin-top:12px;">
-                        <a href="{noti['link']}" style="font-size:13px; color:{cor_tema}; font-weight:bold; text-decoration:none; border-bottom:1px solid {cor_tema};">LER MATÉRIA COMPLETA →</a>
-                    </div>
+                    <a href="{n['link']}" style="text-decoration:none; color:#111;"><h3 style="margin:0 0 10px; font-size:18px;">{n['titulo']}</h3></a>
+                    <p style="margin:0; font-size:14px; color:#444; line-height:1.5;">{n['resumo']}</p>
+                    <div style="margin-top:10px;"><a href="{n['link']}" style="font-size:12px; color:#{cor}; font-weight:bold; text-decoration:none;">LER MAIS →</a></div>
                 </div>
-            </div>
-            """
+            </div>"""
 
-    html += """
-            <div style="text-align:center; padding:30px; background:#fafafa; color:#aaa; font-size:11px;">
-                &copy; 2025 All News Journal.
-            </div>
-        </div>
-    </body>
-    </html>
-    """
+    html += """<div style="text-align:center; padding:30px; background:#fafafa; color:#aaa; font-size:11px;">&copy; 2025 All News Journal.</div></div></body></html>"""
     return html
 
-def enviar_email(destinatario, html):
+def enviar_email(dest, html):
     try:
         msg = MIMEMultipart()
         msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
         msg['From'] = EMAIL_SENDER
-        msg['To'] = destinatario
+        msg['To'] = dest
         msg.attach(MIMEText(html, 'html'))
-        
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, destinatario, msg.as_string())
+        server.sendmail(EMAIL_SENDER, dest, msg.as_string())
         server.quit()
         return True
     except Exception as e:
@@ -322,37 +252,26 @@ def enviar_email(destinatario, html):
         return False
 
 # --- MAIN ---
-
 def main():
-    print("🚀 Iniciando Motor (v5.2 - Blindado)...")
-    
+    print("🚀 Iniciando Motor (v5.3 - Regex Ninja)...")
     sheet = conectar_banco()
     if not sheet: return
-
     usuarios = sheet.get_all_records()
     painel = obter_indicadores()
     cache = {}
-    todas_chaves = RSS_FEEDS.keys()
-
     for usr in usuarios:
-        nome, email = usr.get('Nome'), usr.get('Email')
-        if not nome or not email: continue
-        
-        print(f"🔄 Montando jornal para: {nome}...")
-        conteudos = {}
-        
-        for tema in todas_chaves:
+        if not usr.get('Nome') or not usr.get('Email'): continue
+        print(f"🔄 Gerando para: {usr.get('Nome')}...")
+        conteudo = {}
+        for tema in RSS_FEEDS.keys():
             if usr.get(tema, '').strip().lower() == "sim":
                 if tema not in cache:
                     cache[tema] = processar_tema(tema)
-                    print("      💤 Pausa (10s)...")
                     time.sleep(10)
-                conteudos[tema] = cache[tema]
-
-        if conteudos:
-            html = gerar_html_final(nome, conteudos, painel)
-            if enviar_email(email, html):
-                print("   ✅ Despachado.")
+                conteudo[tema] = cache[tema]
+        if conteudo:
+            if enviar_email(usr.get('Email'), gerar_html_final(usr.get('Nome'), conteudo, painel)):
+                print("   ✅ Enviado.")
 
 if __name__ == "__main__":
     main()
