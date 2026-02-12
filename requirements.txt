@@ -1,8 +1,10 @@
-google-generativeai
-gspread
-google-auth
-feedparser
 streamlit
 feedparser
 requests
 pandas
+lxml
+yfinance
+google-generativeai
+gspread
+google-auth
+oauth2client
