@@ -1,31 +1,33 @@
-name: All News Journal
+name: All News Journal (Email Robot)
 
 on:
   schedule:
-    - cron: '15 10 * * *' # Roda às 07:15 Brasil (Foge do engarrafamento das 07:00)
-  workflow_dispatch: # Botão manual
+    - cron: '15 10 * * *' # Roda às 07:15 (Horário de Brasília)
+  workflow_dispatch: # Botão manual para testar
 
 jobs:
-  build:
+  run-newsletter:
     runs-on: ubuntu-latest
-    timeout-minutes: 15 # Dá mais tempo pro robô trabalhar se a rede estiver lenta
+    # AQUI ESTÁ A SOLUÇÃO: Aumentamos o limite para 60 minutos
+    timeout-minutes: 60 
 
     steps:
-    - name: Baixar código
+    - name: 📥 Baixar código
       uses: actions/checkout@v3
 
-    - name: Instalar Python
+    - name: 🐍 Instalar Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        cache: 'pip' # Cache para instalar mais rápido na próxima
+        cache: 'pip' # Ajuda a instalar mais rápido nas próximas vezes
 
-    - name: Instalar Dependências (Otimizado)
+    - name: ⚙️ Instalar Dependências (Apenas Robô)
+      # Removemos 'streamlit' daqui para ficar mais leve
       run: |
         python -m pip install --upgrade pip
-        python -m pip install "google-generativeai>=0.8.3" requests yfinance gspread feedparser google-auth oauth2client
+        pip install google-generativeai requests yfinance gspread feedparser google-auth oauth2client
 
-    - name: Rodar Jornal
+    - name: 🚀 Rodar Jornal
       env:
         GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
         EMAIL_USER: ${{ secrets.EMAIL_USER }}
