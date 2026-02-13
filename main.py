@@ -46,93 +46,78 @@ def conectar_banco():
         return None
 
 def obter_indicadores():
-    """Painel financeiro blindado (Moedas + Bolsa)."""
     html_items = []
-    
-    # 1. MOEDAS (AwesomeAPI)
+    # 1. Moedas
     try:
         resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL", timeout=5)
         if resp.status_code == 200:
             dados = resp.json()
-            
             # Dólar
             dolar = float(dados['USDBRL']['bid'])
             var_dolar = float(dados['USDBRL']['pctChange'])
             cor_dolar = "green" if var_dolar <= 0 else "red"
             seta_dolar = "▼" if var_dolar <= 0 else "▲"
             html_items.append(f"🇺🇸 <b>USD:</b> {dolar:.2f} <span style='color:{cor_dolar}; font-size:11px;'>{seta_dolar} {var_dolar}%</span>")
-            
-            # Bitcoin
+            # BTC
             btc = float(dados['BTCBRL']['bid'])
             var_btc = float(dados['BTCBRL']['pctChange'])
             cor_btc = "green" if var_btc >= 0 else "red"
             seta_btc = "▲" if var_btc >= 0 else "▼"
             html_items.append(f"₿ <b>BTC:</b> {btc/1000:.1f}k <span style='color:{cor_btc}; font-size:11px;'>{seta_btc} {var_btc}%</span>")
-    except Exception as e:
-        print(f"⚠️ Erro Moedas: {e}")
+    except: pass
 
-    # 2. IBOVESPA (YFinance)
+    # 2. Ibov
     try:
         ibov = yf.Ticker("^BVSP")
         hist = ibov.history(period="2d")
         if len(hist) >= 2:
             atual = hist['Close'].iloc[-1]
-            anterior = hist['Close'].iloc[-2]
-            var_ibov = ((atual - anterior) / anterior) * 100
-            cor_ibov = "green" if var_ibov >= 0 else "red"
-            seta_ibov = "▲" if var_ibov >= 0 else "▼"
-            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual)} <span style='color:{cor_ibov}; font-size:11px;'>{seta_ibov} {var_ibov:.2f}%</span>")
-    except Exception as e:
-        print(f"⚠️ Erro Ibovespa: {e}")
+            ant = hist['Close'].iloc[-2]
+            var = ((atual - ant) / ant) * 100
+            cor = "green" if var >= 0 else "red"
+            seta = "▲" if var >= 0 else "▼"
+            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual)} <span style='color:{cor}; font-size:11px;'>{seta} {var:.2f}%</span>")
+    except: pass
 
     if not html_items: return ""
     return f"""<div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#333;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
 
-# --- 3. EXTRATOR DE IMAGENS (V5.3 - REGEX NINJA) ---
+# --- 3. EXTRATOR IMAGEM (V5.3 - Regex Ninja) ---
 
 def extrair_imagem_rss(entry, tema):
     image_url = None
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     
-    # 1. Media Content (Padrão Ouro)
+    # 1. Media Content
     if 'media_content' in entry:
         for m in entry.media_content:
             if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                 image_url = m['url']; break
-        
-    # 2. Enclosures/Links
+    # 2. Links
     if not image_url and 'links' in entry:
-        for link in entry.links:
-            if link.get('type', '').startswith('image/') and any(ext in link.get('href', '').lower() for ext in extensoes):
-                image_url = link.get('href'); break
-                
-    # 3. Varredura HTML (AQUI A MELHORIA: Aceita aspas simples e duplas)
+        for l in entry.links:
+            if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
+                image_url = l['href']; break
+    # 3. Regex HTML
     if not image_url:
-        texto = ""
+        txt = ""
         if 'content' in entry:
-            for c in entry.content: texto += c.value
-        if 'summary' in entry: texto += entry.summary
-        
-        # Regex flexível: procura src="link" OU src='link'
-        matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', texto)
+            for c in entry.content: txt += c.value
+        if 'summary' in entry: txt += entry.summary
+        matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', txt)
         for url in matches:
             if any(ext in url.lower() for ext in extensoes) and "pixel" not in url and "doubleclick" not in url:
-                image_url = url
-                break
+                image_url = url; break
 
-    # 4. Fallback (Placeholder Temático)
+    # Fallback
     if not image_url:
-        cores = {
-            "Mercado": "27ae60", "Tech": "2980b9", "Motos": "e67e22",
-            "Fofoca": "8e44ad", "Politica": "c0392b", "Esportes": "f1c40f",
-            "Ciencia": "16a085", "Mundo": "34495e"
-        }
+        cores = {"Mercado":"27ae60", "Tech":"2980b9", "Motos":"e67e22", "Fofoca":"8e44ad", 
+                 "Politica":"c0392b", "Esportes":"f1c40f", "Ciencia":"16a085", "Mundo":"34495e"}
         cor = cores.get(tema, "333333")
         image_url = f"https://placehold.co/600x200/{cor}/FFF?text={tema}&font=roboto"
-        
     return image_url
 
-# --- 4. INTELIGÊNCIA ARTIFICIAL ---
+# --- 4. IA (GEMINI) ---
 
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
@@ -144,20 +129,19 @@ def chamar_gemini_api(prompt):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
         for i in range(1, 4):
             try:
-                resp = requests.post(url, headers=headers, json=payload, timeout=30)
-                if resp.status_code == 200:
-                    return resp.json()['candidates'][0]['content']['parts'][0]['text']
-                elif resp.status_code == 429:
+                r = requests.post(url, headers=headers, json=payload, timeout=30)
+                if r.status_code == 200:
+                    return r.json()['candidates'][0]['content']['parts'][0]['text']
+                elif r.status_code == 429:
                     time.sleep(20 * i); continue
                 else: break
             except: break
     return None
 
 def processar_tema(tema):
-    print(f"      ...Lendo feed de {tema}...")
+    print(f"      ...Gerando Cache de {tema}...")
     url = RSS_FEEDS.get(tema)
     if not url: return None
-    
     try:
         feed = feedparser.parse(url)
         if not feed.entries: return None
@@ -170,23 +154,19 @@ def processar_tema(tema):
         prompt = f"""
         Atue como Editor Sênior. Analise estas manchetes de {tema}.
         Para CADA notícia, escreva um resumo de 50-70 palavras.
-        Estrutura: Fato Principal + Contexto/Impacto.
-        Separe EXATAMENTE com "|||".
-        Sem introduções.
+        Estrutura: Fato Principal + Contexto.
+        Separe com "|||". Sem introduções.
         Input: {input_txt}
         """
-        
-        resp_ia = chamar_gemini_api(prompt)
-        if not resp_ia: return None
-        
-        resumos = [r.strip() for r in resp_ia.split('|||') if r.strip()]
+        resp = chamar_gemini_api(prompt)
+        if not resp: return None
+        resumos = [r.strip() for r in resp.split('|||') if r.strip()]
         
         noticias = []
         for i, entry in enumerate(entries):
             resumo = resumos[i] if i < len(resumos) else "Leia mais no link."
             img = extrair_imagem_rss(entry, tema)
             noticias.append({"titulo": entry.title, "link": entry.link, "imagem": img, "resumo": resumo})
-            
         return noticias
     except Exception as e:
         print(f"Erro {tema}: {e}")
@@ -206,17 +186,14 @@ def gerar_html_final(nome, dados, painel):
             <div style="padding:20px;">
                 <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">Bom dia, <b>{nome}</b>.</p>
     """
-    
     for tema, items in dados.items():
+        if not items: continue
         cor = "333"
         if tema == "Mercado": cor = "27ae60"
         elif tema == "Tech": cor = "2980b9"
         elif tema == "Motos": cor = "e67e22"
         elif tema == "Fofoca": cor = "8e44ad"
         elif tema == "Politica": cor = "c0392b"
-        elif tema == "Esportes": cor = "f1c40f"
-        elif tema == "Ciencia": cor = "16a085"
-        elif tema == "Mundo": cor = "34495e"
         
         html += f"""<div style="margin:40px 0 20px; border-bottom:2px solid #{cor};"><span style="background:#{cor}; color:#fff; padding:5px 10px; font-size:12px; font-weight:bold;">{tema.upper()}</span></div>"""
         
@@ -230,7 +207,7 @@ def gerar_html_final(nome, dados, painel):
                     <div style="margin-top:10px;"><a href="{n['link']}" style="font-size:12px; color:#{cor}; font-weight:bold; text-decoration:none;">LER MAIS →</a></div>
                 </div>
             </div>"""
-
+    
     html += """<div style="text-align:center; padding:30px; background:#fafafa; color:#aaa; font-size:11px;">&copy; 2025 All News Journal.</div></div></body></html>"""
     return html
 
@@ -247,31 +224,62 @@ def enviar_email(dest, html):
         server.sendmail(EMAIL_SENDER, dest, msg.as_string())
         server.quit()
         return True
-    except Exception as e:
-        print(f"❌ Erro SMTP: {e}")
-        return False
+    except: return False
 
-# --- MAIN ---
+# --- MAIN OTIMIZADA ---
+
 def main():
-    print("🚀 Iniciando Motor (v5.3 - Regex Ninja)...")
+    print("🚀 Iniciando Motor (v6.0 - Global Cache)...")
     sheet = conectar_banco()
     if not sheet: return
+
     usuarios = sheet.get_all_records()
-    painel = obter_indicadores()
-    cache = {}
+    print(f"📋 {len(usuarios)} usuários encontrados.")
+
+    # 1. IDENTIFICAR TEMAS NECESSÁRIOS
+    # Não vamos gastar tempo gerando 'Pesca' se ninguém assinou 'Pesca'
+    temas_demandados = set()
     for usr in usuarios:
-        if not usr.get('Nome') or not usr.get('Email'): continue
-        print(f"🔄 Gerando para: {usr.get('Nome')}...")
-        conteudo = {}
         for tema in RSS_FEEDS.keys():
             if usr.get(tema, '').strip().lower() == "sim":
-                if tema not in cache:
-                    cache[tema] = processar_tema(tema)
-                    time.sleep(10)
-                conteudo[tema] = cache[tema]
+                temas_demandados.add(tema)
+    
+    print(f"🎯 Temas necessários hoje: {list(temas_demandados)}")
+
+    # 2. GERAR CACHE GLOBAL (O Grande Truque)
+    # Gera o conteúdo uma única vez para cada tema
+    CACHE_GLOBAL = {}
+    painel = obter_indicadores()
+
+    for tema in temas_demandados:
+        conteudo = processar_tema(tema)
         if conteudo:
-            if enviar_email(usr.get('Email'), gerar_html_final(usr.get('Nome'), conteudo, painel)):
-                print("   ✅ Enviado.")
+            CACHE_GLOBAL[tema] = conteudo
+            # Pausa para não bloquear a API, mas só acontece 1 vez por tema
+            print("      💤 Pausa tática (10s)...")
+            time.sleep(10)
+        else:
+            print(f"      ⚠️ Falha ao gerar {tema}")
+
+    # 3. DISTRIBUIR PARA USUÁRIOS (Instantâneo)
+    print("🚚 Iniciando distribuição...")
+    for usr in usuarios:
+        nome = usr.get('Nome')
+        email = usr.get('Email')
+        if not nome or not email: continue
+        
+        # Monta o pacote personalizado pegando do Cache Global
+        pacote_usuario = {}
+        for tema in RSS_FEEDS.keys():
+            if usr.get(tema, '').strip().lower() == "sim":
+                if tema in CACHE_GLOBAL:
+                    pacote_usuario[tema] = CACHE_GLOBAL[tema]
+        
+        if pacote_usuario:
+            print(f"   ✉️ Enviando para {nome}...")
+            enviar_email(email, gerar_html_final(nome, pacote_usuario, painel))
+    
+    print("✅ Missão Cumprida.")
 
 if __name__ == "__main__":
     main()
