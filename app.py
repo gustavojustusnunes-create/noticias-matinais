@@ -14,11 +14,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS: DESIGN CLÁSSICO (JORNAL DE PAPEL) ---
+# --- 2. CSS: DESIGN PREMIUM (TURQUESA E CREME) ---
 st.markdown("""
 <style>
-    /* Importando fontes com serifa (Estilo New York Times) */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Merriweather:wght@300;400;700&display=swap');
+    /* Importando fontes premium */
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
 
     /* Esconder elementos do Streamlit */
     #MainMenu {visibility: hidden;}
@@ -26,10 +26,10 @@ st.markdown("""
     header {visibility: hidden;}
     .stDeployButton {display:none;}
     
-    /* Fundo Papel */
+    /* Fundo Principal (Creme) e Fonte Geral */
     .stApp {
-        background-color: #fcfbf9; 
-        font-family: 'Merriweather', serif;
+        background-color: #fdfbf7; 
+        font-family: 'Lora', serif;
         color: #2c2c2c;
     }
     
@@ -40,90 +40,117 @@ st.markdown("""
         text-align: center;
         font-size: 3.5rem !important;
         letter-spacing: 2px;
-        border-bottom: 3px double #111;
-        padding-bottom: 20px;
+        color: #0a5c5a !important; /* Azul Turquesa Escuro */
+        border-top: 2px solid #0a5c5a;
+        border-bottom: 2px solid #0a5c5a;
+        padding: 15px 0;
         margin-bottom: 20px;
-        color: #111;
     }
     
-    /* Subtítulos */
     h2, h3 {
         font-family: 'Playfair Display', serif;
-        color: #111;
+        color: #0a5c5a !important;
     }
 
-    /* Cards de Notícia */
+    /* Cards de Notícia (Estilo Revista) */
     .news-card {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        padding: 0;
-        margin-bottom: 20px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.03);
-        transition: transform 0.2s;
+        background-color: #ffffff;
+        border: 1px solid #e5e3de;
+        border-radius: 8px; /* Cantos arredondados modernos */
+        overflow: hidden;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
     .news-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 4px 4px 15px rgba(0,0,0,0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(10, 92, 90, 0.15); /* Sombra turquesa ao passar o mouse */
     }
     .news-img {
         width: 100%;
-        height: 160px;
+        height: 180px;
         object-fit: cover;
-        border-bottom: 1px solid #eee;
-        filter: sepia(10%); /* Efeito levemente envelhecido */
+        border-bottom: 3px solid #0a5c5a;
     }
     .news-content {
-        padding: 15px;
+        padding: 20px;
     }
     .news-tag {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: bold;
-        color: #888;
-        margin-bottom: 5px;
+        color: #0a5c5a;
+        margin-bottom: 10px;
+        display: inline-block;
+        border-bottom: 1px solid #0a5c5a;
     }
     .news-title {
         font-family: 'Playfair Display', serif;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
         font-weight: 700;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         display: block;
-        color: #111;
+        color: #111 !important;
         text-decoration: none;
         line-height: 1.3;
     }
     .news-title:hover {
-        text-decoration: underline;
-        color: #b11226; /* Vermelho Jornal */
+        color: #0a5c5a !important;
     }
     .news-date {
-        font-size: 0.75rem;
-        color: #999;
-        margin-top: 10px;
+        font-size: 0.8rem;
+        color: #777;
+        font-style: italic;
         border-top: 1px solid #eee;
-        padding-top: 5px;
+        padding-top: 10px;
     }
 
-    /* Sidebar Customizada */
+    /* ===================================================
+       SUPER DESTAQUE NA SIDEBAR (ÁREA DE INSCRIÇÃO)
+       =================================================== */
     section[data-testid="stSidebar"] {
-        background-color: #f4f4f4;
-        border-right: 1px solid #ddd;
+        background-color: #084c4a !important; /* Turquesa muito escuro */
+        border-right: none;
+    }
+    /* Força os textos da sidebar a ficarem em Creme */
+    section[data-testid="stSidebar"] h2, 
+    section[data-testid="stSidebar"] p, 
+    section[data-testid="stSidebar"] span, 
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] div {
+        color: #fdfbf7 !important;
     }
     
-    /* Botões */
-    .stButton button {
-        background-color: #111;
-        color: white;
-        border-radius: 0;
-        font-family: 'Playfair Display', serif;
-        text-transform: uppercase;
-        font-weight: bold;
+    /* Campos de digitar texto (Fundo creme, letra preta) */
+    section[data-testid="stSidebar"] input {
+        background-color: #fdfbf7 !important;
+        color: #111 !important;
+        border-radius: 5px !important;
+        border: none !important;
     }
-    .stButton button:hover {
-        background-color: #b11226;
-        color: white;
-        border: 1px solid #b11226;
+    
+    /* Botão de Inscrição em Super Destaque */
+    section[data-testid="stSidebar"] .stButton button {
+        background-color: #fdfbf7 !important;
+        color: #084c4a !important;
+        font-weight: 900 !important;
+        border-radius: 5px !important;
+        border: 2px solid #fdfbf7 !important;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+    section[data-testid="stSidebar"] .stButton button:hover {
+        background-color: #e5e3de !important;
+        transform: scale(1.02);
+    }
+    
+    /* Caixa do formulário */
+    [data-testid="stForm"] {
+        border: 1px solid rgba(253, 251, 247, 0.2);
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -142,7 +169,6 @@ RSS_FEEDS = {
 
 # --- 4. FUNÇÕES DO GOOGLE SHEETS ---
 def conectar_planilha():
-    # Tenta pegar a senha das Secrets
     if "GCP_JSON" not in st.secrets:
         st.error("⚠️ Configuração pendente: Adicione GCP_JSON nas Secrets do Streamlit.")
         return None
@@ -159,21 +185,17 @@ def conectar_planilha():
 def salvar_assinante(nome, email, temas):
     sheet = conectar_planilha()
     if not sheet: return False
-    
-    # Prepara linha: Nome, Email, Sim/Não para cada tema
     linha = [nome, email]
     chaves = list(RSS_FEEDS.keys())
-    
     for chave in chaves:
         if chave in temas: linha.append("Sim")
         else: linha.append("Não")
-    
     try:
         sheet.append_row(linha)
         return True
     except: return False
 
-@st.cache_data(ttl=1800) # Cache de 30 minutos
+@st.cache_data(ttl=1800)
 def buscar_noticias(tema):
     url = RSS_FEEDS.get(tema)
     if not url: return []
@@ -181,8 +203,7 @@ def buscar_noticias(tema):
         feed = feedparser.parse(url)
         noticias = []
         for entry in feed.entries[:6]:
-            # Lógica de Imagem
-            img = f"https://placehold.co/600x300/333/FFF?text={tema}"
+            img = f"https://placehold.co/600x300/0a5c5a/FFF?text={tema}"
             if 'media_content' in entry:
                 for m in entry.media_content:
                     if 'url' in m: img = m['url']; break
@@ -201,16 +222,16 @@ def buscar_noticias(tema):
 
 # --- 5. SIDEBAR: ÁREA DE ASSINATURA ---
 with st.sidebar:
-    st.markdown("<h2 style='text-align:center;'>✍️ Assinatura</h2>", unsafe_allow_html=True)
-    st.info("Receba o *Briefing Matinal* no seu e-mail gratuitamente.")
+    st.markdown("<h2 style='text-align:center; font-family: Playfair Display;'>✍️ Junte-se ao Clube</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size: 0.9rem;'>Receba nossa curadoria premium de notícias todas as manhãs, gratuitamente.</p>", unsafe_allow_html=True)
+    st.write("")
     
     with st.form("form_cadastro"):
-        nome = st.text_input("Nome Completo")
+        nome = st.text_input("Seu Nome")
         email = st.text_input("Seu melhor E-mail")
-        st.markdown("---")
-        st.write("**Selecione seus Cadernos:**")
+        st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
+        st.write("**Personalize sua Edição:**")
         
-        # Checkboxes
         escolhas = []
         c1, c2 = st.columns(2)
         for i, tema in enumerate(RSS_FEEDS.keys()):
@@ -218,37 +239,34 @@ with st.sidebar:
             if col.checkbox(tema, value=True):
                 escolhas.append(tema)
         
-        st.markdown("---")
-        submit = st.form_submit_button("🗞️ Confirmar Inscrição")
+        st.write("")
+        submit = st.form_submit_button("ASSINAR AGORA 🗞️")
         
         if submit:
             if nome and email:
-                with st.spinner("Registrando..."):
+                with st.spinner("Preparando sua edição..."):
                     if salvar_assinante(nome, email, escolhas):
-                        st.success("Sucesso! Verifique seu e-mail amanhã cedo.")
+                        st.success("Tudo certo! Verifique seu e-mail amanhã cedo.")
                         st.balloons()
             else:
-                st.warning("Preencha Nome e E-mail.")
+                st.warning("Por favor, preencha Nome e E-mail.")
 
 # --- 6. CONTEÚDO PRINCIPAL ---
 
-# Título
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-# Data e Local
 col_date, col_loc = st.columns(2)
-col_date.markdown(f"<div style='text-align:center; border-top:1px solid #333; border-bottom:1px solid #333; padding:5px;'>📅 {datetime.now().strftime('%A, %d %B %Y')}</div>", unsafe_allow_html=True)
-col_loc.markdown(f"<div style='text-align:center; border-top:1px solid #333; border-bottom:1px solid #333; padding:5px;'>🌎 Edição Global • Online</div>", unsafe_allow_html=True)
+col_date.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>📅 {datetime.now().strftime('%A, %d de %B de %Y')}</div>", unsafe_allow_html=True)
+col_loc.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>🌎 Edição Global • Online</div>", unsafe_allow_html=True)
 
-st.write("") # Espaçamento
+st.write("")
 
-# Filtro
-tema_atual = st.selectbox("📖 Escolha o Caderno para ler agora:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
+tema_atual = st.selectbox("📖 Navegue pelos Cadernos:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
+st.markdown("<br>", unsafe_allow_html=True)
 
 noticias_display = []
 
 if tema_atual == "Capa (Destaques)":
-    # Pega 1 de cada tema
     for t in RSS_FEEDS.keys():
         res = buscar_noticias(t)
         if res:
@@ -261,7 +279,6 @@ else:
         item['tema'] = tema_atual
         noticias_display.append(item)
 
-# Grid de Notícias
 if noticias_display:
     cols = st.columns(3)
     for i, n in enumerate(noticias_display):
@@ -273,15 +290,14 @@ if noticias_display:
                     <img src="{n['img']}" class="news-img">
                 </a>
                 <div class="news-content">
-                    <div class="news-tag">{n['tema']}</div>
+                    <span class="news-tag">{n['tema']}</span>
                     <a href="{n['link']}" target="_blank" class="news-title">{n['titulo']}</a>
-                    <div class="news-date">Clique para ler na íntegra</div>
+                    <div class="news-date">Acesse a matéria original completa</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 else:
-    st.info("Carregando as manchetes...")
+    st.info("Buscando as manchetes mais recentes...")
 
-# Rodapé Simples
-st.markdown("---")
-st.markdown("<div style='text-align:center; color:#888; font-size:0.8rem;'>© 2025 All News Journal Group.</div>", unsafe_allow_html=True)
+st.markdown("<hr style='border-color: #0a5c5a; opacity: 0.2; margin-top: 50px;'>", unsafe_allow_html=True)
+st.markdown("<div style='text-align:center; color:#0a5c5a; font-family: Playfair Display; font-size:0.9rem;'>© 2026 All News Journal Group. Conteúdo Premium.</div>", unsafe_allow_html=True)
