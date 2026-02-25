@@ -11,5 +11,5 @@ jobs:
     steps:
     - name: Ping no Site
       run: |
-        # Substitua pelo SEU link do Streamlit
-        curl -I https://noticias-matinais-w3utkdwxerflwqytjyc7p2.streamlit.app/
+        # Substitua pelo seu NOVO link do Streamlit:
+        curl -I https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/
