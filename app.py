@@ -20,10 +20,10 @@ st.markdown("""
     /* Importando fontes premium */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
 
-    /* Esconder elementos do Streamlit */
+    /* Esconder menu superior direito do Streamlit, mas manter o botão da sidebar à esquerda */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    header {background: transparent !important;}
     .stDeployButton {display:none;}
     
     /* Fundo Principal (Creme) e Fonte Geral */
@@ -75,16 +75,22 @@ st.markdown("""
     .news-content {
         padding: 20px;
     }
+    
+    /* ===== CORREÇÃO DA TAG "DESTAQUE" ===== */
     .news-tag {
-        font-size: 0.75rem;
+        font-size: 0.70rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: bold;
-        color: #0a5c5a;
-        margin-bottom: 10px;
+        background-color: #0a5c5a; /* Fundo Turquesa */
+        color: #ffffff !important; /* Letra Branca */
+        padding: 4px 10px;
+        border-radius: 4px;
+        margin-bottom: 12px;
         display: inline-block;
-        border-bottom: 1px solid #0a5c5a;
     }
+    /* ====================================== */
+
     .news-title {
         font-family: 'Playfair Display', serif;
         font-size: 1.2rem;
@@ -106,9 +112,7 @@ st.markdown("""
         padding-top: 10px;
     }
 
-    /* ===================================================
-       SUPER DESTAQUE NA SIDEBAR (ÁREA DE INSCRIÇÃO)
-       =================================================== */
+    /* SUPER DESTAQUE NA SIDEBAR (ÁREA DE INSCRIÇÃO) */
     section[data-testid="stSidebar"] {
         background-color: #084c4a !important; /* Turquesa muito escuro */
         border-right: none;
