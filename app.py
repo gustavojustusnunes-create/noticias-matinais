@@ -112,35 +112,39 @@ st.markdown("""
         padding-top: 10px;
     }
 
-    /* =========================================
-       CORREÇÃO 1: SETA DA BARRA LATERAL "BLINDADA"
+
+/* =========================================
+       CORREÇÃO 1: SETA DA BARRA LATERAL (MÉTODO NUCLEAR)
        ========================================= */
-    /* Atira para todos os lados para pegar o botão em qualquer versão do Streamlit */
-    [data-testid="collapsedControl"], 
-    [data-testid="stSidebarCollapsedControl"],
-    button[kind="header"] {
+    /* Pegamos o botão pela função dele (Expand sidebar), é infalível */
+    button[kind="header"], 
+    button[aria-label="Expand sidebar"],
+    [data-testid="collapsedControl"] {
         background-color: #0a5c5a !important;
-        border-radius: 50% !important; /* Botão redondinho premium */
+        border-radius: 50% !important; 
         padding: 8px !important;
-        margin: 10px !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
-        color: white !important;
-        opacity: 1 !important;
-        z-index: 999999 !important;
+        margin: 15px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+        border: 2px solid #0a5c5a !important;
+        transition: all 0.3s ease !important;
+        z-index: 99999 !important;
     }
-    [data-testid="collapsedControl"] svg, 
-    [data-testid="stSidebarCollapsedControl"] svg,
-    button[kind="header"] svg {
+    
+    button[kind="header"] svg, 
+    button[aria-label="Expand sidebar"] svg,
+    [data-testid="collapsedControl"] svg {
         fill: #ffffff !important;
         color: #ffffff !important;
         stroke: #ffffff !important;
+        width: 24px !important;
+        height: 24px !important;
     }
-    /* Efeito ao passar o mouse na seta */
-    button[kind="header"]:hover {
+    
+    button[kind="header"]:hover, 
+    button[aria-label="Expand sidebar"]:hover {
         background-color: #084c4a !important;
-        transform: scale(1.1);
+        transform: scale(1.1) !important;
     }
-
     /* =========================================
        CORREÇÃO 2: MENU DE CADERNOS LEGÍVEL 
        ========================================= */
