@@ -15,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS: DESIGN PREMIUM (TURQUESA E CREME) ---
+# --- 2. CSS: DESIGN PREMIUM E CORREÇÕES ---
 st.markdown("""
 <style>
     /* Importando fontes premium */
@@ -53,11 +53,11 @@ st.markdown("""
         color: #0a5c5a !important;
     }
 
-    /* Cards de Notícia (Estilo Revista) */
+    /* Cards de Notícia */
     .news-card {
         background-color: #ffffff;
         border: 1px solid #e5e3de;
-        border-radius: 8px; /* Cantos arredondados modernos */
+        border-radius: 8px;
         overflow: hidden;
         margin-bottom: 25px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.03);
@@ -65,7 +65,7 @@ st.markdown("""
     }
     .news-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(10, 92, 90, 0.15); /* Sombra turquesa ao passar o rato */
+        box-shadow: 0 8px 20px rgba(10, 92, 90, 0.15);
     }
     .news-img {
         width: 100%;
@@ -77,14 +77,14 @@ st.markdown("""
         padding: 20px;
     }
     
-    /* ===== TAG "DESTAQUE / TEMA" ===== */
+    /* TAG "DESTAQUE" */
     .news-tag {
         font-size: 0.70rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: bold;
-        background-color: #0a5c5a; /* Fundo Turquesa */
-        color: #ffffff !important; /* Letra Branca */
+        background-color: #0a5c5a;
+        color: #ffffff !important;
         padding: 4px 10px;
         border-radius: 4px;
         margin-bottom: 12px;
@@ -112,12 +112,50 @@ st.markdown("""
         padding-top: 10px;
     }
 
-    /* SUPER DESTAQUE NA SIDEBAR (ÁREA DE SUBSCRIÇÃO) */
+    /* =========================================
+       CORREÇÃO 1: SETA DA BARRA LATERAL VISÍVEL 
+       ========================================= */
+    [data-testid="collapsedControl"] {
+        background-color: #0a5c5a !important;
+        border-radius: 0 5px 5px 0 !important;
+        padding: 5px !important;
+        box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+        transition: all 0.3s ease;
+    }
+    [data-testid="collapsedControl"] svg {
+        fill: #ffffff !important;
+        color: #ffffff !important;
+    }
+    [data-testid="collapsedControl"]:hover {
+        background-color: #084c4a !important;
+        transform: scale(1.05);
+    }
+
+    /* =========================================
+       CORREÇÃO 2: MENU DE CADERNOS LEGÍVEL 
+       ========================================= */
+    label[data-testid="stWidgetLabel"] p {
+        color: #0a5c5a !important;
+        font-size: 1.1rem !important;
+        font-weight: bold;
+        font-family: 'Playfair Display', serif;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        border: 2px solid #0a5c5a !important;
+        border-radius: 5px;
+    }
+    div[data-baseweb="select"] span {
+        color: #111111 !important;
+        font-weight: bold;
+    }
+
+    /* SUPER DESTAQUE NA SIDEBAR */
     section[data-testid="stSidebar"] {
-        background-color: #084c4a !important; /* Turquesa muito escuro */
+        background-color: #084c4a !important;
         border-right: none;
     }
-    /* Força os textos da sidebar a ficarem em Creme */
     section[data-testid="stSidebar"] h2, 
     section[data-testid="stSidebar"] p, 
     section[data-testid="stSidebar"] span, 
@@ -125,16 +163,12 @@ st.markdown("""
     section[data-testid="stSidebar"] div {
         color: #fdfbf7 !important;
     }
-    
-    /* Campos de digitar texto (Fundo creme, letra preta) */
     section[data-testid="stSidebar"] input {
         background-color: #fdfbf7 !important;
         color: #111 !important;
         border-radius: 5px !important;
         border: none !important;
     }
-    
-    /* Botão de Subscrição em Super Destaque */
     section[data-testid="stSidebar"] .stButton button {
         background-color: #fdfbf7 !important;
         color: #084c4a !important;
@@ -148,8 +182,6 @@ st.markdown("""
         background-color: #e5e3de !important;
         transform: scale(1.02);
     }
-    
-    /* Caixa do formulário */
     [data-testid="stForm"] {
         border: 1px solid rgba(253, 251, 247, 0.2);
         background-color: rgba(0, 0, 0, 0.1);
@@ -199,13 +231,11 @@ def salvar_assinante(nome, email, temas):
         return True
     except: return False
 
-# --- O NOVO CAÇADOR DE IMAGENS E FALLBACK ---
 @st.cache_data(ttl=1800)
 def buscar_noticias(tema):
     url = RSS_FEEDS.get(tema)
     if not url: return []
     
-    # Banco de Imagens Profissionais (Caso a notícia não tenha foto)
     FALLBACK_IMAGES = {
         "Mercado": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
         "Tech": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
@@ -224,20 +254,14 @@ def buscar_noticias(tema):
 
         for entry in feed.entries[:6]:
             img = None
-            
-            # 1. Tenta Media Content
             if 'media_content' in entry:
                 for m in entry.media_content:
                     if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                         img = m['url']; break
-            
-            # 2. Tenta Links
             if not img and 'links' in entry:
                 for l in entry.links:
                     if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
                         img = l['href']; break
-            
-            # 3. Tenta Caçar no HTML (Regex Ninja)
             if not img:
                 txt = ""
                 if 'content' in entry:
@@ -247,8 +271,6 @@ def buscar_noticias(tema):
                 for u in matches:
                     if any(ext in u.lower() for ext in extensoes) and "pixel" not in u and "doubleclick" not in u:
                         img = u; break
-
-            # 4. Fallback: Foto Premium Temática
             if not img:
                 img = FALLBACK_IMAGES.get(tema, "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop")
             
@@ -296,8 +318,19 @@ with st.sidebar:
 
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
+# ==========================================
+# CORREÇÃO 3: DATA EM PORTUGUÊS (PT-BR)
+# ==========================================
+hoje = datetime.now()
+meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+dias_semana = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"]
+
+dia_semana_str = dias_semana[hoje.weekday()]
+mes_str = meses[hoje.month - 1]
+data_ptbr = f"{dia_semana_str}, {hoje.day} de {mes_str} de {hoje.year}"
+
 col_date, col_loc = st.columns(2)
-col_date.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>📅 {datetime.now().strftime('%A, %d de %B de %Y')}</div>", unsafe_allow_html=True)
+col_date.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>📅 {data_ptbr}</div>", unsafe_allow_html=True)
 col_loc.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>🌎 Edição Global • Online</div>", unsafe_allow_html=True)
 
 st.write("")
