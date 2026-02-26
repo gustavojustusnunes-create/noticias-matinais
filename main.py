@@ -30,7 +30,6 @@ RSS_FEEDS = {
 }
 
 # --- 2. INFRAESTRUTURA ---
-
 def conectar_banco():
     if not GCP_JSON:
         print("❌ ERRO: GCP_JSON não encontrado.")
@@ -47,18 +46,16 @@ def conectar_banco():
 
 def obter_indicadores():
     html_items = []
-    # 1. Moedas
     try:
         resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL", timeout=5)
         if resp.status_code == 200:
             dados = resp.json()
-            # Dólar
             dolar = float(dados['USDBRL']['bid'])
             var_dolar = float(dados['USDBRL']['pctChange'])
             cor_dolar = "green" if var_dolar <= 0 else "red"
             seta_dolar = "▼" if var_dolar <= 0 else "▲"
             html_items.append(f"🇺🇸 <b>USD:</b> {dolar:.2f} <span style='color:{cor_dolar}; font-size:11px;'>{seta_dolar} {var_dolar}%</span>")
-            # BTC
+            
             btc = float(dados['BTCBRL']['bid'])
             var_btc = float(dados['BTCBRL']['pctChange'])
             cor_btc = "green" if var_btc >= 0 else "red"
@@ -66,7 +63,6 @@ def obter_indicadores():
             html_items.append(f"₿ <b>BTC:</b> {btc/1000:.1f}k <span style='color:{cor_btc}; font-size:11px;'>{seta_btc} {var_btc}%</span>")
     except: pass
 
-    # 2. Ibov
     try:
         ibov = yf.Ticker("^BVSP")
         hist = ibov.history(period="2d")
@@ -80,25 +76,26 @@ def obter_indicadores():
     except: pass
 
     if not html_items: return ""
-    return f"""<div style="background:#f4f4f4; border-bottom:2px solid #ddd; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#333;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
+    return f"""<div style="background-color:#e5e3de; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#111;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
 
-# --- 3. EXTRATOR IMAGEM (V5.3 - Regex Ninja) ---
-
+# --- 3. EXTRATOR IMAGEM PREMIUM ---
 def extrair_imagem_rss(entry, tema):
     image_url = None
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     
-    # 1. Media Content
+    # 1. Tenta Media Content
     if 'media_content' in entry:
         for m in entry.media_content:
             if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                 image_url = m['url']; break
-    # 2. Links
+    
+    # 2. Tenta Links
     if not image_url and 'links' in entry:
         for l in entry.links:
             if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
                 image_url = l['href']; break
-    # 3. Regex HTML
+    
+    # 3. Regex Ninja no HTML
     if not image_url:
         txt = ""
         if 'content' in entry:
@@ -109,16 +106,23 @@ def extrair_imagem_rss(entry, tema):
             if any(ext in url.lower() for ext in extensoes) and "pixel" not in url and "doubleclick" not in url:
                 image_url = url; break
 
-    # Fallback
+    # 4. Fallback: Banco de Imagens Unsplash (Substituindo os quadrados antigos)
     if not image_url:
-        cores = {"Mercado":"27ae60", "Tech":"2980b9", "Motos":"e67e22", "Fofoca":"8e44ad", 
-                 "Politica":"c0392b", "Esportes":"f1c40f", "Ciencia":"16a085", "Mundo":"34495e"}
-        cor = cores.get(tema, "333333")
-        image_url = f"https://placehold.co/600x200/{cor}/FFF?text={tema}&font=roboto"
+        FALLBACK_IMAGES = {
+            "Mercado": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+            "Tech": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+            "Motos": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
+            "Fofoca": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+            "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
+            "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+            "Ciencia": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
+            "Mundo": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop"
+        }
+        image_url = FALLBACK_IMAGES.get(tema, "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop")
+    
     return image_url
 
-# --- 4. IA (GEMINI) ---
-
+# --- 4. IA (GEMINI) E FILTRO DE NOTÍCIAS ---
 def chamar_gemini_api(prompt):
     if not GEMINI_KEY: return None
     modelos = ["gemini-2.5-flash", "gemini-2.0-flash"]
@@ -145,10 +149,26 @@ def processar_tema(tema):
     try:
         feed = feedparser.parse(url)
         if not feed.entries: return None
-        entries = feed.entries[:4]
+        
+        # FILTRO INTELIGENTE: Pega apenas notícias válidas
+        valid_entries = []
+        for e in feed.entries:
+            link = e.get('link', '').lower()
+            titulo = e.get('title', '').lower()
+            
+            # Se for Tech, bloqueia qualquer coisa relacionada a apostas de futebol
+            if tema == "Tech":
+                if "aposta" in link or "palpite" in titulo or "futebol" in titulo:
+                    continue # Pula essa notícia e vai pra próxima
+            
+            valid_entries.append(e)
+            if len(valid_entries) >= 4: # Pega as 4 primeiras VÁLIDAS
+                break
+                
+        if not valid_entries: return None
         
         input_txt = ""
-        for i, e in enumerate(entries):
+        for i, e in enumerate(valid_entries):
             input_txt += f"Notícia {i+1}: {e.title}\nLink: {e.link}\n\n"
 
         prompt = f"""
@@ -163,8 +183,8 @@ def processar_tema(tema):
         resumos = [r.strip() for r in resp.split('|||') if r.strip()]
         
         noticias = []
-        for i, entry in enumerate(entries):
-            resumo = resumos[i] if i < len(resumos) else "Leia mais no link."
+        for i, entry in enumerate(valid_entries):
+            resumo = resumos[i] if i < len(resumos) else "Acesse o link abaixo para ler a matéria completa."
             img = extrair_imagem_rss(entry, tema)
             noticias.append({"titulo": entry.title, "link": entry.link, "imagem": img, "resumo": resumo})
         return noticias
@@ -172,10 +192,8 @@ def processar_tema(tema):
         print(f"Erro {tema}: {e}")
         return None
 
-# --- 5. TEMPLATE ---
-
+# --- 5. TEMPLATE DO E-MAIL (NOVO VISUAL TURQUESA E CREME) ---
 def gerar_html_final(nome, dados, painel):
-    # Paleta de Cores Premium
     cor_turquesa = "0a5c5a"
     cor_creme = "fdfbf7"
     cor_fundo_escuro = "084c4a"
@@ -198,7 +216,7 @@ def gerar_html_final(nome, dados, painel):
     for tema, items in dados.items():
         if not items: continue
         
-        # Etiqueta do Caderno em Turquesa
+        # Etiqueta Turquesa
         html += f"""
         <div style="margin:40px 0 25px; border-bottom:2px solid #{cor_turquesa};">
             <span style="background-color:#{cor_turquesa}; color:#ffffff; padding:6px 14px; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:1px; border-radius:4px 4px 0 0; display:inline-block;">{tema}</span>
@@ -221,71 +239,19 @@ def gerar_html_final(nome, dados, painel):
                 </div>
             </div>"""
     
-    # RODAPÉ PREMIUM
     html += f"""
             </div>
             <div style="text-align:center; padding:30px; background-color:#{cor_fundo_escuro}; color:#{cor_creme}; font-size:12px; font-family:'Lora', 'Times New Roman', serif;">
                 <p style="margin:0;">&copy; 2026 All News Journal Group. Conteúdo Premium.</p>
-                <p style="margin:10px 0 0; font-size:10px; opacity:0.7;">Você está recebendo este e-mail porque se inscreveu em nosso portal.</p>
+                <p style="margin:10px 0 0; font-size:10px; opacity:0.7;">Você está recebendo este e-mail porque se inscreveu no nosso portal.</p>
             </div>
         </div>
     </body></html>"""
     return html
 
-# --- MAIN OTIMIZADA ---
-
-def main():
-    print("🚀 Iniciando Motor (v6.0 - Global Cache)...")
-    sheet = conectar_banco()
-    if not sheet: return
-
-    usuarios = sheet.get_all_records()
-    print(f"📋 {len(usuarios)} usuários encontrados.")
-
-    # 1. IDENTIFICAR TEMAS NECESSÁRIOS
-    # Não vamos gastar tempo gerando 'Pesca' se ninguém assinou 'Pesca'
-    temas_demandados = set()
-    for usr in usuarios:
-        for tema in RSS_FEEDS.keys():
-            if usr.get(tema, '').strip().lower() == "sim":
-                temas_demandados.add(tema)
-    
-    print(f"🎯 Temas necessários hoje: {list(temas_demandados)}")
-
-    # 2. GERAR CACHE GLOBAL (O Grande Truque)
-    # Gera o conteúdo uma única vez para cada tema
-    CACHE_GLOBAL = {}
-    painel = obter_indicadores()
-
-    for tema in temas_demandados:
-        conteudo = processar_tema(tema)
-        if conteudo:
-            CACHE_GLOBAL[tema] = conteudo
-            # Pausa para não bloquear a API, mas só acontece 1 vez por tema
-            print("      💤 Pausa tática (10s)...")
-            time.sleep(10)
-        else:
-            print(f"      ⚠️ Falha ao gerar {tema}")
-
-    # 3. DISTRIBUIR PARA USUÁRIOS (Instantâneo)
-    print("🚚 Iniciando distribuição...")
-    for usr in usuarios:
-        nome = usr.get('Nome')
-        email = usr.get('Email')
-        if not nome or not email: continue
-        
-        # Monta o pacote personalizado pegando do Cache Global
-        pacote_usuario = {}
-        for tema in RSS_FEEDS.keys():
-            if usr.get(tema, '').strip().lower() == "sim":
-                if tema in CACHE_GLOBAL:
-                    pacote_usuario[tema] = CACHE_GLOBAL[tema]
-        
-        if pacote_usuario:
-            print(f"   ✉️ Enviando para {nome}...")
-            enviar_email(email, gerar_html_final(nome, pacote_usuario, painel))
-    
-    print("✅ Missão Cumprida.")
-
-if __name__ == "__main__":
-    main()
+def enviar_email(dest, html):
+    try:
+        msg = MIMEMultipart()
+        msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
+        msg['From'] = EMAIL_SENDER
+        msg['To']
