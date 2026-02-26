@@ -175,56 +175,62 @@ def processar_tema(tema):
 # --- 5. TEMPLATE ---
 
 def gerar_html_final(nome, dados, painel):
+    # Paleta de Cores Premium
+    cor_turquesa = "0a5c5a"
+    cor_creme = "fdfbf7"
+    cor_fundo_escuro = "084c4a"
+    
     html = f"""
-    <html><body style="margin:0; padding:0; background:#f0f2f5; font-family:Helvetica, Arial;">
-        <div style="max-width:600px; margin:0 auto; background:#fff;">
-            <div style="background:#111; color:#fff; padding:25px; text-align:center;">
-                <h1 style="margin:0; font-family:'Times New Roman'; font-size:28px;">ALL NEWS JOURNAL</h1>
-                <p style="margin:5px 0 0; font-size:11px; color:#888; text-transform:uppercase;">Briefing • {datetime.now().strftime('%d/%m')}</p>
+    <html><body style="margin:0; padding:0; background-color:#e5e3de; font-family:'Lora', 'Times New Roman', serif;">
+        <div style="max-width:600px; margin:20px auto; background-color:#{cor_creme}; border-radius:8px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            
+            <div style="background-color:transparent; color:#{cor_turquesa}; padding:30px 20px 20px; text-align:center; border-bottom:2px solid #{cor_turquesa};">
+                <h1 style="margin:0; font-family:'Playfair Display', Georgia, serif; font-size:32px; text-transform:uppercase; letter-spacing: 2px;">ALL NEWS JOURNAL</h1>
+                <p style="margin:10px 0 0; font-size:12px; color:#777; font-style:italic;">Edição Premium • {datetime.now().strftime('%d/%m/%Y')}</p>
             </div>
+            
             {painel}
-            <div style="padding:20px;">
-                <p style="color:#555; font-size:14px; text-align:center; margin-bottom:30px;">Bom dia, <b>{nome}</b>.</p>
+            
+            <div style="padding:30px 25px;">
+                <p style="color:#2c2c2c; font-size:16px; text-align:center; margin-bottom:40px; font-style:italic;">Bom dia, <b>{nome}</b>. Aqui está a sua curadoria de hoje.</p>
     """
+    
     for tema, items in dados.items():
         if not items: continue
-        cor = "333"
-        if tema == "Mercado": cor = "27ae60"
-        elif tema == "Tech": cor = "2980b9"
-        elif tema == "Motos": cor = "e67e22"
-        elif tema == "Fofoca": cor = "8e44ad"
-        elif tema == "Politica": cor = "c0392b"
         
-        html += f"""<div style="margin:40px 0 20px; border-bottom:2px solid #{cor};"><span style="background:#{cor}; color:#fff; padding:5px 10px; font-size:12px; font-weight:bold;">{tema.upper()}</span></div>"""
+        # Etiqueta do Caderno em Turquesa
+        html += f"""
+        <div style="margin:40px 0 25px; border-bottom:2px solid #{cor_turquesa};">
+            <span style="background-color:#{cor_turquesa}; color:#ffffff; padding:6px 14px; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:1px; border-radius:4px 4px 0 0; display:inline-block;">{tema}</span>
+        </div>"""
         
         for n in items:
             html += f"""
-            <div style="margin-bottom:30px; border-bottom:1px solid #eee; padding-bottom:20px;">
-                <a href="{n['link']}"><img src="{n['imagem']}" style="width:100%; height:200px; object-fit:cover; border-radius:6px; background:#eee;"></a>
+            <div style="margin-bottom:35px; border-bottom:1px solid #e5e3de; padding-bottom:25px;">
+                <a href="{n['link']}">
+                    <img src="{n['imagem']}" style="width:100%; height:220px; object-fit:cover; border-radius:8px; border-bottom:4px solid #{cor_turquesa}; display:block;">
+                </a>
                 <div style="padding-top:15px;">
-                    <a href="{n['link']}" style="text-decoration:none; color:#111;"><h3 style="margin:0 0 10px; font-size:18px;">{n['titulo']}</h3></a>
-                    <p style="margin:0; font-size:14px; color:#444; line-height:1.5;">{n['resumo']}</p>
-                    <div style="margin-top:10px;"><a href="{n['link']}" style="font-size:12px; color:#{cor}; font-weight:bold; text-decoration:none;">LER MAIS →</a></div>
+                    <a href="{n['link']}" style="text-decoration:none; color:#111111;">
+                        <h3 style="margin:0 0 12px; font-size:22px; font-family:'Playfair Display', Georgia, serif; line-height:1.3;">{n['titulo']}</h3>
+                    </a>
+                    <p style="margin:0; font-size:15px; color:#444444; line-height:1.6;">{n['resumo']}</p>
+                    <div style="margin-top:15px;">
+                        <a href="{n['link']}" style="font-size:13px; color:#{cor_turquesa}; font-weight:bold; text-decoration:none; text-transform:uppercase; letter-spacing:0.5px;">Ler matéria completa &rarr;</a>
+                    </div>
                 </div>
             </div>"""
     
-    html += """<div style="text-align:center; padding:30px; background:#fafafa; color:#aaa; font-size:11px;">&copy; 2025 All News Journal.</div></div></body></html>"""
+    # RODAPÉ PREMIUM
+    html += f"""
+            </div>
+            <div style="text-align:center; padding:30px; background-color:#{cor_fundo_escuro}; color:#{cor_creme}; font-size:12px; font-family:'Lora', 'Times New Roman', serif;">
+                <p style="margin:0;">&copy; 2026 All News Journal Group. Conteúdo Premium.</p>
+                <p style="margin:10px 0 0; font-size:10px; opacity:0.7;">Você está recebendo este e-mail porque se inscreveu em nosso portal.</p>
+            </div>
+        </div>
+    </body></html>"""
     return html
-
-def enviar_email(dest, html):
-    try:
-        msg = MIMEMultipart()
-        msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
-        msg['From'] = EMAIL_SENDER
-        msg['To'] = dest
-        msg.attach(MIMEText(html, 'html'))
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
-        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, dest, msg.as_string())
-        server.quit()
-        return True
-    except: return False
 
 # --- MAIN OTIMIZADA ---
 
