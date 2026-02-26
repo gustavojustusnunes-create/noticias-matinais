@@ -21,7 +21,7 @@ st.markdown("""
     /* Importando fontes premium */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
 
-    /* Esconder menu superior direito do Streamlit, mas manter o botão da sidebar à esquerda (transparente) */
+    /* Esconder menu superior direito do Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {background: transparent !important;}
@@ -41,7 +41,7 @@ st.markdown("""
         text-align: center;
         font-size: 3.5rem !important;
         letter-spacing: 2px;
-        color: #0a5c5a !important; /* Azul Turquesa Escuro */
+        color: #0a5c5a !important;
         border-top: 2px solid #0a5c5a;
         border-bottom: 2px solid #0a5c5a;
         padding: 15px 0;
@@ -113,22 +113,32 @@ st.markdown("""
     }
 
     /* =========================================
-       CORREÇÃO 1: SETA DA BARRA LATERAL VISÍVEL 
+       CORREÇÃO 1: SETA DA BARRA LATERAL "BLINDADA"
        ========================================= */
-    [data-testid="collapsedControl"] {
+    /* Atira para todos os lados para pegar o botão em qualquer versão do Streamlit */
+    [data-testid="collapsedControl"], 
+    [data-testid="stSidebarCollapsedControl"],
+    button[kind="header"] {
         background-color: #0a5c5a !important;
-        border-radius: 0 5px 5px 0 !important;
-        padding: 5px !important;
-        box-shadow: 2px 0 8px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
+        border-radius: 50% !important; /* Botão redondinho premium */
+        padding: 8px !important;
+        margin: 10px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3) !important;
+        color: white !important;
+        opacity: 1 !important;
+        z-index: 999999 !important;
     }
-    [data-testid="collapsedControl"] svg {
+    [data-testid="collapsedControl"] svg, 
+    [data-testid="stSidebarCollapsedControl"] svg,
+    button[kind="header"] svg {
         fill: #ffffff !important;
         color: #ffffff !important;
+        stroke: #ffffff !important;
     }
-    [data-testid="collapsedControl"]:hover {
+    /* Efeito ao passar o mouse na seta */
+    button[kind="header"]:hover {
         background-color: #084c4a !important;
-        transform: scale(1.05);
+        transform: scale(1.1);
     }
 
     /* =========================================
@@ -318,9 +328,7 @@ with st.sidebar:
 
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-# ==========================================
-# CORREÇÃO 3: DATA EM PORTUGUÊS (PT-BR)
-# ==========================================
+# DATA EM PORTUGUÊS
 hoje = datetime.now()
 meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
 dias_semana = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"]
