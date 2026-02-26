@@ -114,37 +114,46 @@ st.markdown("""
 
 
 /* =========================================
-       CORREÇÃO 1: SETA DA BARRA LATERAL (MÉTODO NUCLEAR)
+       CORREÇÃO 1: A SETA DA BARRA LATERAL (SNIPER CSS)
        ========================================= */
-    /* Pegamos o botão pela função dele (Expand sidebar), é infalível */
-    button[kind="header"], 
-    button[aria-label="Expand sidebar"],
-    [data-testid="collapsedControl"] {
+    /* 1. O botão de ABRIR (Que fica no topo esquerdo) */
+    header[data-testid="stHeader"] button {
         background-color: #0a5c5a !important;
-        border-radius: 50% !important; 
-        padding: 8px !important;
-        margin: 15px !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+        border-radius: 8px !important;
         border: 2px solid #0a5c5a !important;
-        transition: all 0.3s ease !important;
-        z-index: 99999 !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.2) !important;
+        opacity: 1 !important;
+        visibility: visible !important; 
+        margin-top: 10px !important;
+        margin-left: 10px !important;
     }
     
-    button[kind="header"] svg, 
-    button[aria-label="Expand sidebar"] svg,
-    [data-testid="collapsedControl"] svg {
+    header[data-testid="stHeader"] button svg {
         fill: #ffffff !important;
         color: #ffffff !important;
         stroke: #ffffff !important;
-        width: 24px !important;
-        height: 24px !important;
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    header[data-testid="stHeader"] button:hover {
+        background-color: #084c4a !important;
+        transform: scale(1.05) !important;
+    }
+
+    /* 2. O botão de FECHAR (O "X" que fica dentro da barra quando ela abre) */
+    [data-testid="stSidebarHeader"] button {
+        background-color: #fdfbf7 !important;
+        border-radius: 8px !important;
+        border: 2px solid #084c4a !important;
+    }
+    [data-testid="stSidebarHeader"] button svg {
+        fill: #084c4a !important;
+        color: #084c4a !important;
+        stroke: #084c4a !important;
     }
     
-    button[kind="header"]:hover, 
-    button[aria-label="Expand sidebar"]:hover {
-        background-color: #084c4a !important;
-        transform: scale(1.1) !important;
-    }
+    /* ========================================= */
     /* =========================================
        CORREÇÃO 2: MENU DE CADERNOS LEGÍVEL 
        ========================================= */
