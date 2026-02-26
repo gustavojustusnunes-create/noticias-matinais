@@ -21,7 +21,7 @@ st.markdown("""
     /* Importando fontes premium */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
 
-    /* Esconder menu superior direito do Streamlit, mas manter o botão da sidebar à esquerda */
+    /* Esconder menu superior direito do Streamlit, mas manter o botão da sidebar à esquerda (transparente) */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {background: transparent !important;}
@@ -65,7 +65,7 @@ st.markdown("""
     }
     .news-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 20px rgba(10, 92, 90, 0.15); /* Sombra turquesa ao passar o mouse */
+        box-shadow: 0 8px 20px rgba(10, 92, 90, 0.15); /* Sombra turquesa ao passar o rato */
     }
     .news-img {
         width: 100%;
@@ -77,7 +77,7 @@ st.markdown("""
         padding: 20px;
     }
     
-    /* ===== CORREÇÃO DA TAG "DESTAQUE" ===== */
+    /* ===== TAG "DESTAQUE / TEMA" ===== */
     .news-tag {
         font-size: 0.70rem;
         text-transform: uppercase;
@@ -90,7 +90,6 @@ st.markdown("""
         margin-bottom: 12px;
         display: inline-block;
     }
-    /* ====================================== */
 
     .news-title {
         font-family: 'Playfair Display', serif;
@@ -113,7 +112,7 @@ st.markdown("""
         padding-top: 10px;
     }
 
-    /* SUPER DESTAQUE NA SIDEBAR (ÁREA DE INSCRIÇÃO) */
+    /* SUPER DESTAQUE NA SIDEBAR (ÁREA DE SUBSCRIÇÃO) */
     section[data-testid="stSidebar"] {
         background-color: #084c4a !important; /* Turquesa muito escuro */
         border-right: none;
@@ -135,7 +134,7 @@ st.markdown("""
         border: none !important;
     }
     
-    /* Botão de Inscrição em Super Destaque */
+    /* Botão de Subscrição em Super Destaque */
     section[data-testid="stSidebar"] .stButton button {
         background-color: #fdfbf7 !important;
         color: #084c4a !important;
@@ -184,7 +183,7 @@ def conectar_planilha():
         client = gspread.authorize(creds)
         return client.open("noticias_db").sheet1
     except Exception as e:
-        st.error(f"Erro de Conexão: {e}")
+        st.error(f"Erro de Ligação: {e}")
         return None
 
 def salvar_assinante(nome, email, temas):
@@ -200,21 +199,58 @@ def salvar_assinante(nome, email, temas):
         return True
     except: return False
 
+# --- O NOVO CAÇADOR DE IMAGENS E FALLBACK ---
 @st.cache_data(ttl=1800)
 def buscar_noticias(tema):
     url = RSS_FEEDS.get(tema)
     if not url: return []
+    
+    # Banco de Imagens Profissionais (Caso a notícia não tenha foto)
+    FALLBACK_IMAGES = {
+        "Mercado": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+        "Tech": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+        "Motos": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
+        "Fofoca": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+        "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
+        "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+        "Ciencia": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
+        "Mundo": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop"
+    }
+
     try:
         feed = feedparser.parse(url)
         noticias = []
+        extensoes = ('.jpg', '.jpeg', '.png', '.webp')
+
         for entry in feed.entries[:6]:
-            img = f"https://placehold.co/600x300/0a5c5a/FFF?text={tema}"
+            img = None
+            
+            # 1. Tenta Media Content
             if 'media_content' in entry:
                 for m in entry.media_content:
-                    if 'url' in m: img = m['url']; break
-            elif 'links' in entry:
+                    if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
+                        img = m['url']; break
+            
+            # 2. Tenta Links
+            if not img and 'links' in entry:
                 for l in entry.links:
-                    if l.get('type','').startswith('image/'): img = l['href']; break
+                    if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
+                        img = l['href']; break
+            
+            # 3. Tenta Caçar no HTML (Regex Ninja)
+            if not img:
+                txt = ""
+                if 'content' in entry:
+                    for c in entry.content: txt += c.value
+                if 'summary' in entry: txt += entry.summary
+                matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', txt)
+                for u in matches:
+                    if any(ext in u.lower() for ext in extensoes) and "pixel" not in u and "doubleclick" not in u:
+                        img = u; break
+
+            # 4. Fallback: Foto Premium Temática
+            if not img:
+                img = FALLBACK_IMAGES.get(tema, "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop")
             
             noticias.append({
                 "titulo": entry.title,
@@ -225,17 +261,17 @@ def buscar_noticias(tema):
         return noticias
     except: return []
 
-# --- 5. SIDEBAR: ÁREA DE ASSINATURA ---
+# --- 5. SIDEBAR: ÁREA DE SUBSCRIÇÃO ---
 with st.sidebar:
     st.markdown("<h2 style='text-align:center; font-family: Playfair Display;'>✍️ Junte-se ao Clube</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size: 0.9rem;'>Receba nossa curadoria premium de notícias todas as manhãs, gratuitamente.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size: 0.9rem;'>Receba a nossa curadoria premium de notícias todas as manhãs, gratuitamente.</p>", unsafe_allow_html=True)
     st.write("")
     
     with st.form("form_cadastro"):
-        nome = st.text_input("Seu Nome")
-        email = st.text_input("Seu melhor E-mail")
+        nome = st.text_input("O seu Nome")
+        email = st.text_input("O seu melhor E-mail")
         st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
-        st.write("**Personalize sua Edição:**")
+        st.write("**Personalize a sua Edição:**")
         
         escolhas = []
         c1, c2 = st.columns(2)
@@ -245,16 +281,16 @@ with st.sidebar:
                 escolhas.append(tema)
         
         st.write("")
-        submit = st.form_submit_button("ASSINAR AGORA 🗞️")
+        submit = st.form_submit_button("SUBSCREVER AGORA 🗞️")
         
         if submit:
             if nome and email:
-                with st.spinner("Preparando sua edição..."):
+                with st.spinner("A preparar a sua edição..."):
                     if salvar_assinante(nome, email, escolhas):
-                        st.success("Tudo certo! Verifique seu e-mail amanhã cedo.")
+                        st.success("Tudo certo! Verifique o seu e-mail amanhã cedo.")
                         st.balloons()
             else:
-                st.warning("Por favor, preencha Nome e E-mail.")
+                st.warning("Por favor, preencha o Nome e o E-mail.")
 
 # --- 6. CONTEÚDO PRINCIPAL ---
 
@@ -297,12 +333,12 @@ if noticias_display:
                 <div class="news-content">
                     <span class="news-tag">{n['tema']}</span>
                     <a href="{n['link']}" target="_blank" class="news-title">{n['titulo']}</a>
-                    <div class="news-date">Acesse a matéria original completa</div>
+                    <div class="news-date">Aceda à matéria original completa</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 else:
-    st.info("Buscando as manchetes mais recentes...")
+    st.info("A procurar as manchetes mais recentes...")
 
 st.markdown("<hr style='border-color: #0a5c5a; opacity: 0.2; margin-top: 50px;'>", unsafe_allow_html=True)
 st.markdown("<div style='text-align:center; color:#0a5c5a; font-family: Playfair Display; font-size:0.9rem;'>© 2026 All News Journal Group. Conteúdo Premium.</div>", unsafe_allow_html=True)
