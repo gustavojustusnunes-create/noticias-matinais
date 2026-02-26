@@ -61,7 +61,8 @@ def obter_indicadores():
             cor_btc = "green" if var_btc >= 0 else "red"
             seta_btc = "▲" if var_btc >= 0 else "▼"
             html_items.append(f"₿ <b>BTC:</b> {btc/1000:.1f}k <span style='color:{cor_btc}; font-size:11px;'>{seta_btc} {var_btc}%</span>")
-    except: pass
+    except Exception: 
+        pass
 
     try:
         ibov = yf.Ticker("^BVSP")
@@ -73,7 +74,8 @@ def obter_indicadores():
             cor = "green" if var >= 0 else "red"
             seta = "▲" if var >= 0 else "▼"
             html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual)} <span style='color:{cor}; font-size:11px;'>{seta} {var:.2f}%</span>")
-    except: pass
+    except Exception: 
+        pass
 
     if not html_items: return ""
     return f"""<div style="background-color:#e5e3de; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#111;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
@@ -83,19 +85,16 @@ def extrair_imagem_rss(entry, tema):
     image_url = None
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     
-    # 1. Tenta Media Content
     if 'media_content' in entry:
         for m in entry.media_content:
             if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                 image_url = m['url']; break
     
-    # 2. Tenta Links
     if not image_url and 'links' in entry:
         for l in entry.links:
             if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
                 image_url = l['href']; break
     
-    # 3. Regex Ninja no HTML
     if not image_url:
         txt = ""
         if 'content' in entry:
@@ -106,7 +105,6 @@ def extrair_imagem_rss(entry, tema):
             if any(ext in url.lower() for ext in extensoes) and "pixel" not in url and "doubleclick" not in url:
                 image_url = url; break
 
-    # 4. Fallback: Banco de Imagens Unsplash (Substituindo os quadrados antigos)
     if not image_url:
         FALLBACK_IMAGES = {
             "Mercado": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
@@ -139,7 +137,8 @@ def chamar_gemini_api(prompt):
                 elif r.status_code == 429:
                     time.sleep(20 * i); continue
                 else: break
-            except: break
+            except Exception: 
+                break
     return None
 
 def processar_tema(tema):
@@ -150,19 +149,18 @@ def processar_tema(tema):
         feed = feedparser.parse(url)
         if not feed.entries: return None
         
-        # FILTRO INTELIGENTE: Pega apenas notícias válidas
         valid_entries = []
         for e in feed.entries:
             link = e.get('link', '').lower()
             titulo = e.get('title', '').lower()
             
-            # Se for Tech, bloqueia qualquer coisa relacionada a apostas de futebol
+            # FILTRO TECH ANTI-FUTEBOL
             if tema == "Tech":
                 if "aposta" in link or "palpite" in titulo or "futebol" in titulo:
-                    continue # Pula essa notícia e vai pra próxima
+                    continue 
             
             valid_entries.append(e)
-            if len(valid_entries) >= 4: # Pega as 4 primeiras VÁLIDAS
+            if len(valid_entries) >= 4: 
                 break
                 
         if not valid_entries: return None
@@ -192,7 +190,7 @@ def processar_tema(tema):
         print(f"Erro {tema}: {e}")
         return None
 
-# --- 5. TEMPLATE DO E-MAIL (NOVO VISUAL TURQUESA E CREME) ---
+# --- 5. TEMPLATE DO E-MAIL ---
 def gerar_html_final(nome, dados, painel):
     cor_turquesa = "0a5c5a"
     cor_creme = "fdfbf7"
@@ -216,7 +214,6 @@ def gerar_html_final(nome, dados, painel):
     for tema, items in dados.items():
         if not items: continue
         
-        # Etiqueta Turquesa
         html += f"""
         <div style="margin:40px 0 25px; border-bottom:2px solid #{cor_turquesa};">
             <span style="background-color:#{cor_turquesa}; color:#ffffff; padding:6px 14px; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:1px; border-radius:4px 4px 0 0; display:inline-block;">{tema}</span>
@@ -249,9 +246,67 @@ def gerar_html_final(nome, dados, painel):
     </body></html>"""
     return html
 
+# --- AQUI ESTÁ A FUNÇÃO CORRIGIDA ---
 def enviar_email(dest, html):
     try:
         msg = MIMEMultipart()
         msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
         msg['From'] = EMAIL_SENDER
-        msg['To']
+        msg['To'] = dest
+        msg.attach(MIMEText(html, 'html'))
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_SENDER, dest, msg.as_string())
+        server.quit()
+        return True
+    except Exception as e:
+        print(f"Erro ao enviar email: {e}")
+        return False
+
+# --- 6. MAIN ---
+def main():
+    print("🚀 Iniciando Motor (v7.1 - Premium + Anti-Erro)...")
+    sheet = conectar_banco()
+    if not sheet: return
+
+    usuarios = sheet.get_all_records()
+    print(f"📋 {len(usuarios)} usuários encontrados.")
+
+    temas_demandados = set()
+    for usr in usuarios:
+        for tema in RSS_FEEDS.keys():
+            if usr.get(tema, '').strip().lower() == "sim":
+                temas_demandados.add(tema)
+    
+    CACHE_GLOBAL = {}
+    painel = obter_indicadores()
+
+    for tema in temas_demandados:
+        conteudo = processar_tema(tema)
+        if conteudo:
+            CACHE_GLOBAL[tema] = conteudo
+            print("      💤 Pausa tática (10s)...")
+            time.sleep(10)
+
+    print("🚚 Iniciando distribuição...")
+    for usr in usuarios:
+        nome = usr.get('Nome')
+        email = usr.get('Email')
+        if not nome or not email: continue
+        
+        pacote_usuario = {}
+        for tema in RSS_FEEDS.keys():
+            if usr.get(tema, '').strip().lower() == "sim":
+                if tema in CACHE_GLOBAL:
+                    pacote_usuario[tema] = CACHE_GLOBAL[tema]
+        
+        if pacote_usuario:
+            print(f"   ✉️ Enviando para {nome}...")
+            enviar_email(email, gerar_html_final(nome, pacote_usuario, painel))
+    
+    print("✅ Missão Cumprida.")
+
+if __name__ == "__main__":
+    main()
