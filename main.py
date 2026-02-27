@@ -46,34 +46,47 @@ def conectar_banco():
 
 def obter_indicadores():
     html_items = []
+    
+    # 1. Dólar (Agora via Yahoo Finance)
     try:
-        resp = requests.get("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-BRL", timeout=5)
-        if resp.status_code == 200:
-            dados = resp.json()
-            dolar = float(dados['USDBRL']['bid'])
-            var_dolar = float(dados['USDBRL']['pctChange'])
-            cor_dolar = "green" if var_dolar <= 0 else "red"
-            seta_dolar = "▼" if var_dolar <= 0 else "▲"
-            html_items.append(f"🇺🇸 <b>USD:</b> {dolar:.2f} <span style='color:{cor_dolar}; font-size:11px;'>{seta_dolar} {var_dolar}%</span>")
-            
-            btc = float(dados['BTCBRL']['bid'])
-            var_btc = float(dados['BTCBRL']['pctChange'])
-            cor_btc = "green" if var_btc >= 0 else "red"
-            seta_btc = "▲" if var_btc >= 0 else "▼"
-            html_items.append(f"₿ <b>BTC:</b> {btc/1000:.1f}k <span style='color:{cor_btc}; font-size:11px;'>{seta_btc} {var_btc}%</span>")
+        dolar_ticker = yf.Ticker("BRL=X")
+        hist_dolar = dolar_ticker.history(period="2d")
+        if len(hist_dolar) >= 2:
+            atual_d = hist_dolar['Close'].iloc[-1]
+            ant_d = hist_dolar['Close'].iloc[-2]
+            var_d = ((atual_d - ant_d) / ant_d) * 100
+            # Dólar caindo é bom (verde), subindo é ruim (vermelho)
+            cor_d = "green" if var_d <= 0 else "red"
+            seta_d = "▼" if var_d <= 0 else "▲"
+            html_items.append(f"🇺🇸 <b>USD:</b> R$ {atual_d:.2f} <span style='color:{cor_d}; font-size:11px;'>{seta_d} {var_d:.2f}%</span>")
     except Exception: 
         pass
 
+    # 2. Bitcoin (Agora via Yahoo Finance)
+    try:
+        btc_ticker = yf.Ticker("BTC-BRL")
+        hist_btc = btc_ticker.history(period="2d")
+        if len(hist_btc) >= 2:
+            atual_b = hist_btc['Close'].iloc[-1]
+            ant_b = hist_btc['Close'].iloc[-2]
+            var_b = ((atual_b - ant_b) / ant_b) * 100
+            cor_b = "green" if var_b >= 0 else "red"
+            seta_b = "▲" if var_b >= 0 else "▼"
+            html_items.append(f"₿ <b>BTC:</b> R$ {atual_b/1000:.1f}k <span style='color:{cor_b}; font-size:11px;'>{seta_b} {var_b:.2f}%</span>")
+    except Exception: 
+        pass
+
+    # 3. Ibovespa (Yahoo Finance)
     try:
         ibov = yf.Ticker("^BVSP")
-        hist = ibov.history(period="2d")
-        if len(hist) >= 2:
-            atual = hist['Close'].iloc[-1]
-            ant = hist['Close'].iloc[-2]
-            var = ((atual - ant) / ant) * 100
-            cor = "green" if var >= 0 else "red"
-            seta = "▲" if var >= 0 else "▼"
-            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual)} <span style='color:{cor}; font-size:11px;'>{seta} {var:.2f}%</span>")
+        hist_ibov = ibov.history(period="2d")
+        if len(hist_ibov) >= 2:
+            atual_i = hist_ibov['Close'].iloc[-1]
+            ant_i = hist_ibov['Close'].iloc[-2]
+            var_i = ((atual_i - ant_i) / ant_i) * 100
+            cor_i = "green" if var_i >= 0 else "red"
+            seta_i = "▲" if var_i >= 0 else "▼"
+            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual_i)} pts <span style='color:{cor_i}; font-size:11px;'>{seta_i} {var_i:.2f}%</span>")
     except Exception: 
         pass
 
@@ -154,7 +167,6 @@ def processar_tema(tema):
             link = e.get('link', '').lower()
             titulo = e.get('title', '').lower()
             
-            # FILTRO TECH ANTI-FUTEBOL
             if tema == "Tech":
                 if "aposta" in link or "palpite" in titulo or "futebol" in titulo:
                     continue 
@@ -246,7 +258,6 @@ def gerar_html_final(nome, dados, painel):
     </body></html>"""
     return html
 
-# --- AQUI ESTÁ A FUNÇÃO CORRIGIDA ---
 def enviar_email(dest, html):
     try:
         msg = MIMEMultipart()
@@ -267,7 +278,7 @@ def enviar_email(dest, html):
 
 # --- 6. MAIN ---
 def main():
-    print("🚀 Iniciando Motor (v7.1 - Premium + Anti-Erro)...")
+    print("🚀 Iniciando Motor (v7.2 - Premium + Dolar/BTC + Anti-Erro)...")
     sheet = conectar_banco()
     if not sheet: return
 
