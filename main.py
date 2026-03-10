@@ -18,15 +18,16 @@ GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
+# Estrutura atualizada: Lista de URLs. A primeira é a principal, as seguintes são Fallback (Plano B).
 RSS_FEEDS = {
-    "Mercado": "https://www.infomoney.com.br/feed/",
-    "Tech": "https://rss.tecmundo.com.br/feed",
-    "Motos": "https://www.motociclismoonline.com.br/feed/", 
-    "Fofoca": "https://revistaquem.globo.com/rss/quem/",
-    "Politica": "https://g1.globo.com/rss/g1/politica/",
-    "Esportes": "https://ge.globo.com/rss/ge/",
-    "Ciencia": "https://gizmodo.uol.com.br/category/ciencia/feed/",
-    "Mundo": "https://g1.globo.com/rss/g1/mundo/"
+    "Mercado": ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
+    "Tech": ["https://rss.tecmundo.com.br/feed"],
+    "Motos": ["https://www.motociclismoonline.com.br/feed/"], 
+    "Fofoca": ["https://revistaquem.globo.com/rss/quem/"],
+    "Politica": ["https://g1.globo.com/rss/g1/politica/"],
+    "Esportes": ["https://ge.globo.com/rss/ge/"],
+    "Ciencia": ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
+    "Mundo": ["https://g1.globo.com/rss/g1/mundo/"]
 }
 
 # --- 2. INFRAESTRUTURA ---
@@ -44,51 +45,48 @@ def conectar_banco():
         print(f"❌ Erro Banco: {e}")
         return None
 
+def formatar_indicador(nome, valor, variacao, prefixo=""):
+    """Lógica de negócio estrita: Cresceu = Verde, Caiu = Vermelho."""
+    cor = "green" if variacao >= 0 else "red"
+    seta = "▲" if variacao >= 0 else "▼"
+    sinal = "+" if variacao > 0 else ""
+    return f"{prefixo} <b>{nome}:</b> {valor} <span style='color:{cor}; font-size:11px;'>{seta} {sinal}{variacao:.2f}%</span>"
+
 def obter_indicadores():
     html_items = []
     
-    # 1. Dólar (Agora via Yahoo Finance)
+    # 1. Dólar (Período de 5 dias para evitar falhas em fins de semana/feriados)
     try:
-        dolar_ticker = yf.Ticker("BRL=X")
-        hist_dolar = dolar_ticker.history(period="2d")
+        hist_dolar = yf.Ticker("BRL=X").history(period="5d")
         if len(hist_dolar) >= 2:
             atual_d = hist_dolar['Close'].iloc[-1]
             ant_d = hist_dolar['Close'].iloc[-2]
             var_d = ((atual_d - ant_d) / ant_d) * 100
-            # Dólar caindo é bom (verde), subindo é ruim (vermelho)
-            cor_d = "green" if var_d <= 0 else "red"
-            seta_d = "▼" if var_d <= 0 else "▲"
-            html_items.append(f"🇺🇸 <b>USD:</b> R$ {atual_d:.2f} <span style='color:{cor_d}; font-size:11px;'>{seta_d} {var_d:.2f}%</span>")
-    except Exception: 
-        pass
+            html_items.append(formatar_indicador("USD", f"R$ {atual_d:.2f}", var_d, "🇺🇸"))
+    except Exception as e: 
+        print(f"⚠️ Alerta (USD): {e}")
 
-    # 2. Bitcoin (Agora via Yahoo Finance)
+    # 2. Bitcoin
     try:
-        btc_ticker = yf.Ticker("BTC-BRL")
-        hist_btc = btc_ticker.history(period="2d")
+        hist_btc = yf.Ticker("BTC-BRL").history(period="5d")
         if len(hist_btc) >= 2:
             atual_b = hist_btc['Close'].iloc[-1]
             ant_b = hist_btc['Close'].iloc[-2]
             var_b = ((atual_b - ant_b) / ant_b) * 100
-            cor_b = "green" if var_b >= 0 else "red"
-            seta_b = "▲" if var_b >= 0 else "▼"
-            html_items.append(f"₿ <b>BTC:</b> R$ {atual_b/1000:.1f}k <span style='color:{cor_b}; font-size:11px;'>{seta_b} {var_b:.2f}%</span>")
-    except Exception: 
-        pass
+            html_items.append(formatar_indicador("BTC", f"R$ {atual_b/1000:.1f}k", var_b, "₿"))
+    except Exception as e: 
+        print(f"⚠️ Alerta (BTC): {e}")
 
-    # 3. Ibovespa (Yahoo Finance)
+    # 3. Ibovespa
     try:
-        ibov = yf.Ticker("^BVSP")
-        hist_ibov = ibov.history(period="2d")
+        hist_ibov = yf.Ticker("^BVSP").history(period="5d")
         if len(hist_ibov) >= 2:
             atual_i = hist_ibov['Close'].iloc[-1]
             ant_i = hist_ibov['Close'].iloc[-2]
             var_i = ((atual_i - ant_i) / ant_i) * 100
-            cor_i = "green" if var_i >= 0 else "red"
-            seta_i = "▲" if var_i >= 0 else "▼"
-            html_items.append(f"🇧🇷 <b>IBOV:</b> {int(atual_i)} pts <span style='color:{cor_i}; font-size:11px;'>{seta_i} {var_i:.2f}%</span>")
-    except Exception: 
-        pass
+            html_items.append(formatar_indicador("IBOV", f"{int(atual_i)} pts", var_i, "🇧🇷"))
+    except Exception as e: 
+        print(f"⚠️ Alerta (IBOV): {e}")
 
     if not html_items: return ""
     return f"""<div style="background-color:#e5e3de; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#111;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
@@ -156,14 +154,27 @@ def chamar_gemini_api(prompt):
 
 def processar_tema(tema):
     print(f"      ...Gerando Cache de {tema}...")
-    url = RSS_FEEDS.get(tema)
-    if not url: return None
-    try:
-        feed = feedparser.parse(url)
-        if not feed.entries: return None
+    urls = RSS_FEEDS.get(tema, [])
+    
+    valid_entries = []
+    
+    # Sistema de Fallback: Tenta a primeira URL. Se falhar, tenta a próxima.
+    for url in urls:
+        try:
+            feed = feedparser.parse(url)
+            if feed.entries:
+                valid_entries = feed.entries
+                break # Sucesso!
+        except Exception as e:
+            print(f"      ⚠️ Falha ao ler {url}. Tentando próxima fonte... Erro: {e}")
+            
+    if not valid_entries: 
+        print(f"❌ ERRO CRÍTICO: Todas as fontes de '{tema}' falharam.")
+        return None
         
-        valid_entries = []
-        for e in feed.entries:
+    try:
+        noticias_filtradas = []
+        for e in valid_entries:
             link = e.get('link', '').lower()
             titulo = e.get('title', '').lower()
             
@@ -171,14 +182,14 @@ def processar_tema(tema):
                 if "aposta" in link or "palpite" in titulo or "futebol" in titulo:
                     continue 
             
-            valid_entries.append(e)
-            if len(valid_entries) >= 4: 
+            noticias_filtradas.append(e)
+            if len(noticias_filtradas) >= 4: 
                 break
                 
-        if not valid_entries: return None
+        if not noticias_filtradas: return None
         
         input_txt = ""
-        for i, e in enumerate(valid_entries):
+        for i, e in enumerate(noticias_filtradas):
             input_txt += f"Notícia {i+1}: {e.title}\nLink: {e.link}\n\n"
 
         prompt = f"""
@@ -192,14 +203,14 @@ def processar_tema(tema):
         if not resp: return None
         resumos = [r.strip() for r in resp.split('|||') if r.strip()]
         
-        noticias = []
-        for i, entry in enumerate(valid_entries):
+        noticias_finais = []
+        for i, entry in enumerate(noticias_filtradas):
             resumo = resumos[i] if i < len(resumos) else "Acesse o link abaixo para ler a matéria completa."
             img = extrair_imagem_rss(entry, tema)
-            noticias.append({"titulo": entry.title, "link": entry.link, "imagem": img, "resumo": resumo})
-        return noticias
+            noticias_finais.append({"titulo": entry.title, "link": entry.link, "imagem": img, "resumo": resumo})
+        return noticias_finais
     except Exception as e:
-        print(f"Erro {tema}: {e}")
+        print(f"Erro ao processar {tema}: {e}")
         return None
 
 # --- 5. TEMPLATE DO E-MAIL ---
@@ -278,7 +289,7 @@ def enviar_email(dest, html):
 
 # --- 6. MAIN ---
 def main():
-    print("🚀 Iniciando Motor (v7.2 - Premium + Dolar/BTC + Anti-Erro)...")
+    print("🚀 Iniciando Motor (v8.0 - Premium + Dinamismo + Fallback)...")
     sheet = conectar_banco()
     if not sheet: return
 
