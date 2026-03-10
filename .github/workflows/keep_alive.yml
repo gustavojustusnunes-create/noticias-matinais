@@ -9,8 +9,9 @@ jobs:
   wake_up:
     runs-on: ubuntu-latest
     steps:
-    - name: Acordar Servidor (Health Check)
+    - name: Acordar Servidor (Gerenciando Cookies)
       run: |
-        # Batendo direto na rota de diagnóstico do Streamlit para evitar o loop de JavaScript
-        curl -s -o /dev/null -w "%{http_code}" https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/_stcore/health || true
-        echo " - Ping executado na rota de saúde. Servidor mantido online."
+        # Usando -c e -b para salvar e enviar cookies. Isso simula uma sessão real de usuário.
+        # Ao aceitar o cookie, o Streamlit é obrigado a carregar o contêiner e a página completa.
+        curl -c cookies.txt -b cookies.txt -sL --max-time 60 https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/ > /dev/null
+        echo "Ping executado com sucesso e página renderizada. Servidor acordado!"
