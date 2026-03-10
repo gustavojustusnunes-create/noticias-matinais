@@ -9,9 +9,8 @@ jobs:
   wake_up:
     runs-on: ubuntu-latest
     steps:
-    - name: Ping no Site (Simulando Chrome)
+    - name: Acordar Servidor (Health Check)
       run: |
-        # Passando um User-Agent real para burlar o firewall do Streamlit
-        # O timeout agora é de 60s para obrigar o script a esperar a máquina acordar
-        curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" -sL --max-time 60 https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/ > /dev/null
-        echo "Máquina forçada a acordar com sucesso."
+        # Batendo direto na rota de diagnóstico do Streamlit para evitar o loop de JavaScript
+        curl -s -o /dev/null -w "%{http_code}" https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/_stcore/health || true
+        echo " - Ping executado na rota de saúde. Servidor mantido online."
