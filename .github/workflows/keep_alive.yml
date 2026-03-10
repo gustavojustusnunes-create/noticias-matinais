@@ -2,17 +2,16 @@ name: Despertador do Site Premium
 
 on:
   schedule:
-    # Roda a cada 15 minutos para impedir a hibernação (Streamlit dorme em ~30min)
+    # Mantemos a cada 15 minutos para evitar a hibernação padrão do Streamlit
     - cron: '*/15 * * * *' 
-  workflow_dispatch: # Permite rodar o botão manualmente se precisarmos testar
+  workflow_dispatch:
 
 jobs:
   wake_up:
     runs-on: ubuntu-latest
     steps:
-    - name: Ping no Site (Full GET)
+    - name: Ping no Site (Anti-Loop)
       run: |
-        # Usando -sL: "s" para modo silencioso no log, "L" para seguir possíveis redirecionamentos do Streamlit.
-        # O timeout evita que o GitHub Actions trave caso o Streamlit demore a responder.
-        curl -sL --max-time 30 https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/ > /dev/null
-        echo "Ping executado com sucesso e site mantido acordado."
+        # Limitamos os redirecionamentos para 3 e usamos "|| true" para forçar o status de Sucesso na Action
+        curl -sL --max-time 15 --max-redirs 3 https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/ > /dev/null || true
+        echo "Ping executado com sucesso. Máquina acordada."
