@@ -11,237 +11,414 @@ from datetime import datetime
 import json
 import time
 import re
+import hashlib
 
+# =============================================================================
 # --- 1. CONFIGURAÇÕES ---
+# =============================================================================
 GEMINI_KEY = os.environ.get("GEMINI_KEY", "").strip()
 GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
-# Estrutura atualizada: Lista de URLs. A primeira é a principal, as seguintes são Fallback (Plano B).
 RSS_FEEDS = {
-    "Mercado": ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
-    "Tech": ["https://rss.tecmundo.com.br/feed"],
-    "Motos": ["https://www.motociclismoonline.com.br/feed/"], 
-    "Fofoca": ["https://revistaquem.globo.com/rss/quem/"],
+    "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
+    "Tech":     ["https://rss.tecmundo.com.br/feed"],
+    "Motos":    ["https://www.motociclismoonline.com.br/feed/"],
+    "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Esportes": ["https://ge.globo.com/rss/ge/"],
-    "Ciencia": ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
-    "Mundo": ["https://g1.globo.com/rss/g1/mundo/"]
+    "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
+    "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"]
 }
 
-# --- 2. INFRAESTRUTURA ---
+# Filtros de palavras indesejadas por tema (expansível facilmente)
+FILTROS_TEMA = {
+    "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet"],
+    "Mercado":  ["horóscopo", "moda"],
+    "Esportes": [],
+    "Politica": [],
+    "Motos":    [],
+    "Fofoca":   [],
+    "Ciencia":  [],
+    "Mundo":    [],
+}
+
+# =============================================================================
+# --- 2. VALIDAÇÃO DE AMBIENTE (nova) ---
+# =============================================================================
+def validar_ambiente():
+    """
+    Valida todas as variáveis de ambiente obrigatórias antes de qualquer execução.
+    Retorna True se tudo ok, False se algo estiver faltando.
+    """
+    variaveis = {
+        "GEMINI_KEY": GEMINI_KEY,
+        "GCP_JSON": GCP_JSON,
+        "EMAIL_USER": EMAIL_SENDER,
+        "EMAIL_PASSWORD": EMAIL_PASSWORD,
+    }
+    erros = [nome for nome, val in variaveis.items() if not val]
+    if erros:
+        print(f"❌ ERRO CRÍTICO: Variáveis de ambiente faltando: {', '.join(erros)}")
+        print("   Configure-as nos Secrets do GitHub Actions antes de continuar.")
+        return False
+    print("✅ Ambiente validado com sucesso.")
+    return True
+
+# =============================================================================
+# --- 3. INFRAESTRUTURA (banco de dados) ---
+# =============================================================================
 def conectar_banco():
-    if not GCP_JSON:
-        print("❌ ERRO: GCP_JSON não encontrado.")
-        return None
     try:
         creds_dict = json.loads(GCP_JSON)
-        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
-        return client.open("noticias_db").sheet1
-    except Exception as e:
-        print(f"❌ Erro Banco: {e}")
-        return None
+        planilha = client.open("noticias_db")
 
+        sheet_usuarios = planilha.sheet1
+
+        # Garante que as abas auxiliares existam
+        try:
+            sheet_historico = planilha.worksheet("historico")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_historico = planilha.add_worksheet(title="historico", rows=5000, cols=3)
+            sheet_historico.append_row(["hash", "titulo", "data"])
+            print("   📋 Aba 'historico' criada automaticamente.")
+
+        try:
+            sheet_logs = planilha.worksheet("logs")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_logs = planilha.add_worksheet(title="logs", rows=5000, cols=5)
+            sheet_logs.append_row(["data", "nome", "email", "status", "temas"])
+            print("   📋 Aba 'logs' criada automaticamente.")
+
+        return sheet_usuarios, sheet_historico, sheet_logs
+
+    except Exception as e:
+        print(f"❌ Erro ao conectar ao banco: {e}")
+        return None, None, None
+
+# =============================================================================
+# --- 4. CONTROLE DE DUPLICATAS (novo) ---
+# =============================================================================
+def gerar_hash(titulo, link):
+    """Gera um hash único baseado no título e link da notícia."""
+    conteudo = f"{titulo}{link}".encode("utf-8")
+    return hashlib.md5(conteudo).hexdigest()
+
+def carregar_historico(sheet_historico):
+    """Carrega todos os hashes de notícias já enviadas."""
+    try:
+        registros = sheet_historico.get_all_records()
+        return {r["hash"] for r in registros}
+    except Exception as e:
+        print(f"⚠️ Não foi possível carregar histórico: {e}")
+        return set()
+
+def salvar_no_historico(sheet_historico, noticias_novas):
+    """Salva os hashes das novas notícias processadas nesta execução."""
+    hoje = datetime.now().strftime("%d/%m/%Y %H:%M")
+    linhas = [
+        [gerar_hash(n["titulo"], n["link"]), n["titulo"][:80], hoje]
+        for n in noticias_novas
+    ]
+    if linhas:
+        sheet_historico.append_rows(linhas)
+
+# =============================================================================
+# --- 5. LOG DE ENVIOS (novo) ---
+# =============================================================================
+def registrar_log(sheet_logs, nome, email, status, temas_enviados):
+    """Registra o resultado de cada envio na aba de logs."""
+    try:
+        sheet_logs.append_row([
+            datetime.now().strftime("%d/%m/%Y %H:%M"),
+            nome,
+            email,
+            "✅ Enviado" if status else "❌ Falhou",
+            ", ".join(temas_enviados)
+        ])
+    except Exception as e:
+        print(f"⚠️ Não foi possível registrar log para {nome}: {e}")
+
+# =============================================================================
+# --- 6. INDICADORES FINANCEIROS ---
+# =============================================================================
 def formatar_indicador(nome, valor, variacao, prefixo=""):
-    """Lógica de negócio estrita: Cresceu = Verde, Caiu = Vermelho."""
     cor = "green" if variacao >= 0 else "red"
     seta = "▲" if variacao >= 0 else "▼"
     sinal = "+" if variacao > 0 else ""
-    return f"{prefixo} <b>{nome}:</b> {valor} <span style='color:{cor}; font-size:11px;'>{seta} {sinal}{variacao:.2f}%</span>"
+    return (
+        f"{prefixo} <b>{nome}:</b> {valor} "
+        f"<span style='color:{cor}; font-size:11px;'>{seta} {sinal}{variacao:.2f}%</span>"
+    )
 
 def obter_indicadores():
     html_items = []
-    
-    # 1. Dólar (Período de 5 dias para evitar falhas em fins de semana/feriados)
-    try:
-        hist_dolar = yf.Ticker("BRL=X").history(period="5d")
-        if len(hist_dolar) >= 2:
-            atual_d = hist_dolar['Close'].iloc[-1]
-            ant_d = hist_dolar['Close'].iloc[-2]
-            var_d = ((atual_d - ant_d) / ant_d) * 100
-            html_items.append(formatar_indicador("USD", f"R$ {atual_d:.2f}", var_d, "🇺🇸"))
-    except Exception as e: 
-        print(f"⚠️ Alerta (USD): {e}")
 
-    # 2. Bitcoin
-    try:
-        hist_btc = yf.Ticker("BTC-BRL").history(period="5d")
-        if len(hist_btc) >= 2:
-            atual_b = hist_btc['Close'].iloc[-1]
-            ant_b = hist_btc['Close'].iloc[-2]
-            var_b = ((atual_b - ant_b) / ant_b) * 100
-            html_items.append(formatar_indicador("BTC", f"R$ {atual_b/1000:.1f}k", var_b, "₿"))
-    except Exception as e: 
-        print(f"⚠️ Alerta (BTC): {e}")
+    tickers = [
+        ("BRL=X",  "USD",  lambda v: f"R$ {v:.2f}",        "🇺🇸"),
+        ("BTC-BRL","BTC",  lambda v: f"R$ {v/1000:.1f}k",  "₿"),
+        ("^BVSP",  "IBOV", lambda v: f"{int(v)} pts",       "🇧🇷"),
+    ]
 
-    # 3. Ibovespa
-    try:
-        hist_ibov = yf.Ticker("^BVSP").history(period="5d")
-        if len(hist_ibov) >= 2:
-            atual_i = hist_ibov['Close'].iloc[-1]
-            ant_i = hist_ibov['Close'].iloc[-2]
-            var_i = ((atual_i - ant_i) / ant_i) * 100
-            html_items.append(formatar_indicador("IBOV", f"{int(atual_i)} pts", var_i, "🇧🇷"))
-    except Exception as e: 
-        print(f"⚠️ Alerta (IBOV): {e}")
+    for ticker_id, nome, formatar, prefixo in tickers:
+        try:
+            hist = yf.Ticker(ticker_id).history(period="5d")
+            if len(hist) >= 2:
+                atual = hist['Close'].iloc[-1]
+                ant   = hist['Close'].iloc[-2]
+                var   = ((atual - ant) / ant) * 100
+                html_items.append(formatar_indicador(nome, formatar(atual), var, prefixo))
+        except Exception as e:
+            print(f"⚠️ Alerta ({nome}): {e}")
 
-    if not html_items: return ""
-    return f"""<div style="background-color:#e5e3de; padding:12px; text-align:center; font-family:monospace; font-size:13px; color:#111;">{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"""
+    if not html_items:
+        return ""
 
-# --- 3. EXTRATOR IMAGEM PREMIUM ---
+    return (
+        f"<div style='background-color:#e5e3de; padding:12px; text-align:center; "
+        f"font-family:monospace; font-size:13px; color:#111;'>"
+        f"{' &nbsp;&nbsp;|&nbsp;&nbsp; '.join(html_items)}</div>"
+    )
+
+# =============================================================================
+# --- 7. EXTRATOR DE IMAGEM ---
+# =============================================================================
 def extrair_imagem_rss(entry, tema):
-    image_url = None
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
-    
+    image_url = None
+
     if 'media_content' in entry:
         for m in entry.media_content:
             if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
-                image_url = m['url']; break
-    
+                image_url = m['url']
+                break
+
     if not image_url and 'links' in entry:
         for l in entry.links:
-            if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
-                image_url = l['href']; break
-    
+            href = l.get('href', '')
+            if l.get('type', '').startswith('image/') and any(ext in href.lower() for ext in extensoes):
+                image_url = href
+                break
+
     if not image_url:
         txt = ""
         if 'content' in entry:
-            for c in entry.content: txt += c.value
-        if 'summary' in entry: txt += entry.summary
+            for c in entry.content:
+                txt += c.value
+        if 'summary' in entry:
+            txt += entry.summary
         matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', txt)
         for url in matches:
             if any(ext in url.lower() for ext in extensoes) and "pixel" not in url and "doubleclick" not in url:
-                image_url = url; break
+                image_url = url
+                break
 
     if not image_url:
         FALLBACK_IMAGES = {
-            "Mercado": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
-            "Tech": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
-            "Motos": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
-            "Fofoca": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+            "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+            "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+            "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
+            "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
             "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
             "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-            "Ciencia": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-            "Mundo": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop"
+            "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
+            "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
         }
-        image_url = FALLBACK_IMAGES.get(tema, "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop")
-    
+        image_url = FALLBACK_IMAGES.get(
+            tema,
+            "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+        )
+
     return image_url
 
-# --- 4. IA (GEMINI) E FILTRO DE NOTÍCIAS ---
+# =============================================================================
+# --- 8. IA (GEMINI) ---
+# =============================================================================
 def chamar_gemini_api(prompt):
-    if not GEMINI_KEY: return None
+    if not GEMINI_KEY:
+        return None
     modelos = ["gemini-2.5-flash", "gemini-2.0-flash"]
     headers = {'Content-Type': 'application/json'}
     payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
     for modelo in modelos:
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
-        for i in range(1, 4):
+        for tentativa in range(1, 4):
             try:
                 r = requests.post(url, headers=headers, json=payload, timeout=30)
                 if r.status_code == 200:
                     return r.json()['candidates'][0]['content']['parts'][0]['text']
                 elif r.status_code == 429:
-                    time.sleep(20 * i); continue
-                else: break
-            except Exception: 
+                    print(f"      ⏳ Rate limit Gemini. Aguardando {20 * tentativa}s...")
+                    time.sleep(20 * tentativa)
+                else:
+                    print(f"      ⚠️ Gemini retornou status {r.status_code}. Tentando próximo modelo...")
+                    break
+            except Exception as e:
+                print(f"      ⚠️ Exceção ao chamar Gemini: {e}")
                 break
     return None
 
-def processar_tema(tema):
-    print(f"      ...Gerando Cache de {tema}...")
+def resumo_fallback(entry):
+    """
+    (NOVO) Fallback: extrai resumo direto do RSS quando a IA não está disponível.
+    Limita a 60 palavras e remove tags HTML.
+    """
+    texto = ""
+    if 'summary' in entry:
+        texto = entry.summary
+    elif 'content' in entry and entry.content:
+        texto = entry.content[0].value
+
+    # Remove tags HTML
+    texto = re.sub(r'<[^>]+>', '', texto).strip()
+
+    # Limita a 60 palavras
+    palavras = texto.split()
+    if len(palavras) > 60:
+        texto = " ".join(palavras[:60]) + "..."
+
+    return texto if texto else "Acesse o link abaixo para ler a matéria completa."
+
+# =============================================================================
+# --- 9. PROCESSAMENTO DE TEMA ---
+# =============================================================================
+def aplicar_filtros(entry, tema):
+    """
+    (MELHORADO) Filtro genérico e expansível por tema.
+    Verifica título e link contra lista de palavras proibidas.
+    """
+    palavras_proibidas = FILTROS_TEMA.get(tema, [])
+    if not palavras_proibidas:
+        return True  # sem filtros para este tema
+
+    titulo = entry.get('title', '').lower()
+    link   = entry.get('link', '').lower()
+
+    for palavra in palavras_proibidas:
+        if palavra in titulo or palavra in link:
+            return False
+    return True
+
+def processar_tema(tema, historico_hashes):
+    """
+    Coleta, filtra (duplicatas + conteúdo), resume e retorna as notícias do tema.
+    Se a IA falhar, usa resumo do próprio RSS como fallback.
+    """
+    print(f"      ...Processando {tema}...")
     urls = RSS_FEEDS.get(tema, [])
-    
     valid_entries = []
-    
-    # Sistema de Fallback: Tenta a primeira URL. Se falhar, tenta a próxima.
+
     for url in urls:
         try:
             feed = feedparser.parse(url)
             if feed.entries:
                 valid_entries = feed.entries
-                break # Sucesso!
-        except Exception as e:
-            print(f"      ⚠️ Falha ao ler {url}. Tentando próxima fonte... Erro: {e}")
-            
-    if not valid_entries: 
-        print(f"❌ ERRO CRÍTICO: Todas as fontes de '{tema}' falharam.")
-        return None
-        
-    try:
-        noticias_filtradas = []
-        for e in valid_entries:
-            link = e.get('link', '').lower()
-            titulo = e.get('title', '').lower()
-            
-            if tema == "Tech":
-                if "aposta" in link or "palpite" in titulo or "futebol" in titulo:
-                    continue 
-            
-            noticias_filtradas.append(e)
-            if len(noticias_filtradas) >= 4: 
                 break
-                
-        if not noticias_filtradas: return None
-        
-        input_txt = ""
-        for i, e in enumerate(noticias_filtradas):
-            input_txt += f"Notícia {i+1}: {e.title}\nLink: {e.link}\n\n"
+        except Exception as e:
+            print(f"      ⚠️ Falha ao ler {url}. Tentando próxima... Erro: {e}")
 
-        prompt = f"""
-        Atue como Editor Sênior. Analise estas manchetes de {tema}.
-        Para CADA notícia, escreva um resumo de 50-70 palavras.
-        Estrutura: Fato Principal + Contexto.
-        Separe com "|||". Sem introduções.
-        Input: {input_txt}
-        """
-        resp = chamar_gemini_api(prompt)
-        if not resp: return None
-        resumos = [r.strip() for r in resp.split('|||') if r.strip()]
-        
-        noticias_finais = []
-        for i, entry in enumerate(noticias_filtradas):
-            resumo = resumos[i] if i < len(resumos) else "Acesse o link abaixo para ler a matéria completa."
-            img = extrair_imagem_rss(entry, tema)
-            noticias_finais.append({"titulo": entry.title, "link": entry.link, "imagem": img, "resumo": resumo})
-        return noticias_finais
-    except Exception as e:
-        print(f"Erro ao processar {tema}: {e}")
+    if not valid_entries:
+        print(f"❌ Todas as fontes de '{tema}' falharam.")
         return None
 
-# --- 5. TEMPLATE DO E-MAIL ---
+    # Filtro de conteúdo + filtro de duplicatas
+    noticias_filtradas = []
+    for entry in valid_entries:
+        if not aplicar_filtros(entry, tema):
+            continue
+
+        h = gerar_hash(entry.get('title', ''), entry.get('link', ''))
+        if h in historico_hashes:
+            print(f"      ↩️ Duplicata ignorada: {entry.get('title', '')[:50]}...")
+            continue
+
+        noticias_filtradas.append(entry)
+        if len(noticias_filtradas) >= 4:
+            break
+
+    if not noticias_filtradas:
+        print(f"⚠️ '{tema}' sem notícias novas após filtros.")
+        return None
+
+    # Tenta resumir com IA
+    input_txt = ""
+    for i, e in enumerate(noticias_filtradas):
+        input_txt += f"Notícia {i+1}: {e.title}\nLink: {e.link}\n\n"
+
+    prompt = f"""
+    Atue como Editor Sênior. Analise estas manchetes de {tema}.
+    Para CADA notícia, escreva um resumo de 50-70 palavras.
+    Estrutura: Fato Principal + Contexto.
+    Separe com "|||". Sem introduções.
+    Input: {input_txt}
+    """
+
+    resp_ia = chamar_gemini_api(prompt)
+
+    # Monta as notícias finais
+    noticias_finais = []
+    if resp_ia:
+        resumos = [r.strip() for r in resp_ia.split('|||') if r.strip()]
+    else:
+        print(f"      ⚠️ IA indisponível para '{tema}'. Usando resumo do RSS como fallback.")
+        resumos = []  # será preenchido abaixo por fallback
+
+    for i, entry in enumerate(noticias_filtradas):
+        if resp_ia and i < len(resumos):
+            resumo = resumos[i]
+        else:
+            resumo = resumo_fallback(entry)  # FALLBACK SEM IA
+
+        img = extrair_imagem_rss(entry, tema)
+        noticias_finais.append({
+            "titulo": entry.title,
+            "link":   entry.link,
+            "imagem": img,
+            "resumo": resumo,
+        })
+
+    return noticias_finais
+
+# =============================================================================
+# --- 10. TEMPLATE DO E-MAIL ---
+# =============================================================================
 def gerar_html_final(nome, dados, painel):
-    cor_turquesa = "0a5c5a"
-    cor_creme = "fdfbf7"
+    cor_turquesa    = "0a5c5a"
+    cor_creme       = "fdfbf7"
     cor_fundo_escuro = "084c4a"
-    
+
     html = f"""
     <html><body style="margin:0; padding:0; background-color:#e5e3de; font-family:'Lora', 'Times New Roman', serif;">
         <div style="max-width:600px; margin:20px auto; background-color:#{cor_creme}; border-radius:8px; overflow:hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-            
+
             <div style="background-color:transparent; color:#{cor_turquesa}; padding:30px 20px 20px; text-align:center; border-bottom:2px solid #{cor_turquesa};">
                 <h1 style="margin:0; font-family:'Playfair Display', Georgia, serif; font-size:32px; text-transform:uppercase; letter-spacing: 2px;">ALL NEWS JOURNAL</h1>
                 <p style="margin:10px 0 0; font-size:12px; color:#777; font-style:italic;">Edição Premium • {datetime.now().strftime('%d/%m/%Y')}</p>
             </div>
-            
+
             {painel}
-            
+
             <div style="padding:30px 25px;">
                 <p style="color:#2c2c2c; font-size:16px; text-align:center; margin-bottom:40px; font-style:italic;">Bom dia, <b>{nome}</b>. Aqui está a sua curadoria de hoje.</p>
     """
-    
+
     for tema, items in dados.items():
-        if not items: continue
-        
+        if not items:
+            continue
+
         html += f"""
         <div style="margin:40px 0 25px; border-bottom:2px solid #{cor_turquesa};">
             <span style="background-color:#{cor_turquesa}; color:#ffffff; padding:6px 14px; font-size:12px; font-weight:bold; text-transform:uppercase; letter-spacing:1px; border-radius:4px 4px 0 0; display:inline-block;">{tema}</span>
         </div>"""
-        
+
         for n in items:
             html += f"""
             <div style="margin-bottom:35px; border-bottom:1px solid #e5e3de; padding-bottom:25px;">
@@ -258,7 +435,7 @@ def gerar_html_final(nome, dados, painel):
                     </div>
                 </div>
             </div>"""
-    
+
     html += f"""
             </div>
             <div style="text-align:center; padding:30px; background-color:#{cor_fundo_escuro}; color:#{cor_creme}; font-size:12px; font-family:'Lora', 'Times New Roman', serif;">
@@ -269,14 +446,17 @@ def gerar_html_final(nome, dados, painel):
     </body></html>"""
     return html
 
+# =============================================================================
+# --- 11. ENVIO DE E-MAIL ---
+# =============================================================================
 def enviar_email(dest, html):
     try:
         msg = MIMEMultipart()
         msg['Subject'] = f"📰 All News Journal - {datetime.now().strftime('%d/%m')}"
-        msg['From'] = EMAIL_SENDER
-        msg['To'] = dest
+        msg['From']    = EMAIL_SENDER
+        msg['To']      = dest
         msg.attach(MIMEText(html, 'html'))
-        
+
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
@@ -284,51 +464,92 @@ def enviar_email(dest, html):
         server.quit()
         return True
     except Exception as e:
-        print(f"Erro ao enviar email: {e}")
+        print(f"      ❌ Erro ao enviar para {dest}: {e}")
         return False
 
-# --- 6. MAIN ---
+# =============================================================================
+# --- 12. MAIN ---
+# =============================================================================
 def main():
-    print("🚀 Iniciando Motor (v8.0 - Premium + Dinamismo + Fallback)...")
-    sheet = conectar_banco()
-    if not sheet: return
+    print("🚀 Iniciando Motor (v9.0 - Validação + Fallback + Anti-Duplicata + Logs)...")
 
-    usuarios = sheet.get_all_records()
-    print(f"📋 {len(usuarios)} usuários encontrados.")
+    # 1. Valida o ambiente antes de qualquer coisa
+    if not validar_ambiente():
+        return
 
+    # 2. Conecta ao banco (agora retorna 3 abas)
+    sheet_usuarios, sheet_historico, sheet_logs = conectar_banco()
+    if not sheet_usuarios:
+        return
+
+    # 3. Carrega histórico de notícias já enviadas
+    historico_hashes = carregar_historico(sheet_historico)
+    print(f"   🗂️ {len(historico_hashes)} notícias no histórico (anti-duplicata).")
+
+    # 4. Lê usuários
+    usuarios = sheet_usuarios.get_all_records()
+    print(f"   📋 {len(usuarios)} usuários encontrados.")
+
+    # 5. Descobre quais temas são necessários
     temas_demandados = set()
     for usr in usuarios:
         for tema in RSS_FEEDS.keys():
             if usr.get(tema, '').strip().lower() == "sim":
                 temas_demandados.add(tema)
-    
+
+    # 6. Processa e armazena em cache global
     CACHE_GLOBAL = {}
+    todas_noticias_novas = []
     painel = obter_indicadores()
 
     for tema in temas_demandados:
-        conteudo = processar_tema(tema)
+        conteudo = processar_tema(tema, historico_hashes)
         if conteudo:
             CACHE_GLOBAL[tema] = conteudo
+            todas_noticias_novas.extend(conteudo)
+            print(f"      ✅ {tema}: {len(conteudo)} notícias prontas.")
             print("      💤 Pausa tática (10s)...")
             time.sleep(10)
 
+    # 7. Salva novas notícias no histórico (anti-duplicata para próximas execuções)
+    if todas_noticias_novas:
+        salvar_no_historico(sheet_historico, todas_noticias_novas)
+        print(f"   💾 {len(todas_noticias_novas)} notícias salvas no histórico.")
+
+    # 8. Distribui para cada usuário e registra log
     print("🚚 Iniciando distribuição...")
+    enviados, falhas = 0, 0
+
     for usr in usuarios:
-        nome = usr.get('Nome')
+        nome  = usr.get('Nome')
         email = usr.get('Email')
-        if not nome or not email: continue
-        
-        pacote_usuario = {}
-        for tema in RSS_FEEDS.keys():
-            if usr.get(tema, '').strip().lower() == "sim":
-                if tema in CACHE_GLOBAL:
-                    pacote_usuario[tema] = CACHE_GLOBAL[tema]
-        
-        if pacote_usuario:
-            print(f"   ✉️ Enviando para {nome}...")
-            enviar_email(email, gerar_html_final(nome, pacote_usuario, painel))
-    
-    print("✅ Missão Cumprida.")
+        if not nome or not email:
+            continue
+
+        pacote_usuario = {
+            tema: CACHE_GLOBAL[tema]
+            for tema in RSS_FEEDS.keys()
+            if usr.get(tema, '').strip().lower() == "sim" and tema in CACHE_GLOBAL
+        }
+
+        if not pacote_usuario:
+            print(f"   ⚠️ {nome} não tem temas disponíveis. Pulando.")
+            continue
+
+        print(f"   ✉️ Enviando para {nome} ({email})...")
+        status = enviar_email(email, gerar_html_final(nome, pacote_usuario, painel))
+
+        # Registra o resultado no log
+        registrar_log(sheet_logs, nome, email, status, list(pacote_usuario.keys()))
+
+        if status:
+            enviados += 1
+            print(f"      ✅ Enviado com sucesso.")
+        else:
+            falhas += 1
+            print(f"      ❌ Falha no envio.")
+
+    print(f"\n✅ Missão Cumprida. Enviados: {enviados} | Falhas: {falhas}")
 
 if __name__ == "__main__":
     main()
