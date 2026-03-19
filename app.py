@@ -441,21 +441,20 @@ def buscar_noticias(tema):
     return noticias
 
 # =============================================================================
-# --- 8. SIDEBAR: FORMULÁRIO COM DRAG-AND-DROP ---
+# --- 8. SIDEBAR: FORMULÁRIO COM REORDENAÇÃO ↑↓ ---
 # =============================================================================
 
-# Emojis decorativos por tema (usados em todo o app)
 ICONES = {
     "Mundo":    "🌎", "Mercado": "📈", "Politica": "🏛️",
     "Tech":     "💻", "Esportes": "⚽", "Ciencia":  "🔬",
     "Motos":    "🏍️", "Fofoca":   "⭐",
 }
 
-try:
-    from streamlit_sortables import sort_items
-    SORTABLES_OK = True
-except ImportError:
-    SORTABLES_OK = False
+# Inicializa session_state na primeira execução
+if "ordem_lista" not in st.session_state:
+    st.session_state.ordem_lista = list(RSS_FEEDS.keys())
+if "ativos" not in st.session_state:
+    st.session_state.ativos = {t: True for t in RSS_FEEDS.keys()}
 
 with st.sidebar:
     st.markdown(
@@ -469,114 +468,73 @@ with st.sidebar:
     )
     st.write("")
 
-    # --- Campos de nome e e-mail (fora do form para que o sortable funcione) ---
     nome  = st.text_input("O seu Nome",          key="inp_nome")
     email = st.text_input("O seu melhor E-mail", key="inp_email")
 
     st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
+    st.markdown(
+        "<p style='font-size:0.82rem; font-weight:bold; margin-bottom:2px;'>"
+        "📋 Ordene os seus cadernos:</p>",
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        "<p style='font-size:0.75rem; opacity:0.75; margin-top:0; margin-bottom:10px;'>"
+        "Use ↑↓ para mudar a ordem. Desmarque os que não quer receber.</p>",
+        unsafe_allow_html=True
+    )
 
-    todos_temas  = list(RSS_FEEDS.keys())
-    labels_temas = [f"{ICONES.get(t,'📰')} {t}" for t in todos_temas]
+    lista = st.session_state.ordem_lista
 
-    if SORTABLES_OK:
-        # ------------------------------------------------------------------
-        # Drag-and-drop com dois painéis:
-        #   ✅ Receber  — itens ativos, na ordem que aparecerão no e-mail
-        #   ❌ Não receber — itens desativados
-        # ------------------------------------------------------------------
+    for i, tema in enumerate(lista):
+        icone = ICONES.get(tema, "📰")
+        col_chk, col_up, col_dn = st.columns([5, 1, 1])
+
+        ativo = col_chk.checkbox(
+            f"{icone} {tema}",
+            value=st.session_state.ativos.get(tema, True),
+            key=f"chk_{tema}"
+        )
+        st.session_state.ativos[tema] = ativo
+
+        if i > 0:
+            if col_up.button("↑", key=f"up_{tema}"):
+                lista[i], lista[i - 1] = lista[i - 1], lista[i]
+                st.rerun()
+        else:
+            col_up.write("")
+
+        if i < len(lista) - 1:
+            if col_dn.button("↓", key=f"dn_{tema}"):
+                lista[i], lista[i + 1] = lista[i + 1], lista[i]
+                st.rerun()
+        else:
+            col_dn.write("")
+
+    # Preview
+    temas_ativos_preview = [
+        t for t in st.session_state.ordem_lista
+        if st.session_state.ativos.get(t, True)
+    ]
+    if temas_ativos_preview:
+        preview_txt = " → ".join(f"{ICONES.get(t,'📰')}{t}" for t in temas_ativos_preview)
         st.markdown(
-            "<p style='font-size:0.82rem; font-weight:bold; margin-bottom:4px;'>"
-            "📋 Arraste para ordenar os cadernos:</p>",
+            f"<p style='font-size:0.70rem; opacity:0.65; text-align:center; "
+            f"font-style:italic; margin-top:8px;'>📧 Ordem no e-mail:<br>{preview_txt}</p>",
             unsafe_allow_html=True
         )
-        st.markdown(
-            "<p style='font-size:0.75rem; opacity:0.75; margin-top:0;'>"
-            "Mova para <b>❌ Não receber</b> os que não quer.</p>",
-            unsafe_allow_html=True
-        )
-
-        resultado_sort = sort_items(
-            [
-                {"header": "✅ Receber",      "items": labels_temas},
-                {"header": "❌ Não receber",  "items": []},
-            ],
-            multi_containers=True,
-            direction="vertical",
-            key="sortable_cadernos",
-            custom_style={
-                # Painel ativo — fundo turquesa escuro
-                "container": {
-                    "background-color": "rgba(0,0,0,0.15)",
-                    "border-radius": "8px",
-                    "padding": "6px",
-                    "margin-bottom": "8px",
-                },
-                "item": {
-                    "background-color": "#fdfbf7",
-                    "color": "#084c4a",
-                    "border-radius": "6px",
-                    "padding": "8px 12px",
-                    "margin": "4px 0",
-                    "font-family": "'Lora', serif",
-                    "font-size": "0.88rem",
-                    "font-weight": "600",
-                    "cursor": "grab",
-                    "border-left": "4px solid #0a5c5a",
-                },
-            },
-        )
-
-        # resultado_sort é uma lista de 2 listas: [receber, nao_receber]
-        receber_labels    = resultado_sort[0] if len(resultado_sort) > 0 else labels_temas
-        nao_receber_labels = resultado_sort[1] if len(resultado_sort) > 1 else []
-
-        # Converte labels de volta para nomes de tema
-        label_para_tema = {f"{ICONES.get(t,'📰')} {t}": t for t in todos_temas}
-        temas_ativos    = [label_para_tema[l] for l in receber_labels    if l in label_para_tema]
-        temas_inativos  = [label_para_tema[l] for l in nao_receber_labels if l in label_para_tema]
-
-        # Monta ordem_temas: {tema: posicao (int) ou "Não"}
-        ordem_temas = {}
-        for i, tema in enumerate(temas_ativos, start=1):
-            ordem_temas[tema] = i
-        for tema in temas_inativos:
-            ordem_temas[tema] = "Não"
-        # Temas que não apareceram em nenhum painel (edge case) ficam como Não
-        for tema in todos_temas:
-            if tema not in ordem_temas:
-                ordem_temas[tema] = "Não"
-
-    else:
-        # ------------------------------------------------------------------
-        # Fallback: checkboxes simples (caso streamlit-sortables não esteja instalado)
-        # ------------------------------------------------------------------
-        st.markdown(
-            "<p style='font-size:0.82rem; opacity:0.8;'>"
-            "⚠️ Instale <code>streamlit-sortables</code> para habilitar o arrastar. "
-            "Por agora, selecione os cadernos abaixo:</p>",
-            unsafe_allow_html=True
-        )
-        ordem_temas = {}
-        for i, tema in enumerate(todos_temas):
-            icone = ICONES.get(tema, "📰")
-            sel = st.checkbox(f"{icone} {tema}", value=True, key=f"chk_{tema}")
-            ordem_temas[tema] = (i + 1) if sel else "Não"
 
     st.write("")
 
-    # Preview da ordem atual
-    temas_preview = [t for t in todos_temas if ordem_temas.get(t) != "Não"]
-    if temas_preview:
-        preview_txt = " → ".join(
-            f"{ICONES.get(t,'📰')}{t}" for t in temas_preview
-        )
-        st.markdown(
-            f"<p style='font-size:0.72rem; opacity:0.7; text-align:center; "
-            f"font-style:italic; margin-top:4px;'>📧 Ordem no e-mail:<br>{preview_txt}</p>",
-            unsafe_allow_html=True
-        )
+    # Monta ordem_temas para salvar
+    ordem_temas = {}
+    pos = 1
+    for tema in st.session_state.ordem_lista:
+        if st.session_state.ativos.get(tema, True):
+            ordem_temas[tema] = pos
+            pos += 1
+        else:
+            ordem_temas[tema] = "Não"
 
-    # Botão de submissão (fora do form pois sortable não funciona dentro)
     if st.button("SUBSCREVER AGORA 🗞️", use_container_width=True, key="btn_subscribe"):
         erros = []
 
@@ -589,7 +547,7 @@ with st.sidebar:
 
         temas_selecionados = [t for t, v in ordem_temas.items() if v != "Não"]
         if not temas_selecionados:
-            erros.append("Mova pelo menos um caderno para '✅ Receber'.")
+            erros.append("Selecione pelo menos um caderno para receber.")
 
         if erros:
             for erro in erros:
@@ -611,6 +569,7 @@ with st.sidebar:
                             st.balloons()
                         else:
                             st.error(f"❌ Algo deu errado. {mensagem}")
+
 
 # =============================================================================
 # --- 9. CONTEÚDO PRINCIPAL ---
