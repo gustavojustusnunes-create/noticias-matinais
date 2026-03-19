@@ -441,101 +441,176 @@ def buscar_noticias(tema):
     return noticias
 
 # =============================================================================
-# --- 8. SIDEBAR: FORMULÁRIO DE INSCRIÇÃO COM ORDENAÇÃO ---
+# --- 8. SIDEBAR: FORMULÁRIO COM DRAG-AND-DROP ---
 # =============================================================================
+
+# Emojis decorativos por tema (usados em todo o app)
+ICONES = {
+    "Mundo":    "🌎", "Mercado": "📈", "Politica": "🏛️",
+    "Tech":     "💻", "Esportes": "⚽", "Ciencia":  "🔬",
+    "Motos":    "🏍️", "Fofoca":   "⭐",
+}
+
+try:
+    from streamlit_sortables import sort_items
+    SORTABLES_OK = True
+except ImportError:
+    SORTABLES_OK = False
+
 with st.sidebar:
     st.markdown(
         "<h2 style='text-align:center; font-family: Playfair Display;'>✍️ Junte-se ao Clube</h2>",
         unsafe_allow_html=True
     )
     st.markdown(
-        "<p style='text-align:center; font-size: 0.9rem;'>Receba a nossa curadoria premium de notícias todas as manhãs, gratuitamente.</p>",
+        "<p style='text-align:center; font-size: 0.9rem;'>Receba a nossa curadoria premium "
+        "de notícias todas as manhãs, gratuitamente.</p>",
         unsafe_allow_html=True
     )
     st.write("")
 
-    with st.form("form_cadastro", clear_on_submit=True):
-        nome  = st.text_input("O seu Nome")
-        email = st.text_input("O seu melhor E-mail")
+    # --- Campos de nome e e-mail (fora do form para que o sortable funcione) ---
+    nome  = st.text_input("O seu Nome",          key="inp_nome")
+    email = st.text_input("O seu melhor E-mail", key="inp_email")
 
-        st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
-        st.markdown("**📋 Escolha e ordene os seus cadernos:**", unsafe_allow_html=False)
+    st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
+
+    todos_temas  = list(RSS_FEEDS.keys())
+    labels_temas = [f"{ICONES.get(t,'📰')} {t}" for t in todos_temas]
+
+    if SORTABLES_OK:
+        # ------------------------------------------------------------------
+        # Drag-and-drop com dois painéis:
+        #   ✅ Receber  — itens ativos, na ordem que aparecerão no e-mail
+        #   ❌ Não receber — itens desativados
+        # ------------------------------------------------------------------
         st.markdown(
-            "<p style='font-size:0.78rem; opacity:0.75; margin-top:-8px;'>"
-            "Marque os que quer receber e defina a prioridade (1 = primeiro no e-mail).</p>",
+            "<p style='font-size:0.82rem; font-weight:bold; margin-bottom:4px;'>"
+            "📋 Arraste para ordenar os cadernos:</p>",
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            "<p style='font-size:0.75rem; opacity:0.75; margin-top:0;'>"
+            "Mova para <b>❌ Não receber</b> os que não quer.</p>",
             unsafe_allow_html=True
         )
 
-        todos_temas = list(RSS_FEEDS.keys())
-        # Emojis decorativos por tema
-        ICONES = {
-            "Mundo":    "🌎", "Mercado": "📈", "Politica": "🏛️",
-            "Tech":     "💻", "Esportes": "⚽", "Ciencia":  "🔬",
-            "Motos":    "🏍️", "Fofoca":   "⭐",
-        }
+        resultado_sort = sort_items(
+            [
+                {"header": "✅ Receber",      "items": labels_temas},
+                {"header": "❌ Não receber",  "items": []},
+            ],
+            multi_containers=True,
+            direction="vertical",
+            key="sortable_cadernos",
+            custom_style={
+                # Painel ativo — fundo turquesa escuro
+                "container": {
+                    "background-color": "rgba(0,0,0,0.15)",
+                    "border-radius": "8px",
+                    "padding": "6px",
+                    "margin-bottom": "8px",
+                },
+                "item": {
+                    "background-color": "#fdfbf7",
+                    "color": "#084c4a",
+                    "border-radius": "6px",
+                    "padding": "8px 12px",
+                    "margin": "4px 0",
+                    "font-family": "'Lora', serif",
+                    "font-size": "0.88rem",
+                    "font-weight": "600",
+                    "cursor": "grab",
+                    "border-left": "4px solid #0a5c5a",
+                },
+            },
+        )
 
-        ordem_temas = {}  # {tema: numero_ordem ou "Não"}
-        prioridade_usada = []  # para detectar duplicatas
+        # resultado_sort é uma lista de 2 listas: [receber, nao_receber]
+        receber_labels    = resultado_sort[0] if len(resultado_sort) > 0 else labels_temas
+        nao_receber_labels = resultado_sort[1] if len(resultado_sort) > 1 else []
 
+        # Converte labels de volta para nomes de tema
+        label_para_tema = {f"{ICONES.get(t,'📰')} {t}": t for t in todos_temas}
+        temas_ativos    = [label_para_tema[l] for l in receber_labels    if l in label_para_tema]
+        temas_inativos  = [label_para_tema[l] for l in nao_receber_labels if l in label_para_tema]
+
+        # Monta ordem_temas: {tema: posicao (int) ou "Não"}
+        ordem_temas = {}
+        for i, tema in enumerate(temas_ativos, start=1):
+            ordem_temas[tema] = i
+        for tema in temas_inativos:
+            ordem_temas[tema] = "Não"
+        # Temas que não apareceram em nenhum painel (edge case) ficam como Não
         for tema in todos_temas:
-            col_check, col_num = st.columns([2, 1])
-            icone = ICONES.get(tema, "📰")
-            selecionado = col_check.checkbox(f"{icone} {tema}", value=True, key=f"chk_{tema}")
-            if selecionado:
-                prioridade = col_num.number_input(
-                    "Prioridade", min_value=1, max_value=8,
-                    value=todos_temas.index(tema) + 1,
-                    key=f"num_{tema}", label_visibility="collapsed"
-                )
-                ordem_temas[tema] = int(prioridade)
-                prioridade_usada.append(int(prioridade))
-            else:
+            if tema not in ordem_temas:
                 ordem_temas[tema] = "Não"
-                col_num.markdown("—")
 
-        st.write("")
-        submit = st.form_submit_button("SUBSCREVER AGORA 🗞️")
+    else:
+        # ------------------------------------------------------------------
+        # Fallback: checkboxes simples (caso streamlit-sortables não esteja instalado)
+        # ------------------------------------------------------------------
+        st.markdown(
+            "<p style='font-size:0.82rem; opacity:0.8;'>"
+            "⚠️ Instale <code>streamlit-sortables</code> para habilitar o arrastar. "
+            "Por agora, selecione os cadernos abaixo:</p>",
+            unsafe_allow_html=True
+        )
+        ordem_temas = {}
+        for i, tema in enumerate(todos_temas):
+            icone = ICONES.get(tema, "📰")
+            sel = st.checkbox(f"{icone} {tema}", value=True, key=f"chk_{tema}")
+            ordem_temas[tema] = (i + 1) if sel else "Não"
 
-        if submit:
-            erros = []
+    st.write("")
 
-            if not validar_nome(nome):
-                erros.append("Por favor, informe um nome válido (mínimo 2 caracteres).")
-            if not email:
-                erros.append("Por favor, informe o seu e-mail.")
-            elif not validar_email(email):
-                erros.append("O e-mail informado não parece válido. Verifique e tente novamente.")
+    # Preview da ordem atual
+    temas_preview = [t for t in todos_temas if ordem_temas.get(t) != "Não"]
+    if temas_preview:
+        preview_txt = " → ".join(
+            f"{ICONES.get(t,'📰')}{t}" for t in temas_preview
+        )
+        st.markdown(
+            f"<p style='font-size:0.72rem; opacity:0.7; text-align:center; "
+            f"font-style:italic; margin-top:4px;'>📧 Ordem no e-mail:<br>{preview_txt}</p>",
+            unsafe_allow_html=True
+        )
 
-            temas_selecionados = [t for t, v in ordem_temas.items() if v != "Não"]
-            if not temas_selecionados:
-                erros.append("Selecione ao menos um caderno para receber.")
+    # Botão de submissão (fora do form pois sortable não funciona dentro)
+    if st.button("SUBSCREVER AGORA 🗞️", use_container_width=True, key="btn_subscribe"):
+        erros = []
 
-            # Avisa prioridades duplicadas (não bloqueia, só alerta)
-            if len(prioridade_usada) != len(set(prioridade_usada)):
-                st.warning("⚠️ Você usou o mesmo número de prioridade em mais de um caderno. "
-                           "Tudo bem — em caso de empate, usamos a ordem padrão.")
+        if not validar_nome(nome):
+            erros.append("Por favor, informe um nome válido (mínimo 2 caracteres).")
+        if not email:
+            erros.append("Por favor, informe o seu e-mail.")
+        elif not validar_email(email):
+            erros.append("O e-mail informado não parece válido. Verifique e tente novamente.")
 
-            if erros:
-                for erro in erros:
-                    st.warning(erro)
-            else:
-                with st.spinner("A verificar o seu cadastro..."):
-                    if email_ja_cadastrado(email):
-                        st.info("📬 Este e-mail já está inscrito! Você já faz parte do clube.")
-                    else:
-                        with st.spinner("A preparar a sua edição..."):
-                            ok, mensagem = salvar_assinante(nome, email, ordem_temas)
-                            if ok:
-                                # Monta lista ordenada para o e-mail de boas-vindas
-                                temas_ordenados = sorted(
-                                    temas_selecionados,
-                                    key=lambda t: ordem_temas[t]
-                                )
-                                enviar_boas_vindas(nome, email, temas_ordenados)
-                                st.success("✅ Tudo certo! Verifique o seu e-mail — enviamos uma confirmação.")
-                                st.balloons()
-                            else:
-                                st.error(f"❌ Algo deu errado. {mensagem}")
+        temas_selecionados = [t for t, v in ordem_temas.items() if v != "Não"]
+        if not temas_selecionados:
+            erros.append("Mova pelo menos um caderno para '✅ Receber'.")
+
+        if erros:
+            for erro in erros:
+                st.warning(erro)
+        else:
+            with st.spinner("A verificar o seu cadastro..."):
+                if email_ja_cadastrado(email):
+                    st.info("📬 Este e-mail já está inscrito! Você já faz parte do clube.")
+                else:
+                    with st.spinner("A preparar a sua edição..."):
+                        ok, mensagem = salvar_assinante(nome, email, ordem_temas)
+                        if ok:
+                            temas_ordenados = sorted(
+                                temas_selecionados,
+                                key=lambda t: ordem_temas[t]
+                            )
+                            enviar_boas_vindas(nome, email, temas_ordenados)
+                            st.success("✅ Tudo certo! Verifique o seu e-mail — enviamos uma confirmação.")
+                            st.balloons()
+                        else:
+                            st.error(f"❌ Algo deu errado. {mensagem}")
 
 # =============================================================================
 # --- 9. CONTEÚDO PRINCIPAL ---
