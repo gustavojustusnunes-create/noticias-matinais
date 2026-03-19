@@ -193,39 +193,69 @@ st.markdown("""
         border: none !important;
     }
 
-    /* Botões ↑ ↓ de reordenação — compactos, turquesa */
-    section[data-testid="stSidebar"] .stButton button {
-        background-color: rgba(255,255,255,0.15) !important;
-        color: #fdfbf7 !important;
-        font-weight: 900 !important;
-        font-size: 1rem !important;
+    /* Todos os botões da sidebar — base */
+    section[data-testid="stSidebar"] button,
+    section[data-testid="stSidebar"] .stButton > button,
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+        background-color: #0a5c5a !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255,255,255,0.35) !important;
         border-radius: 6px !important;
-        border: 1px solid rgba(253,251,247,0.4) !important;
-        width: 100% !important;
-        padding: 2px 0 !important;
+        font-weight: 700 !important;
         transition: all 0.2s ease;
     }
-    section[data-testid="stSidebar"] .stButton button:hover {
-        background-color: rgba(255,255,255,0.30) !important;
-        border-color: #fdfbf7 !important;
-        transform: scale(1.05);
+
+    /* Texto interno dos botões */
+    section[data-testid="stSidebar"] button p,
+    section[data-testid="stSidebar"] button span,
+    section[data-testid="stSidebar"] .stButton > button p {
+        color: #ffffff !important;
+        font-weight: 700 !important;
     }
 
-    /* Botão principal "Subscrever" — destaque em creme */
-    section[data-testid="stSidebar"] .stButton button[kind="secondary"],
-    section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
+    /* Hover de todos os botões */
+    section[data-testid="stSidebar"] button:hover,
+    section[data-testid="stSidebar"] .stButton > button:hover {
+        background-color: #084c4a !important;
+        border-color: #ffffff !important;
+        transform: scale(1.04);
+    }
+
+    /* Botão "Subscrever" — destaque em creme (identificado por ser use_container_width) */
+    section[data-testid="stSidebar"] .stButton:last-of-type > button {
         background-color: #fdfbf7 !important;
         color: #084c4a !important;
-        font-weight: 900 !important;
-        font-size: 0.95rem !important;
         border: 2px solid #fdfbf7 !important;
-        border-radius: 5px !important;
-        padding: 10px 0 !important;
+        font-size: 0.92rem !important;
+        padding: 8px 0 !important;
+        margin-top: 6px !important;
     }
-    section[data-testid="stSidebar"] .stButton button[kind="secondary"]:hover,
-    section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
+    section[data-testid="stSidebar"] .stButton:last-of-type > button p {
+        color: #084c4a !important;
+    }
+    section[data-testid="stSidebar"] .stButton:last-of-type > button:hover {
         background-color: #e5e3de !important;
-        transform: scale(1.02);
+    }
+
+    /* Botão "Subscrever" type=primary — destaque em creme */
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-primary"],
+    section[data-testid="stSidebar"] button[kind="primary"] {
+        background-color: #fdfbf7 !important;
+        color: #084c4a !important;
+        border: 2px solid #fdfbf7 !important;
+        font-size: 0.92rem !important;
+        font-weight: 900 !important;
+        margin-top: 6px !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-primary"] p,
+    section[data-testid="stSidebar"] button[kind="primary"] p {
+        color: #084c4a !important;
+        font-weight: 900 !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-primary"]:hover {
+        background-color: #e5e3de !important;
+        border-color: #e5e3de !important;
     }
 
     [data-testid="stForm"] {
@@ -520,14 +550,14 @@ with st.sidebar:
         st.session_state.ativos[tema] = ativo
 
         if i > 0:
-            if col_up.button("↑", key=f"up_{tema}"):
+            if col_up.button("↑", key=f"up_{tema}", use_container_width=True):
                 lista[i], lista[i - 1] = lista[i - 1], lista[i]
                 st.rerun()
         else:
             col_up.write("")
 
         if i < len(lista) - 1:
-            if col_dn.button("↓", key=f"dn_{tema}"):
+            if col_dn.button("↓", key=f"dn_{tema}", use_container_width=True):
                 lista[i], lista[i + 1] = lista[i + 1], lista[i]
                 st.rerun()
         else:
@@ -558,7 +588,7 @@ with st.sidebar:
         else:
             ordem_temas[tema] = "Não"
 
-    if st.button("SUBSCREVER AGORA 🗞️", use_container_width=True, key="btn_subscribe"):
+    if st.button("SUBSCREVER AGORA 🗞️", use_container_width=True, key="btn_subscribe", type="primary"):
         erros = []
 
         if not validar_nome(nome):
