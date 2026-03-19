@@ -4,10 +4,15 @@ import requests
 import gspread
 from google.oauth2.service_account import Credentials
 import json
-from datetime import datetime
 import re
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from datetime import datetime
 
+# =============================================================================
 # --- 1. CONFIGURAÇÃO DA PÁGINA ---
+# =============================================================================
 st.set_page_config(
     page_title="All News Journal",
     page_icon="📰",
@@ -15,26 +20,24 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS: DESIGN PREMIUM E CORREÇÕES ---
+# =============================================================================
+# --- 2. CSS: DESIGN PREMIUM ---
+# =============================================================================
 st.markdown("""
 <style>
-    /* Importando fontes premium */
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
 
-    /* Esconder menu superior direito do Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {background: transparent !important;}
     .stDeployButton {display:none;}
-    
-    /* Fundo Principal (Creme) e Fonte Geral */
+
     .stApp {
-        background-color: #fdfbf7; 
+        background-color: #fdfbf7;
         font-family: 'Lora', serif;
         color: #2c2c2c;
     }
-    
-    /* Título Principal */
+
     h1 {
         font-family: 'Playfair Display', serif;
         text-transform: uppercase;
@@ -47,13 +50,12 @@ st.markdown("""
         padding: 15px 0;
         margin-bottom: 20px;
     }
-    
+
     h2, h3 {
         font-family: 'Playfair Display', serif;
         color: #0a5c5a !important;
     }
 
-    /* Cards de Notícia */
     .news-card {
         background-color: #ffffff;
         border: 1px solid #e5e3de;
@@ -73,11 +75,8 @@ st.markdown("""
         object-fit: cover;
         border-bottom: 3px solid #0a5c5a;
     }
-    .news-content {
-        padding: 20px;
-    }
-    
-    /* TAG "DESTAQUE" */
+    .news-content { padding: 20px; }
+
     .news-tag {
         font-size: 0.70rem;
         text-transform: uppercase;
@@ -90,7 +89,6 @@ st.markdown("""
         margin-bottom: 12px;
         display: inline-block;
     }
-
     .news-title {
         font-family: 'Playfair Display', serif;
         font-size: 1.2rem;
@@ -101,9 +99,7 @@ st.markdown("""
         text-decoration: none;
         line-height: 1.3;
     }
-    .news-title:hover {
-        color: #0a5c5a !important;
-    }
+    .news-title:hover { color: #0a5c5a !important; }
     .news-date {
         font-size: 0.8rem;
         color: #777;
@@ -112,22 +108,37 @@ st.markdown("""
         padding-top: 10px;
     }
 
+    /* Alerta de erro customizado */
+    .alerta-erro {
+        background-color: #fff0f0;
+        border-left: 4px solid #cc0000;
+        padding: 12px 16px;
+        border-radius: 4px;
+        color: #cc0000;
+        font-size: 0.9rem;
+        margin: 8px 0;
+    }
+    .alerta-sucesso {
+        background-color: #f0fff4;
+        border-left: 4px solid #0a5c5a;
+        padding: 12px 16px;
+        border-radius: 4px;
+        color: #0a5c5a;
+        font-size: 0.9rem;
+        margin: 8px 0;
+    }
 
-/* =========================================
-       CORREÇÃO 1: A SETA DA BARRA LATERAL (SNIPER CSS)
-       ========================================= */
-    /* 1. O botão de ABRIR (Que fica no topo esquerdo) */
+    /* Botões da sidebar */
     header[data-testid="stHeader"] button {
         background-color: #0a5c5a !important;
         border-radius: 8px !important;
         border: 2px solid #0a5c5a !important;
         box-shadow: 0 4px 6px rgba(0,0,0,0.2) !important;
         opacity: 1 !important;
-        visibility: visible !important; 
+        visibility: visible !important;
         margin-top: 10px !important;
         margin-left: 10px !important;
     }
-    
     header[data-testid="stHeader"] button svg {
         fill: #ffffff !important;
         color: #ffffff !important;
@@ -135,13 +146,10 @@ st.markdown("""
         width: 20px !important;
         height: 20px !important;
     }
-
     header[data-testid="stHeader"] button:hover {
         background-color: #084c4a !important;
         transform: scale(1.05) !important;
     }
-
-    /* 2. O botão de FECHAR (O "X" que fica dentro da barra quando ela abre) */
     [data-testid="stSidebarHeader"] button {
         background-color: #fdfbf7 !important;
         border-radius: 8px !important;
@@ -152,11 +160,7 @@ st.markdown("""
         color: #084c4a !important;
         stroke: #084c4a !important;
     }
-    
-    /* ========================================= */
-    /* =========================================
-       CORREÇÃO 2: MENU DE CADERNOS LEGÍVEL 
-       ========================================= */
+
     label[data-testid="stWidgetLabel"] p {
         color: #0a5c5a !important;
         font-size: 1.1rem !important;
@@ -169,19 +173,15 @@ st.markdown("""
         border: 2px solid #0a5c5a !important;
         border-radius: 5px;
     }
-    div[data-baseweb="select"] span {
-        color: #111111 !important;
-        font-weight: bold;
-    }
+    div[data-baseweb="select"] span { color: #111111 !important; font-weight: bold; }
 
-    /* SUPER DESTAQUE NA SIDEBAR */
     section[data-testid="stSidebar"] {
         background-color: #084c4a !important;
         border-right: none;
     }
-    section[data-testid="stSidebar"] h2, 
-    section[data-testid="stSidebar"] p, 
-    section[data-testid="stSidebar"] span, 
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] span,
     section[data-testid="stSidebar"] label,
     section[data-testid="stSidebar"] div {
         color: #fdfbf7 !important;
@@ -214,151 +214,322 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- 3. DADOS E FEEDS ---
+# =============================================================================
+# --- 3. DADOS E FEEDS (com fallback igual ao main.py) ---
+# =============================================================================
 RSS_FEEDS = {
-    "Mercado": "https://www.infomoney.com.br/feed/",
-    "Tech": "https://rss.tecmundo.com.br/feed",
-    "Motos": "https://www.motociclismoonline.com.br/feed/", 
-    "Fofoca": "https://revistaquem.globo.com/rss/quem/",
-    "Politica": "https://g1.globo.com/rss/g1/politica/",
-    "Esportes": "https://ge.globo.com/rss/ge/",
-    "Ciencia": "https://gizmodo.uol.com.br/category/ciencia/feed/",
-    "Mundo": "https://g1.globo.com/rss/g1/mundo/"
+    "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
+    "Tech":     ["https://rss.tecmundo.com.br/feed"],
+    "Motos":    ["https://www.motociclismoonline.com.br/feed/"],
+    "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
+    "Politica": ["https://g1.globo.com/rss/g1/politica/"],
+    "Esportes": ["https://ge.globo.com/rss/ge/"],
+    "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
+    "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"]
 }
 
-# --- 4. FUNÇÕES DO GOOGLE SHEETS ---
+FALLBACK_IMAGES = {
+    "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+    "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+    "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
+    "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+    "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
+    "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+    "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
+    "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
+}
+
+# =============================================================================
+# --- 4. VALIDAÇÕES (novas) ---
+# =============================================================================
+def validar_email(email):
+    """Valida formato de e-mail com regex."""
+    padrao = r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(padrao, email.strip()))
+
+def validar_nome(nome):
+    """Nome deve ter ao menos 2 caracteres e só letras/espaços."""
+    return len(nome.strip()) >= 2
+
+# =============================================================================
+# --- 5. GOOGLE SHEETS ---
+# =============================================================================
+@st.cache_resource(ttl=300)
 def conectar_planilha():
+    """Conecta ao Google Sheets e retorna a aba de usuários."""
     if "GCP_JSON" not in st.secrets:
-        st.error("⚠️ Configuração pendente: Adicione GCP_JSON nas Secrets do Streamlit.")
         return None
     try:
         creds_dict = json.loads(st.secrets["GCP_JSON"])
-        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive"
+        ]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
         return client.open("noticias_db").sheet1
     except Exception as e:
-        st.error(f"Erro de Ligação: {e}")
+        st.error(f"Erro de conexão com o banco: {e}")
         return None
 
-def salvar_assinante(nome, email, temas):
+def email_ja_cadastrado(email):
+    """
+    (NOVO) Verifica se o e-mail já existe na planilha antes de inserir.
+    Evita duplicatas.
+    """
     sheet = conectar_planilha()
-    if not sheet: return False
-    linha = [nome, email]
-    chaves = list(RSS_FEEDS.keys())
-    for chave in chaves:
-        if chave in temas: linha.append("Sim")
-        else: linha.append("Não")
+    if not sheet:
+        return False
     try:
-        sheet.append_row(linha)
-        return True
-    except: return False
+        registros = sheet.get_all_records()
+        emails_existentes = [r.get("Email", "").strip().lower() for r in registros]
+        return email.strip().lower() in emails_existentes
+    except Exception:
+        return False
 
+def salvar_assinante(nome, email, temas):
+    """Salva novo assinante no Sheets com tratamento de erro detalhado."""
+    sheet = conectar_planilha()
+    if not sheet:
+        return False, "Não foi possível conectar ao banco de dados. Tente novamente."
+    try:
+        linha = [nome.strip(), email.strip()]
+        for chave in RSS_FEEDS.keys():
+            linha.append("Sim" if chave in temas else "Não")
+        sheet.append_row(linha)
+        return True, "Sucesso"
+    except Exception as e:
+        return False, f"Erro ao salvar: {str(e)}"
+
+# =============================================================================
+# --- 6. E-MAIL DE BOAS-VINDAS (novo) ---
+# =============================================================================
+def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
+    """
+    (NOVO) Envia um e-mail de boas-vindas assim que o leitor se inscreve.
+    Usa as mesmas credenciais do main.py via st.secrets.
+    """
+    try:
+        email_sender   = st.secrets.get("EMAIL_USER")
+        email_password = st.secrets.get("EMAIL_PASSWORD")
+        if not email_sender or not email_password:
+            return  # Sem credenciais configuradas, ignora silenciosamente
+
+        temas_html = "".join(
+            f"<li style='padding:4px 0; color:#2c2c2c;'>✅ {t}</li>"
+            for t in temas_escolhidos
+        )
+
+        html = f"""
+        <html><body style="margin:0; padding:0; background-color:#e5e3de; font-family:'Lora','Times New Roman',serif;">
+          <div style="max-width:560px; margin:30px auto; background:#fdfbf7; border-radius:8px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.07);">
+
+            <div style="padding:30px 20px; text-align:center; border-bottom:2px solid #0a5c5a;">
+              <h1 style="margin:0; font-family:'Playfair Display',Georgia,serif; font-size:28px; text-transform:uppercase; letter-spacing:2px; color:#0a5c5a;">ALL NEWS JOURNAL</h1>
+              <p style="margin:8px 0 0; font-size:12px; color:#777; font-style:italic;">Bem-vindo ao Clube Premium</p>
+            </div>
+
+            <div style="padding:30px 25px;">
+              <p style="font-size:17px; color:#2c2c2c;">Olá, <b>{nome}</b>! 👋</p>
+              <p style="font-size:15px; color:#444; line-height:1.7;">
+                A sua inscrição no <b>All News Journal</b> foi confirmada com sucesso.<br>
+                A partir de amanhã cedo, você receberá a sua edição personalizada com as notícias dos cadernos que escolheu:
+              </p>
+              <ul style="font-size:15px; padding-left:20px; line-height:1.8;">
+                {temas_html}
+              </ul>
+              <p style="font-size:14px; color:#777; margin-top:20px; font-style:italic;">
+                Se quiser alterar os seus cadernos, basta acessar o portal e se inscrever novamente com o mesmo e-mail.
+              </p>
+            </div>
+
+            <div style="text-align:center; padding:20px; background-color:#084c4a; color:#fdfbf7; font-size:12px;">
+              <p style="margin:0;">© 2026 All News Journal Group. Conteúdo Premium.</p>
+              <p style="margin:8px 0 0; font-size:10px; opacity:0.7;">Você recebeu este e-mail porque acabou de se inscrever no nosso portal.</p>
+            </div>
+
+          </div>
+        </body></html>
+        """
+
+        msg = MIMEMultipart()
+        msg['Subject'] = "📰 Bem-vindo ao All News Journal!"
+        msg['From']    = email_sender
+        msg['To']      = email_dest
+        msg.attach(MIMEText(html, 'html'))
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(email_sender, email_password)
+        server.sendmail(email_sender, email_dest, msg.as_string())
+        server.quit()
+
+    except Exception as e:
+        pass  # Boas-vindas é opcional — não bloqueia o cadastro se falhar
+
+# =============================================================================
+# --- 7. BUSCA DE NOTÍCIAS (com fallback de URL) ---
+# =============================================================================
 @st.cache_data(ttl=1800)
 def buscar_noticias(tema):
-    url = RSS_FEEDS.get(tema)
-    if not url: return []
-    
-    FALLBACK_IMAGES = {
-        "Mercado": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
-        "Tech": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
-        "Motos": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
-        "Fofoca": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
-        "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-        "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-        "Ciencia": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-        "Mundo": "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop"
-    }
+    """
+    (MELHORADO) Usa lista de URLs com fallback, igual ao main.py.
+    Avisa o usuário se todas as fontes falharem.
+    """
+    urls = RSS_FEEDS.get(tema, [])
+    extensoes = ('.jpg', '.jpeg', '.png', '.webp')
+    feed = None
 
-    try:
-        feed = feedparser.parse(url)
-        noticias = []
-        extensoes = ('.jpg', '.jpeg', '.png', '.webp')
+    for url in urls:
+        try:
+            f = feedparser.parse(url)
+            if f.entries:
+                feed = f
+                break
+        except Exception:
+            continue
 
-        for entry in feed.entries[:6]:
-            img = None
-            if 'media_content' in entry:
-                for m in entry.media_content:
-                    if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
-                        img = m['url']; break
-            if not img and 'links' in entry:
-                for l in entry.links:
-                    if l.get('type','').startswith('image/') and any(ext in l.get('href','').lower() for ext in extensoes):
-                        img = l['href']; break
-            if not img:
-                txt = ""
-                if 'content' in entry:
-                    for c in entry.content: txt += c.value
-                if 'summary' in entry: txt += entry.summary
-                matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', txt)
-                for u in matches:
-                    if any(ext in u.lower() for ext in extensoes) and "pixel" not in u and "doubleclick" not in u:
-                        img = u; break
-            if not img:
-                img = FALLBACK_IMAGES.get(tema, "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop")
-            
-            noticias.append({
-                "titulo": entry.title,
-                "link": entry.link,
-                "img": img,
-                "data": entry.get('published', '')[:16]
-            })
-        return noticias
-    except: return []
+    if not feed:
+        return []
 
-# --- 5. SIDEBAR: ÁREA DE SUBSCRIÇÃO ---
+    noticias = []
+    for entry in feed.entries[:6]:
+        img = None
+
+        if 'media_content' in entry:
+            for m in entry.media_content:
+                if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
+                    img = m['url']
+                    break
+
+        if not img and 'links' in entry:
+            for l in entry.links:
+                href = l.get('href', '')
+                if l.get('type', '').startswith('image/') and any(ext in href.lower() for ext in extensoes):
+                    img = href
+                    break
+
+        if not img:
+            txt = ""
+            if 'content' in entry:
+                for c in entry.content:
+                    txt += c.value
+            if 'summary' in entry:
+                txt += entry.summary
+            matches = re.findall(r'<img[^>]+src=[\'"]([^\'"]+)[\'"]', txt)
+            for u in matches:
+                if any(ext in u.lower() for ext in extensoes) and "pixel" not in u and "doubleclick" not in u:
+                    img = u
+                    break
+
+        if not img:
+            img = FALLBACK_IMAGES.get(
+                tema,
+                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+            )
+
+        noticias.append({
+            "titulo": entry.title,
+            "link":   entry.link,
+            "img":    img,
+            "data":   entry.get('published', '')[:16]
+        })
+
+    return noticias
+
+# =============================================================================
+# --- 8. SIDEBAR: FORMULÁRIO DE INSCRIÇÃO ---
+# =============================================================================
 with st.sidebar:
-    st.markdown("<h2 style='text-align:center; font-family: Playfair Display;'>✍️ Junte-se ao Clube</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size: 0.9rem;'>Receba a nossa curadoria premium de notícias todas as manhãs, gratuitamente.</p>", unsafe_allow_html=True)
+    st.markdown(
+        "<h2 style='text-align:center; font-family: Playfair Display;'>✍️ Junte-se ao Clube</h2>",
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        "<p style='text-align:center; font-size: 0.9rem;'>Receba a nossa curadoria premium de notícias todas as manhãs, gratuitamente.</p>",
+        unsafe_allow_html=True
+    )
     st.write("")
-    
-    with st.form("form_cadastro"):
-        nome = st.text_input("O seu Nome")
+
+    with st.form("form_cadastro", clear_on_submit=True):
+        nome  = st.text_input("O seu Nome")
         email = st.text_input("O seu melhor E-mail")
+
         st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
         st.write("**Personalize a sua Edição:**")
-        
+
         escolhas = []
         c1, c2 = st.columns(2)
         for i, tema in enumerate(RSS_FEEDS.keys()):
             col = c1 if i % 2 == 0 else c2
             if col.checkbox(tema, value=True):
                 escolhas.append(tema)
-        
+
         st.write("")
         submit = st.form_submit_button("SUBSCREVER AGORA 🗞️")
-        
+
         if submit:
-            if nome and email:
-                with st.spinner("A preparar a sua edição..."):
-                    if salvar_assinante(nome, email, escolhas):
-                        st.success("Tudo certo! Verifique o seu e-mail amanhã cedo.")
-                        st.balloons()
+            # --- Validações em cascata ---
+            erros = []
+
+            if not validar_nome(nome):
+                erros.append("Por favor, informe um nome válido (mínimo 2 caracteres).")
+
+            if not email:
+                erros.append("Por favor, informe o seu e-mail.")
+            elif not validar_email(email):
+                erros.append("O e-mail informado não parece válido. Verifique e tente novamente.")
+
+            if not escolhas:
+                erros.append("Selecione ao menos um caderno para receber.")
+
+            if erros:
+                for erro in erros:
+                    st.warning(erro)
+
             else:
-                st.warning("Por favor, preencha o Nome e o E-mail.")
+                # Verifica duplicata antes de salvar
+                with st.spinner("A verificar o seu cadastro..."):
+                    if email_ja_cadastrado(email):
+                        st.info("📬 Este e-mail já está inscrito! Você já faz parte do clube.")
+                    else:
+                        with st.spinner("A preparar a sua edição..."):
+                            ok, mensagem = salvar_assinante(nome, email, escolhas)
+                            if ok:
+                                # Dispara e-mail de boas-vindas
+                                enviar_boas_vindas(nome, email, escolhas)
+                                st.success("✅ Tudo certo! Verifique o seu e-mail — enviamos uma confirmação.")
+                                st.balloons()
+                            else:
+                                st.error(f"❌ Algo deu errado. {mensagem}")
 
-# --- 6. CONTEÚDO PRINCIPAL ---
-
+# =============================================================================
+# --- 9. CONTEÚDO PRINCIPAL ---
+# =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-# DATA EM PORTUGUÊS
+# Data em português
 hoje = datetime.now()
-meses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
-dias_semana = ["Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado", "Domingo"]
-
-dia_semana_str = dias_semana[hoje.weekday()]
-mes_str = meses[hoje.month - 1]
-data_ptbr = f"{dia_semana_str}, {hoje.day} de {mes_str} de {hoje.year}"
+meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+dias_semana = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
+data_ptbr = f"{dias_semana[hoje.weekday()]}, {hoje.day} de {meses[hoje.month-1]} de {hoje.year}"
 
 col_date, col_loc = st.columns(2)
-col_date.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>📅 {data_ptbr}</div>", unsafe_allow_html=True)
-col_loc.markdown(f"<div style='text-align:center; color: #0a5c5a; font-weight: bold; padding:5px;'>🌎 Edição Global • Online</div>", unsafe_allow_html=True)
+col_date.markdown(
+    f"<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>📅 {data_ptbr}</div>",
+    unsafe_allow_html=True
+)
+col_loc.markdown(
+    "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global • Online</div>",
+    unsafe_allow_html=True
+)
 
 st.write("")
 
 tema_atual = st.selectbox("📖 Navegue pelos Cadernos:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
 st.markdown("<br>", unsafe_allow_html=True)
 
+# --- Busca e exibe notícias ---
 noticias_display = []
 
 if tema_atual == "Capa (Destaques)":
@@ -368,8 +539,13 @@ if tema_atual == "Capa (Destaques)":
             item = res[0]
             item['tema'] = t
             noticias_display.append(item)
+        # Avisa se o caderno estiver vazio
+        elif not res:
+            pass  # Silencioso na capa — evita poluir o layout
 else:
     res = buscar_noticias(tema_atual)
+    if not res:
+        st.warning(f"⚠️ Não foi possível carregar as notícias de **{tema_atual}** agora. Tente novamente em alguns minutos.")
     for item in res:
         item['tema'] = tema_atual
         noticias_display.append(item)
@@ -391,8 +567,15 @@ if noticias_display:
                 </div>
             </div>
             """, unsafe_allow_html=True)
-else:
+elif not noticias_display and tema_atual == "Capa (Destaques)":
     st.info("A procurar as manchetes mais recentes...")
 
-st.markdown("<hr style='border-color: #0a5c5a; opacity: 0.2; margin-top: 50px;'>", unsafe_allow_html=True)
-st.markdown("<div style='text-align:center; color:#0a5c5a; font-family: Playfair Display; font-size:0.9rem;'>© 2026 All News Journal Group. Conteúdo Premium.</div>", unsafe_allow_html=True)
+# --- Rodapé ---
+st.markdown(
+    "<hr style='border-color: #0a5c5a; opacity: 0.2; margin-top: 50px;'>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    "<div style='text-align:center; color:#0a5c5a; font-family: Playfair Display; font-size:0.9rem;'>© 2026 All News Journal Group. Conteúdo Premium.</div>",
+    unsafe_allow_html=True
+)
