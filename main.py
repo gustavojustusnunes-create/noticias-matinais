@@ -33,10 +33,13 @@ RSS_FEEDS = {
 }
 
 # Filtros de palavras indesejadas por tema (expansível facilmente)
+# Verifica tanto o título quanto o link da notícia
 FILTROS_TEMA = {
-    "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet"],
+    "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
+                 "guia-de-compras", "em-oferta", "promoção", "desconto"],
     "Mercado":  ["horóscopo", "moda"],
-    "Esportes": [],
+    "Esportes": ["ao-vivo", "ao vivo", "/jogo/", "onde-assistir",
+                 "ingressos", "escalação", "prováveis-times"],
     "Politica": [],
     "Motos":    [],
     "Fofoca":   [],
@@ -161,10 +164,27 @@ def formatar_indicador(nome, valor, variacao, prefixo=""):
 def obter_indicadores():
     html_items = []
 
+    # BTC: tenta BRL primeiro, cai para USD (converte na hora) se falhar
+    def buscar_btc():
+        for ticker_id, moeda in [("BTC-BRL", "BRL"), ("BTC-USD", "USD")]:
+            try:
+                hist = yf.Ticker(ticker_id).history(period="5d")
+                if len(hist) >= 2:
+                    atual = hist['Close'].iloc[-1]
+                    ant   = hist['Close'].iloc[-2]
+                    var   = ((atual - ant) / ant) * 100
+                    if moeda == "BRL":
+                        label = f"R$ {atual/1000:.1f}k"
+                    else:
+                        label = f"US$ {atual/1000:.1f}k"
+                    return formatar_indicador("BTC", label, var, "₿")
+            except Exception as e:
+                print(f"⚠️ Alerta (BTC/{moeda}): {e}")
+        return None
+
     tickers = [
-        ("BRL=X",  "USD",  lambda v: f"R$ {v:.2f}",        "🇺🇸"),
-        ("BTC-BRL","BTC",  lambda v: f"R$ {v/1000:.1f}k",  "₿"),
-        ("^BVSP",  "IBOV", lambda v: f"{int(v)} pts",       "🇧🇷"),
+        ("BRL=X",  "USD",  lambda v: f"R$ {v:.2f}",    "🇺🇸"),
+        ("^BVSP",  "IBOV", lambda v: f"{int(v)} pts",   "🇧🇷"),
     ]
 
     for ticker_id, nome, formatar, prefixo in tickers:
@@ -177,6 +197,11 @@ def obter_indicadores():
                 html_items.append(formatar_indicador(nome, formatar(atual), var, prefixo))
         except Exception as e:
             print(f"⚠️ Alerta ({nome}): {e}")
+
+    # BTC entra entre USD e IBOV
+    btc_html = buscar_btc()
+    if btc_html:
+        html_items.insert(1, btc_html)  # posição 1 = entre USD e IBOV
 
     if not html_items:
         return ""
@@ -354,14 +379,35 @@ def processar_tema(tema, historico_hashes):
         input_txt += f"Notícia {i+1}: {e.title}\nLink: {e.link}\n\n"
 
     prompt = f"""
-    Atue como Editor Sênior. Analise estas manchetes de {tema}.
-    Para CADA notícia, escreva um resumo de 50-70 palavras.
-    Estrutura: Fato Principal + Contexto.
-    Separe com "|||". Sem introduções.
-    Input: {input_txt}
+    Você é um jornalista experiente escrevendo para um jornal digital premium brasileiro.
+    Analise estas {len(noticias_filtradas)} manchetes do caderno de {tema}.
+
+    Para CADA manchete, escreva um parágrafo de resumo com as seguintes regras OBRIGATÓRIAS:
+
+    REGRAS DE ESTILO (siga à risca):
+    1. Tom direto e natural — escreva como se estivesse contando a notícia para um amigo culto.
+    2. NUNCA use frases como "o artigo fala", "a notícia informa", "o texto explora", "a matéria aborda", "o post detalha".
+    3. NUNCA numere os resumos. Não escreva "Notícia 1:", "**Notícia 2:**" ou qualquer variação.
+    4. NUNCA use markdown — sem asteriscos, sem negrito, sem títulos.
+    5. Comece sempre pelo fato principal, depois dê contexto (máximo 65 palavras por resumo).
+    6. Use linguagem clara, sem jargão desnecessário. Seja preciso e humano.
+
+    Separe cada resumo com o marcador exato "|||" (três barras verticais). Nada mais além dos resumos.
+
+    Manchetes:
+    {input_txt}
     """
 
     resp_ia = chamar_gemini_api(prompt)
+
+    # Limpa resíduos de markdown que a IA ocasionalmente deixa
+    def limpar_resumo(texto):
+        # Remove negrito/itálico markdown
+        texto = re.sub(r'\*{1,2}([^*]+)\*{1,2}', r'\1', texto)
+        # Remove prefixos do tipo "Notícia 1:", "**Notícia 2:**", "1.", "2." no início
+        texto = re.sub(r'^[\*\s]*Not[íi]cia\s*\d+[\:\.\s\*]*', '', texto, flags=re.IGNORECASE)
+        texto = re.sub(r'^\d+[\.\)]\s*', '', texto)
+        return texto.strip()
 
     # Monta as notícias finais
     noticias_finais = []
@@ -373,7 +419,7 @@ def processar_tema(tema, historico_hashes):
 
     for i, entry in enumerate(noticias_filtradas):
         if resp_ia and i < len(resumos):
-            resumo = resumos[i]
+            resumo = limpar_resumo(resumos[i])
         else:
             resumo = resumo_fallback(entry)  # FALLBACK SEM IA
 
