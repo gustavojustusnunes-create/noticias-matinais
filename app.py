@@ -218,14 +218,14 @@ st.markdown("""
 # --- 3. DADOS E FEEDS (com fallback igual ao main.py) ---
 # =============================================================================
 RSS_FEEDS = {
+    "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
     "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
-    "Tech":     ["https://rss.tecmundo.com.br/feed"],
-    "Motos":    ["https://www.motociclismoonline.com.br/feed/"],
-    "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
+    "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": ["https://ge.globo.com/rss/ge/"],
     "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
-    "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"]
+    "Motos":    ["https://www.motociclismoonline.com.br/feed/"],
+    "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
 
 FALLBACK_IMAGES = {
@@ -287,15 +287,18 @@ def email_ja_cadastrado(email):
     except Exception:
         return False
 
-def salvar_assinante(nome, email, temas):
-    """Salva novo assinante no Sheets com tratamento de erro detalhado."""
+def salvar_assinante(nome, email, ordem_temas):
+    """
+    Salva novo assinante no Sheets.
+    ordem_temas: dict {tema: posicao} onde posicao é 1,2,3... ou "Não" se não selecionado.
+    """
     sheet = conectar_planilha()
     if not sheet:
         return False, "Não foi possível conectar ao banco de dados. Tente novamente."
     try:
         linha = [nome.strip(), email.strip()]
         for chave in RSS_FEEDS.keys():
-            linha.append("Sim" if chave in temas else "Não")
+            linha.append(ordem_temas.get(chave, "Não"))
         sheet.append_row(linha)
         return True, "Sucesso"
     except Exception as e:
@@ -438,7 +441,7 @@ def buscar_noticias(tema):
     return noticias
 
 # =============================================================================
-# --- 8. SIDEBAR: FORMULÁRIO DE INSCRIÇÃO ---
+# --- 8. SIDEBAR: FORMULÁRIO DE INSCRIÇÃO COM ORDENAÇÃO ---
 # =============================================================================
 with st.sidebar:
     st.markdown(
@@ -456,48 +459,79 @@ with st.sidebar:
         email = st.text_input("O seu melhor E-mail")
 
         st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
-        st.write("**Personalize a sua Edição:**")
+        st.markdown("**📋 Escolha e ordene os seus cadernos:**", unsafe_allow_html=False)
+        st.markdown(
+            "<p style='font-size:0.78rem; opacity:0.75; margin-top:-8px;'>"
+            "Marque os que quer receber e defina a prioridade (1 = primeiro no e-mail).</p>",
+            unsafe_allow_html=True
+        )
 
-        escolhas = []
-        c1, c2 = st.columns(2)
-        for i, tema in enumerate(RSS_FEEDS.keys()):
-            col = c1 if i % 2 == 0 else c2
-            if col.checkbox(tema, value=True):
-                escolhas.append(tema)
+        todos_temas = list(RSS_FEEDS.keys())
+        # Emojis decorativos por tema
+        ICONES = {
+            "Mundo":    "🌎", "Mercado": "📈", "Politica": "🏛️",
+            "Tech":     "💻", "Esportes": "⚽", "Ciencia":  "🔬",
+            "Motos":    "🏍️", "Fofoca":   "⭐",
+        }
+
+        ordem_temas = {}  # {tema: numero_ordem ou "Não"}
+        prioridade_usada = []  # para detectar duplicatas
+
+        for tema in todos_temas:
+            col_check, col_num = st.columns([2, 1])
+            icone = ICONES.get(tema, "📰")
+            selecionado = col_check.checkbox(f"{icone} {tema}", value=True, key=f"chk_{tema}")
+            if selecionado:
+                prioridade = col_num.number_input(
+                    "Prioridade", min_value=1, max_value=8,
+                    value=todos_temas.index(tema) + 1,
+                    key=f"num_{tema}", label_visibility="collapsed"
+                )
+                ordem_temas[tema] = int(prioridade)
+                prioridade_usada.append(int(prioridade))
+            else:
+                ordem_temas[tema] = "Não"
+                col_num.markdown("—")
 
         st.write("")
         submit = st.form_submit_button("SUBSCREVER AGORA 🗞️")
 
         if submit:
-            # --- Validações em cascata ---
             erros = []
 
             if not validar_nome(nome):
                 erros.append("Por favor, informe um nome válido (mínimo 2 caracteres).")
-
             if not email:
                 erros.append("Por favor, informe o seu e-mail.")
             elif not validar_email(email):
                 erros.append("O e-mail informado não parece válido. Verifique e tente novamente.")
 
-            if not escolhas:
+            temas_selecionados = [t for t, v in ordem_temas.items() if v != "Não"]
+            if not temas_selecionados:
                 erros.append("Selecione ao menos um caderno para receber.")
+
+            # Avisa prioridades duplicadas (não bloqueia, só alerta)
+            if len(prioridade_usada) != len(set(prioridade_usada)):
+                st.warning("⚠️ Você usou o mesmo número de prioridade em mais de um caderno. "
+                           "Tudo bem — em caso de empate, usamos a ordem padrão.")
 
             if erros:
                 for erro in erros:
                     st.warning(erro)
-
             else:
-                # Verifica duplicata antes de salvar
                 with st.spinner("A verificar o seu cadastro..."):
                     if email_ja_cadastrado(email):
                         st.info("📬 Este e-mail já está inscrito! Você já faz parte do clube.")
                     else:
                         with st.spinner("A preparar a sua edição..."):
-                            ok, mensagem = salvar_assinante(nome, email, escolhas)
+                            ok, mensagem = salvar_assinante(nome, email, ordem_temas)
                             if ok:
-                                # Dispara e-mail de boas-vindas
-                                enviar_boas_vindas(nome, email, escolhas)
+                                # Monta lista ordenada para o e-mail de boas-vindas
+                                temas_ordenados = sorted(
+                                    temas_selecionados,
+                                    key=lambda t: ordem_temas[t]
+                                )
+                                enviar_boas_vindas(nome, email, temas_ordenados)
                                 st.success("✅ Tudo certo! Verifique o seu e-mail — enviamos uma confirmação.")
                                 st.balloons()
                             else:
