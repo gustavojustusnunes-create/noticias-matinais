@@ -192,19 +192,42 @@ st.markdown("""
         border-radius: 5px !important;
         border: none !important;
     }
+
+    /* Botões ↑ ↓ de reordenação — compactos, turquesa */
     section[data-testid="stSidebar"] .stButton button {
+        background-color: rgba(255,255,255,0.15) !important;
+        color: #fdfbf7 !important;
+        font-weight: 900 !important;
+        font-size: 1rem !important;
+        border-radius: 6px !important;
+        border: 1px solid rgba(253,251,247,0.4) !important;
+        width: 100% !important;
+        padding: 2px 0 !important;
+        transition: all 0.2s ease;
+    }
+    section[data-testid="stSidebar"] .stButton button:hover {
+        background-color: rgba(255,255,255,0.30) !important;
+        border-color: #fdfbf7 !important;
+        transform: scale(1.05);
+    }
+
+    /* Botão principal "Subscrever" — destaque em creme */
+    section[data-testid="stSidebar"] .stButton button[kind="secondary"],
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
         background-color: #fdfbf7 !important;
         color: #084c4a !important;
         font-weight: 900 !important;
-        border-radius: 5px !important;
+        font-size: 0.95rem !important;
         border: 2px solid #fdfbf7 !important;
-        width: 100%;
-        transition: all 0.3s ease;
+        border-radius: 5px !important;
+        padding: 10px 0 !important;
     }
-    section[data-testid="stSidebar"] .stButton button:hover {
+    section[data-testid="stSidebar"] .stButton button[kind="secondary"]:hover,
+    section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
         background-color: #e5e3de !important;
         transform: scale(1.02);
     }
+
     [data-testid="stForm"] {
         border: 1px solid rgba(253, 251, 247, 0.2);
         background-color: rgba(0, 0, 0, 0.1);
