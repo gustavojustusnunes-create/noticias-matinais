@@ -28,14 +28,31 @@ RSS_FEEDS = {
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
-        # Múltiplas fontes para cobertura ampla além do futebol
+        # F1, NBA, NFL em primeiro para priorizar nas coletas
+        "https://www.motorsport.com/rss/f1/news/",               # F1 Motorsport
+        "https://sportv.globo.com/rss/sportv/",                  # SporTV (F1, NBA, tênis etc)
+        "https://www.espn.com.br/rss/",                          # ESPN Brasil (NBA, NFL, F1)
         "https://ge.globo.com/rss/ge/",                          # GE Globo geral
-        "https://sportv.globo.com/rss/sportv/",                  # SporTV (F1, tênis, NBA etc)
         "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
-        "https://www.espn.com.br/rss/",                          # ESPN Brasil
+    ],
+    "Cinema":   [
+        "https://www.adorocinema.com/noticias/filmes/rss/",      # AdoroCinema
+        "https://www.omelete.com.br/rss/",                       # Omelete (filmes + séries)
+        "https://cinemaemcena.com.br/feed/",                     # Cinema em Cena
+    ],
+    "Fitness":  [
+        "https://www.runnersworld.com.br/feed/",                 # Runners World Brasil
+        "https://www.bicycling.com.br/feed/",                    # Bicycling Brasil
+        "https://www.musculacao.net/feed/",                      # Musculação.net
+        "https://www.saudemelhor.com.br/feed/",                  # Saúde Melhor
+        "https://www.tudoemaforma.com.br/feed/",                 # Tudo em Forma
     ],
     "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
-    "Motos":    ["https://www.motociclismoonline.com.br/feed/"],
+    "Motos":    [
+        "https://www.motociclismoonline.com.br/feed/",
+        "https://www.motoo.com.br/feed/",                        # Segunda fonte de motos
+        "https://www.moto.com.br/feed/",                         # Terceira fonte
+    ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
 
@@ -44,36 +61,55 @@ RSS_FEEDS = {
 FILTROS_TEMA = {
     "Mundo":    [],
     "Mercado":  ["horóscopo", "moda", "futebol", "brasileirão", "campeonato",
-                 "onde assistir", "onde-assistir", "jogo", "gol", "escalação",
-                 "partida", "clube", "torcedor", "lollapalooza", "festival",
-                 "show", "ingresso", "previsão do tempo", "clima", "chuva",
+                 "onde assistir", "onde-assistir", "ao vivo", "ao-vivo", "jogo",
+                 "gol", "escalação", "partida", "clube", "torcedor",
+                 "lollapalooza", "festival", "show", "ingresso",
+                 "previsão do tempo", "clima", "chuva",
                  "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
-                 "guia-de-compras", "em-oferta", "promoção", "desconto"],
+                 "guia-de-compras", "em-oferta", "promoção", "desconto",
+                 "série", "elenco", "temporada", "episódio", "streaming",
+                 "jogos grátis", "resgate agora", "ps store", "xbox"],
     "Esportes": [
         # Páginas de placar/logística
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
-        # Futebol regional/amador (para limitar e dar espaço a outros esportes)
+        # Futebol regional/amador
         "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
         "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
         "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
         "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
         "copa-do-brasil-sub", "paulista-sub", "carioca-sub",
+        "futsal", "futebol-de-areia", "futebol-americano-sub",
     ],
+    "Cinema":   ["aposta", "bet", "cassino", "jogos", "futebol"],
+    "Fitness":  ["aposta", "bet", "cassino"],
     "Ciencia":  [],
     "Motos":    [],
     "Fofoca":   [],
 }
 
 # Palavras-chave de futebol para controle de proporção no caderno Esportes
+# (máx 1 futebol em 4 — liberando espaço para F1, NBA, NFL)
 PALAVRAS_FUTEBOL = [
     "futebol", "brasileirão", "série a", "serie-a", "libertadores",
     "copa do brasil", "palmeiras", "flamengo", "corinthians", "são paulo",
     "santos", "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
     "botafogo", "fluminense", "fortaleza", "bahia", "gol", "técnico",
-    "treinador", "zagueiro", "atacante", "meia", "goleiro", "volante"
+    "treinador", "zagueiro", "atacante", "meia", "goleiro", "volante",
+    "campeonato brasileiro", "premier league", "la liga", "serie a italiana",
+    "champions league", "copa-do-brasil", "brasileirao"
+]
+
+# Palavras-chave de esportes prioritários (F1, NBA, NFL)
+PALAVRAS_ESPORTES_PRIORITY = [
+    "formula 1", "formula1", "fórmula 1", "fórmula1", "f1", "gp de",
+    "grand prix", "verstappen", "hamilton", "leclerc", "norris", "ferrari",
+    "red bull racing", "mercedes f1", "mclaren f1",
+    "nba", "basquete", "basquetebol", "lakers", "warriors", "celtics",
+    "lebron", "curry", "nfl", "futebol americano", "super bowl",
+    "touchdown", "quarterback",
 ]
 
 # =============================================================================
@@ -276,14 +312,16 @@ def extrair_imagem_rss(entry, tema):
 
     if not image_url:
         FALLBACK_IMAGES = {
+            "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
             "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+            "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
             "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+            "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+            "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
+            "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+            "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
             "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
             "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
-            "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-            "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-            "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-            "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
         }
         image_url = FALLBACK_IMAGES.get(
             tema,
@@ -392,17 +430,20 @@ def e_futebol(entry):
     texto = (entry.get('title', '') + ' ' + entry.get('link', '')).lower()
     return any(p in texto for p in PALAVRAS_FUTEBOL)
 
-def titulos_similares(t1, t2):
-    """Detecta quasi-duplicatas: se >60% das palavras significativas coincidem."""
-    p1 = set(re.findall(r'\w{4,}', t1.lower()))
-    p2 = set(re.findall(r'\w{4,}', t2.lower()))
-    if not p1 or not p2:
-        return False
-    return len(p1 & p2) / min(len(p1), len(p2)) >= 0.60
+def e_esporte_prioritario(entry):
+    """Retorna True se for F1, NBA ou NFL."""
+    texto = (entry.get('title', '') + ' ' + entry.get('link', '')).lower()
+    return any(p in texto for p in PALAVRAS_ESPORTES_PRIORITY)
 
 def coletar_entries_esportes():
-    """Coleta de múltiplas fontes sem duplicar URLs."""
+    """
+    Coleta de múltiplas fontes com ordem de prioridade:
+    1. F1, NBA, NFL (esportes prioritários) — até 3 notícias
+    2. Outros esportes não-futebol — completa até 4
+    3. Futebol — máx 1 para fechar o slot se necessário
+    """
     todas_entries, vistos_urls = [], set()
+
     for url in RSS_FEEDS["Esportes"]:
         try:
             feed = feedparser.parse(url)
@@ -413,14 +454,23 @@ def coletar_entries_esportes():
                     todas_entries.append(e)
         except Exception as ex:
             print(f"      ⚠️ Falha ao ler Esportes ({url}): {ex}")
+
     return todas_entries
+
+def titulos_similares(t1, t2):
+    """Detecta quasi-duplicatas: se >50% das palavras significativas coincidem."""
+    p1 = set(re.findall(r'\w{4,}', t1.lower()))
+    p2 = set(re.findall(r'\w{4,}', t2.lower()))
+    if not p1 or not p2:
+        return False
+    return len(p1 & p2) / min(len(p1), len(p2)) >= 0.50
 
 def processar_tema(tema, historico_hashes):
     """
     Coleta, filtra e resume notícias do tema.
-    - Uma única chamada Gemini por tema (sem filtro semântico separado)
-    - Filtragem de Mercado embutida no prompt da IA (retorna SKIP para off-topic)
-    - Contexto limpo enviado à IA (sem créditos de foto, sem rodapés)
+    - Uma única chamada Gemini por tema
+    - Filtro semântico de Mercado embutido no prompt (SKIP para off-topic)
+    - Esportes: prioriza F1/NBA/NFL, máx 1 futebol em 4
     - Fallback robusto para feeds sem summary
     """
     print(f"      ...Processando {tema}...")
@@ -460,20 +510,25 @@ def processar_tema(tema, historico_hashes):
         print(f"⚠️ '{tema}' sem notícias após filtros básicos.")
         return None
 
-    # --- Diversidade Esportes: máx 2 futebol em 4 ---
+    # --- Diversidade Esportes: prioriza F1/NBA/NFL, máx 1 futebol em 4 ---
     if tema == "Esportes":
-        selecionadas, qtd_futebol = [], 0
+        prioritarios, outros, futebol_pool = [], [], []
         for entry in candidatas:
-            if e_futebol(entry):
-                if qtd_futebol < 2:
-                    selecionadas.append(entry)
-                    qtd_futebol += 1
+            if e_esporte_prioritario(entry):
+                prioritarios.append(entry)
+            elif e_futebol(entry):
+                futebol_pool.append(entry)
             else:
-                selecionadas.append(entry)
-            if len(selecionadas) >= 4:
-                break
-        candidatas = selecionadas
-        print(f"      ⚽ Esportes: {qtd_futebol} futebol + {len(candidatas)-qtd_futebol} outros.")
+                outros.append(entry)
+
+        # Monta lista: prioritários primeiro, depois outros, depois 1 futebol se necessário
+        selecionadas = (prioritarios + outros)[:4]
+        if len(selecionadas) < 4 and futebol_pool:
+            selecionadas.append(futebol_pool[0])
+        candidatas = selecionadas[:4]
+        qtd_f1_nba = sum(1 for e in candidatas if e_esporte_prioritario(e))
+        qtd_fut    = sum(1 for e in candidatas if e_futebol(e))
+        print(f"      🏎️ Esportes: {qtd_f1_nba} F1/NBA/NFL | {qtd_fut} futebol | {len(candidatas)-qtd_f1_nba-qtd_fut} outros.")
 
     # --- Deduplicação por similaridade de título ---
     noticias_filtradas = []
