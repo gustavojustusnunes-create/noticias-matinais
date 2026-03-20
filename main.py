@@ -28,30 +28,33 @@ RSS_FEEDS = {
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
-        # F1, NBA, NFL em primeiro para priorizar nas coletas
-        "https://www.motorsport.com/rss/f1/news/",               # F1 Motorsport
+        # F1 em português primeiro
+        "https://pt.motorsport.com/rss/f1/news/",               # Motorsport PT (F1)
         "https://sportv.globo.com/rss/sportv/",                  # SporTV (F1, NBA, tênis etc)
         "https://www.espn.com.br/rss/",                          # ESPN Brasil (NBA, NFL, F1)
         "https://ge.globo.com/rss/ge/",                          # GE Globo geral
         "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
     ],
     "Cinema":   [
-        "https://www.adorocinema.com/noticias/filmes/rss/",      # AdoroCinema
-        "https://www.omelete.com.br/rss/",                       # Omelete (filmes + séries)
-        "https://cinemaemcena.com.br/feed/",                     # Cinema em Cena
+        # Fontes robustas e em português
+        "https://www.omelete.com.br/rss/filmes",                 # Omelete filmes
+        "https://www.omelete.com.br/rss/series",                 # Omelete séries
+        "https://www.adorocinema.com/rss/noticias/",             # AdoroCinema
+        "https://www.papodecinema.com.br/feed/",                 # Papo de Cinema
     ],
     "Fitness":  [
-        "https://www.runnersworld.com.br/feed/",                 # Runners World Brasil
-        "https://www.bicycling.com.br/feed/",                    # Bicycling Brasil
-        "https://www.musculacao.net/feed/",                      # Musculação.net
-        "https://www.saudemelhor.com.br/feed/",                  # Saúde Melhor
-        "https://www.tudoemaforma.com.br/feed/",                 # Tudo em Forma
+        # Fontes mais robustas
+        "https://www.dicasdemulher.com.br/category/saude-e-bem-estar/feed/",  # Dicas de Mulher saúde
+        "https://www.minhavida.com.br/alimentacao/rss",           # Minha Vida alimentação
+        "https://www.minhavida.com.br/fitness/rss",               # Minha Vida fitness
+        "https://www.uol.com.br/vivabem/rss.xml",                 # UOL VivaBem
+        "https://www.runnersworld.com.br/feed/",                  # Runners World BR
     ],
     "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
     "Motos":    [
         "https://www.motociclismoonline.com.br/feed/",
-        "https://www.motoo.com.br/feed/",                        # Segunda fonte de motos
-        "https://www.moto.com.br/feed/",                         # Terceira fonte
+        "https://www.motoo.com.br/feed/",
+        "https://www.moto.com.br/feed/",
     ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
@@ -69,8 +72,14 @@ FILTROS_TEMA = {
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
                  "guia-de-compras", "em-oferta", "promoção", "desconto",
-                 "série", "elenco", "temporada", "episódio", "streaming",
-                 "jogos grátis", "resgate agora", "ps store", "xbox"],
+                 # Entretenimento/fofoca que escapa do TecMundo
+                 "adeus,", "homenagem", "morre", "falece", "morte",
+                 "ator", "atriz", "celebridade", "chuck norris", "stallone",
+                 # Gaming off-topic
+                 "troféus", "conquistas", "guia de", "lista de troféus",
+                 # Séries/filmes (vão para Cinema)
+                 "série", "elenco", "temporada", "episódio",
+                 "jogos grátis", "resgate agora", "ps store", "xbox game pass"],
     "Esportes": [
         # Páginas de placar/logística
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
@@ -81,10 +90,11 @@ FILTROS_TEMA = {
         "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
         "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
         "copa-do-brasil-sub", "paulista-sub", "carioca-sub",
-        "futsal", "futebol-de-areia", "futebol-americano-sub",
+        "futsal", "futebol-de-areia",
     ],
-    "Cinema":   ["aposta", "bet", "cassino", "jogos", "futebol"],
-    "Fitness":  ["aposta", "bet", "cassino"],
+    "Cinema":   ["aposta", "bet", "cassino", "futebol", "jogos", "esporte"],
+    "Fitness":  ["aposta", "bet", "cassino", "futebol", "moda", "beleza",
+                 "maquiagem", "cabelo", "unhas"],
     "Ciencia":  [],
     "Motos":    [],
     "Fofoca":   [],
@@ -476,8 +486,28 @@ def processar_tema(tema, historico_hashes):
     print(f"      ...Processando {tema}...")
 
     # --- Coleta ---
-    if tema == "Esportes":
-        valid_entries = coletar_entries_esportes()
+    # Esportes: coleta de todas as fontes para ter pool diverso
+    # Cinema/Fitness: também tenta todas as fontes pois feeds individuais são pequenos
+    TEMAS_MULTI_FONTE = {"Esportes", "Cinema", "Fitness"}
+
+    if tema in TEMAS_MULTI_FONTE:
+        if tema == "Esportes":
+            valid_entries = coletar_entries_esportes()
+        else:
+            # Coleta de todas as fontes, sem parar na primeira
+            valid_entries = []
+            vistos_urls = set()
+            for url in RSS_FEEDS.get(tema, []):
+                try:
+                    feed = feedparser.parse(url)
+                    for e in feed.entries:
+                        link = e.get('link', '')
+                        if link not in vistos_urls:
+                            vistos_urls.add(link)
+                            valid_entries.append(e)
+                except Exception as ex:
+                    print(f"      ⚠️ Falha ao ler {tema} ({url}): {ex}")
+            print(f"      📡 {tema}: {len(valid_entries)} entradas coletadas de todas as fontes.")
     else:
         valid_entries = []
         for url in RSS_FEEDS.get(tema, []):
