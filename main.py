@@ -36,21 +36,26 @@ RSS_FEEDS = {
         "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
     ],
     "Cinema":   [
-        # Fontes robustas e em português
-        "https://www.omelete.com.br/rss/filmes",                 # Omelete filmes
-        "https://www.omelete.com.br/rss/series",                 # Omelete séries
-        "https://www.adorocinema.com/rss/noticias/",             # AdoroCinema
-        "https://www.papodecinema.com.br/feed/",                 # Papo de Cinema
+        # Fontes com feeds RSS confirmados
+        "https://www.omelete.com.br/rss/",                        # Omelete geral (filmes + séries)
+        "https://www.adorocinema.com/rss/",                       # AdoroCinema
+        "https://www.papodecinema.com.br/feed/",                  # Papo de Cinema
+        "https://www.cinepop.com.br/feed",                        # CinePOP
     ],
     "Fitness":  [
-        # Fontes mais robustas
-        "https://www.dicasdemulher.com.br/category/saude-e-bem-estar/feed/",  # Dicas de Mulher saúde
-        "https://www.minhavida.com.br/alimentacao/rss",           # Minha Vida alimentação
+        "https://www.uol.com.br/vivabem/rss.xml",                 # UOL VivaBem (robusto)
         "https://www.minhavida.com.br/fitness/rss",               # Minha Vida fitness
-        "https://www.uol.com.br/vivabem/rss.xml",                 # UOL VivaBem
-        "https://www.runnersworld.com.br/feed/",                  # Runners World BR
+        "https://www.minhavida.com.br/alimentacao/rss",           # Minha Vida alimentação
+        "https://www.dicasdemulher.com.br/category/saude-e-bem-estar/feed/",
+        "https://www.runnersworld.com.br/feed/",
     ],
-    "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
+    "Ciencia":  [
+        # Múltiplas fontes — Gizmodo UOL pode estar instável
+        "https://gizmodo.uol.com.br/feed/",                       # Gizmodo UOL geral
+        "https://www.inovacaotecnologica.com.br/boletim/rss.xml", # Inovação Tecnológica (ativo)
+        "https://feeds.feedburner.com/canaltechbr",               # Canaltech (tech + ciência)
+        "https://www.tecmundo.com.br/ciencia/rss",                # TecMundo ciência
+    ],
     "Motos":    [
         "https://www.motociclismoonline.com.br/feed/",
         "https://www.motoo.com.br/feed/",
