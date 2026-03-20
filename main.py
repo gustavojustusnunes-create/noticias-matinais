@@ -322,33 +322,37 @@ def chamar_gemini_api(prompt):
 
 def limpar_texto_rss(texto):
     """
-    Remove lixo comum de feeds RSS antes de processar:
+    Remove lixo comum de feeds RSS:
     - Tags HTML
-    - Rodapés do tipo 'The post X appeared first on Y.'
-    - Créditos de imagem (Reuters, AFP, etc.) no início
-    - Entidades HTML (&amp; &#8220; etc.)
-    - Espaços duplicados
+    - Rodapés 'The post X appeared first on Y.' (qualquer posição, com ou sem \n)
+    - Créditos de foto (Reuters/X, AFP, AP etc.) em qualquer posição
+    - Entidades HTML
+    - Espaços/quebras duplicados
     """
     # Remove tags HTML
     texto = re.sub(r'<[^>]+>', '', texto)
-    # Remove rodapé do InfoMoney e similares
-    texto = re.sub(r'The post .+? appeared first on .+?\.', '', texto, flags=re.DOTALL)
-    texto = re.sub(r'appeared first on .+', '', texto)
-    # Remove créditos de foto no início (ex: "Reuters/John Doe " ou "AFP ")
-    texto = re.sub(r'^(Reuters|AFP|AP|EFE|G1|Globo|GE)[^\n]{0,60}\n', '', texto)
-    # Decodifica entidades HTML comuns
+    # Decodifica entidades HTML ANTES de aplicar outros filtros
     texto = texto.replace('&#8220;', '"').replace('&#8221;', '"')
     texto = texto.replace('&#8216;', "'").replace('&#8217;', "'")
     texto = texto.replace('&amp;', '&').replace('&quot;', '"')
     texto = texto.replace('&nbsp;', ' ')
+    # Remove rodapé InfoMoney/WordPress em qualquer posição (com \n ou sem)
+    texto = re.sub(r'\s*The post .+?appeared first on .+?\.?\s*', ' ', texto, flags=re.DOTALL | re.IGNORECASE)
+    texto = re.sub(r'\s*appeared first on .+', '', texto, flags=re.IGNORECASE)
+    # Remove créditos de foto em qualquer posição: "Reuters/Nome", "AFP/Nome", "AP Photo/Nome"
+    texto = re.sub(r'\b(Reuters|AFP|AP|EFE|G1|Globo|GE|Getty)[\s/][^\.\n]{0,60}', ' ', texto, flags=re.IGNORECASE)
+    # Remove frases só de legenda de foto (começa com agência de notícia)
+    texto = re.sub(r'(Reuters|AFP|AP|EFE)/\S+', '', texto, flags=re.IGNORECASE)
     # Remove espaços/quebras duplicados
     texto = re.sub(r'\s+', ' ', texto).strip()
     return texto
 
 def resumo_fallback(entry):
     """
-    Fallback: extrai resumo direto do RSS quando a IA não está disponível.
+    Fallback quando a IA não retorna resumo.
+    Tenta em ordem: summary → content → nada.
     Limpa lixo, limita a 60 palavras.
+    Nunca retorna texto menor que 15 palavras (sinal de lixo restante).
     """
     texto = ""
     if 'summary' in entry:
@@ -357,18 +361,22 @@ def resumo_fallback(entry):
         texto = entry.content[0].value
 
     texto = limpar_texto_rss(texto)
-
     palavras = texto.split()
+
+    # Se sobrou menos de 15 palavras úteis, provavelmente é lixo
+    if len(palavras) < 15:
+        return ""  # sinaliza para o chamador que não tem texto
+
     if len(palavras) > 60:
         texto = " ".join(palavras[:60]) + "..."
 
-    return texto if texto else "Acesse o link abaixo para ler a matéria completa."
+    return texto
 
 # =============================================================================
 # --- 9. PROCESSAMENTO DE TEMA ---
 # =============================================================================
 def aplicar_filtros(entry, tema):
-    """Filtro genérico por tema. Verifica título e link contra lista de palavras proibidas."""
+    """Filtro por tema. Verifica título e link contra lista de palavras proibidas."""
     palavras_proibidas = FILTROS_TEMA.get(tema, [])
     if not palavras_proibidas:
         return True
@@ -385,54 +393,16 @@ def e_futebol(entry):
     return any(p in texto for p in PALAVRAS_FUTEBOL)
 
 def titulos_similares(t1, t2):
-    """
-    Detecta notícias quase-duplicadas comparando palavras em comum.
-    Se >60% das palavras do título menor estiverem no maior, considera similar.
-    """
+    """Detecta quasi-duplicatas: se >60% das palavras significativas coincidem."""
     p1 = set(re.findall(r'\w{4,}', t1.lower()))
     p2 = set(re.findall(r'\w{4,}', t2.lower()))
     if not p1 or not p2:
         return False
-    intersecao = p1 & p2
-    menor = min(len(p1), len(p2))
-    return len(intersecao) / menor >= 0.60
-
-def filtro_semantico_mercado(titulos_candidatos):
-    """
-    (NOVO) Usa Gemini para classificar quais títulos são genuinamente
-    de economia/mercado financeiro. Descarta os que não forem.
-    Retorna lista de índices aprovados (0-based).
-    """
-    if not titulos_candidatos or not GEMINI_KEY:
-        return list(range(len(titulos_candidatos)))
-
-    lista_txt = "\n".join(f"{i+1}. {t}" for i, t in enumerate(titulos_candidatos))
-    prompt = f"""Você é um editor de economia. Avalie cada manchete abaixo e diga se é genuinamente sobre economia, finanças, mercado financeiro, negócios ou política econômica.
-
-Responda APENAS com os números das manchetes aprovadas, separados por vírgula. Sem explicações.
-Exemplo de resposta: 1, 3, 4
-
-Manchetes:
-{lista_txt}"""
-
-    resp = chamar_gemini_api(prompt)
-    if not resp:
-        return list(range(len(titulos_candidatos)))
-
-    try:
-        aprovados = [int(x.strip()) - 1 for x in resp.split(',') if x.strip().isdigit()]
-        return [i for i in aprovados if 0 <= i < len(titulos_candidatos)]
-    except Exception:
-        return list(range(len(titulos_candidatos)))
+    return len(p1 & p2) / min(len(p1), len(p2)) >= 0.60
 
 def coletar_entries_esportes():
-    """
-    (NOVO) Coleta de múltiplas fontes e garante diversidade:
-    máximo 2 notícias de futebol nas 4 selecionadas.
-    """
-    todas_entries = []
-    vistos_urls = set()
-
+    """Coleta de múltiplas fontes sem duplicar URLs."""
+    todas_entries, vistos_urls = [], set()
     for url in RSS_FEEDS["Esportes"]:
         try:
             feed = feedparser.parse(url)
@@ -443,14 +413,15 @@ def coletar_entries_esportes():
                     todas_entries.append(e)
         except Exception as ex:
             print(f"      ⚠️ Falha ao ler Esportes ({url}): {ex}")
-
     return todas_entries
 
 def processar_tema(tema, historico_hashes):
     """
     Coleta, filtra e resume notícias do tema.
-    Inclui: limpeza de lixo RSS, filtro semântico (Mercado),
-    controle de diversidade (Esportes), deduplicação por similaridade.
+    - Uma única chamada Gemini por tema (sem filtro semântico separado)
+    - Filtragem de Mercado embutida no prompt da IA (retorna SKIP para off-topic)
+    - Contexto limpo enviado à IA (sem créditos de foto, sem rodapés)
+    - Fallback robusto para feeds sem summary
     """
     print(f"      ...Processando {tema}...")
 
@@ -458,9 +429,8 @@ def processar_tema(tema, historico_hashes):
     if tema == "Esportes":
         valid_entries = coletar_entries_esportes()
     else:
-        urls = RSS_FEEDS.get(tema, [])
         valid_entries = []
-        for url in urls:
+        for url in RSS_FEEDS.get(tema, []):
             try:
                 feed = feedparser.parse(url)
                 if feed.entries:
@@ -473,7 +443,7 @@ def processar_tema(tema, historico_hashes):
         print(f"❌ Todas as fontes de '{tema}' falharam.")
         return None
 
-    # --- Filtros de conteúdo + duplicata por hash ---
+    # --- Filtros de conteúdo + hash ---
     candidatas = []
     for entry in valid_entries:
         if not aplicar_filtros(entry, tema):
@@ -483,21 +453,14 @@ def processar_tema(tema, historico_hashes):
             print(f"      ↩️ Duplicata ignorada: {entry.get('title', '')[:50]}...")
             continue
         candidatas.append(entry)
-        if len(candidatas) >= 20:  # pool generoso para filtros posteriores
+        if len(candidatas) >= 20:
             break
 
     if not candidatas:
-        print(f"⚠️ '{tema}' sem notícias novas após filtros básicos.")
+        print(f"⚠️ '{tema}' sem notícias após filtros básicos.")
         return None
 
-    # --- Filtro semântico para Mercado ---
-    if tema == "Mercado":
-        titulos_pool = [e.get('title', '') for e in candidatas[:10]]
-        indices_ok = filtro_semantico_mercado(titulos_pool)
-        candidatas = [candidatas[i] for i in indices_ok if i < len(candidatas)]
-        print(f"      🔍 Filtro semântico Mercado: {len(indices_ok)}/10 aprovadas.")
-
-    # --- Controle de diversidade para Esportes (máx 2 futebol em 4) ---
+    # --- Diversidade Esportes: máx 2 futebol em 4 ---
     if tema == "Esportes":
         selecionadas, qtd_futebol = [], 0
         for entry in candidatas:
@@ -512,12 +475,11 @@ def processar_tema(tema, historico_hashes):
         candidatas = selecionadas
         print(f"      ⚽ Esportes: {qtd_futebol} futebol + {len(candidatas)-qtd_futebol} outros.")
 
-    # --- Deduplicação por similaridade de título (evita mesma notícia de 2 fontes) ---
+    # --- Deduplicação por similaridade de título ---
     noticias_filtradas = []
     for entry in candidatas:
         titulo_novo = entry.get('title', '')
-        similar = any(titulos_similares(titulo_novo, e.get('title', '')) for e in noticias_filtradas)
-        if not similar:
+        if not any(titulos_similares(titulo_novo, e.get('title', '')) for e in noticias_filtradas):
             noticias_filtradas.append(entry)
         if len(noticias_filtradas) >= 4:
             break
@@ -526,61 +488,92 @@ def processar_tema(tema, historico_hashes):
         print(f"⚠️ '{tema}' sem notícias após deduplicação.")
         return None
 
-    # --- Prepara input para a IA (com limpeza de lixo RSS) ---
+    # --- Monta input para Gemini (apenas título — sem contexto sujo) ---
     input_txt = ""
     for i, e in enumerate(noticias_filtradas):
-        titulo  = e.get('title', '')
-        summary = limpar_texto_rss(e.get('summary', '') or '')
-        summary_trunc = ' '.join(summary.split()[:80])  # limita contexto
-        input_txt += f"Notícia {i+1}: {titulo}\nContexto: {summary_trunc}\nLink: {e.get('link','')}\n\n"
+        input_txt += f"Notícia {i+1}: {e.get('title', '')}\n\n"
 
-    prompt = f"""
-    Você é um jornalista experiente escrevendo para um jornal digital premium brasileiro.
-    Analise estas {len(noticias_filtradas)} manchetes do caderno de {tema}.
+    # Instrução extra para Mercado: filtro semântico embutido no mesmo prompt
+    instrucao_mercado = ""
+    if tema == "Mercado":
+        instrucao_mercado = """
+    REGRA EXTRA para o caderno Mercado:
+    - Se uma manchete NÃO for sobre economia, finanças, mercado financeiro ou negócios
+      (ex: esporte, entretenimento, clima, festivais), escreva exatamente a palavra SKIP
+      como resumo dela, sem mais nada.
+    - Notícias genuínas de economia recebem o resumo normal.
+"""
 
-    Para CADA manchete, escreva um parágrafo de resumo com as seguintes regras OBRIGATÓRIAS:
+    prompt = f"""Você é um jornalista experiente escrevendo para um jornal digital premium brasileiro.
+Analise estas {len(noticias_filtradas)} manchetes do caderno de {tema}.
 
-    REGRAS DE ESTILO (siga à risca):
-    1. Tom direto e natural — escreva como se estivesse contando a notícia para um amigo culto, de forma objetiva.
-    2. PROIBIDO usar qualquer dessas expressões: "o artigo fala", "a notícia informa", "o texto explora",
-       "a matéria aborda", "o post detalha", "o que se espera", "a notícia detalha", "a notícia destaca".
-    3. PROIBIDO numerar os resumos. Não escreva "Notícia 1:", "**Notícia 2:**", "1.", "2." ou qualquer variação.
-    4. PROIBIDO usar markdown — sem asteriscos, sem negrito, sem títulos, sem bullet points.
-    5. Comece sempre pelo fato principal em si, depois adicione contexto (máximo 65 palavras por resumo).
-    6. Use linguagem clara, sem jargão. Seja preciso e humano. Escreva sempre na voz ativa.
+Para CADA manchete, escreva um resumo seguindo TODAS as regras abaixo:
 
-    Separe cada resumo com o marcador exato "|||" (três barras verticais). Nada mais além dos resumos.
+REGRAS OBRIGATÓRIAS:
+1. Tom direto e natural — como se estivesse contando para um amigo culto.
+2. PROIBIDO: "o artigo fala", "a notícia informa", "o texto explora", "a matéria aborda",
+   "o post detalha", "o que se espera", "a notícia detalha", "a notícia destaca".
+3. PROIBIDO numerar os resumos ("Notícia 1:", "1.", etc.).
+4. PROIBIDO usar markdown (asteriscos, negrito, títulos, bullet points).
+5. Comece sempre pelo fato principal. Máximo 65 palavras por resumo.
+6. Se o título for sua única informação, escreva um resumo informativo baseado só nele.
+7. Linguagem clara, voz ativa, sem jargão.
+{instrucao_mercado}
+Separe cada resumo com "|||" (três barras verticais). Nada mais além dos resumos.
 
-    Manchetes:
-    {input_txt}
-    """
+Manchetes:
+{input_txt}"""
 
     resp_ia = chamar_gemini_api(prompt)
 
     def limpar_resumo(texto):
+        # Remove markdown residual
         texto = re.sub(r'\*{1,2}([^*]+)\*{1,2}', r'\1', texto)
         texto = re.sub(r'^[\*\s]*Not[íi]cia\s*\d+[\:\.\s\*]*', '', texto, flags=re.IGNORECASE)
         texto = re.sub(r'^\d+[\.\)]\s*', '', texto)
-        # Remove rodapé RSS que possa ter escapado
-        texto = re.sub(r'The post .+? appeared first on .+?\.?$', '', texto, flags=re.DOTALL)
+        # Remove lixo RSS que possa ter escapado
+        texto = limpar_texto_rss(texto)
         return texto.strip()
 
-    noticias_finais = []
-    resumos = [r.strip() for r in resp_ia.split('|||') if r.strip()] if resp_ia else []
-    if not resp_ia:
+    resumos_ia = []
+    if resp_ia:
+        resumos_ia = [r.strip() for r in resp_ia.split('|||') if r.strip()]
+        # Garante que temos resumos suficientes (Gemini às vezes retorna menos)
+        while len(resumos_ia) < len(noticias_filtradas):
+            resumos_ia.append("")
+    else:
         print(f"      ⚠️ IA indisponível para '{tema}'. Usando fallback RSS.")
 
+    # --- Monta notícias finais ---
+    noticias_finais = []
     for i, entry in enumerate(noticias_filtradas):
-        resumo = limpar_resumo(resumos[i]) if resp_ia and i < len(resumos) else resumo_fallback(entry)
-        img    = extrair_imagem_rss(entry, tema)
+        resumo_bruto = resumos_ia[i] if resp_ia and i < len(resumos_ia) else ""
+        resumo_limpo = limpar_resumo(resumo_bruto)
+
+        # Se Gemini retornou SKIP (filtro semântico de Mercado) → pula
+        if resumo_limpo.strip().upper() == "SKIP":
+            print(f"      🚫 Mercado SKIP: {entry.get('title','')[:50]}")
+            continue
+
+        # Se resumo da IA ficou vazio → usa fallback do RSS
+        if not resumo_limpo:
+            resumo_fallback_txt = resumo_fallback(entry)
+            # Se fallback também ficou vazio → gera aviso genérico com o título
+            if not resumo_fallback_txt:
+                titulo = entry.get('title', '')
+                resumo_limpo = f"Confira o que está acontecendo: {titulo}."
+            else:
+                resumo_limpo = resumo_fallback_txt
+
+        img = extrair_imagem_rss(entry, tema)
         noticias_finais.append({
             "titulo": entry.get('title', ''),
             "link":   entry.get('link', ''),
             "imagem": img,
-            "resumo": resumo,
+            "resumo": resumo_limpo,
         })
 
-    return noticias_finais
+    return noticias_finais if noticias_finais else None
 
 # =============================================================================
 # --- 10. TEMPLATE DO E-MAIL ---
