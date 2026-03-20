@@ -2,16 +2,57 @@ name: Despertador do Site Premium
 
 on:
   schedule:
-    - cron: '*/15 * * * *' 
-  workflow_dispatch:
+    - cron: '*/15 * * * *'   # A cada 15 minutos
+  workflow_dispatch:           # Permite rodar manualmente
 
 jobs:
   wake_up:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+
     steps:
-    - name: Acordar Servidor (Gerenciando Cookies)
-      run: |
-        # Usando -c e -b para salvar e enviar cookies. Isso simula uma sessão real de usuário.
-        # Ao aceitar o cookie, o Streamlit é obrigado a carregar o contêiner e a página completa.
-        curl -c cookies.txt -b cookies.txt -sL --max-time 60 https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/ > /dev/null
-        echo "Ping executado com sucesso e página renderizada. Servidor acordado!"
+      - name: Instalar Python e Playwright
+        run: |
+          pip install playwright --quiet
+          playwright install chromium --with-deps --quiet
+
+      - name: Acordar o Streamlit
+        run: |
+          python3 - << 'EOF'
+          import asyncio
+          from playwright.async_api import async_playwright
+
+          URL = "https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/"
+          TIMEOUT = 60000  # 60 segundos
+
+          async def acordar():
+              async with async_playwright() as p:
+                  browser = await p.chromium.launch(headless=True)
+                  page    = await browser.new_page()
+
+                  print(f"🌐 Acessando {URL}...")
+                  await page.goto(URL, timeout=TIMEOUT)
+
+                  # Aguarda até 15s para ver se aparece o botão de despertar
+                  try:
+                      botao = page.get_by_role("button", name="Yes, get this app back up!")
+                      await botao.wait_for(timeout=15000)
+                      await botao.click()
+                      print("🔔 App estava dormindo — botão clicado!")
+                  except Exception:
+                      print("✅ App já estava acordado.")
+
+                  # Aguarda o app carregar de verdade (elemento do Streamlit visível)
+                  try:
+                      await page.wait_for_selector(
+                          "[data-testid='stApp'], [data-testid='stAppViewContainer']",
+                          timeout=TIMEOUT
+                      )
+                      print("✅ App carregado com sucesso!")
+                  except Exception:
+                      print("⚠️ Timeout ao aguardar o app — pode estar demorando mais que o normal.")
+
+                  await browser.close()
+
+          asyncio.run(acordar())
+          EOF
