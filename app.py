@@ -275,21 +275,45 @@ RSS_FEEDS = {
     "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
-    "Esportes": ["https://ge.globo.com/rss/ge/"],
+    "Esportes": [
+        "https://www.motorsport.com/rss/f1/news/",
+        "https://sportv.globo.com/rss/sportv/",
+        "https://www.espn.com.br/rss/",
+        "https://ge.globo.com/rss/ge/",
+        "https://www.uol.com.br/esporte/rss.xml",
+    ],
+    "Cinema":   [
+        "https://www.adorocinema.com/noticias/filmes/rss/",
+        "https://www.omelete.com.br/rss/",
+        "https://cinemaemcena.com.br/feed/",
+    ],
+    "Fitness":  [
+        "https://www.runnersworld.com.br/feed/",
+        "https://www.bicycling.com.br/feed/",
+        "https://www.musculacao.net/feed/",
+        "https://www.saudemelhor.com.br/feed/",
+        "https://www.tudoemaforma.com.br/feed/",
+    ],
     "Ciencia":  ["https://gizmodo.uol.com.br/category/ciencia/feed/"],
-    "Motos":    ["https://www.motociclismoonline.com.br/feed/"],
+    "Motos":    [
+        "https://www.motociclismoonline.com.br/feed/",
+        "https://www.motoo.com.br/feed/",
+        "https://www.moto.com.br/feed/",
+    ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
 
 FALLBACK_IMAGES = {
+    "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
     "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+    "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
     "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+    "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+    "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
+    "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+    "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
     "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
     "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
-    "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-    "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-    "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-    "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
 }
 
 # =============================================================================
@@ -498,9 +522,10 @@ def buscar_noticias(tema):
 # =============================================================================
 
 ICONES = {
-    "Mundo":    "🌎", "Mercado": "📈", "Politica": "🏛️",
-    "Tech":     "💻", "Esportes": "⚽", "Ciencia":  "🔬",
-    "Motos":    "🏍️", "Fofoca":   "⭐",
+    "Mundo":    "🌎", "Mercado":  "📈", "Politica": "🏛️",
+    "Tech":     "💻", "Esportes": "🏎️", "Cinema":   "🎬",
+    "Fitness":  "🏃", "Ciencia":  "🔬", "Motos":    "🏍️",
+    "Fofoca":   "⭐",
 }
 
 # Inicializa session_state na primeira execução
