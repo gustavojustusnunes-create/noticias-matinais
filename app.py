@@ -290,10 +290,10 @@ RSS_FEEDS = {
     ],
     "Fitness":  [
         "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
+        "https://saude.abril.com.br/feed/",                      # Saúde Abril
+        "https://www.terra.com.br/vida-e-estilo/saude/rss",      # Terra Saúde
         "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
         "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
-        "https://www.minhavida.com.br/saude/rss",                # Minha Vida saúde
-        "https://www.uol.com.br/nossa/rss.xml",                  # UOL Nossa saúde/bem-estar
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -552,27 +552,46 @@ def buscar_noticias(tema):
     if not entries_filtradas:
         return []
 
-    # Fallbacks por modalidade esportiva (evita imagem repetida)
-    FALLBACK_ESPORTES = {
-        "f1": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "formula": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "grand prix": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "gp de": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "verstappen": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "hamilton": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "ferrari": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-        "nba": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        "basquete": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        "lebron": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        "nfl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
-        "super bowl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
-        "tênis": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "open": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "fonseca": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "alcaraz": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "motogp": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
-        "márquez": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+    # Fallbacks verificados por modalidade esportiva
+    FALLBACK_ESPORTES_KEYWORD = {
+        # F1
+        "f1":           "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "formula":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "grand prix":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "gp de":        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "verstappen":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "hamilton":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "ferrari":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        "leclerc":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+        # NBA / Basquete
+        "nba":          "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        "basquete":     "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        "lebron":       "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        "curry":        "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        # NFL
+        "nfl":          "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+        "super bowl":   "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+        # Tênis
+        "tênis":        "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "tennis":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "fonseca":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "alcaraz":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "sinner":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "miami open":   "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        # MotoGP (IDs verificados)
+        "motogp":       "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+        "moto gp":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+        "márquez":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+        "moreira":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
     }
+
+    # Rotação de imagens genéricas para quando não há keyword — evita repetição
+    FALLBACK_ESPORTES_GENERIC = [
+        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",  # estádio
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",  # atletismo
+        "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",  # campo
+        "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",  # ciclismo
+    ]
 
     noticias = []
     for entry in entries_filtradas:
@@ -615,13 +634,13 @@ def buscar_noticias(tema):
                     img = u
                     break
 
-        # 5. Fallback — Esportes usa imagem por modalidade; outros usam genérico do tema
+        # 5. Fallback — Esportes usa keyword primeiro, depois rotação por índice
         if not img:
             if tema == "Esportes":
                 titulo_lower = entry.get('title', '').lower()
                 img = next(
-                    (url for kw, url in FALLBACK_ESPORTES.items() if kw in titulo_lower),
-                    FALLBACK_IMAGES.get("Esportes")
+                    (url for kw, url in FALLBACK_ESPORTES_KEYWORD.items() if kw in titulo_lower),
+                    FALLBACK_ESPORTES_GENERIC[len(noticias) % len(FALLBACK_ESPORTES_GENERIC)]
                 )
             else:
                 img = FALLBACK_IMAGES.get(
