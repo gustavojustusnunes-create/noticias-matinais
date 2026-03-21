@@ -276,37 +276,73 @@ RSS_FEEDS = {
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
-        "https://pt.motorsport.com/rss/f1/news/",
-        "https://sportv.globo.com/rss/sportv/",
-        "https://www.espn.com.br/rss/",
-        "https://ge.globo.com/rss/ge/",
-        "https://www.uol.com.br/esporte/rss.xml",
+        "https://pt.motorsport.com/rss/f1/news/",                # Motorsport PT — F1
+        "https://www.espn.com.br/rss/",                          # ESPN Brasil — NBA/NFL/F1
+        "https://sportv.globo.com/rss/sportv/",                  # SporTV
+        "https://ge.globo.com/rss/ge/",                          # GE Globo
+        "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
     ],
     "Cinema":   [
-        "https://www.omelete.com.br/rss/",
-        "https://www.adorocinema.com/rss/",
-        "https://www.papodecinema.com.br/feed/",
-        "https://www.cinepop.com.br/feed",
+        "https://www.omelete.com.br/rss/",                       # Omelete (filmes + séries)
+        "https://www.cinepop.com.br/feed",                       # CinePOP
+        "https://www.papodecinema.com.br/feed/",                 # Papo de Cinema
+        "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        "https://www.uol.com.br/vivabem/rss.xml",
-        "https://www.minhavida.com.br/fitness/rss",
-        "https://www.minhavida.com.br/alimentacao/rss",
-        "https://www.dicasdemulher.com.br/category/saude-e-bem-estar/feed/",
-        "https://www.runnersworld.com.br/feed/",
+        "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
+        "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
+        "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
     ],
     "Ciencia":  [
-        "https://gizmodo.uol.com.br/feed/",
-        "https://www.inovacaotecnologica.com.br/boletim/rss.xml",
-        "https://feeds.feedburner.com/canaltechbr",
-        "https://www.tecmundo.com.br/ciencia/rss",
+        "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
+        "https://gizmodo.uol.com.br/feed/",                      # Gizmodo UOL
+        "https://www.inovacaotecnologica.com.br/boletim/rss.xml",# Inovação Tecnológica
+        "https://www.tecmundo.com.br/ciencia/rss",               # TecMundo ciência
     ],
     "Motos":    [
-        "https://www.motociclismoonline.com.br/feed/",
-        "https://www.motoo.com.br/feed/",
-        "https://www.moto.com.br/feed/",
+        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online
+        "https://www.motoo.com.br/feed/",                        # Motoo
+        "https://quatrorodas.abril.com.br/motos/feed/",          # Quatro Rodas motos
+        "https://www.webmotors.com.br/noticias/motos/feed/",     # WebMotors motos
     ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
+}
+
+# Filtros de palavras indesejadas (mesmo padrão do main.py)
+FILTROS_TEMA = {
+    "Mundo":    [],
+    "Mercado":  ["horóscopo", "moda", "futebol", "brasileirão", "campeonato",
+                 "onde assistir", "onde-assistir", "ao vivo", "ao-vivo",
+                 "gol", "escalação", "clube", "torcedor",
+                 "lollapalooza", "festival", "show", "ingresso",
+                 "previsão do tempo", "clima", "chuva",
+                 "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
+    "Politica": [],
+    "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
+                 "guia-de-compras", "em-oferta", "promoção", "desconto",
+                 "homenagem", "morre", "falece", "morte", "aniversário",
+                 "ator", "atriz", "celebridade", "troféus", "conquistas",
+                 "ps store", "xbox game pass", "jogos grátis", "resgate agora",
+                 "marinheiro", "porta-avião", "base militar"],
+    "Esportes": ["ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
+                 "escalação", "prováveis-times",
+                 "reprisa", "reprise", "jogos históricos", "programação", "transmissão",
+                 "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
+                 "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
+                 "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
+                 "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
+                 "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal"],
+    "Cinema":   ["aposta", "bet", "cassino", "futebol", "esporte",
+                 "aniversário", "tatuagem", "look", "moda", "relacionamento",
+                 "casamento", "separação", "gravidez", "filhos",
+                 "morte de", "falecimento", "luto", "lamenta morte",
+                 "celebra aniversário", "faz anos"],
+    "Fitness":  ["aposta", "bet", "cassino", "futebol", "moda",
+                 "maquiagem", "cabelo", "unhas", "beleza", "tatuagem"],
+    "Ciencia":  [],
+    "Motos":    [],
+    "Fofoca":   [],
 }
 
 FALLBACK_IMAGES = {
@@ -456,30 +492,63 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
 # =============================================================================
 # --- 7. BUSCA DE NOTÍCIAS (com fallback de URL) ---
 # =============================================================================
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=600)  # 10 minutos — evita feeds velhos demais
 def buscar_noticias(tema):
     """
-    (MELHORADO) Usa lista de URLs com fallback, igual ao main.py.
-    Avisa o usuário se todas as fontes falharem.
+    Busca notícias do RSS com fallback de múltiplas fontes.
+    Para Cinema, Ciência, Fitness, Motos e Esportes tenta todas as fontes.
+    Aplica os mesmos filtros do main.py. Nunca cacheia resultado vazio.
     """
     urls = RSS_FEEDS.get(tema, [])
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
-    feed = None
 
-    for url in urls:
-        try:
-            f = feedparser.parse(url)
-            if f.entries:
-                feed = f
-                break
-        except Exception:
+    # Temas que precisam tentar TODAS as fontes
+    TEMAS_MULTI_FONTE = {"Cinema", "Fitness", "Ciencia", "Esportes", "Motos"}
+
+    entries = []
+    vistos = set()
+
+    if tema in TEMAS_MULTI_FONTE:
+        for url in urls:
+            try:
+                f = feedparser.parse(url)
+                for e in f.entries:
+                    link = e.get('link', '')
+                    if link not in vistos:
+                        vistos.add(link)
+                        entries.append(e)
+            except Exception:
+                continue
+    else:
+        for url in urls:
+            try:
+                f = feedparser.parse(url)
+                if f.entries:
+                    entries = list(f.entries)
+                    break
+            except Exception:
+                continue
+
+    if not entries:
+        return []
+
+    # Aplica filtros do tema (mesma lógica do main.py)
+    filtros = FILTROS_TEMA.get(tema, [])
+    entries_filtradas = []
+    for entry in entries:
+        titulo = entry.get('title', '').lower()
+        link   = entry.get('link', '').lower()
+        if filtros and any(p in titulo or p in link for p in filtros):
             continue
+        entries_filtradas.append(entry)
+        if len(entries_filtradas) >= 6:
+            break
 
-    if not feed:
+    if not entries_filtradas:
         return []
 
     noticias = []
-    for entry in feed.entries[:6]:
+    for entry in entries_filtradas:
         img = None
 
         if 'media_content' in entry:
@@ -710,7 +779,8 @@ if noticias_display:
             st.markdown(f"""
             <div class="news-card">
                 <a href="{n['link']}" target="_blank">
-                    <img src="{n['img']}" class="news-img">
+                    <img src="{n['img']}" class="news-img"
+                         onerror="this.src='{FALLBACK_IMAGES.get(n['tema'], 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop')}'">
                 </a>
                 <div class="news-content">
                     <span class="news-tag">{n['tema']}</span>
