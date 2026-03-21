@@ -290,9 +290,10 @@ RSS_FEEDS = {
     ],
     "Fitness":  [
         "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
         "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
         "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
+        "https://www.minhavida.com.br/saude/rss",                # Minha Vida saúde
+        "https://www.uol.com.br/nossa/rss.xml",                  # UOL Nossa saúde/bem-estar
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -324,7 +325,11 @@ FILTROS_TEMA = {
                  "homenagem", "morre", "falece", "morte", "aniversário",
                  "ator", "atriz", "celebridade", "troféus", "conquistas",
                  "ps store", "xbox game pass", "jogos grátis", "resgate agora",
-                 "marinheiro", "porta-avião", "base militar"],
+                 "marinheiro", "porta-avião", "base militar",
+                 "séries live-action", "live-action", "temporada", "episódio",
+                 "netflix planeja", "disney+", "hbo planeja",
+                 "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
+                 "configurações para rodar", "placa de vídeo para"],
     "Esportes": ["ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
                  "escalação", "prováveis-times",
                  "reprisa", "reprise", "jogos históricos", "programação", "transmissão",
@@ -547,16 +552,48 @@ def buscar_noticias(tema):
     if not entries_filtradas:
         return []
 
+    # Fallbacks por modalidade esportiva (evita imagem repetida)
+    FALLBACK_ESPORTES = {
+        "f1": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "formula": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "grand prix": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "gp de": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "verstappen": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "hamilton": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "ferrari": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+        "nba": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        "basquete": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        "lebron": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+        "nfl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+        "super bowl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+        "tênis": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "open": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "fonseca": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "alcaraz": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+        "motogp": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+        "márquez": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+    }
+
     noticias = []
     for entry in entries_filtradas:
         img = None
 
+        # 1. media_content
         if 'media_content' in entry:
             for m in entry.media_content:
                 if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                     img = m['url']
                     break
 
+        # 2. enclosures (padrão alternativo usado por alguns feeds)
+        if not img and 'enclosures' in entry:
+            for enc in entry.enclosures:
+                url_enc = enc.get('url', '')
+                if any(ext in url_enc.lower() for ext in extensoes):
+                    img = url_enc
+                    break
+
+        # 3. links com type image
         if not img and 'links' in entry:
             for l in entry.links:
                 href = l.get('href', '')
@@ -564,6 +601,7 @@ def buscar_noticias(tema):
                     img = href
                     break
 
+        # 4. scraping de <img> no HTML do summary/content
         if not img:
             txt = ""
             if 'content' in entry:
@@ -577,11 +615,19 @@ def buscar_noticias(tema):
                     img = u
                     break
 
+        # 5. Fallback — Esportes usa imagem por modalidade; outros usam genérico do tema
         if not img:
-            img = FALLBACK_IMAGES.get(
-                tema,
-                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
-            )
+            if tema == "Esportes":
+                titulo_lower = entry.get('title', '').lower()
+                img = next(
+                    (url for kw, url in FALLBACK_ESPORTES.items() if kw in titulo_lower),
+                    FALLBACK_IMAGES.get("Esportes")
+                )
+            else:
+                img = FALLBACK_IMAGES.get(
+                    tema,
+                    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+                )
 
         noticias.append({
             "titulo": entry.title,
