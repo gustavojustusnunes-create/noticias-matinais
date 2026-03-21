@@ -42,9 +42,10 @@ RSS_FEEDS = {
     ],
     "Fitness":  [
         "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem — robusto
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
         "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
         "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
+        "https://www.minhavida.com.br/saude/rss",                # Minha Vida saúde
+        "https://www.uol.com.br/nossa/rss.xml",                  # UOL Nossa saúde/bem-estar
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -77,7 +78,13 @@ FILTROS_TEMA = {
                  "ator", "atriz", "celebridade", "chuck norris", "stallone",
                  "troféus", "conquistas", "lista de troféus", "ps store",
                  "xbox game pass", "jogos grátis", "resgate agora",
-                 "marinheiro", "porta-avião", "base militar"],
+                 "marinheiro", "porta-avião", "base militar",
+                 # Séries e filmes — vão para Cinema
+                 "séries live-action", "live-action", "temporada", "episódio",
+                 "netflix planeja", "disney+", "hbo planeja",
+                 # PC gamer off-topic
+                 "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
+                 "configurações para rodar", "placa de vídeo para"],
     "Esportes": [
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
@@ -295,16 +302,57 @@ def obter_indicadores():
 # =============================================================================
 # --- 7. EXTRATOR DE IMAGEM ---
 # =============================================================================
+
+# Fallbacks específicos por esporte (usados quando o feed não tem imagem)
+FALLBACK_ESPORTES = {
+    # F1
+    "f1": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    "formula": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    "grand prix": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    "gp de": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    "verstappen": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    "hamilton": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    "ferrari": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
+    # NBA / Basquete
+    "nba": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "basquete": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "lakers": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "lebron": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    # NFL
+    "nfl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+    "super bowl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+    # Tênis
+    "tênis": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "tennis": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "open": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "fonseca": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "alcaraz": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    # MotoGP / Motos esporte
+    "motogp": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+    "moto gp": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+    "márquez": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+}
+
 def extrair_imagem_rss(entry, tema):
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     image_url = None
 
+    # 1. media_content
     if 'media_content' in entry:
         for m in entry.media_content:
             if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                 image_url = m['url']
                 break
 
+    # 2. enclosures (comum em feeds de podcast/news)
+    if not image_url and 'enclosures' in entry:
+        for enc in entry.enclosures:
+            url_enc = enc.get('url', '')
+            if any(ext in url_enc.lower() for ext in extensoes):
+                image_url = url_enc
+                break
+
+    # 3. links com type image
     if not image_url and 'links' in entry:
         for l in entry.links:
             href = l.get('href', '')
@@ -312,6 +360,7 @@ def extrair_imagem_rss(entry, tema):
                 image_url = href
                 break
 
+    # 4. scraping de <img> no summary/content
     if not image_url:
         txt = ""
         if 'content' in entry:
@@ -325,23 +374,30 @@ def extrair_imagem_rss(entry, tema):
                 image_url = url
                 break
 
+    # 5. Fallback — para Esportes usa imagem específica por modalidade
     if not image_url:
-        FALLBACK_IMAGES = {
-            "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
-            "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
-            "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-            "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
-            "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-            "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
-            "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
-            "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-            "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
-            "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
-        }
-        image_url = FALLBACK_IMAGES.get(
-            tema,
-            "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
-        )
+        if tema == "Esportes":
+            titulo = entry.get('title', '').lower()
+            image_url = next(
+                (img for kw, img in FALLBACK_ESPORTES.items() if kw in titulo),
+                "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop"
+            )
+        else:
+            FALLBACK_IMAGES = {
+                "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
+                "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+                "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
+                "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+                "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
+                "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+                "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
+                "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
+                "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+            }
+            image_url = FALLBACK_IMAGES.get(
+                tema,
+                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+            )
 
     return image_url
 
