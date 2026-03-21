@@ -22,84 +22,84 @@ EMAIL_SENDER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
 RSS_FEEDS = {
-    # Ordem padrão do sistema (usada como fallback quando o leitor não definiu ordem própria)
+    # Ordem padrão do sistema
     "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
     "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
-        # F1 em português primeiro
-        "https://pt.motorsport.com/rss/f1/news/",               # Motorsport PT (F1)
-        "https://sportv.globo.com/rss/sportv/",                  # SporTV (F1, NBA, tênis etc)
-        "https://www.espn.com.br/rss/",                          # ESPN Brasil (NBA, NFL, F1)
-        "https://ge.globo.com/rss/ge/",                          # GE Globo geral
+        "https://pt.motorsport.com/rss/f1/news/",                # Motorsport PT — F1
+        "https://www.espn.com.br/rss/",                          # ESPN Brasil — NBA/NFL/F1
+        "https://sportv.globo.com/rss/sportv/",                  # SporTV
+        "https://ge.globo.com/rss/ge/",                          # GE Globo
         "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
     ],
     "Cinema":   [
-        # Fontes com feeds RSS confirmados
-        "https://www.omelete.com.br/rss/",                        # Omelete geral (filmes + séries)
-        "https://www.adorocinema.com/rss/",                       # AdoroCinema
-        "https://www.papodecinema.com.br/feed/",                  # Papo de Cinema
-        "https://www.cinepop.com.br/feed",                        # CinePOP
+        "https://www.omelete.com.br/rss/",                       # Omelete (filmes + séries)
+        "https://www.cinepop.com.br/feed",                       # CinePOP
+        "https://www.papodecinema.com.br/feed/",                 # Papo de Cinema
+        "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        "https://www.uol.com.br/vivabem/rss.xml",                 # UOL VivaBem (robusto)
-        "https://www.minhavida.com.br/fitness/rss",               # Minha Vida fitness
-        "https://www.minhavida.com.br/alimentacao/rss",           # Minha Vida alimentação
-        "https://www.dicasdemulher.com.br/category/saude-e-bem-estar/feed/",
-        "https://www.runnersworld.com.br/feed/",
+        "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem — robusto
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
+        "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
+        "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
     ],
     "Ciencia":  [
-        # Múltiplas fontes — Gizmodo UOL pode estar instável
-        "https://gizmodo.uol.com.br/feed/",                       # Gizmodo UOL geral
-        "https://www.inovacaotecnologica.com.br/boletim/rss.xml", # Inovação Tecnológica (ativo)
-        "https://feeds.feedburner.com/canaltechbr",               # Canaltech (tech + ciência)
-        "https://www.tecmundo.com.br/ciencia/rss",                # TecMundo ciência
+        "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
+        "https://gizmodo.uol.com.br/feed/",                      # Gizmodo UOL
+        "https://www.inovacaotecnologica.com.br/boletim/rss.xml",# Inovação Tecnológica
+        "https://www.tecmundo.com.br/ciencia/rss",               # TecMundo ciência
     ],
     "Motos":    [
-        "https://www.motociclismoonline.com.br/feed/",
-        "https://www.motoo.com.br/feed/",
-        "https://www.moto.com.br/feed/",
+        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online
+        "https://www.motoo.com.br/feed/",                        # Motoo
+        "https://quatrorodas.abril.com.br/motos/feed/",          # Quatro Rodas motos
+        "https://www.webmotors.com.br/noticias/motos/feed/",     # WebMotors motos
     ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
 
 # Filtros de palavras indesejadas por tema
-# Verificados no título E no link da notícia (case-insensitive)
 FILTROS_TEMA = {
     "Mundo":    [],
     "Mercado":  ["horóscopo", "moda", "futebol", "brasileirão", "campeonato",
-                 "onde assistir", "onde-assistir", "ao vivo", "ao-vivo", "jogo",
-                 "gol", "escalação", "partida", "clube", "torcedor",
+                 "onde assistir", "onde-assistir", "ao vivo", "ao-vivo",
+                 "gol", "escalação", "clube", "torcedor",
                  "lollapalooza", "festival", "show", "ingresso",
                  "previsão do tempo", "clima", "chuva",
                  "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
                  "guia-de-compras", "em-oferta", "promoção", "desconto",
-                 # Entretenimento/fofoca que escapa do TecMundo
-                 "adeus,", "homenagem", "morre", "falece", "morte",
+                 "homenagem", "morre", "falece", "morte", "aniversário",
                  "ator", "atriz", "celebridade", "chuck norris", "stallone",
-                 # Gaming off-topic
-                 "troféus", "conquistas", "guia de", "lista de troféus",
-                 # Séries/filmes (vão para Cinema)
-                 "série", "elenco", "temporada", "episódio",
-                 "jogos grátis", "resgate agora", "ps store", "xbox game pass"],
+                 "troféus", "conquistas", "lista de troféus", "ps store",
+                 "xbox game pass", "jogos grátis", "resgate agora",
+                 "marinheiro", "porta-avião", "base militar"],
     "Esportes": [
-        # Páginas de placar/logística
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
-        # Futebol regional/amador
+        "reprisa", "reprise", "jogos históricos", "jogos clássicos",
+        "programação", "vai passar", "transmissão",
         "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
         "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
         "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
         "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
-        "copa-do-brasil-sub", "paulista-sub", "carioca-sub",
-        "futsal", "futebol-de-areia",
+        "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal",
     ],
-    "Cinema":   ["aposta", "bet", "cassino", "futebol", "jogos", "esporte"],
-    "Fitness":  ["aposta", "bet", "cassino", "futebol", "moda", "beleza",
-                 "maquiagem", "cabelo", "unhas"],
+    "Cinema":   [
+        "aposta", "bet", "cassino", "futebol", "esporte",
+        "aniversário", "tatuagem", "look", "moda", "relacionamento",
+        "casamento", "separação", "gravidez", "filhos",
+        "morte de", "falecimento", "luto", "velório",
+        "lamenta morte", "celebra aniversário", "faz anos",
+    ],
+    "Fitness":  [
+        "aposta", "bet", "cassino", "futebol", "moda",
+        "maquiagem", "cabelo", "unhas", "beleza", "tatuagem",
+    ],
     "Ciencia":  [],
     "Motos":    [],
     "Fofoca":   [],
@@ -538,7 +538,9 @@ def processar_tema(tema, historico_hashes):
             print(f"      ↩️ Duplicata ignorada: {entry.get('title', '')[:50]}...")
             continue
         candidatas.append(entry)
-        if len(candidatas) >= 20:
+        # Pool maior para temas que precisam de diversidade
+        limite = 40 if tema in ("Esportes", "Motos", "Cinema", "Fitness") else 20
+        if len(candidatas) >= limite:
             break
 
     if not candidatas:
@@ -556,10 +558,13 @@ def processar_tema(tema, historico_hashes):
             else:
                 outros.append(entry)
 
-        # Monta lista: prioritários primeiro, depois outros, depois 1 futebol se necessário
-        selecionadas = (prioritarios + outros)[:4]
-        if len(selecionadas) < 4 and futebol_pool:
-            selecionadas.append(futebol_pool[0])
+        # Ordem: F1/NBA/NFL → outros esportes → futebol (último recurso)
+        selecionadas = prioritarios + outros
+        # Completa com futebol se ainda faltar
+        for f in futebol_pool:
+            if len(selecionadas) >= 4:
+                break
+            selecionadas.append(f)
         candidatas = selecionadas[:4]
         qtd_f1_nba = sum(1 for e in candidatas if e_esporte_prioritario(e))
         qtd_fut    = sum(1 for e in candidatas if e_futebol(e))
@@ -578,38 +583,54 @@ def processar_tema(tema, historico_hashes):
         print(f"⚠️ '{tema}' sem notícias após deduplicação.")
         return None
 
-    # --- Monta input para Gemini (apenas título — sem contexto sujo) ---
+    # --- Monta input para Gemini ---
     input_txt = ""
     for i, e in enumerate(noticias_filtradas):
         input_txt += f"Notícia {i+1}: {e.get('title', '')}\n\n"
 
-    # Instrução extra para Mercado: filtro semântico embutido no mesmo prompt
+    # Instrução extra para Mercado
     instrucao_mercado = ""
     if tema == "Mercado":
         instrucao_mercado = """
-    REGRA EXTRA para o caderno Mercado:
-    - Se uma manchete NÃO for sobre economia, finanças, mercado financeiro ou negócios
-      (ex: esporte, entretenimento, clima, festivais), escreva exatamente a palavra SKIP
-      como resumo dela, sem mais nada.
-    - Notícias genuínas de economia recebem o resumo normal.
+REGRA EXTRA para o caderno Mercado:
+- Se uma manchete NÃO for sobre economia, finanças, mercado financeiro ou negócios
+  (ex: esporte, entretenimento, clima, festivais), escreva exatamente a palavra SKIP.
+- Notícias genuínas de economia recebem o resumo normal.
 """
 
-    prompt = f"""Você é um jornalista experiente escrevendo para um jornal digital premium brasileiro.
-Analise estas {len(noticias_filtradas)} manchetes do caderno de {tema}.
+    # Instruções específicas por tema para aumentar profundidade
+    instrucao_tema = {
+        "Mundo":    "Inclua o contexto geopolítico, os países e atores envolvidos, e as possíveis consequências do evento.",
+        "Mercado":  "Inclua números concretos (percentuais, valores, índices), o impacto para o investidor ou cidadão, e o contexto econômico.",
+        "Politica": "Inclua o contexto institucional, as partes envolvidas, e os possíveis desdobramentos políticos ou jurídicos.",
+        "Tech":     "Inclua detalhes técnicos relevantes, o impacto no mercado ou no usuário final, e o contexto da inovação ou empresa.",
+        "Esportes": "Inclua resultados, classificações, desempenho de atletas e o que está em jogo na competição.",
+        "Cinema":   "Inclua avaliações (Rotten Tomatoes, IMDb quando disponível), o gênero, o elenco principal e por que vale assistir.",
+        "Fitness":  "Inclua dados científicos, recomendações práticas com números (tempo, repetições, nutrientes) e benefícios comprovados.",
+        "Ciencia":  "Inclua a metodologia da pesquisa, os números e descobertas concretas, e o que isso muda no entendimento científico.",
+        "Motos":    "Inclua especificações técnicas relevantes (motor, potência, preço), diferenciais do modelo e contexto do mercado.",
+        "Fofoca":   "Inclua o contexto da história, as pessoas envolvidas e os detalhes que tornam o assunto interessante.",
+    }.get(tema, "Inclua dados, números e contexto que dão profundidade ao assunto.")
 
-Para CADA manchete, escreva um resumo seguindo TODAS as regras abaixo:
+    prompt = f"""Você é um jornalista sênior de um jornal digital premium brasileiro.
+Escreva resumos informativos e densos para as manchetes do caderno de {tema}.
+
+MISSÃO: Cada resumo deve ler como um parágrafo de um artigo real — com dados, contexto e substância.
+NÃO escreva manchetes longas. Escreva jornalismo de verdade.
 
 REGRAS OBRIGATÓRIAS:
-1. Tom direto e natural — como se estivesse contando para um amigo culto.
-2. PROIBIDO: "o artigo fala", "a notícia informa", "o texto explora", "a matéria aborda",
-   "o post detalha", "o que se espera", "a notícia detalha", "a notícia destaca".
-3. PROIBIDO numerar os resumos ("Notícia 1:", "1.", etc.).
-4. PROIBIDO usar markdown (asteriscos, negrito, títulos, bullet points).
-5. Comece sempre pelo fato principal. Máximo 65 palavras por resumo.
-6. Se o título for sua única informação, escreva um resumo informativo baseado só nele.
-7. Linguagem clara, voz ativa, sem jargão.
+1. PROFUNDIDADE: {instrucao_tema}
+2. TAMANHO: Entre 70 e 90 palavras por resumo. Resumos curtos (abaixo de 60 palavras) são INACEITÁVEIS.
+3. Tom direto e natural — como se estivesse explicando para um leitor inteligente e curioso.
+4. PROIBIDO: "o artigo fala", "a notícia informa", "o texto explora", "a matéria aborda",
+   "o post detalha", "o que se espera", "a notícia detalha", "a notícia destaca",
+   "vale destacar", "é importante notar", "segundo a publicação".
+5. PROIBIDO numerar os resumos ("Notícia 1:", "1.", etc.).
+6. PROIBIDO markdown (asteriscos, negrito, títulos, bullet points).
+7. Comece sempre pelo fato principal com dados concretos quando disponíveis.
+8. Voz ativa. Sem jargão desnecessário.
 {instrucao_mercado}
-Separe cada resumo com "|||" (três barras verticais). Nada mais além dos resumos.
+Separe cada resumo com "|||". Nada mais além dos resumos.
 
 Manchetes:
 {input_txt}"""
