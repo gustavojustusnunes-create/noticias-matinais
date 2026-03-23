@@ -216,10 +216,42 @@ def gerar_hash(titulo, link):
     return hashlib.md5(conteudo).hexdigest()
 
 def carregar_historico(sheet_historico):
-    """Carrega todos os hashes de notícias já enviadas."""
+    """
+    Carrega hashes de notícias enviadas nos últimos 30 dias.
+    Remove automaticamente registros mais antigos para manter a planilha leve.
+    """
     try:
         registros = sheet_historico.get_all_records()
-        return {r["hash"] for r in registros}
+        if not registros:
+            return set()
+
+        from datetime import timedelta
+        limite = datetime.now() - timedelta(days=30)
+        hashes_validos = set()
+        linhas_remover = []  # índices (1-based, linha 1 = cabeçalho)
+
+        for i, r in enumerate(registros, start=2):  # linha 2 em diante (1 = header)
+            try:
+                data_str = r.get("data", "")
+                data = datetime.strptime(data_str[:10], "%d/%m/%Y")
+                if data >= limite:
+                    hashes_validos.add(r["hash"])
+                else:
+                    linhas_remover.append(i)
+            except Exception:
+                hashes_validos.add(r.get("hash", ""))
+
+        # Remove linhas antigas em lote (de trás para frente para não deslocar índices)
+        if linhas_remover:
+            for idx in reversed(linhas_remover):
+                try:
+                    sheet_historico.delete_rows(idx)
+                except Exception:
+                    pass
+            print(f"   🧹 Histórico: {len(linhas_remover)} entradas antigas removidas.")
+
+        print(f"   🗂️ Histórico: {len(hashes_validos)} notícias nos últimos 30 dias.")
+        return hashes_validos
     except Exception as e:
         print(f"⚠️ Não foi possível carregar histórico: {e}")
         return set()
@@ -591,7 +623,7 @@ def processar_tema(tema, historico_hashes):
     # --- Coleta ---
     # Esportes: coleta de todas as fontes para ter pool diverso
     # Cinema/Fitness: também tenta todas as fontes pois feeds individuais são pequenos
-    TEMAS_MULTI_FONTE = {"Esportes", "Cinema", "Fitness"}
+    TEMAS_MULTI_FONTE = {"Esportes", "Cinema", "Fitness", "Ciencia", "Motos"}
 
     if tema in TEMAS_MULTI_FONTE:
         if tema == "Esportes":
@@ -868,7 +900,7 @@ def enviar_email(dest, html):
 # --- 12. MAIN ---
 # =============================================================================
 def main():
-    print("🚀 Iniciando Motor (v10.0 - Ordem Personalizada + Filtros Reforçados)...")
+    print("🚀 Iniciando Motor (v11.0 - Multi-fonte + Histórico 30d + Validações)...")
 
     # 1. Valida o ambiente antes de qualquer coisa
     if not validar_ambiente():
@@ -906,8 +938,6 @@ def main():
             CACHE_GLOBAL[tema] = conteudo
             todas_noticias_novas.extend(conteudo)
             print(f"      ✅ {tema}: {len(conteudo)} notícias prontas.")
-            print("      💤 Pausa tática (10s)...")
-            time.sleep(10)
 
     # 7. Salva novas notícias no histórico (anti-duplicata para próximas execuções)
     if todas_noticias_novas:
@@ -922,6 +952,12 @@ def main():
         nome  = usr.get('Nome')
         email = usr.get('Email')
         if not nome or not email:
+            print(f"   ⚠️ Linha ignorada: nome='{nome}' email='{email}' (dados incompletos).")
+            continue
+
+        # Validação básica de formato de e-mail
+        if not re.match(r'^[^@]+@[^@]+[.][^@]+$', email.strip()):
+            print(f"   ⚠️ E-mail inválido ignorado: '{email}' (usuário: {nome}).")
             continue
 
         # Monta o pacote respeitando a ordem personalizada do leitor
