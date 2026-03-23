@@ -270,6 +270,50 @@ st.markdown("""
 # =============================================================================
 # --- 3. DADOS E FEEDS (com fallback igual ao main.py) ---
 # =============================================================================
+
+def traduzir_titulo_se_ingles(titulo):
+    """
+    Detecta se o título está em inglês e traduz para português via Gemini.
+    Usado nas notícias de Fitness (fontes internacionais US/EU).
+    Retorna o título traduzido ou o original se já estiver em PT ou se falhar.
+    """
+    if not titulo:
+        return titulo
+    # Heurística rápida: se tem palavras comuns em inglês, provavelmente é EN
+    palavras_ingles = ["the", "how", "why", "what", "best", "your", "you",
+                       "with", "this", "that", "and", "for", "are", "was",
+                       "running", "workout", "training", "fitness", "marathon",
+                       "diet", "muscle", "weight", "cardio", "strength"]
+    titulo_lower = titulo.lower()
+    palavras_encontradas = sum(1 for p in palavras_ingles if f" {p} " in f" {titulo_lower} ")
+    if palavras_encontradas < 2:
+        return titulo  # Provavelmente já está em português
+
+    gemini_key = st.secrets.get("GEMINI_KEY", "")
+    if not gemini_key:
+        return titulo
+
+    try:
+        prompt = (
+            f"Traduza este título de artigo de inglês para português brasileiro, "
+            f"mantendo o tom jornalístico e direto. "
+            f"Retorne APENAS o título traduzido, sem aspas, sem explicação:\n\n{titulo}"
+        )
+        r = requests.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={gemini_key}",
+            headers={"Content-Type": "application/json"},
+            json={"contents": [{"parts": [{"text": prompt}]}]},
+            timeout=8
+        )
+        if r.status_code == 200:
+            traduzido = r.json()["candidates"][0]["content"]["parts"][0]["text"].strip()
+            # Sanidade: não aceita resposta muito longa ou vazia
+            if 5 < len(traduzido) < 200:
+                return traduzido
+    except Exception:
+        pass
+    return titulo
+
 RSS_FEEDS = {
     "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
     "Mercado":  [
@@ -359,7 +403,15 @@ FILTROS_TEMA = {
                  "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
                  "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
                  "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
-                 "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal"],
+                 "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal",
+                 # Futebol — bloqueia no site também (mesma lógica do main.py)
+                 "seleção brasileira", "convocação", "treino da seleção",
+                 "neymar", "vinicius", "vinícius", "rodrygo", "endrick",
+                 "memphis depay", "raphinha", "militão", "marquinhos",
+                 "copa do mundo", "eliminatórias", "eurocopa",
+                 "palmeiras", "flamengo", "corinthians", "são paulo",
+                 "grêmio", "atletico", "cruzeiro", "vasco", "botafogo",
+                 "brasileirão", "copa do brasil", "libertadores"],
     "Cinema":   ["aposta", "bet", "cassino", "futebol", "esporte",
                  "aniversário", "tatuagem", "look", "moda", "relacionamento",
                  "casamento", "separação", "gravidez", "filhos",
@@ -735,8 +787,13 @@ def buscar_noticias(tema):
                     "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
                 )
 
+        titulo_final = entry.get('title', '')
+        # Traduz automaticamente títulos em inglês (fontes internacionais de Fitness)
+        if tema == "Fitness":
+            titulo_final = traduzir_titulo_se_ingles(titulo_final)
+
         noticias.append({
-            "titulo": entry.get('title', ''),
+            "titulo": titulo_final,
             "link":   entry.get('link', ''),
             "img":    img,
             "data":   entry.get('published', '')[:16]
