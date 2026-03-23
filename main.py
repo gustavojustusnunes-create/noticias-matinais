@@ -41,11 +41,13 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
-        "https://extra.globo.com/rss/saude-e-ciencia/",          # Extra Saúde
-        "https://oglobo.globo.com/rss/saude/",                   # O Globo Saúde
-        "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
-        "https://saude.abril.com.br/feed/",                      # Saúde Abril
+        # Fontes com foco em wellness, performance e cultura de saúde ativa
+        "https://www.runnersworld.com.br/feed/",                 # Runners World BR — corrida
+        "https://www.bicycling.com.br/feed/",                    # Bicycling BR — ciclismo
+        "https://www.womenshealthbrasil.com.br/feed/",           # Women's Health BR
+        "https://www.menshealth.com.br/feed/",                   # Men's Health BR
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar (backup robusto)
+        "https://saude.abril.com.br/feed/",                      # Saúde Abril (backup)
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -109,8 +111,15 @@ FILTROS_TEMA = {
         "lamenta morte", "celebra aniversário", "faz anos",
     ],
     "Fitness":  [
+        # Off-topic direto
         "aposta", "bet", "cassino", "futebol", "moda",
         "maquiagem", "cabelo", "unhas", "beleza", "tatuagem",
+        # Saúde médica genérica — vai para Ciência
+        "câncer", "tumor", "cirurgia", "hospital", "médico recomenda",
+        "remédio", "medicamento", "vacina", "dengue", "vírus",
+        "doença", "diagnóstico", "sintomas", "tratamento clínico",
+        # Celebridade/gossip
+        "famoso", "celebridade", "ator", "atriz", "novela",
     ],
     "Ciencia":  [],
     "Motos":    [],
@@ -695,7 +704,7 @@ REGRA EXTRA para o caderno Mercado:
         "Tech":     "Inclua detalhes técnicos relevantes, o impacto no mercado ou no usuário final, e o contexto da inovação ou empresa.",
         "Esportes": "Inclua resultados, classificações, desempenho de atletas e o que está em jogo na competição.",
         "Cinema":   "Inclua avaliações (Rotten Tomatoes, IMDb quando disponível), o gênero, o elenco principal e por que vale assistir.",
-        "Fitness":  "Inclua dados científicos, recomendações práticas com números (tempo, repetições, nutrientes) e benefícios comprovados.",
+        "Fitness":  "Escreva com a linguagem da cultura wellness e performance: foque em treino, recuperação, nutrição esportiva, mindset e estilo de vida ativo. Inclua dados práticos (séries, tempo, macros, protocolos) e conecte com a mentalidade de quem busca evoluir — seja corredor, atleta recreativo ou praticante de academia. Evite tom de consultório médico.",
         "Ciencia":  "Inclua a metodologia da pesquisa, os números e descobertas concretas, e o que isso muda no entendimento científico.",
         "Motos":    "Inclua especificações técnicas relevantes (motor, potência, preço), diferenciais do modelo e contexto do mercado.",
         "Fofoca":   "Inclua o contexto da história, as pessoas envolvidas e os detalhes que tornam o assunto interessante.",
