@@ -289,11 +289,11 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
+        "https://extra.globo.com/rss/saude-e-ciencia/",          # Extra Saúde
+        "https://oglobo.globo.com/rss/saude/",                   # O Globo Saúde
         "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
         "https://saude.abril.com.br/feed/",                      # Saúde Abril
-        "https://www.terra.com.br/vida-e-estilo/saude/rss",      # Terra Saúde
-        "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
-        "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -318,6 +318,7 @@ FILTROS_TEMA = {
                  "gol", "escalação", "clube", "torcedor",
                  "lollapalooza", "festival", "show", "ingresso",
                  "previsão do tempo", "clima", "chuva",
+                 "bbb", "big brother", "prêmio do bbb", "reality",
                  "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
@@ -328,6 +329,9 @@ FILTROS_TEMA = {
                  "marinheiro", "porta-avião", "base militar",
                  "séries live-action", "live-action", "temporada", "episódio",
                  "netflix planeja", "disney+", "hbo planeja",
+                 "filmes e séries", "séries em alta", "para ver na netflix",
+                 "para ver no prime", "para assistir",
+                 "jogos para jogar", "jogos cooperativos", "melhores jogos",
                  "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
                  "configurações para rodar", "placa de vídeo para"],
     "Esportes": ["ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
@@ -552,6 +556,24 @@ def buscar_noticias(tema):
     if not entries_filtradas:
         return []
 
+    # Rotação dentro da mesma categoria esportiva — evita imagem repetida
+    SPORT_ROTATIONS = {
+        "nba":   ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+                   "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600&h=300&fit=crop"],
+        "f1":    ["https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+                   "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=600&h=300&fit=crop"],
+        "mma":   ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=300&fit=crop",
+                   "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=300&fit=crop"],
+        "tenis":  ["https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+                    "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop"],
+    }
+    SPORT_KEYWORDS = {
+        "nba": ["nba","basquete","lebron","durant","curry","lakers","celtics","warriors"],
+        "f1":  ["f1","formula","grand prix","gp de","verstappen","hamilton","ferrari","leclerc","norris"],
+        "mma": ["mma","ufc","silva","evloev","volkanovski","poatan","adesanya"],
+        "tenis": ["tênis","tennis","fonseca","alcaraz","sinner","open","nadal"],
+    }
+
     # Fallbacks verificados por modalidade esportiva
     FALLBACK_ESPORTES_KEYWORD = {
         # F1
@@ -634,14 +656,20 @@ def buscar_noticias(tema):
                     img = u
                     break
 
-        # 5. Fallback — Esportes usa keyword primeiro, depois rotação por índice
+        # 5. Fallback — Esportes usa rotação dentro da categoria; outros usam genérico
         if not img:
             if tema == "Esportes":
                 titulo_lower = entry.get('title', '').lower()
-                img = next(
-                    (url for kw, url in FALLBACK_ESPORTES_KEYWORD.items() if kw in titulo_lower),
-                    FALLBACK_ESPORTES_GENERIC[len(noticias) % len(FALLBACK_ESPORTES_GENERIC)]
-                )
+                categoria = None
+                for cat, kws in SPORT_KEYWORDS.items():
+                    if any(kw in titulo_lower for kw in kws):
+                        categoria = cat
+                        break
+                if categoria and categoria in SPORT_ROTATIONS:
+                    idx = ord(titulo_lower[0]) % len(SPORT_ROTATIONS[categoria])
+                    img = SPORT_ROTATIONS[categoria][idx]
+                else:
+                    img = FALLBACK_ESPORTES_GENERIC[len(noticias) % len(FALLBACK_ESPORTES_GENERIC)]
             else:
                 img = FALLBACK_IMAGES.get(
                     tema,
