@@ -289,11 +289,12 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
-        "https://extra.globo.com/rss/saude-e-ciencia/",          # Extra Saúde
-        "https://oglobo.globo.com/rss/saude/",                   # O Globo Saúde
-        "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
-        "https://saude.abril.com.br/feed/",                      # Saúde Abril
+        "https://www.runnersworld.com.br/feed/",                 # Runners World BR — corrida
+        "https://www.bicycling.com.br/feed/",                    # Bicycling BR — ciclismo
+        "https://www.womenshealthbrasil.com.br/feed/",           # Women's Health BR
+        "https://www.menshealth.com.br/feed/",                   # Men's Health BR
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar (backup)
+        "https://saude.abril.com.br/feed/",                      # Saúde Abril (backup)
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -348,7 +349,13 @@ FILTROS_TEMA = {
                  "morte de", "falecimento", "luto", "lamenta morte",
                  "celebra aniversário", "faz anos"],
     "Fitness":  ["aposta", "bet", "cassino", "futebol", "moda",
-                 "maquiagem", "cabelo", "unhas", "beleza", "tatuagem"],
+                 "maquiagem", "cabelo", "unhas", "beleza", "tatuagem",
+                 # Saúde médica genérica — vai para Ciência
+                 "câncer", "tumor", "cirurgia", "hospital", "médico recomenda",
+                 "remédio", "medicamento", "vacina", "dengue", "vírus",
+                 "doença", "diagnóstico", "sintomas", "tratamento clínico",
+                 # Celebridade/gossip
+                 "famoso", "celebridade", "ator", "atriz", "novela"],
     "Ciencia":  [],
     "Motos":    [],
     "Fofoca":   [],
