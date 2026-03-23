@@ -374,6 +374,30 @@ FALLBACK_IMAGES = {
     "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
 }
 
+# Constantes de fallback para Esportes — movidas para escopo global (performance)
+SPORT_ROTATIONS = {
+    "nba":   ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+               "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600&h=300&fit=crop"],
+    "f1":    ["https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+               "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=600&h=300&fit=crop"],
+    "mma":   ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=300&fit=crop",
+               "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=300&fit=crop"],
+    "tenis": ["https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+               "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop"],
+}
+SPORT_KEYWORDS = {
+    "nba":   ["nba","basquete","lebron","durant","curry","lakers","celtics","warriors"],
+    "f1":    ["f1","formula","grand prix","gp de","verstappen","hamilton","ferrari","leclerc","norris"],
+    "mma":   ["mma","ufc","silva","evloev","volkanovski","poatan","adesanya"],
+    "tenis": ["tênis","tennis","fonseca","alcaraz","sinner","open","nadal"],
+}
+FALLBACK_ESPORTES_GENERIC = [
+    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",
+]
+
 # =============================================================================
 # --- 4. VALIDAÇÕES (novas) ---
 # =============================================================================
@@ -389,7 +413,7 @@ def validar_nome(nome):
 # =============================================================================
 # --- 5. GOOGLE SHEETS ---
 # =============================================================================
-@st.cache_resource(ttl=300)
+@st.cache_data(ttl=300)
 def conectar_planilha():
     """Conecta ao Google Sheets e retorna a aba de usuários."""
     if "GCP_JSON" not in st.secrets:
@@ -563,25 +587,7 @@ def buscar_noticias(tema):
     if not entries_filtradas:
         return []
 
-    # Rotação dentro da mesma categoria esportiva — evita imagem repetida
-    SPORT_ROTATIONS = {
-        "nba":   ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-                   "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600&h=300&fit=crop"],
-        "f1":    ["https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-                   "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=600&h=300&fit=crop"],
-        "mma":   ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=300&fit=crop",
-                   "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=300&fit=crop"],
-        "tenis":  ["https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-                    "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop"],
-    }
-    SPORT_KEYWORDS = {
-        "nba": ["nba","basquete","lebron","durant","curry","lakers","celtics","warriors"],
-        "f1":  ["f1","formula","grand prix","gp de","verstappen","hamilton","ferrari","leclerc","norris"],
-        "mma": ["mma","ufc","silva","evloev","volkanovski","poatan","adesanya"],
-        "tenis": ["tênis","tennis","fonseca","alcaraz","sinner","open","nadal"],
-    }
-
-    # Fallbacks verificados por modalidade esportiva
+    # Fallbacks verificados por modalidade esportiva (constantes globais)
     FALLBACK_ESPORTES_KEYWORD = {
         # F1
         "f1":           "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
@@ -613,14 +619,6 @@ def buscar_noticias(tema):
         "márquez":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
         "moreira":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
     }
-
-    # Rotação de imagens genéricas para quando não há keyword — evita repetição
-    FALLBACK_ESPORTES_GENERIC = [
-        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",  # estádio
-        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",  # atletismo
-        "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",  # campo
-        "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",  # ciclismo
-    ]
 
     noticias = []
     for entry in entries_filtradas:
@@ -684,8 +682,8 @@ def buscar_noticias(tema):
                 )
 
         noticias.append({
-            "titulo": entry.title,
-            "link":   entry.link,
+            "titulo": entry.get('title', ''),
+            "link":   entry.get('link', ''),
             "img":    img,
             "data":   entry.get('published', '')[:16]
         })
@@ -820,6 +818,9 @@ with st.sidebar:
                             enviar_boas_vindas(nome, email, temas_ordenados)
                             st.success("✅ Tudo certo! Verifique o seu e-mail — enviamos uma confirmação.")
                             st.balloons()
+                            # Reseta a lista de ordem para nova sessão
+                            st.session_state.ordem_lista = list(RSS_FEEDS.keys())
+                            st.session_state.ativos = {t: True for t in RSS_FEEDS.keys()}
                         else:
                             st.error(f"❌ Algo deu errado. {mensagem}")
 
