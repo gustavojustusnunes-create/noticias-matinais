@@ -294,12 +294,15 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        "https://www.runnersworld.com.br/feed/",                 # Runners World BR — corrida
-        "https://www.bicycling.com.br/feed/",                    # Bicycling BR — ciclismo
-        "https://www.womenshealthbrasil.com.br/feed/",           # Women's Health BR
-        "https://www.menshealth.com.br/feed/",                   # Men's Health BR
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar (backup)
-        "https://saude.abril.com.br/feed/",                      # Saúde Abril (backup)
+        # Fontes internacionais de elite — Europa e EUA (traduzidas pelo Gemini)
+        "https://www.runnersworld.com/rss/all.xml/",             # Runner's World US — corrida/trail
+        "https://www.menshealth.com/rss/all.xml/",               # Men's Health US — performance
+        "https://www.womenshealthmag.com/rss/all.xml/",          # Women's Health US — wellness
+        "https://www.bicycling.com/rss/all.xml/",                # Bicycling US — ciclismo
+        "https://www.outsideonline.com/feed/",                   # Outside Online — endurance/aventura
+        # Backup Brasil
+        "https://www.runnersworld.com.br/feed/",                 # Runner's World BR
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -556,6 +559,27 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
 # =============================================================================
 # --- 7. BUSCA DE NOTÍCIAS (com fallback de URL) ---
 # =============================================================================
+def buscar_og_image(url_artigo, timeout=5):
+    """Busca og:image da página real do artigo — imagem mais relevante para a notícia."""
+    if not url_artigo:
+        return None
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)', 'Accept': 'text/html'}
+        r = requests.get(url_artigo, headers=headers, timeout=timeout, allow_redirects=True)
+        if r.status_code != 200:
+            return None
+        html = r.text
+        match = re.search(r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"', html, re.IGNORECASE)
+        if not match:
+            match = re.search(r'<meta[^>]+content="([^"]+)"[^>]+property="og:image"', html, re.IGNORECASE)
+        if match:
+            img_url = match.group(1).strip()
+            if img_url.startswith('http') and len(img_url) > 10:
+                return img_url
+    except Exception:
+        pass
+    return None
+
 @st.cache_data(ttl=600)  # 10 minutos — evita feeds velhos demais
 def buscar_noticias(tema):
     """
@@ -647,6 +671,12 @@ def buscar_noticias(tema):
     noticias = []
     for entry in entries_filtradas:
         img = None
+
+        # 0. og:image da página real (prioritário para Esportes, Fitness e Motos)
+        if tema in ("Esportes", "Fitness", "Motos"):
+            og = buscar_og_image(entry.get('link', ''))
+            if og:
+                img = og
 
         # 1. media_content
         if 'media_content' in entry:
