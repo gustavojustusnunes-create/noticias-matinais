@@ -8,8 +8,7 @@ on:
 jobs:
   run-newsletter:
     runs-on: ubuntu-latest
-    # AQUI ESTÁ A SOLUÇÃO: Aumentamos o limite para 60 minutos
-    timeout-minutes: 60 
+    timeout-minutes: 60
 
     steps:
     - name: 📥 Baixar código
@@ -19,13 +18,12 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        cache: 'pip' # Ajuda a instalar mais rápido nas próximas vezes
+        cache: 'pip'
 
-    - name: ⚙️ Instalar Dependências (Apenas Robô)
-      # Removemos 'streamlit' daqui para ficar mais leve
+    - name: ⚙️ Instalar Dependências
       run: |
         python -m pip install --upgrade pip
-        pip install google-generativeai requests yfinance gspread feedparser google-auth oauth2client
+        pip install -r requirements.txt
 
     - name: 🚀 Rodar Jornal
       env:
