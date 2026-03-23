@@ -272,7 +272,12 @@ st.markdown("""
 # =============================================================================
 RSS_FEEDS = {
     "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
-    "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
+    "Mercado":  [
+        "https://www.infomoney.com.br/feed/",
+        "https://rss.uol.com.br/feed/economia.xml",
+        "https://economia.uol.com.br/rss.xml",
+        "https://valor.globo.com/rss/",
+    ],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
@@ -303,10 +308,11 @@ RSS_FEEDS = {
         "https://www.tecmundo.com.br/ciencia/rss",               # TecMundo ciência
     ],
     "Motos":    [
-        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online
+        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online — robusto
         "https://www.motoo.com.br/feed/",                        # Motoo
-        "https://quatrorodas.abril.com.br/motos/feed/",          # Quatro Rodas motos
-        "https://www.webmotors.com.br/noticias/motos/feed/",     # WebMotors motos
+        "https://motoblog.uol.com.br/feed/",                     # Moto Blog UOL
+        "https://www.icarros.com.br/noticias/motos/rss.xml",     # iCarros motos
+        "https://revistaautoesporte.globo.com/rss/",             # Auto Esporte
     ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
@@ -320,7 +326,9 @@ FILTROS_TEMA = {
                  "lollapalooza", "festival", "show", "ingresso",
                  "previsão do tempo", "clima", "chuva",
                  "bbb", "big brother", "prêmio do bbb", "reality",
-                 "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
+                 "tênis", "fonseca", "alcaraz", "sinner", "nadal",
+                 "israel:", "irã:", "civil morto", "guerra de fronteira",
+                 "ataque", "bombardeio", "teerã", "netanyahu", "míssil"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
                  "guia-de-compras", "em-oferta", "promoção", "desconto",
@@ -334,10 +342,16 @@ FILTROS_TEMA = {
                  "para ver no prime", "para assistir",
                  "jogos para jogar", "jogos cooperativos", "melhores jogos",
                  "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
-                 "configurações para rodar", "placa de vídeo para"],
+                 "configurações para rodar", "placa de vídeo para",
+                 "de graça", "baratinhos", "indicações de games", "games da semana",
+                 "jogos da semana", "resgate grátis", "jogo grátis"],
     "Esportes": ["ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
                  "escalação", "prováveis-times",
                  "reprisa", "reprise", "jogos históricos", "programação", "transmissão",
+                 "o que assistir", "disney+", "para assistir", "catálogo",
+                 "nota de falecimento", "troféu best", "melhor nadador juvenil",
+                 "1959-", "1960-", "1961-", "1962-", "1963-", "1964-", "1965-",
+                 "mensagem de despedida",
                  "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
                  "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
                  "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
@@ -354,8 +368,18 @@ FILTROS_TEMA = {
                  "câncer", "tumor", "cirurgia", "hospital", "médico recomenda",
                  "remédio", "medicamento", "vacina", "dengue", "vírus",
                  "doença", "diagnóstico", "sintomas", "tratamento clínico",
-                 # Celebridade/gossip
-                 "famoso", "celebridade", "ator", "atriz", "novela"],
+                 # Celebridade/gossip/reality
+                 "famoso", "celebridade", "ator", "atriz", "novela",
+                 "bbb", "big brother", "reality",
+                 # Saúde sazonal e genérica
+                 "resfriado", "alergia", "gripe", "outono e saúde",
+                 "afastados do trabalho", "adoecimento mental", "afastamento",
+                 # Culinária genérica
+                 "erros na cozinha", "receita de", "culinária",
+                 "carne vermelha crua", "faz mal comer",
+                 # Saúde do idoso genérica
+                 "velhice", "envelhecimento", "como deixar de beber aos",
+                 "idoso", "terceira idade"],
     "Ciencia":  [],
     "Motos":    [],
     "Fofoca":   [],
