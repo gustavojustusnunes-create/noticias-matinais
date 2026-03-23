@@ -41,11 +41,11 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem — robusto
-        "https://www.minhavida.com.br/fitness/rss",              # Minha Vida fitness
-        "https://www.minhavida.com.br/alimentacao/rss",          # Minha Vida alimentação
-        "https://www.minhavida.com.br/saude/rss",                # Minha Vida saúde
-        "https://www.uol.com.br/nossa/rss.xml",                  # UOL Nossa saúde/bem-estar
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
+        "https://extra.globo.com/rss/saude-e-ciencia/",          # Extra Saúde
+        "https://oglobo.globo.com/rss/saude/",                   # O Globo Saúde
+        "https://www.uol.com.br/vivabem/rss.xml",                # UOL VivaBem
+        "https://saude.abril.com.br/feed/",                      # Saúde Abril
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -70,6 +70,7 @@ FILTROS_TEMA = {
                  "gol", "escalação", "clube", "torcedor",
                  "lollapalooza", "festival", "show", "ingresso",
                  "previsão do tempo", "clima", "chuva",
+                 "bbb", "big brother", "prêmio do bbb", "reality",
                  "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
@@ -82,6 +83,10 @@ FILTROS_TEMA = {
                  # Séries e filmes — vão para Cinema
                  "séries live-action", "live-action", "temporada", "episódio",
                  "netflix planeja", "disney+", "hbo planeja",
+                 "filmes e séries", "séries em alta", "filmes em alta",
+                 "para ver na netflix", "para ver no prime", "para assistir",
+                 # Listas de jogos — vão para Cinema ou são off-topic
+                 "jogos para jogar", "jogos cooperativos", "melhores jogos",
                  # PC gamer off-topic
                  "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
                  "configurações para rodar", "placa de vídeo para"],
@@ -304,36 +309,41 @@ def obter_indicadores():
 # =============================================================================
 
 # Fallbacks específicos por esporte (usados quando o feed não tem imagem)
-FALLBACK_ESPORTES = {
-    # F1
-    "f1": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    "formula": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    "grand prix": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    "gp de": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    "verstappen": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    "hamilton": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    "ferrari": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=300&fit=crop",
-    # NBA / Basquete
-    "nba": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-    "basquete": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-    "lakers": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-    "lebron": "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-    # NFL
-    "nfl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
-    "super bowl": "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
-    # Tênis
-    "tênis": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-    "tennis": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-    "open": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-    "fonseca": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-    "alcaraz": "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-    # MotoGP / Motos esporte
-    "motogp": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
-    "moto gp": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
-    "márquez": "https://images.unsplash.com/photo-1558618047-3c8f847e66b8?w=600&h=300&fit=crop",
+FALLBACK_ESPORTES_KEYWORD = {
+    "f1":           "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "formula":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "grand prix":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "gp de":        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "verstappen":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "hamilton":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "ferrari":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "leclerc":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "nba":          "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "basquete":     "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "lebron":       "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "curry":        "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "nfl":          "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+    "super bowl":   "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+    "tênis":        "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "tennis":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "fonseca":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "alcaraz":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "sinner":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "miami open":   "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "motogp":       "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+    "moto gp":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+    "márquez":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+    "moreira":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
 }
 
-def extrair_imagem_rss(entry, tema):
+FALLBACK_ESPORTES_GENERIC = [
+    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",
+]
+
+def extrair_imagem_rss(entry, tema, idx_entry=0):
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     image_url = None
 
@@ -374,14 +384,37 @@ def extrair_imagem_rss(entry, tema):
                 image_url = url
                 break
 
-    # 5. Fallback — para Esportes usa imagem específica por modalidade
+    # 5. Fallback com rotação por esporte para evitar imagens repetidas
     if not image_url:
         if tema == "Esportes":
             titulo = entry.get('title', '').lower()
-            image_url = next(
-                (img for kw, img in FALLBACK_ESPORTES.items() if kw in titulo),
-                "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop"
-            )
+            # Rotação dentro da mesma categoria esportiva
+            SPORT_ROTATIONS = {
+                "nba":      ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+                             "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600&h=300&fit=crop"],
+                "f1":       ["https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+                             "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=600&h=300&fit=crop"],
+                "mma":      ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=300&fit=crop",
+                             "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=300&fit=crop"],
+                "tênis":    ["https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+                             "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop"],
+            }
+            # Detecta categoria
+            categoria = None
+            for kw, cat in [("nba","nba"),("basquete","nba"),("lebron","nba"),("durant","nba"),("curry","nba"),
+                            ("f1","f1"),("formula","f1"),("grand prix","f1"),("gp de","f1"),("verstappen","f1"),("hamilton","f1"),("ferrari","f1"),("leclerc","f1"),
+                            ("mma","mma"),("ufc","mma"),("silva","mma"),("evloev","mma"),("volkanovski","mma"),
+                            ("tênis","tênis"),("fonseca","tênis"),("alcaraz","tênis"),("sinner","tênis"),("open","tênis")]:
+                if kw in titulo:
+                    categoria = cat
+                    break
+            if categoria and categoria in SPORT_ROTATIONS:
+                # Usa keyword para escolher imagem — alterna entre as duas do par pela primeira letra do título
+                idx = ord(titulo[0]) % len(SPORT_ROTATIONS[categoria])
+                image_url = SPORT_ROTATIONS[categoria][idx]
+            else:
+                # Sem categoria específica: usa fallback genérico rotativo
+                image_url = FALLBACK_ESPORTES_GENERIC[idx_entry % len(FALLBACK_ESPORTES_GENERIC)]
         else:
             FALLBACK_IMAGES = {
                 "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
@@ -732,7 +765,7 @@ Manchetes:
             else:
                 resumo_limpo = resumo_fallback_txt
 
-        img = extrair_imagem_rss(entry, tema)
+        img = extrair_imagem_rss(entry, tema, idx_entry=i)
         noticias_finais.append({
             "titulo": entry.get('title', ''),
             "link":   entry.get('link', ''),
