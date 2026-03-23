@@ -1,8 +1,6 @@
-streamlit
-feedparser
-requests
-pandas
-lxml
-gspread
-google-auth
-oauth2client
+streamlit==1.43.2
+feedparser==6.0.11
+requests==2.32.3
+yfinance==0.2.54
+gspread==6.1.4
+google-auth==2.38.0
