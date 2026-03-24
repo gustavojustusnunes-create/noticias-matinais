@@ -16,7 +16,7 @@ import hashlib
 # =============================================================================
 # --- 1. CONFIGURAÇÕES ---
 # =============================================================================
-GEMINI_KEY = os.environ.get("GEMINI_KEY", "").strip()
+CLAUDE_KEY = os.environ.get("CLAUDE_KEY", "").strip()
 GCP_JSON = os.environ.get("GCP_JSON")
 EMAIL_SENDER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
@@ -24,7 +24,12 @@ EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 RSS_FEEDS = {
     # Ordem padrão do sistema
     "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
-    "Mercado":  ["https://www.infomoney.com.br/feed/", "https://rss.uol.com.br/feed/economia.xml"],
+    "Mercado":  [
+        "https://www.infomoney.com.br/feed/",
+        "https://rss.uol.com.br/feed/economia.xml",
+        "https://economia.uol.com.br/rss.xml",                   # UOL Economia (separado)
+        "https://valor.globo.com/rss/",                          # Valor Econômico
+    ],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
@@ -41,13 +46,15 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        # Fontes com foco em wellness, performance e cultura de saúde ativa
-        "https://www.runnersworld.com.br/feed/",                 # Runners World BR — corrida
-        "https://www.bicycling.com.br/feed/",                    # Bicycling BR — ciclismo
-        "https://www.womenshealthbrasil.com.br/feed/",           # Women's Health BR
-        "https://www.menshealth.com.br/feed/",                   # Men's Health BR
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar (backup robusto)
-        "https://saude.abril.com.br/feed/",                      # Saúde Abril (backup)
+        # Fontes internacionais de elite — Europa e EUA (traduzidas pelo Gemini)
+        "https://www.runnersworld.com/rss/all.xml/",             # Runner's World US — corrida/trail
+        "https://www.menshealth.com/rss/all.xml/",               # Men's Health US — performance
+        "https://www.womenshealthmag.com/rss/all.xml/",          # Women's Health US — wellness
+        "https://www.bicycling.com/rss/all.xml/",                # Bicycling US — ciclismo
+        "https://www.outsideonline.com/feed/",                   # Outside Online — endurance/aventura
+        # Backup Brasil (quando internacionais falham)
+        "https://www.runnersworld.com.br/feed/",                 # Runner's World BR
+        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -56,10 +63,11 @@ RSS_FEEDS = {
         "https://www.tecmundo.com.br/ciencia/rss",               # TecMundo ciência
     ],
     "Motos":    [
-        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online
+        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online — robusto
         "https://www.motoo.com.br/feed/",                        # Motoo
-        "https://quatrorodas.abril.com.br/motos/feed/",          # Quatro Rodas motos
-        "https://www.webmotors.com.br/noticias/motos/feed/",     # WebMotors motos
+        "https://motoblog.uol.com.br/feed/",                     # Moto Blog UOL
+        "https://www.icarros.com.br/noticias/motos/rss.xml",     # iCarros motos
+        "https://revistaautoesporte.globo.com/rss/",             # Auto Esporte (cobre motos)
     ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
@@ -73,7 +81,10 @@ FILTROS_TEMA = {
                  "lollapalooza", "festival", "show", "ingresso",
                  "previsão do tempo", "clima", "chuva",
                  "bbb", "big brother", "prêmio do bbb", "reality",
-                 "tênis", "fonseca", "alcaraz", "sinner", "nadal"],
+                 "tênis", "fonseca", "alcaraz", "sinner", "nadal",
+                 # Guerra/geopolítica — vai para Mundo, não Mercado
+                 "israel:", "irã:", "civil morto", "guerra de fronteira",
+                 "ataque", "bombardeio", "teerã", "netanyahu", "míssil"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
                  "guia-de-compras", "em-oferta", "promoção", "desconto",
@@ -91,12 +102,21 @@ FILTROS_TEMA = {
                  "jogos para jogar", "jogos cooperativos", "melhores jogos",
                  # PC gamer off-topic
                  "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
-                 "configurações para rodar", "placa de vídeo para"],
+                 "configurações para rodar", "placa de vídeo para",
+                 # Promoções de games com linguagem coloquial
+                 "de graça", "baratinhos", "indicações de games", "games da semana",
+                 "jogos da semana", "resgate grátis", "jogo grátis"],
     "Esportes": [
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
         "reprisa", "reprise", "jogos históricos", "jogos clássicos",
         "programação", "vai passar", "transmissão",
+        # Streaming e guias de conteúdo
+        "o que assistir", "disney+", "para assistir", "catálogo",
+        # Arquivos antigos / obituários / premiações antigas
+        "nota de falecimento", "troféu best", "melhor nadador juvenil",
+        "1959-", "1960-", "1961-", "1962-", "1963-", "1964-", "1965-",
+        "mensagem de despedida",
         "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
         "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
         "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
@@ -118,8 +138,18 @@ FILTROS_TEMA = {
         "câncer", "tumor", "cirurgia", "hospital", "médico recomenda",
         "remédio", "medicamento", "vacina", "dengue", "vírus",
         "doença", "diagnóstico", "sintomas", "tratamento clínico",
-        # Celebridade/gossip
+        # Celebridade/gossip/reality
         "famoso", "celebridade", "ator", "atriz", "novela",
+        "bbb", "big brother", "reality",
+        # Saúde sazonal e genérica — vai para Ciência
+        "resfriado", "alergia", "gripe", "outono e saúde",
+        "afastados do trabalho", "adoecimento mental", "afastamento",
+        # Culinária genérica — não é wellness/performance
+        "erros na cozinha", "receita de", "culinária",
+        "carne vermelha crua", "faz mal comer",
+        # Saúde do idoso / velhice genérica
+        "velhice", "envelhecimento", "como deixar de beber aos",
+        "idoso", "terceira idade",
     ],
     "Ciencia":  [],
     "Motos":    [],
@@ -129,13 +159,27 @@ FILTROS_TEMA = {
 # Palavras-chave de futebol para controle de proporção no caderno Esportes
 # (máx 1 futebol em 4 — liberando espaço para F1, NBA, NFL)
 PALAVRAS_FUTEBOL = [
+    # Competições
     "futebol", "brasileirão", "série a", "serie-a", "libertadores",
-    "copa do brasil", "palmeiras", "flamengo", "corinthians", "são paulo",
-    "santos", "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
-    "botafogo", "fluminense", "fortaleza", "bahia", "gol", "técnico",
-    "treinador", "zagueiro", "atacante", "meia", "goleiro", "volante",
-    "campeonato brasileiro", "premier league", "la liga", "serie a italiana",
-    "champions league", "copa-do-brasil", "brasileirao"
+    "copa do brasil", "copa-do-brasil", "brasileirao", "champions league",
+    "premier league", "la liga", "serie a italiana", "campeonato brasileiro",
+    "copa do mundo", "eliminatórias", "eurocopa", "world cup",
+    # Clubes brasileiros
+    "palmeiras", "flamengo", "corinthians", "são paulo", "santos",
+    "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
+    "botafogo", "fluminense", "fortaleza", "bahia", "sport", "ceará",
+    "athletico", "coritiba", "goiás", "bragantino", "juventude",
+    # Seleção e contexto nacional
+    "seleção brasileira", "seleção", "cbf", "tite", "dorival",
+    # Jogadores frequentes no feed
+    "neymar", "vinicius", "vinícius", "rodrygo", "endrick", "richarlison",
+    "memphis", "raphinha", "gabriel martinelli", "militão", "marquinhos",
+    "alisson", "ederson", "casemiro", "fred", "paquetá",
+    # Posições e termos técnicos
+    "técnico", "treinador", "zagueiro", "atacante", "meia", "goleiro",
+    "volante", "lateral", "centroavante", "artilheiro", "convocação",
+    # Termos genéricos de futebol
+    "gol", "partida", "clássico", "derby", "escalação", "treino da seleção",
 ]
 
 # Palavras-chave de esportes prioritários (F1, NBA, NFL)
@@ -157,7 +201,7 @@ def validar_ambiente():
     Retorna True se tudo ok, False se algo estiver faltando.
     """
     variaveis = {
-        "GEMINI_KEY": GEMINI_KEY,
+        "CLAUDE_KEY": CLAUDE_KEY,
         "GCP_JSON": GCP_JSON,
         "EMAIL_USER": EMAIL_SENDER,
         "EMAIL_PASSWORD": EMAIL_PASSWORD,
@@ -349,6 +393,38 @@ def obter_indicadores():
 # --- 7. EXTRATOR DE IMAGEM ---
 # =============================================================================
 
+def buscar_og_image(url_artigo, timeout=5):
+    """
+    Busca a imagem og:image da página do artigo via HTTP.
+    Essa é a imagem real do artigo — muito mais relevante que fallbacks genéricos.
+    Retorna a URL da imagem ou None se falhar.
+    """
+    if not url_artigo:
+        return None
+    try:
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)',
+            'Accept': 'text/html',
+        }
+        r = requests.get(url_artigo, headers=headers, timeout=timeout, allow_redirects=True)
+        if r.status_code != 200:
+            return None
+        html = r.text
+        # og:image é o padrão mais universal — usado por G1, ESPN, SporTV, TecMundo etc.
+        match = re.search(r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"', html, re.IGNORECASE)
+        if not match:
+            match = re.search(r'<meta[^>]+content="([^"]+)"[^>]+property="og:image"', html, re.IGNORECASE)
+        if match:
+            img_url = match.group(1).strip()
+            # Valida que é uma URL real de imagem
+            extensoes = ('.jpg', '.jpeg', '.png', '.webp', '.gif')
+            # Aceita também URLs sem extensão (CDNs como Globo, G1 usam isso)
+            if img_url.startswith('http') and len(img_url) > 10:
+                return img_url
+    except Exception:
+        pass
+    return None
+
 # Fallbacks específicos por esporte (usados quando o feed não tem imagem)
 FALLBACK_ESPORTES_KEYWORD = {
     "f1":           "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
@@ -387,6 +463,13 @@ FALLBACK_ESPORTES_GENERIC = [
 def extrair_imagem_rss(entry, tema, idx_entry=0):
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     image_url = None
+
+    # 0. og:image da página real do artigo (mais preciso — imagem real do conteúdo)
+    # Usado PRIMEIRO para Esportes e Fitness, onde imagens genéricas são problemáticas
+    if tema in ("Esportes", "Fitness", "Motos"):
+        og = buscar_og_image(entry.get('link', ''))
+        if og:
+            image_url = og
 
     # 1. media_content
     if 'media_content' in entry:
@@ -478,29 +561,62 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
 # =============================================================================
 # --- 8. IA (GEMINI) ---
 # =============================================================================
-def chamar_gemini_api(prompt):
-    if not GEMINI_KEY:
+def chamar_claude_api(prompt):
+    """
+    Chama a API do Claude (Anthropic) para gerar resumos das notícias.
+    Modelo: claude-sonnet-4-20250514 — melhor equilíbrio entre qualidade e velocidade.
+    Fallback: claude-haiku-4-5-20251001 — mais rápido se Sonnet falhar por rate limit.
+    """
+    if not CLAUDE_KEY:
         return None
-    modelos = ["gemini-2.5-flash", "gemini-2.0-flash"]
-    headers = {'Content-Type': 'application/json'}
-    payload = {"contents": [{"parts": [{"text": prompt}]}]}
 
-    for modelo in modelos:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent?key={GEMINI_KEY}"
+    modelos = [
+        ("claude-sonnet-4-20250514", 30),   # Primário: qualidade máxima
+        ("claude-haiku-4-5-20251001", 20),  # Fallback: mais rápido
+    ]
+
+    headers = {
+        "x-api-key":         CLAUDE_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type":      "application/json",
+    }
+
+    for modelo, timeout in modelos:
         for tentativa in range(1, 4):
             try:
-                r = requests.post(url, headers=headers, json=payload, timeout=30)
+                payload = {
+                    "model":      modelo,
+                    "max_tokens": 2048,
+                    "messages":   [{"role": "user", "content": prompt}],
+                }
+                r = requests.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers=headers,
+                    json=payload,
+                    timeout=timeout
+                )
                 if r.status_code == 200:
-                    return r.json()['candidates'][0]['content']['parts'][0]['text']
+                    texto = r.json()["content"][0]["text"]
+                    print(f"      🤖 Claude ({modelo}) respondeu com sucesso.")
+                    return texto
                 elif r.status_code == 429:
-                    print(f"      ⏳ Rate limit Gemini. Aguardando {20 * tentativa}s...")
-                    time.sleep(20 * tentativa)
-                else:
-                    print(f"      ⚠️ Gemini retornou status {r.status_code}. Tentando próximo modelo...")
+                    espera = 15 * tentativa
+                    print(f"      ⏳ Rate limit Claude. Aguardando {espera}s... (tentativa {tentativa})")
+                    time.sleep(espera)
+                elif r.status_code == 529:
+                    print(f"      ⚠️ Claude sobrecarregado (529). Tentando fallback...")
                     break
-            except Exception as e:
-                print(f"      ⚠️ Exceção ao chamar Gemini: {e}")
+                else:
+                    print(f"      ⚠️ Claude retornou status {r.status_code}: {r.text[:100]}")
+                    break
+            except requests.exceptions.Timeout:
+                print(f"      ⚠️ Timeout ao chamar Claude ({modelo}).")
                 break
+            except Exception as e:
+                print(f"      ⚠️ Exceção ao chamar Claude: {e}")
+                break
+
+    print("      ❌ Todas as tentativas com Claude falharam. Usando fallback RSS.")
     return None
 
 def limpar_texto_rss(texto):
@@ -736,7 +852,7 @@ REGRA EXTRA para o caderno Mercado:
         "Tech":     "Inclua detalhes técnicos relevantes, o impacto no mercado ou no usuário final, e o contexto da inovação ou empresa.",
         "Esportes": "Inclua resultados, classificações, desempenho de atletas e o que está em jogo na competição.",
         "Cinema":   "Inclua avaliações (Rotten Tomatoes, IMDb quando disponível), o gênero, o elenco principal e por que vale assistir.",
-        "Fitness":  "Escreva com a linguagem da cultura wellness e performance: foque em treino, recuperação, nutrição esportiva, mindset e estilo de vida ativo. Inclua dados práticos (séries, tempo, macros, protocolos) e conecte com a mentalidade de quem busca evoluir — seja corredor, atleta recreativo ou praticante de academia. Evite tom de consultório médico.",
+        "Fitness":  "IMPORTANTE: Se a manchete estiver em inglês, traduza o conteúdo para português brasileiro naturalmente antes de escrever o resumo. Escreva com a linguagem da cultura wellness e performance: foque em treino, recuperação, nutrição esportiva, mindset e estilo de vida ativo. Inclua dados práticos (séries, tempo, macros, protocolos, zonas de frequência cardíaca) e conecte com a mentalidade de quem busca evoluir — corredor, ciclista, triatleta ou praticante de academia. Evite tom de consultório médico.",
         "Ciencia":  "Inclua a metodologia da pesquisa, os números e descobertas concretas, e o que isso muda no entendimento científico.",
         "Motos":    "Inclua especificações técnicas relevantes (motor, potência, preço), diferenciais do modelo e contexto do mercado.",
         "Fofoca":   "Inclua o contexto da história, as pessoas envolvidas e os detalhes que tornam o assunto interessante.",
@@ -765,7 +881,7 @@ Separe cada resumo com "|||". Nada mais além dos resumos.
 Manchetes:
 {input_txt}"""
 
-    resp_ia = chamar_gemini_api(prompt)
+    resp_ia = chamar_claude_api(prompt)
 
     def limpar_resumo(texto):
         # Remove markdown residual
@@ -900,7 +1016,7 @@ def enviar_email(dest, html):
 # --- 12. MAIN ---
 # =============================================================================
 def main():
-    print("🚀 Iniciando Motor (v11.0 - Multi-fonte + Histórico 30d + Validações)...")
+    print("🚀 Iniciando Motor (v12.0 - Claude AI + Multi-fonte + Histórico 30d)...")
 
     # 1. Valida o ambiente antes de qualquer coisa
     if not validar_ambiente():
