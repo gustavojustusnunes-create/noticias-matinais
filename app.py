@@ -273,25 +273,37 @@ st.markdown("""
 
 def traduzir_titulo_se_ingles(titulo):
     """
-    Detecta se o título está em inglês e traduz para português via Gemini.
+    Detecta se o título está em inglês e traduz para português via Claude.
     Usado nas notícias de Fitness (fontes internacionais US/EU).
     Retorna o título traduzido ou o original se já estiver em PT ou se falhar.
     """
     if not titulo:
         return titulo
-    # Heurística rápida: se tem palavras comuns em inglês, provavelmente é EN
+
+    # Heurística: detecta inglês por palavras funcionais comuns
     palavras_ingles = ["the", "how", "why", "what", "best", "your", "you",
                        "with", "this", "that", "and", "for", "are", "was",
                        "running", "workout", "training", "fitness", "marathon",
-                       "diet", "muscle", "weight", "cardio", "strength"]
+                       "i ran", "i didn", "i found", "my ", "me ", "review:",
+                       "things no", "could benefit", "summer", "winter", "spring"]
     titulo_lower = titulo.lower()
-    palavras_encontradas = sum(1 for p in palavras_ingles if f" {p} " in f" {titulo_lower} ")
+    palavras_encontradas = sum(1 for p in palavras_ingles if p in titulo_lower)
     if palavras_encontradas < 2:
         return titulo  # Provavelmente já está em português
 
-    claude_key = st.secrets.get("CLAUDE_KEY", "")
+    # Tenta pegar a chave de diferentes fontes (Streamlit secrets ou env var)
+    claude_key = ""
+    try:
+        claude_key = st.secrets.get("CLAUDE_KEY", "")
+    except Exception:
+        pass
     if not claude_key:
-        return titulo
+        import os
+        claude_key = os.environ.get("CLAUDE_KEY", "")
+
+    if not claude_key:
+        # Sem chave: mostra indicador visual de que é conteúdo EN
+        return f"🇺🇸 {titulo}"
 
     try:
         prompt = (
@@ -315,7 +327,6 @@ def traduzir_titulo_se_ingles(titulo):
         )
         if r.status_code == 200:
             traduzido = r.json()["content"][0]["text"].strip()
-            # Remove aspas que Claude às vezes adiciona
             traduzido = traduzido.strip('"\'`')
             if 5 < len(traduzido) < 250:
                 return traduzido
@@ -413,14 +424,25 @@ FILTROS_TEMA = {
                  "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
                  "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
                  "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal",
-                 # Futebol — bloqueia no site também (mesma lógica do main.py)
+                 # Futebol brasileiro
                  "seleção brasileira", "convocação", "treino da seleção",
                  "neymar", "vinicius", "vinícius", "rodrygo", "endrick",
-                 "memphis depay", "raphinha", "militão", "marquinhos",
+                 "memphis", "raphinha", "militão", "marquinhos",
                  "copa do mundo", "eliminatórias", "eurocopa",
                  "palmeiras", "flamengo", "corinthians", "são paulo",
                  "grêmio", "atletico", "cruzeiro", "vasco", "botafogo",
-                 "brasileirão", "copa do brasil", "libertadores"],
+                 "brasileirão", "copa do brasil", "libertadores",
+                 # Futebol internacional — jogadores
+                 "salah", "mbappé", "mbappe", "haaland", "bellingham",
+                 "modric", "benzema", "lewandowski", "kane", "de bruyne",
+                 "messi", "ronaldo", "kroos", "pedri", "yamal",
+                 # Futebol internacional — clubes e ligas
+                 "liverpool", "real madrid", "barcelona", "manchester",
+                 "arsenal", "chelsea", "psg", "bayern", "juventus",
+                 "premier league", "la liga", "champions league",
+                 # Técnicos / contexto futebol
+                 "ancelotti", "diniz", "guardiola", "klopp", "mourinho",
+                 "brasil x ", "seleção x ", "amistoso", "friendly"],
     "Cinema":   ["aposta", "bet", "cassino", "futebol", "esporte",
                  "aniversário", "tatuagem", "look", "moda", "relacionamento",
                  "casamento", "separação", "gravidez", "filhos",
