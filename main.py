@@ -180,6 +180,17 @@ PALAVRAS_FUTEBOL = [
     "volante", "lateral", "centroavante", "artilheiro", "convocação",
     # Termos genéricos de futebol
     "gol", "partida", "clássico", "derby", "escalação", "treino da seleção",
+    # Futebol internacional — jogadores
+    "salah", "mbappé", "mbappe", "haaland", "bellingham",
+    "modric", "benzema", "lewandowski", "kane", "de bruyne",
+    "messi", "ronaldo", "kroos", "pedri", "yamal",
+    # Futebol internacional — clubes e ligas
+    "liverpool", "real madrid", "barcelona", "manchester",
+    "arsenal", "chelsea", "psg", "bayern", "juventus",
+    "premier league", "la liga", "champions league",
+    # Técnicos / contexto futebol
+    "ancelotti", "diniz", "guardiola", "klopp", "mourinho",
+    "brasil x ", "seleção x ", "amistoso",
 ]
 
 # Palavras-chave de esportes prioritários (F1, NBA, NFL)
@@ -564,15 +575,19 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
 def chamar_claude_api(prompt):
     """
     Chama a API do Claude (Anthropic) para gerar resumos das notícias.
-    Modelo: claude-sonnet-4-20250514 — melhor equilíbrio entre qualidade e velocidade.
-    Fallback: claude-haiku-4-5-20251001 — mais rápido se Sonnet falhar por rate limit.
+    Modelos atuais (Março 2026):
+      - claude-sonnet-4-6       → qualidade premium, primário
+      - claude-haiku-4-5-20251001 → rápido e econômico, fallback
     """
     if not CLAUDE_KEY:
+        print("      ❌ CLAUDE_KEY não definida. Verifique os secrets do GitHub Actions.")
         return None
 
+    print(f"      🔑 CLAUDE_KEY detectada ({len(CLAUDE_KEY)} chars). Iniciando chamada...")
+
     modelos = [
-        ("claude-sonnet-4-20250514", 30),   # Primário: qualidade máxima
-        ("claude-haiku-4-5-20251001", 20),  # Fallback: mais rápido
+        ("claude-sonnet-4-6",        45),   # Primário: Sonnet 4.6 — qualidade máxima
+        ("claude-haiku-4-5-20251001", 30),  # Fallback: Haiku — mais rápido
     ]
 
     headers = {
@@ -582,6 +597,7 @@ def chamar_claude_api(prompt):
     }
 
     for modelo, timeout in modelos:
+        print(f"      🤖 Tentando modelo: {modelo}...")
         for tentativa in range(1, 4):
             try:
                 payload = {
@@ -596,27 +612,35 @@ def chamar_claude_api(prompt):
                     timeout=timeout
                 )
                 if r.status_code == 200:
-                    texto = r.json()["content"][0]["text"]
-                    print(f"      🤖 Claude ({modelo}) respondeu com sucesso.")
+                    data = r.json()
+                    texto = data["content"][0]["text"]
+                    tokens = data.get("usage", {})
+                    print(f"      ✅ Claude ({modelo}) OK. Tokens: in={tokens.get('input_tokens','?')} out={tokens.get('output_tokens','?')}")
                     return texto
                 elif r.status_code == 429:
-                    espera = 15 * tentativa
-                    print(f"      ⏳ Rate limit Claude. Aguardando {espera}s... (tentativa {tentativa})")
+                    espera = 20 * tentativa
+                    print(f"      ⏳ Rate limit (429). Aguardando {espera}s... (tentativa {tentativa}/3)")
                     time.sleep(espera)
+                elif r.status_code == 404:
+                    print(f"      ❌ Modelo não encontrado (404): {modelo}. Tentando próximo...")
+                    break
+                elif r.status_code == 401:
+                    print(f"      ❌ CLAUDE_KEY inválida (401). Verifique o secret.")
+                    return None  # Não adianta tentar mais
                 elif r.status_code == 529:
-                    print(f"      ⚠️ Claude sobrecarregado (529). Tentando fallback...")
+                    print(f"      ⚠️ Claude sobrecarregado (529). Tentando próximo modelo...")
                     break
                 else:
-                    print(f"      ⚠️ Claude retornou status {r.status_code}: {r.text[:100]}")
+                    print(f"      ⚠️ Status inesperado {r.status_code}: {r.text[:200]}")
                     break
             except requests.exceptions.Timeout:
-                print(f"      ⚠️ Timeout ao chamar Claude ({modelo}).")
+                print(f"      ⚠️ Timeout ({timeout}s) em {modelo}. Tentando próximo...")
                 break
             except Exception as e:
-                print(f"      ⚠️ Exceção ao chamar Claude: {e}")
+                print(f"      ⚠️ Exceção: {e}")
                 break
 
-    print("      ❌ Todas as tentativas com Claude falharam. Usando fallback RSS.")
+    print("      ❌ Todos os modelos falharam. Usando fallback RSS.")
     return None
 
 def limpar_texto_rss(texto):
@@ -915,12 +939,22 @@ Manchetes:
         # Se resumo da IA ficou vazio → usa fallback do RSS
         if not resumo_limpo:
             resumo_fallback_txt = resumo_fallback(entry)
-            # Se fallback também ficou vazio → gera aviso genérico com o título
-            if not resumo_fallback_txt:
-                titulo = entry.get('title', '')
-                resumo_limpo = f"Confira o que está acontecendo: {titulo}."
-            else:
+            if resumo_fallback_txt:
                 resumo_limpo = resumo_fallback_txt
+            else:
+                # RSS também vazio: tenta gerar resumo mínimo via Claude só com o título
+                titulo_entry = entry.get('title', '')
+                prompt_mini = (
+                    f"Em 2 frases diretas e informativas (mínimo 40 palavras), "
+                    f"escreva o que provavelmente esta notícia aborda, baseado apenas no título. "
+                    f"Não use 'provavelmente', 'possivelmente' ou linguagem especulativa. "
+                    f"Escreva como fato jornalístico natural.\n\nTítulo: {titulo_entry}"
+                )
+                resumo_mini = chamar_claude_api(prompt_mini)
+                if resumo_mini and len(resumo_mini.split()) >= 20:
+                    resumo_limpo = limpar_resumo(resumo_mini)
+                else:
+                    resumo_limpo = titulo_entry  # último recurso: só o título
 
         img = extrair_imagem_rss(entry, tema, idx_entry=i)
         noticias_finais.append({
@@ -1016,7 +1050,7 @@ def enviar_email(dest, html):
 # --- 12. MAIN ---
 # =============================================================================
 def main():
-    print("🚀 Iniciando Motor (v12.0 - Claude AI + Multi-fonte + Histórico 30d)...")
+    print("🚀 Iniciando Motor (v12.1 - Claude Sonnet 4.6 + Fallback Inteligente)...")
 
     # 1. Valida o ambiente antes de qualquer coisa
     if not validar_ambiente():
