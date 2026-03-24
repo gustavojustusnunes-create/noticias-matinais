@@ -307,15 +307,17 @@ def traduzir_titulo_se_ingles(titulo):
                 "content-type":      "application/json",
             },
             json={
-                "model":    "claude-haiku-4-5-20251001",
-                "max_tokens": 100,
-                "messages": [{"role": "user", "content": prompt}],
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": 150,
+                "messages":   [{"role": "user", "content": prompt}],
             },
-            timeout=8
+            timeout=10
         )
         if r.status_code == 200:
             traduzido = r.json()["content"][0]["text"].strip()
-            if 5 < len(traduzido) < 200:
+            # Remove aspas que Claude às vezes adiciona
+            traduzido = traduzido.strip('"\'`')
+            if 5 < len(traduzido) < 250:
                 return traduzido
     except Exception:
         pass
