@@ -27,7 +27,7 @@ jobs:
 
     - name: 🚀 Rodar Jornal
       env:
-        GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
+        CLAUDE_KEY: ${{ secrets.CLAUDE_KEY }}
         EMAIL_USER: ${{ secrets.EMAIL_USER }}
         EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
         GCP_JSON: ${{ secrets.GCP_JSON }}
