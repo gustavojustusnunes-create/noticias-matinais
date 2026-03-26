@@ -34,9 +34,9 @@ RSS_FEEDS = {
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
         "https://pt.motorsport.com/rss/f1/news/",                # Motorsport PT — F1
+        "https://www.theplayoffs.com.br/feed/",                  # The Playoffs BR — NBA/NFL em PT
         "https://www.espn.com.br/rss/",                          # ESPN Brasil — NBA/NFL/F1
         "https://sportv.globo.com/rss/sportv/",                  # SporTV
-        "https://ge.globo.com/rss/ge/",                          # GE Globo
         "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
     ],
     "Cinema":   [
@@ -46,15 +46,14 @@ RSS_FEEDS = {
         "https://www.adorocinema.com/rss/",                      # AdoroCinema
     ],
     "Fitness":  [
-        # Fontes internacionais de elite — Europa e EUA (traduzidas pelo Gemini)
-        "https://www.runnersworld.com/rss/all.xml/",             # Runner's World US — corrida/trail
-        "https://www.menshealth.com/rss/all.xml/",               # Men's Health US — performance
-        "https://www.womenshealthmag.com/rss/all.xml/",          # Women's Health US — wellness
-        "https://www.bicycling.com/rss/all.xml/",                # Bicycling US — ciclismo
-        "https://www.outsideonline.com/feed/",                   # Outside Online — endurance/aventura
-        # Backup Brasil (quando internacionais falham)
+        # PT-BR primeiro — têm RSS com summary (Claude funciona bem)
+        "https://ge.globo.com/rss/eu-atleta/",                   # Eu Atleta — GE Globo performance
         "https://www.runnersworld.com.br/feed/",                 # Runner's World BR
-        "https://g1.globo.com/rss/g1/bem-estar/",                # G1 Bem-Estar
+        "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/", # SporTV Fitness
+        # Internacional como complemento (Claude traduz no prompt)
+        "https://www.runnersworld.com/rss/all.xml/",             # Runner's World US
+        "https://www.menshealth.com/rss/all.xml/",               # Men's Health US
+        "https://www.bicycling.com/rss/all.xml/",                # Bicycling US
     ],
     "Ciencia":  [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
@@ -105,23 +104,54 @@ FILTROS_TEMA = {
                  "configurações para rodar", "placa de vídeo para",
                  # Promoções de games com linguagem coloquial
                  "de graça", "baratinhos", "indicações de games", "games da semana",
-                 "jogos da semana", "resgate grátis", "jogo grátis"],
+                 "jogos da semana", "resgate grátis", "jogo grátis",
+                 # Séries/filmes específicos — vão para Cinema
+                 "peaky blinders", "invencível", "house of", "the last of",
+                 "breaking bad", "game of thrones", "stranger things",
+                 # Gaming — guias e cosméticos
+                 "pets em ", "roupas para", "como ter pets", "como comprar"],
     "Esportes": [
+        # Logística / ao-vivo
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
         "reprisa", "reprise", "jogos históricos", "jogos clássicos",
         "programação", "vai passar", "transmissão",
-        # Streaming e guias de conteúdo
+        # Streaming
         "o que assistir", "disney+", "para assistir", "catálogo",
-        # Arquivos antigos / obituários / premiações antigas
+        # Arquivo morto
         "nota de falecimento", "troféu best", "melhor nadador juvenil",
         "1959-", "1960-", "1961-", "1962-", "1963-", "1964-", "1965-",
         "mensagem de despedida",
+        # Futebol regional/amador
         "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
         "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
         "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
         "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
         "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal",
+        # ── FUTEBOL BRASILEIRO — BLOQUEIO TOTAL ──
+        "futebol", "brasileirão", "série a", "serie a", "libertadores",
+        "copa do brasil", "copa-do-brasil", "brasileirao",
+        "campeonato brasileiro", "eliminatórias", "eurocopa", "copa do mundo",
+        "seleção brasileira", "seleção", "convocação", "cbf",
+        "amistoso", "friendly", "brasil x ", "seleção x ",
+        # Jogadores BR
+        "neymar", "vinicius", "vinícius", "rodrygo", "endrick", "richarlison",
+        "memphis", "raphinha", "militão", "marquinhos", "casemiro", "paquetá",
+        "alisson", "ederson", "rayan",
+        # Clubes BR
+        "palmeiras", "flamengo", "corinthians", "são paulo", "santos",
+        "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
+        "botafogo", "fluminense", "fortaleza", "bahia", "athletico",
+        # ── FUTEBOL INTERNACIONAL — BLOQUEIO TOTAL ──
+        "salah", "mbappé", "mbappe", "haaland", "bellingham",
+        "modric", "benzema", "lewandowski", "kane", "de bruyne",
+        "messi", "ronaldo", "kroos", "pedri", "yamal",
+        "liverpool", "real madrid", "barcelona", "manchester",
+        "arsenal", "chelsea", "psg", "bayern", "juventus",
+        "premier league", "la liga", "champions league",
+        # Técnicos de futebol
+        "ancelotti", "diniz", "guardiola", "klopp", "mourinho",
+        "dorival", "tite", "técnico da seleção",
     ],
     "Cinema":   [
         "aposta", "bet", "cassino", "futebol", "esporte",
@@ -586,8 +616,8 @@ def chamar_claude_api(prompt):
     print(f"      🔑 CLAUDE_KEY detectada ({len(CLAUDE_KEY)} chars). Iniciando chamada...")
 
     modelos = [
-        ("claude-sonnet-4-6",        45),   # Primário: Sonnet 4.6 — qualidade máxima
-        ("claude-haiku-4-5-20251001", 30),  # Fallback: Haiku — mais rápido
+        ("claude-sonnet-4-6",         90),  # Primário: timeout generoso (prompt longo)
+        ("claude-haiku-4-5-20251001", 60),  # Fallback: Haiku — mais rápido
     ]
 
     headers = {
@@ -602,7 +632,7 @@ def chamar_claude_api(prompt):
             try:
                 payload = {
                     "model":      modelo,
-                    "max_tokens": 2048,
+                    "max_tokens": 4096,
                     "messages":   [{"role": "user", "content": prompt}],
                 }
                 r = requests.post(
