@@ -17,21 +17,47 @@ st.set_page_config(
     page_title="All News Journal",
     page_icon="📰",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': None,
+        'Report a bug': None,
+        'About': None,
+    }
 )
 
 # =============================================================================
-# --- 2. CSS: DESIGN PREMIUM ---
+# --- 2. CSS PREMIUM — OCULTA TUDO TÉCNICO DO STREAMLIT ---
 # =============================================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
 
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {background: transparent !important;}
-    .stDeployButton {display:none;}
+    /* ── OCULTAR ABSOLUTAMENTE TUDO DO STREAMLIT ── */
+    #MainMenu                                  { display: none !important; }
+    footer                                     { display: none !important; }
+    header                                     { background: transparent !important; }
+    .stDeployButton                            { display: none !important; }
+    [data-testid="stToolbar"]                  { display: none !important; }
+    [data-testid="stDecoration"]               { display: none !important; }
+    [data-testid="stStatusWidget"]             { display: none !important; }
+    [data-testid="manage-app-button"]          { display: none !important; }
+    [data-testid="stToolbarActions"]           { display: none !important; }
+    .viewerBadge_container__1QSob             { display: none !important; }
+    .styles_viewerBadge__1yB5_                { display: none !important; }
+    #stDecoration                              { display: none !important; }
+    [class*="viewerBadge"]                    { display: none !important; }
+    [class*="deployButton"]                   { display: none !important; }
+    [class*="StatusWidget"]                   { display: none !important; }
+    [class*="toolbar"]                        { display: none !important; }
+    iframe[title="streamlit_analytics"]       { display: none !important; }
+    .st-emotion-cache-zq5wmm                  { display: none !important; }
+    .st-emotion-cache-1dp5vir                 { display: none !important; }
+    .st-emotion-cache-18ni7ap                 { display: none !important; }
+    /* Oculta todo rodapé de terceiros */
+    [data-testid="stBottom"]                  { display: none !important; }
+    .st-emotion-cache-uf99v8                  { display: none !important; }
 
+    /* ── DESIGN PREMIUM ── */
     .stApp {
         background-color: #fdfbf7;
         font-family: 'Lora', serif;
@@ -50,12 +76,12 @@ st.markdown("""
         padding: 15px 0;
         margin-bottom: 20px;
     }
-
     h2, h3 {
         font-family: 'Playfair Display', serif;
         color: #0a5c5a !important;
     }
 
+    /* ── CARDS DE NOTÍCIA ── */
     .news-card {
         background-color: #ffffff;
         border: 1px solid #e5e3de;
@@ -76,7 +102,6 @@ st.markdown("""
         border-bottom: 3px solid #0a5c5a;
     }
     .news-content { padding: 20px; }
-
     .news-tag {
         font-size: 0.70rem;
         text-transform: uppercase;
@@ -91,24 +116,29 @@ st.markdown("""
     }
     .news-title {
         font-family: 'Playfair Display', serif;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         font-weight: 700;
         margin-bottom: 12px;
         display: block;
         color: #111 !important;
         text-decoration: none;
-        line-height: 1.3;
+        line-height: 1.35;
     }
     .news-title:hover { color: #0a5c5a !important; }
-    .news-date {
-        font-size: 0.8rem;
-        color: #777;
-        font-style: italic;
+    .news-source {
+        font-size: 0.78rem;
+        color: #0a5c5a;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         border-top: 1px solid #eee;
         padding-top: 10px;
+        text-decoration: none;
+        display: block;
     }
+    .news-source:hover { opacity: 0.75; }
 
-    /* Alerta de erro customizado */
+    /* ── ALERTAS ── */
     .alerta-erro {
         background-color: #fff0f0;
         border-left: 4px solid #cc0000;
@@ -128,7 +158,7 @@ st.markdown("""
         margin: 8px 0;
     }
 
-    /* Botões da sidebar */
+    /* ── BOTÃO HAMBURGUER DO HEADER ── */
     header[data-testid="stHeader"] button {
         background-color: #0a5c5a !important;
         border-radius: 8px !important;
@@ -148,7 +178,6 @@ st.markdown("""
     }
     header[data-testid="stHeader"] button:hover {
         background-color: #084c4a !important;
-        transform: scale(1.05) !important;
     }
     [data-testid="stSidebarHeader"] button {
         background-color: #fdfbf7 !important;
@@ -161,20 +190,7 @@ st.markdown("""
         stroke: #084c4a !important;
     }
 
-    label[data-testid="stWidgetLabel"] p {
-        color: #0a5c5a !important;
-        font-size: 1.1rem !important;
-        font-weight: bold;
-        font-family: 'Playfair Display', serif;
-    }
-    div[data-baseweb="select"] > div {
-        background-color: #ffffff !important;
-        color: #111111 !important;
-        border: 2px solid #0a5c5a !important;
-        border-radius: 5px;
-    }
-    div[data-baseweb="select"] span { color: #111111 !important; font-weight: bold; }
-
+    /* ── SIDEBAR ── */
     section[data-testid="stSidebar"] {
         background-color: #084c4a !important;
         border-right: none;
@@ -192,8 +208,21 @@ st.markdown("""
         border-radius: 5px !important;
         border: none !important;
     }
+    label[data-testid="stWidgetLabel"] p {
+        color: #0a5c5a !important;
+        font-size: 1.1rem !important;
+        font-weight: bold;
+        font-family: 'Playfair Display', serif;
+    }
+    div[data-baseweb="select"] > div {
+        background-color: #ffffff !important;
+        color: #111111 !important;
+        border: 2px solid #0a5c5a !important;
+        border-radius: 5px;
+    }
+    div[data-baseweb="select"] span { color: #111111 !important; font-weight: bold; }
 
-    /* Todos os botões da sidebar — base */
+    /* Botões da sidebar */
     section[data-testid="stSidebar"] button,
     section[data-testid="stSidebar"] .stButton > button,
     section[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"],
@@ -205,40 +234,19 @@ st.markdown("""
         font-weight: 700 !important;
         transition: all 0.2s ease;
     }
-
-    /* Texto interno dos botões */
     section[data-testid="stSidebar"] button p,
     section[data-testid="stSidebar"] button span,
     section[data-testid="stSidebar"] .stButton > button p {
         color: #ffffff !important;
         font-weight: 700 !important;
     }
-
-    /* Hover de todos os botões */
     section[data-testid="stSidebar"] button:hover,
     section[data-testid="stSidebar"] .stButton > button:hover {
         background-color: #084c4a !important;
         border-color: #ffffff !important;
         transform: scale(1.04);
     }
-
-    /* Botão "Subscrever" — destaque em creme (identificado por ser use_container_width) */
-    section[data-testid="stSidebar"] .stButton:last-of-type > button {
-        background-color: #fdfbf7 !important;
-        color: #084c4a !important;
-        border: 2px solid #fdfbf7 !important;
-        font-size: 0.92rem !important;
-        padding: 8px 0 !important;
-        margin-top: 6px !important;
-    }
-    section[data-testid="stSidebar"] .stButton:last-of-type > button p {
-        color: #084c4a !important;
-    }
-    section[data-testid="stSidebar"] .stButton:last-of-type > button:hover {
-        background-color: #e5e3de !important;
-    }
-
-    /* Botão "Subscrever" type=primary — destaque em creme */
+    /* Botão primário (Subscrever) */
     section[data-testid="stSidebar"] [data-testid="stBaseButton-primary"],
     section[data-testid="stSidebar"] button[kind="primary"] {
         background-color: #fdfbf7 !important;
@@ -264,34 +272,35 @@ st.markdown("""
         border-radius: 10px;
         padding: 20px;
     }
+
+    /* ── SELECTBOX PRINCIPAL ── */
+    section[data-testid="stMain"] label[data-testid="stWidgetLabel"] p {
+        color: #0a5c5a !important;
+        font-size: 1rem !important;
+        font-weight: bold;
+        font-family: 'Playfair Display', serif;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # =============================================================================
-# --- 3. DADOS E FEEDS (com fallback igual ao main.py) ---
+# --- 3. DADOS E FEEDS ---
 # =============================================================================
-
 def traduzir_titulo_se_ingles(titulo):
-    """
-    Detecta se o título está em inglês e traduz para português via Claude.
-    Usado nas notícias de Fitness (fontes internacionais US/EU).
-    Retorna o título traduzido ou o original se já estiver em PT ou se falhar.
-    """
     if not titulo:
         return titulo
-
-    # Heurística: detecta inglês por palavras funcionais comuns
     palavras_ingles = ["the", "how", "why", "what", "best", "your", "you",
                        "with", "this", "that", "and", "for", "are", "was",
                        "running", "workout", "training", "fitness", "marathon",
                        "i ran", "i didn", "i found", "my ", "me ", "review:",
-                       "things no", "could benefit", "summer", "winter", "spring"]
+                       "things no", "could benefit", "summer", "winter", "spring",
+                       "tried", "defense", "softer", "faster", "better",
+                       "scared", "shorts", "pillow", "sleeper"]
     titulo_lower = titulo.lower()
     palavras_encontradas = sum(1 for p in palavras_ingles if p in titulo_lower)
     if palavras_encontradas < 2:
-        return titulo  # Provavelmente já está em português
+        return titulo
 
-    # Tenta pegar a chave de diferentes fontes (Streamlit secrets ou env var)
     claude_key = ""
     try:
         claude_key = st.secrets.get("CLAUDE_KEY", "")
@@ -302,8 +311,7 @@ def traduzir_titulo_se_ingles(titulo):
         claude_key = os.environ.get("CLAUDE_KEY", "")
 
     if not claude_key:
-        # Sem chave: mostra indicador visual de que é conteúdo EN
-        return f"🇺🇸 {titulo}"
+        return f"🌐 {titulo}"
 
     try:
         prompt = (
@@ -326,8 +334,7 @@ def traduzir_titulo_se_ingles(titulo):
             timeout=10
         )
         if r.status_code == 200:
-            traduzido = r.json()["content"][0]["text"].strip()
-            traduzido = traduzido.strip('"\'`')
+            traduzido = r.json()["content"][0]["text"].strip().strip('"\'`')
             if 5 < len(traduzido) < 250:
                 return traduzido
     except Exception:
@@ -345,133 +352,113 @@ RSS_FEEDS = {
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
     "Tech":     ["https://rss.tecmundo.com.br/feed"],
     "Esportes": [
-        "https://pt.motorsport.com/rss/f1/news/",                # Motorsport PT — F1
-        "https://www.theplayoffs.com.br/feed/",                  # The Playoffs BR — NBA/NFL em PT
-        "https://www.espn.com.br/rss/",                          # ESPN Brasil — NBA/NFL/F1
-        "https://sportv.globo.com/rss/sportv/",                  # SporTV
-        "https://www.uol.com.br/esporte/rss.xml",                # UOL Esporte
+        "https://pt.motorsport.com/rss/f1/news/",
+        "https://www.theplayoffs.com.br/feed/",
+        "https://www.espn.com.br/rss/",
+        "https://sportv.globo.com/rss/sportv/",
+        "https://www.uol.com.br/esporte/rss.xml",
     ],
     "Cinema":   [
-        "https://www.omelete.com.br/rss/",                       # Omelete (filmes + séries)
-        "https://www.cinepop.com.br/feed",                       # CinePOP
-        "https://www.papodecinema.com.br/feed/",                 # Papo de Cinema
-        "https://www.adorocinema.com/rss/",                      # AdoroCinema
+        "https://www.omelete.com.br/rss/",
+        "https://www.cinepop.com.br/feed",
+        "https://www.papodecinema.com.br/feed/",
+        "https://www.adorocinema.com/rss/",
     ],
     "Fitness":  [
-        # PT-BR primeiro — têm RSS com summary
-        "https://ge.globo.com/rss/eu-atleta/",                   # Eu Atleta — GE Globo performance
-        "https://www.runnersworld.com.br/feed/",                 # Runner's World BR
-        "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/", # SporTV Fitness
-        # Internacional como complemento
-        "https://www.runnersworld.com/rss/all.xml/",             # Runner's World US
-        "https://www.menshealth.com/rss/all.xml/",               # Men's Health US
-        "https://www.bicycling.com/rss/all.xml/",                # Bicycling US
+        "https://ge.globo.com/rss/eu-atleta/",
+        "https://www.runnersworld.com.br/feed/",
+        "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/",
+        "https://www.runnersworld.com/rss/all.xml/",
+        "https://www.menshealth.com/rss/all.xml/",
+        "https://www.bicycling.com/rss/all.xml/",
     ],
     "Ciencia":  [
-        "https://g1.globo.com/rss/g1/ciencia-e-saude/",          # G1 Ciência e Saúde
-        "https://gizmodo.uol.com.br/feed/",                      # Gizmodo UOL
-        "https://www.inovacaotecnologica.com.br/boletim/rss.xml",# Inovação Tecnológica
-        "https://www.tecmundo.com.br/ciencia/rss",               # TecMundo ciência
+        "https://g1.globo.com/rss/g1/ciencia-e-saude/",
+        "https://gizmodo.uol.com.br/feed/",
+        "https://www.inovacaotecnologica.com.br/boletim/rss.xml",
+        "https://www.tecmundo.com.br/ciencia/rss",
     ],
     "Motos":    [
-        "https://www.motociclismoonline.com.br/feed/",           # Motociclismo Online — robusto
-        "https://www.motoo.com.br/feed/",                        # Motoo
-        "https://motoblog.uol.com.br/feed/",                     # Moto Blog UOL
-        "https://www.icarros.com.br/noticias/motos/rss.xml",     # iCarros motos
-        "https://revistaautoesporte.globo.com/rss/",             # Auto Esporte
+        "https://www.motociclismoonline.com.br/feed/",
+        "https://www.motoo.com.br/feed/",
+        "https://motoblog.uol.com.br/feed/",
+        "https://www.icarros.com.br/noticias/motos/rss.xml",
+        "https://revistaautoesporte.globo.com/rss/",
     ],
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
 
-# Filtros de palavras indesejadas (mesmo padrão do main.py)
 FILTROS_TEMA = {
     "Mundo":    [],
     "Mercado":  ["horóscopo", "moda", "futebol", "brasileirão", "campeonato",
-                 "onde assistir", "onde-assistir", "ao vivo", "ao-vivo",
-                 "gol", "escalação", "clube", "torcedor",
+                 "onde assistir", "ao vivo", "ao-vivo", "gol", "escalação",
                  "lollapalooza", "festival", "show", "ingresso",
                  "previsão do tempo", "clima", "chuva",
-                 "bbb", "big brother", "prêmio do bbb", "reality",
+                 "bbb", "big brother", "reality",
                  "tênis", "fonseca", "alcaraz", "sinner", "nadal",
                  "israel:", "irã:", "civil morto", "guerra de fronteira",
-                 "ataque", "bombardeio", "teerã", "netanyahu", "míssil"],
+                 "ataque", "bombardeio", "teerã", "netanyahu", "míssil",
+                 "lotofácil", "mega-sena", "mega sena", "quina", "lotomania",
+                 "resultado sorteado", "concurso 3", "concurso 4", "concurso 5",
+                 "números sorteados", "prêmio da loteria"],
     "Politica": [],
     "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
                  "guia-de-compras", "em-oferta", "promoção", "desconto",
                  "homenagem", "morre", "falece", "morte", "aniversário",
-                 "ator", "atriz", "celebridade", "troféus", "conquistas",
-                 "ps store", "xbox game pass", "jogos grátis", "resgate agora",
-                 "marinheiro", "porta-avião", "base militar",
+                 "ator", "atriz", "celebridade",
+                 "troféus", "conquistas", "ps store", "xbox game pass",
+                 "jogos grátis", "resgate agora", "marinheiro", "porta-avião",
+                 "entenda o final", "spoiler", "temporada final",
                  "séries live-action", "live-action", "temporada", "episódio",
                  "netflix planeja", "disney+", "hbo planeja",
-                 "filmes e séries", "séries em alta", "para ver na netflix",
-                 "para ver no prime", "para assistir",
+                 "filmes e séries", "para ver na netflix", "para assistir",
                  "jogos para jogar", "jogos cooperativos", "melhores jogos",
-                 "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
-                 "configurações para rodar", "placa de vídeo para",
-                 "de graça", "baratinhos", "indicações de games", "games da semana",
-                 "jogos da semana", "resgate grátis", "jogo grátis",
+                 "% off", "com até", "em oferta", "jogo grátis", "resgate grátis",
+                 "de graça", "baratinhos", "games da semana", "jogos da semana",
                  "peaky blinders", "invencível", "house of", "the last of",
-                 "pets em ", "roupas para", "como ter pets", "como comprar"],
-    "Esportes": ["ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
+                 "pets em ", "roupas para", "como ter pets"],
+    "Esportes": ["palpite", "apostas", "aposta", "odds", "odd:", "prognóstico",
+                 "melhores apostas", "mercado de apostas", "bet", "betting",
+                 "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
                  "escalação", "prováveis-times",
-                 "reprisa", "reprise", "jogos históricos", "programação", "transmissão",
-                 "o que assistir", "disney+", "para assistir", "catálogo",
-                 "nota de falecimento", "troféu best", "melhor nadador juvenil",
-                 "1959-", "1960-", "1961-", "1962-", "1963-", "1964-", "1965-",
-                 "mensagem de despedida",
+                 "reprisa", "reprise", "programação", "vai passar", "transmissão",
+                 "o que assistir", "disney+", "para assistir",
+                 "nota de falecimento", "troféu best", "mensagem de despedida",
                  "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
-                 "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
-                 "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
-                 "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
-                 "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal",
-                 # Futebol brasileiro
-                 "seleção brasileira", "convocação", "treino da seleção",
-                 "neymar", "vinicius", "vinícius", "rodrygo", "endrick",
-                 "memphis", "raphinha", "militão", "marquinhos",
-                 "copa do mundo", "eliminatórias", "eurocopa",
-                 "palmeiras", "flamengo", "corinthians", "são paulo",
-                 "grêmio", "atletico", "cruzeiro", "vasco", "botafogo",
-                 "brasileirão", "copa do brasil", "libertadores",
-                 # Futebol internacional — jogadores
+                 "segunda-divisao", "terceira-divisao", "serie-d", "serie-c", "futsal",
+                 "futebol", "brasileirão", "libertadores", "copa do brasil", "brasileirao",
+                 "eliminatórias", "eurocopa", "copa do mundo",
+                 "seleção brasileira", "seleção", "convocação", "cbf",
+                 "amistoso", "brasil x ", "seleção x ",
+                 "neymar", "vinicius", "vinícius", "rodrygo", "endrick", "richarlison",
+                 "memphis", "raphinha", "militão", "marquinhos", "casemiro", "paquetá",
+                 "palmeiras", "flamengo", "corinthians", "são paulo", "santos",
+                 "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
+                 "botafogo", "fluminense", "fortaleza", "bahia", "athletico",
                  "salah", "mbappé", "mbappe", "haaland", "bellingham",
                  "modric", "benzema", "lewandowski", "kane", "de bruyne",
                  "messi", "ronaldo", "kroos", "pedri", "yamal",
-                 # Futebol internacional — clubes e ligas
                  "liverpool", "real madrid", "barcelona", "manchester",
                  "arsenal", "chelsea", "psg", "bayern", "juventus",
                  "premier league", "la liga", "champions league",
-                 # Técnicos / contexto futebol
-                 "ancelotti", "diniz", "guardiola", "klopp", "mourinho",
-                 "dorival", "tite", "técnico da seleção",
-                 "brasil x ", "seleção x ", "amistoso", "friendly",
-                 # Jogadores BR que ainda escapavam
-                 "rayan", "sara sara", "gabriel sara", "casemiro", "paquetá",
-                 "richarlison", "gabriel martinelli"],
+                 "ancelotti", "guardiola", "klopp", "mourinho"],
     "Cinema":   ["aposta", "bet", "cassino", "futebol", "esporte",
                  "aniversário", "tatuagem", "look", "moda", "relacionamento",
                  "casamento", "separação", "gravidez", "filhos",
-                 "morte de", "falecimento", "luto", "lamenta morte",
-                 "celebra aniversário", "faz anos"],
+                 "morte de", "falecimento", "luto",
+                 "lamenta morte", "celebra aniversário", "faz anos"],
     "Fitness":  ["aposta", "bet", "cassino", "futebol", "moda",
                  "maquiagem", "cabelo", "unhas", "beleza", "tatuagem",
-                 # Saúde médica genérica — vai para Ciência
-                 "câncer", "tumor", "cirurgia", "hospital", "médico recomenda",
+                 "câncer", "tumor", "cirurgia", "hospital",
                  "remédio", "medicamento", "vacina", "dengue", "vírus",
-                 "doença", "diagnóstico", "sintomas", "tratamento clínico",
-                 # Celebridade/gossip/reality
+                 "doença", "diagnóstico", "sintomas",
                  "famoso", "celebridade", "ator", "atriz", "novela",
                  "bbb", "big brother", "reality",
-                 # Saúde sazonal e genérica
-                 "resfriado", "alergia", "gripe", "outono e saúde",
-                 "afastados do trabalho", "adoecimento mental", "afastamento",
-                 # Culinária genérica
+                 "resfriado", "alergia", "gripe",
                  "erros na cozinha", "receita de", "culinária",
-                 "carne vermelha crua", "faz mal comer",
-                 # Saúde do idoso genérica
-                 "velhice", "envelhecimento", "como deixar de beber aos",
-                 "idoso", "terceira idade"],
-    "Ciencia":  [],
+                 "velhice", "envelhecimento", "idoso", "terceira idade"],
+    "Ciencia":  ["mão de obra", "mercado de trabalho", "emprego",
+                 "carreira", "concurso público", "salário"],
     "Motos":    [],
     "Fofoca":   [],
 }
@@ -489,7 +476,6 @@ FALLBACK_IMAGES = {
     "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
 }
 
-# Constantes de fallback para Esportes — movidas para escopo global (performance)
 SPORT_ROTATIONS = {
     "nba":   ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
                "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600&h=300&fit=crop"],
@@ -514,15 +500,13 @@ FALLBACK_ESPORTES_GENERIC = [
 ]
 
 # =============================================================================
-# --- 4. VALIDAÇÕES (novas) ---
+# --- 4. VALIDAÇÕES ---
 # =============================================================================
 def validar_email(email):
-    """Valida formato de e-mail com regex."""
     padrao = r'^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$'
     return bool(re.match(padrao, email.strip()))
 
 def validar_nome(nome):
-    """Nome deve ter ao menos 2 caracteres e só letras/espaços."""
     return len(nome.strip()) >= 2
 
 # =============================================================================
@@ -530,7 +514,6 @@ def validar_nome(nome):
 # =============================================================================
 @st.cache_data(ttl=300)
 def conectar_planilha():
-    """Conecta ao Google Sheets e retorna a aba de usuários."""
     if "GCP_JSON" not in st.secrets:
         return None
     try:
@@ -542,15 +525,10 @@ def conectar_planilha():
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
         return client.open("noticias_db").sheet1
-    except Exception as e:
-        st.error(f"Erro de conexão com o banco: {e}")
+    except Exception:
         return None
 
 def email_ja_cadastrado(email):
-    """
-    (NOVO) Verifica se o e-mail já existe na planilha antes de inserir.
-    Evita duplicatas.
-    """
     sheet = conectar_planilha()
     if not sheet:
         return False
@@ -562,13 +540,9 @@ def email_ja_cadastrado(email):
         return False
 
 def salvar_assinante(nome, email, ordem_temas):
-    """
-    Salva novo assinante no Sheets.
-    ordem_temas: dict {tema: posicao} onde posicao é 1,2,3... ou "Não" se não selecionado.
-    """
     sheet = conectar_planilha()
     if not sheet:
-        return False, "Não foi possível conectar ao banco de dados. Tente novamente."
+        return False, "Não foi possível conectar. Por favor, tente novamente em alguns instantes."
     try:
         linha = [nome.strip(), email.strip()]
         for chave in RSS_FEEDS.keys():
@@ -576,21 +550,17 @@ def salvar_assinante(nome, email, ordem_temas):
         sheet.append_row(linha)
         return True, "Sucesso"
     except Exception as e:
-        return False, f"Erro ao salvar: {str(e)}"
+        return False, "Ocorreu um problema ao registar a sua inscrição. Por favor, tente novamente."
 
 # =============================================================================
-# --- 6. E-MAIL DE BOAS-VINDAS (novo) ---
+# --- 6. E-MAIL DE BOAS-VINDAS ---
 # =============================================================================
 def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
-    """
-    (NOVO) Envia um e-mail de boas-vindas assim que o leitor se inscreve.
-    Usa as mesmas credenciais do main.py via st.secrets.
-    """
     try:
         email_sender   = st.secrets.get("EMAIL_USER")
         email_password = st.secrets.get("EMAIL_PASSWORD")
         if not email_sender or not email_password:
-            return  # Sem credenciais configuradas, ignora silenciosamente
+            return
 
         temas_html = "".join(
             f"<li style='padding:4px 0; color:#2c2c2c;'>✅ {t}</li>"
@@ -600,38 +570,32 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
         html = f"""
         <html><body style="margin:0; padding:0; background-color:#e5e3de; font-family:'Lora','Times New Roman',serif;">
           <div style="max-width:560px; margin:30px auto; background:#fdfbf7; border-radius:8px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.07);">
-
             <div style="padding:30px 20px; text-align:center; border-bottom:2px solid #0a5c5a;">
+              <p style="margin:0 0 6px; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#999;">Edição Premium Digital</p>
               <h1 style="margin:0; font-family:'Playfair Display',Georgia,serif; font-size:28px; text-transform:uppercase; letter-spacing:2px; color:#0a5c5a;">ALL NEWS JOURNAL</h1>
-              <p style="margin:8px 0 0; font-size:12px; color:#777; font-style:italic;">Bem-vindo ao Clube Premium</p>
+              <p style="margin:8px 0 0; font-size:12px; color:#777; font-style:italic;">Inscrição confirmada com sucesso</p>
             </div>
-
             <div style="padding:30px 25px;">
               <p style="font-size:17px; color:#2c2c2c;">Olá, <b>{nome}</b>! 👋</p>
               <p style="font-size:15px; color:#444; line-height:1.7;">
                 A sua inscrição no <b>All News Journal</b> foi confirmada com sucesso.<br>
-                A partir de amanhã cedo, você receberá a sua edição personalizada com as notícias dos cadernos que escolheu:
+                A partir de amanhã cedo, receberá a sua edição personalizada com os seguintes cadernos:
               </p>
               <ul style="font-size:15px; padding-left:20px; line-height:1.8;">
                 {temas_html}
               </ul>
-              <p style="font-size:14px; color:#777; margin-top:20px; font-style:italic;">
-                Se quiser alterar os seus cadernos, basta acessar o portal e se inscrever novamente com o mesmo e-mail.
-              </p>
             </div>
-
             <div style="text-align:center; padding:20px; background-color:#084c4a; color:#fdfbf7; font-size:12px;">
-              <p style="margin:0;">© 2026 All News Journal Group. Conteúdo Premium.</p>
-              <p style="margin:8px 0 0; font-size:10px; opacity:0.7;">Você recebeu este e-mail porque acabou de se inscrever no nosso portal.</p>
+              <p style="margin:0; font-weight:bold; font-size:13px; letter-spacing:1px;">ALL NEWS JOURNAL</p>
+              <p style="margin:8px 0 0; font-size:10px; opacity:0.7;">© {datetime.now().year} All News Journal Group. Conteúdo Premium.</p>
             </div>
-
           </div>
         </body></html>
         """
 
         msg = MIMEMultipart()
         msg['Subject'] = "📰 Bem-vindo ao All News Journal!"
-        msg['From']    = email_sender
+        msg['From']    = f"All News Journal <{email_sender}>"
         msg['To']      = email_dest
         msg.attach(MIMEText(html, 'html'))
 
@@ -640,46 +604,54 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
         server.login(email_sender, email_password)
         server.sendmail(email_sender, email_dest, msg.as_string())
         server.quit()
-
-    except Exception as e:
-        pass  # Boas-vindas é opcional — não bloqueia o cadastro se falhar
+    except Exception:
+        pass
 
 # =============================================================================
-# --- 7. BUSCA DE NOTÍCIAS (com fallback de URL) ---
+# --- 7. BUSCA DE IMAGEM ---
 # =============================================================================
-def buscar_og_image(url_artigo, timeout=5):
-    """Busca og:image da página real do artigo — imagem mais relevante para a notícia."""
+def buscar_og_image(url_artigo, timeout=8):
     if not url_artigo:
         return None
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (compatible; NewsBot/1.0)', 'Accept': 'text/html'}
+        headers = {
+            'User-Agent': (
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                'AppleWebKit/537.36 (KHTML, like Gecko) '
+                'Chrome/120.0.0.0 Safari/537.36'
+            ),
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'pt-BR,pt;q=0.9',
+        }
         r = requests.get(url_artigo, headers=headers, timeout=timeout, allow_redirects=True)
         if r.status_code != 200:
             return None
         html = r.text
-        match = re.search(r'<meta[^>]+property="og:image"[^>]+content="([^"]+)"', html, re.IGNORECASE)
-        if not match:
-            match = re.search(r'<meta[^>]+content="([^"]+)"[^>]+property="og:image"', html, re.IGNORECASE)
-        if match:
-            img_url = match.group(1).strip()
-            if img_url.startswith('http') and len(img_url) > 10:
-                return img_url
+        padroes = [
+            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
+            r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']twitter:image["\']',
+        ]
+        for padrao in padroes:
+            match = re.search(padrao, html, re.IGNORECASE)
+            if match:
+                img_url = match.group(1).strip().replace('&amp;', '&')
+                if img_url.startswith('http') and len(img_url) > 15:
+                    return img_url
     except Exception:
         pass
     return None
 
-@st.cache_data(ttl=600)  # 10 minutos — evita feeds velhos demais
+# =============================================================================
+# --- 8. BUSCA DE NOTÍCIAS ---
+# =============================================================================
+@st.cache_data(ttl=600)
 def buscar_noticias(tema):
-    """
-    Busca notícias do RSS com fallback de múltiplas fontes.
-    Para Cinema, Ciência, Fitness, Motos e Esportes tenta todas as fontes.
-    Aplica os mesmos filtros do main.py. Nunca cacheia resultado vazio.
-    """
     urls = RSS_FEEDS.get(tema, [])
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
-
-    # Temas que precisam tentar TODAS as fontes
     TEMAS_MULTI_FONTE = {"Cinema", "Fitness", "Ciencia", "Esportes", "Motos"}
+    filtros = FILTROS_TEMA.get(tema, [])
 
     entries = []
     vistos = set()
@@ -708,8 +680,7 @@ def buscar_noticias(tema):
     if not entries:
         return []
 
-    # Aplica filtros do tema (mesma lógica do main.py)
-    filtros = FILTROS_TEMA.get(tema, [])
+    # Aplica filtros
     entries_filtradas = []
     for entry in entries:
         titulo = entry.get('title', '').lower()
@@ -723,57 +694,23 @@ def buscar_noticias(tema):
     if not entries_filtradas:
         return []
 
-    # Fallbacks verificados por modalidade esportiva (constantes globais)
-    FALLBACK_ESPORTES_KEYWORD = {
-        # F1
-        "f1":           "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "formula":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "grand prix":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "gp de":        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "verstappen":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "hamilton":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "ferrari":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        "leclerc":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-        # NBA / Basquete
-        "nba":          "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        "basquete":     "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        "lebron":       "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        "curry":        "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-        # NFL
-        "nfl":          "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
-        "super bowl":   "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
-        # Tênis
-        "tênis":        "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "tennis":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "fonseca":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "alcaraz":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "sinner":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        "miami open":   "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-        # MotoGP (IDs verificados)
-        "motogp":       "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
-        "moto gp":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
-        "márquez":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
-        "moreira":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
-    }
-
     noticias = []
     for entry in entries_filtradas:
         img = None
 
-        # 0. og:image da página real (prioritário para Esportes, Fitness e Motos)
-        if tema in ("Esportes", "Fitness", "Motos"):
-            og = buscar_og_image(entry.get('link', ''))
-            if og:
-                img = og
+        # Tenta og:image primeiro (para todos os temas)
+        og = buscar_og_image(entry.get('link', ''))
+        if og:
+            img = og
 
-        # 1. media_content
-        if 'media_content' in entry:
+        # media_content
+        if not img and 'media_content' in entry:
             for m in entry.media_content:
                 if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                     img = m['url']
                     break
 
-        # 2. enclosures (padrão alternativo usado por alguns feeds)
+        # enclosures
         if not img and 'enclosures' in entry:
             for enc in entry.enclosures:
                 url_enc = enc.get('url', '')
@@ -781,7 +718,7 @@ def buscar_noticias(tema):
                     img = url_enc
                     break
 
-        # 3. links com type image
+        # links com type image
         if not img and 'links' in entry:
             for l in entry.links:
                 href = l.get('href', '')
@@ -789,7 +726,7 @@ def buscar_noticias(tema):
                     img = href
                     break
 
-        # 4. scraping de <img> no HTML do summary/content
+        # scraping de <img> no summary/content
         if not img:
             txt = ""
             if 'content' in entry:
@@ -803,7 +740,7 @@ def buscar_noticias(tema):
                     img = u
                     break
 
-        # 5. Fallback — Esportes usa rotação dentro da categoria; outros usam genérico
+        # Fallback por tema
         if not img:
             if tema == "Esportes":
                 titulo_lower = entry.get('title', '').lower()
@@ -824,7 +761,6 @@ def buscar_noticias(tema):
                 )
 
         titulo_final = entry.get('title', '')
-        # Traduz automaticamente títulos em inglês (fontes internacionais de Fitness)
         if tema == "Fitness":
             titulo_final = traduzir_titulo_se_ingles(titulo_final)
 
@@ -832,15 +768,13 @@ def buscar_noticias(tema):
             "titulo": titulo_final,
             "link":   entry.get('link', ''),
             "img":    img,
-            "data":   entry.get('published', '')[:16]
         })
 
     return noticias
 
 # =============================================================================
-# --- 8. SIDEBAR: FORMULÁRIO COM REORDENAÇÃO ↑↓ ---
+# --- 9. SIDEBAR: FORMULÁRIO ---
 # =============================================================================
-
 ICONES = {
     "Mundo":    "🌎", "Mercado":  "📈", "Politica": "🏛️",
     "Tech":     "💻", "Esportes": "🏎️", "Cinema":   "🎬",
@@ -848,7 +782,6 @@ ICONES = {
     "Fofoca":   "⭐",
 }
 
-# Inicializa session_state na primeira execução
 if "ordem_lista" not in st.session_state:
     st.session_state.ordem_lista = list(RSS_FEEDS.keys())
 if "ativos" not in st.session_state:
@@ -856,11 +789,11 @@ if "ativos" not in st.session_state:
 
 with st.sidebar:
     st.markdown(
-        "<h2 style='text-align:center; font-family: Playfair Display;'>✍️ Junte-se ao Clube</h2>",
+        "<h2 style='text-align:center; font-family: Playfair Display; margin-bottom:4px;'>✍️ Junte-se ao Clube</h2>",
         unsafe_allow_html=True
     )
     st.markdown(
-        "<p style='text-align:center; font-size: 0.9rem;'>Receba a nossa curadoria premium "
+        "<p style='text-align:center; font-size: 0.88rem; opacity:0.9;'>Receba a nossa curadoria premium "
         "de notícias todas as manhãs, gratuitamente.</p>",
         unsafe_allow_html=True
     )
@@ -872,12 +805,12 @@ with st.sidebar:
     st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
     st.markdown(
         "<p style='font-size:0.82rem; font-weight:bold; margin-bottom:2px;'>"
-        "📋 Ordene os seus cadernos:</p>",
+        "📋 Escolha e ordene os seus cadernos:</p>",
         unsafe_allow_html=True
     )
     st.markdown(
         "<p style='font-size:0.75rem; opacity:0.75; margin-top:0; margin-bottom:10px;'>"
-        "Use ↑↓ para mudar a ordem. Desmarque os que não quer receber.</p>",
+        "Use ↑↓ para ordenar. Desmarque os que não quer receber.</p>",
         unsafe_allow_html=True
     )
 
@@ -908,7 +841,6 @@ with st.sidebar:
         else:
             col_dn.write("")
 
-    # Preview
     temas_ativos_preview = [
         t for t in st.session_state.ordem_lista
         if st.session_state.ativos.get(t, True)
@@ -923,7 +855,6 @@ with st.sidebar:
 
     st.write("")
 
-    # Monta ordem_temas para salvar
     ordem_temas = {}
     pos = 1
     for tema in st.session_state.ordem_lista:
@@ -941,7 +872,7 @@ with st.sidebar:
         if not email:
             erros.append("Por favor, informe o seu e-mail.")
         elif not validar_email(email):
-            erros.append("O e-mail informado não parece válido. Verifique e tente novamente.")
+            erros.append("O e-mail informado não é válido. Verifique e tente novamente.")
 
         temas_selecionados = [t for t, v in ordem_temas.items() if v != "Não"]
         if not temas_selecionados:
@@ -953,9 +884,9 @@ with st.sidebar:
         else:
             with st.spinner("A verificar o seu cadastro..."):
                 if email_ja_cadastrado(email):
-                    st.info("📬 Este e-mail já está inscrito! Você já faz parte do clube.")
+                    st.info("📬 Este e-mail já está inscrito! Já faz parte do clube.")
                 else:
-                    with st.spinner("A preparar a sua edição..."):
+                    with st.spinner("A registar a sua inscrição..."):
                         ok, mensagem = salvar_assinante(nome, email, ordem_temas)
                         if ok:
                             temas_ordenados = sorted(
@@ -963,21 +894,18 @@ with st.sidebar:
                                 key=lambda t: ordem_temas[t]
                             )
                             enviar_boas_vindas(nome, email, temas_ordenados)
-                            st.success("✅ Tudo certo! Verifique o seu e-mail — enviamos uma confirmação.")
+                            st.success("✅ Inscrição confirmada! Verifique o seu e-mail — enviamos uma mensagem de boas-vindas.")
                             st.balloons()
-                            # Reseta a lista de ordem para nova sessão
                             st.session_state.ordem_lista = list(RSS_FEEDS.keys())
                             st.session_state.ativos = {t: True for t in RSS_FEEDS.keys()}
                         else:
-                            st.error(f"❌ Algo deu errado. {mensagem}")
-
+                            st.error(f"❌ {mensagem}")
 
 # =============================================================================
-# --- 9. CONTEÚDO PRINCIPAL ---
+# --- 10. CONTEÚDO PRINCIPAL ---
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-# Data em português
 hoje = datetime.now()
 meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
 dias_semana = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
@@ -989,16 +917,15 @@ col_date.markdown(
     unsafe_allow_html=True
 )
 col_loc.markdown(
-    "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global • Online</div>",
+    "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global · Digital</div>",
     unsafe_allow_html=True
 )
 
 st.write("")
 
-tema_atual = st.selectbox("📖 Navegue pelos Cadernos:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
+tema_atual = st.selectbox("📖 Selecione o Caderno:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- Busca e exibe notícias ---
 noticias_display = []
 
 if tema_atual == "Capa (Destaques)":
@@ -1008,13 +935,10 @@ if tema_atual == "Capa (Destaques)":
             item = res[0]
             item['tema'] = t
             noticias_display.append(item)
-        # Avisa se o caderno estiver vazio
-        elif not res:
-            pass  # Silencioso na capa — evita poluir o layout
 else:
     res = buscar_noticias(tema_atual)
     if not res:
-        st.warning(f"⚠️ Não foi possível carregar as notícias de **{tema_atual}** agora. Tente novamente em alguns minutos.")
+        st.warning(f"⚠️ As notícias de **{tema_atual}** estão temporariamente indisponíveis. Por favor, tente novamente em alguns minutos.")
     for item in res:
         item['tema'] = tema_atual
         noticias_display.append(item)
@@ -1026,26 +950,36 @@ if noticias_display:
         with col:
             st.markdown(f"""
             <div class="news-card">
-                <a href="{n['link']}" target="_blank">
+                <a href="{n['link']}" target="_blank" rel="noopener noreferrer">
                     <img src="{n['img']}" class="news-img"
                          onerror="this.src='{FALLBACK_IMAGES.get(n['tema'], 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop')}'">
                 </a>
                 <div class="news-content">
                     <span class="news-tag">{n['tema']}</span>
-                    <a href="{n['link']}" target="_blank" class="news-title">{n['titulo']}</a>
-                    <div class="news-date">Aceda à matéria original completa</div>
+                    <a href="{n['link']}" target="_blank" rel="noopener noreferrer" class="news-title">{n['titulo']}</a>
+                    <a href="{n['link']}" target="_blank" rel="noopener noreferrer" class="news-source">Ler na fonte original →</a>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 elif not noticias_display and tema_atual == "Capa (Destaques)":
-    st.info("A procurar as manchetes mais recentes...")
+    st.info("A carregar as manchetes mais recentes...")
 
-# --- Rodapé ---
+# Rodapé profissional
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown(
-    "<hr style='border-color: #0a5c5a; opacity: 0.2; margin-top: 50px;'>",
-    unsafe_allow_html=True
-)
-st.markdown(
-    "<div style='text-align:center; color:#0a5c5a; font-family: Playfair Display; font-size:0.9rem;'>© 2026 All News Journal Group. Conteúdo Premium.</div>",
+    """
+    <div style='
+        border-top: 2px solid #0a5c5a;
+        padding: 25px 0 10px;
+        text-align: center;
+        color: #0a5c5a;
+        font-family: Playfair Display, serif;
+    '>
+        <p style='font-size:1.1rem; font-weight:bold; letter-spacing:2px; margin:0;'>ALL NEWS JOURNAL</p>
+        <p style='font-size:0.75rem; color:#888; margin:8px 0 0;'>
+            © """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
+        </p>
+    </div>
+    """,
     unsafe_allow_html=True
 )
