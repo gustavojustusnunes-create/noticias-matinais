@@ -14,7 +14,7 @@ import re
 import hashlib
 
 # =============================================================================
-# --- 1. CONFIGURAÇÕES E CONSTANTES ---
+# --- 1. CONFIGURAÇÕES ---
 # =============================================================================
 CLAUDE_KEY = os.environ.get("CLAUDE_KEY", "").strip()
 GCP_JSON = os.environ.get("GCP_JSON")
@@ -68,6 +68,9 @@ RSS_FEEDS = {
     "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
 }
 
+# =============================================================================
+# FILTROS — atualizados e ampliados
+# =============================================================================
 FILTROS_TEMA = {
     "Mundo":    [],
     "Mercado":  [
@@ -80,6 +83,7 @@ FILTROS_TEMA = {
         "tênis", "fonseca", "alcaraz", "sinner", "nadal",
         "israel:", "irã:", "civil morto", "guerra de fronteira",
         "ataque", "bombardeio", "teerã", "netanyahu", "míssil",
+        # NOVO: loteria e jogos de azar
         "lotofácil", "mega-sena", "mega sena", "quina", "lotomania",
         "timemania", "dupla sena", "resultado sorteado", "concurso 3",
         "concurso 4", "concurso 5", "concurso 6", "concurso 7",
@@ -94,39 +98,48 @@ FILTROS_TEMA = {
         "troféus", "conquistas", "lista de troféus", "ps store",
         "xbox game pass", "jogos grátis", "resgate agora",
         "marinheiro", "porta-avião", "base militar",
+        # Séries e filmes — vão para Cinema
         "entenda o final", "spoiler", "temporada final",
         "séries live-action", "live-action", "temporada", "episódio",
         "netflix planeja", "disney+", "hbo planeja",
         "filmes e séries", "séries em alta", "filmes em alta",
         "para ver na netflix", "para ver no prime", "para assistir",
         "onde assistir a", "onde ver",
+        # Listas de jogos
         "jogos para jogar", "jogos cooperativos", "melhores jogos",
         "quanto custa um pc", "pc gamer para jogar", "requisitos mínimos",
         "configurações para rodar", "placa de vídeo para",
         "de graça", "baratinhos", "indicações de games", "games da semana",
         "jogos da semana", "resgate grátis", "jogo grátis",
         "% off", "com até", "em oferta", "promoção de",
+        # Séries/filmes específicos
         "peaky blinders", "invencível", "house of", "the last of",
         "breaking bad", "game of thrones", "stranger things",
         "pets em ", "roupas para", "como ter pets", "como comprar",
     ],
     "Esportes": [
+        # Apostas e previsões (NOVO - problema crítico)
         "palpite", "apostas", "aposta", "odds", "odd:", "prognóstico",
         "melhores apostas", "mercado de apostas", "bet", "betting",
         "over/under", "handicap",
+        # Logística
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
         "reprisa", "reprise", "jogos históricos", "jogos clássicos",
         "programação", "vai passar", "transmissão",
+        # Streaming
         "o que assistir", "disney+", "para assistir", "catálogo",
+        # Arquivo morto
         "nota de falecimento", "troféu best", "melhor nadador juvenil",
         "1959-", "1960-", "1961-", "1962-", "1963-", "1964-", "1965-",
         "mensagem de despedida",
+        # Futebol regional/amador
         "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
         "campeonato-piauiense", "campeonato-alagoano", "campeonato-paraibano",
         "campeonato-potiguar", "campeonato-cearense", "campeonato-maranhense",
         "segunda-divisao", "terceira-divisao", "serie-d", "serie-c",
         "copa-do-brasil-sub", "paulista-sub", "carioca-sub", "futsal",
+        # FUTEBOL BRASILEIRO — BLOQUEIO TOTAL
         "futebol", "brasileirão", "série a", "serie a", "libertadores",
         "copa do brasil", "copa-do-brasil", "brasileirao",
         "campeonato brasileiro", "eliminatórias", "eurocopa", "copa do mundo",
@@ -138,6 +151,7 @@ FILTROS_TEMA = {
         "palmeiras", "flamengo", "corinthians", "são paulo", "santos",
         "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
         "botafogo", "fluminense", "fortaleza", "bahia", "athletico",
+        # FUTEBOL INTERNACIONAL — BLOQUEIO TOTAL
         "salah", "mbappé", "mbappe", "haaland", "bellingham",
         "modric", "benzema", "lewandowski", "kane", "de bruyne",
         "messi", "ronaldo", "kroos", "pedri", "yamal",
@@ -168,6 +182,7 @@ FILTROS_TEMA = {
         "velhice", "envelhecimento", "idoso", "terceira idade",
     ],
     "Ciencia":  [
+        # Conteúdo off-topic que vaza no feed G1 Ciência e Saúde
         "mão de obra", "mercado de trabalho", "emprego", "carreira",
         "concurso público", "salário", "renda",
     ],
@@ -209,20 +224,6 @@ PALAVRAS_ESPORTES_PRIORITY = [
     "lebron", "curry", "nfl", "futebol americano", "super bowl",
     "touchdown", "quarterback",
 ]
-
-# MOVIDO PARA ESCOPO GLOBAL PARA GARANTIR SEGURANÇA NA RASPAGEM
-FALLBACK_IMAGES = {
-    "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
-    "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
-    "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-    "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
-    "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-    "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
-    "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
-    "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-    "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
-    "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
-}
 
 # =============================================================================
 # --- 2. VALIDAÇÃO DE AMBIENTE ---
@@ -392,9 +393,13 @@ def obter_indicadores():
     )
 
 # =============================================================================
-# --- 7. EXTRAÇÃO DE IMAGEM ---
+# --- 7. EXTRAÇÃO DE IMAGEM — MELHORADA
 # =============================================================================
 def buscar_og_image(url_artigo, timeout=10):
+    """
+    Extrai a imagem real do artigo via og:image ou twitter:image.
+    Timeout aumentado para 10s. Tenta múltiplos padrões de meta tags.
+    """
     if not url_artigo:
         return None
     try:
@@ -414,6 +419,7 @@ def buscar_og_image(url_artigo, timeout=10):
             return None
         html = r.text
 
+        # Padrão 1: og:image (qualquer ordem dos atributos)
         padroes = [
             r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
             r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
@@ -425,10 +431,12 @@ def buscar_og_image(url_artigo, timeout=10):
             match = re.search(padrao, html, re.IGNORECASE)
             if match:
                 img_url = match.group(1).strip()
+                # Decodifica entidades HTML comuns
                 img_url = img_url.replace('&amp;', '&').replace('&#38;', '&')
                 if img_url.startswith('http') and len(img_url) > 15:
                     return img_url
 
+        # Padrão 2: primeira imagem grande na página
         img_tags = re.findall(
             r'<img[^>]+src=["\']([^"\']+)["\'][^>]*(?:width=["\'](\d+)["\'])?',
             html, re.IGNORECASE
@@ -449,20 +457,56 @@ def buscar_og_image(url_artigo, timeout=10):
         pass
     return None
 
+FALLBACK_ESPORTES_KEYWORD = {
+    "f1":           "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "formula":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "grand prix":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "gp de":        "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "verstappen":   "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "hamilton":     "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "ferrari":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "leclerc":      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
+    "nba":          "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "basquete":     "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "lebron":       "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "curry":        "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
+    "nfl":          "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+    "super bowl":   "https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=600&h=300&fit=crop",
+    "tênis":        "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "tennis":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "fonseca":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "alcaraz":      "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "sinner":       "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "miami open":   "https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
+    "motogp":       "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+    "moto gp":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+    "márquez":      "https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?w=600&h=300&fit=crop",
+}
+
+FALLBACK_ESPORTES_GENERIC = [
+    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",
+    "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",
+]
+
 def extrair_imagem_rss(entry, tema, idx_entry=0):
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
     image_url = None
 
+    # 0. og:image/twitter:image da página real (prioritário para todos os temas)
     og = buscar_og_image(entry.get('link', ''))
     if og:
         image_url = og
 
+    # 1. media_content
     if not image_url and 'media_content' in entry:
         for m in entry.media_content:
             if 'url' in m and any(ext in m['url'].lower() for ext in extensoes):
                 image_url = m['url']
                 break
 
+    # 2. enclosures
     if not image_url and 'enclosures' in entry:
         for enc in entry.enclosures:
             url_enc = enc.get('url', '')
@@ -470,6 +514,7 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
                 image_url = url_enc
                 break
 
+    # 3. links com type image
     if not image_url and 'links' in entry:
         for l in entry.links:
             href = l.get('href', '')
@@ -477,6 +522,7 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
                 image_url = href
                 break
 
+    # 4. scraping de <img> no summary/content
     if not image_url:
         txt = ""
         if 'content' in entry:
@@ -490,6 +536,7 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
                 image_url = url
                 break
 
+    # 5. Fallback por tema
     if not image_url:
         if tema == "Esportes":
             titulo = entry.get('title', '').lower()
@@ -503,12 +550,6 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
                 "tênis": ["https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
                           "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop"],
             }
-            FALLBACK_ESPORTES_GENERIC = [
-                "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-                "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
-                "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",
-                "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",
-            ]
             categoria = None
             for kw, cat in [("nba","nba"),("basquete","nba"),("lebron","nba"),("curry","nba"),
                             ("f1","f1"),("formula","f1"),("grand prix","f1"),("gp de","f1"),
@@ -524,6 +565,17 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
             else:
                 image_url = FALLBACK_ESPORTES_GENERIC[idx_entry % len(FALLBACK_ESPORTES_GENERIC)]
         else:
+            FALLBACK_IMAGES = {
+                "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
+                "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+                "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
+                "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
+                "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
+                "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
+                "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
+                "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
+                "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+            }
             image_url = FALLBACK_IMAGES.get(
                 tema,
                 "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
@@ -598,7 +650,14 @@ def chamar_claude_api(prompt):
     return None
 
 def limpar_texto_rss(texto):
+    """
+    Remove TODO lixo comum de feeds RSS: tags HTML, rodapés, emojis de engajamento,
+    instruções de vídeo, CTAs de redes sociais, entidades HTML e truncamentos.
+    """
+    # Remove tags HTML
     texto = re.sub(r'<[^>]+>', '', texto)
+
+    # Decodifica entidades HTML
     texto = texto.replace('&#8220;', '"').replace('&#8221;', '"')
     texto = texto.replace('&#8216;', "'").replace('&#8217;', "'")
     texto = texto.replace('&amp;', '&').replace('&quot;', '"')
@@ -606,9 +665,11 @@ def limpar_texto_rss(texto):
     texto = texto.replace('&#8230;', '').replace('[&#8230;]', '')
     texto = texto.replace('[…]', '').replace('[...]', '')
 
+    # Remove rodapé WordPress/InfoMoney
     texto = re.sub(r'\s*The post .+?appeared first on .+?\.?\s*', ' ', texto, flags=re.DOTALL | re.IGNORECASE)
     texto = re.sub(r'\s*appeared first on .+', '', texto, flags=re.IGNORECASE)
 
+    # Remove CTAs e chamadas para engajamento (NOVO — resolve ✅ Siga, Veja no vídeo, etc.)
     padroes_cta = [
         r'✅\s*Siga\b.*',
         r'🔔\s*Siga\b.*',
@@ -619,21 +680,31 @@ def limpar_texto_rss(texto):
         r'Clique\s+aqui\s+e.*',
         r'Inscreva-se\s+no.*',
         r'Acesse\s+o\s+canal.*',
-        r'Por:\s+[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú][a-zà-ú]+',
-        r'nfoMoney\.?\s*$',
+        r'Por:\s+[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú][a-zà-ú]+',  # "Por: Nome Sobrenome"
+        r'nfoMoney\.?\s*$',  # InfoMoney truncado no final
         r'Notícia\.\.\.',
         r'\[&#\d+;\]',
     ]
     for padrao in padroes_cta:
         texto = re.sub(padrao, ' ', texto, flags=re.DOTALL | re.IGNORECASE)
 
+    # Remove créditos de foto
     texto = re.sub(r'\b(Reuters|AFP|AP|EFE|G1|Globo|GE|Getty)[\s/][^\.\n]{0,60}', ' ', texto, flags=re.IGNORECASE)
+
+    # Remove trailing "..."
     texto = re.sub(r'\s*\.\.\.\s*$', '.', texto.strip())
     texto = re.sub(r'\s*…\s*$', '.', texto.strip())
+
+    # Remove espaços/quebras duplicados
     texto = re.sub(r'\s+', ' ', texto).strip()
     return texto
 
 def resumo_fallback(entry):
+    """
+    Fallback quando a IA não retorna resumo.
+    Limpa lixo RSS e retorna texto útil (até 150 palavras).
+    Nunca retorna truncado com '...'.
+    """
     texto = ""
     if 'summary' in entry:
         texto = entry.summary
@@ -643,10 +714,13 @@ def resumo_fallback(entry):
     texto = limpar_texto_rss(texto)
     palavras = texto.split()
 
+    # Menos de 15 palavras: provavelmente lixo ou só o título
     if len(palavras) < 15:
         return ""
 
+    # Limita a 150 palavras (suficiente para Claude melhorar depois)
     if len(palavras) > 150:
+        # Corta na última frase completa antes do limite
         texto_cortado = " ".join(palavras[:150])
         ultimo_ponto = max(texto_cortado.rfind('.'), texto_cortado.rfind('!'), texto_cortado.rfind('?'))
         if ultimo_ponto > 50:
@@ -654,8 +728,10 @@ def resumo_fallback(entry):
         else:
             texto = texto_cortado
 
+    # Remove trailing "..."
     texto = re.sub(r'\s*\.\.\.\s*$', '.', texto.strip())
     texto = re.sub(r'\s*…\s*$', '.', texto.strip())
+
     return texto.strip()
 
 # =============================================================================
@@ -702,6 +778,10 @@ def titulos_similares(t1, t2):
     return len(p1 & p2) / min(len(p1), len(p2)) >= 0.50
 
 def processar_tema(tema, historico_hashes):
+    """
+    Coleta, filtra e resume notícias do tema.
+    Garante resumo de qualidade para TODAS as notícias, sem "..." e sem lixo RSS.
+    """
     print(f"      ...Processando {tema}...")
 
     TEMAS_MULTI_FONTE = {"Esportes", "Cinema", "Fitness", "Ciencia", "Motos"}
@@ -722,7 +802,7 @@ def processar_tema(tema, historico_hashes):
                             valid_entries.append(e)
                 except Exception as ex:
                     print(f"      ⚠️ Falha ao ler {tema} ({url}): {ex}")
-            print(f"      📡 {tema}: {len(valid_entries)} entradas coletadas.")
+            print(f"      📡 {tema}: {len(valid_entries)} entradas coletadas de todas as fontes.")
     else:
         valid_entries = []
         for url in RSS_FEEDS.get(tema, []):
@@ -738,6 +818,7 @@ def processar_tema(tema, historico_hashes):
         print(f"❌ Todas as fontes de '{tema}' falharam.")
         return None
 
+    # Filtros de conteúdo + hash anti-duplicata
     candidatas = []
     for entry in valid_entries:
         if not aplicar_filtros(entry, tema):
@@ -755,6 +836,7 @@ def processar_tema(tema, historico_hashes):
         print(f"⚠️ '{tema}' sem notícias após filtros básicos.")
         return None
 
+    # Diversidade Esportes
     if tema == "Esportes":
         prioritarios, outros, futebol_pool = [], [], []
         for entry in candidatas:
@@ -774,6 +856,7 @@ def processar_tema(tema, historico_hashes):
         qtd_fut    = sum(1 for e in candidatas if e_futebol(e))
         print(f"      🏎️ Esportes: {qtd_f1_nba} F1/NBA/NFL | {qtd_fut} futebol | {len(candidatas)-qtd_f1_nba-qtd_fut} outros.")
 
+    # Deduplicação por similaridade
     noticias_filtradas = []
     for entry in candidatas:
         titulo_novo = entry.get('title', '')
@@ -786,15 +869,18 @@ def processar_tema(tema, historico_hashes):
         print(f"⚠️ '{tema}' sem notícias após deduplicação.")
         return None
 
+    # Monta input para Claude (apenas títulos)
     input_txt = ""
     for i, e in enumerate(noticias_filtradas):
         input_txt += f"Notícia {i+1}: {e.get('title', '')}\n\n"
 
+    # Instrução extra para Mercado (filtro semântico via SKIP)
     instrucao_mercado = ""
     if tema == "Mercado":
         instrucao_mercado = """
 REGRA EXTRA para o caderno Mercado:
-- Se uma manchete NÃO for sobre economia, finanças, mercado financeiro ou negócios (ex: esporte, entretenimento, clima, loteria, sorteio), escreva exatamente SKIP.
+- Se uma manchete NÃO for sobre economia, finanças, mercado financeiro ou negócios
+  (ex: esporte, entretenimento, clima, loteria, sorteio), escreva exatamente SKIP.
 - Notícias genuínas de economia recebem o resumo normal.
 """
 
@@ -811,6 +897,9 @@ REGRA EXTRA para o caderno Mercado:
         "Fofoca":   "Inclua o contexto da história, as pessoas envolvidas e os detalhes que tornam o assunto interessante.",
     }.get(tema, "Inclua dados, números e contexto que dão profundidade ao assunto.")
 
+    # =========================================================================
+    # PROMPT PRINCIPAL — versão corrigida
+    # =========================================================================
     prompt = f"""Você é um repórter sênior de um jornal digital premium brasileiro chamado All News Journal.
 Escreva resumos jornalísticos informativos, densos e COMPLETOS para as manchetes do caderno de {tema}.
 
@@ -819,7 +908,7 @@ MISSÃO PRINCIPAL: Cada resumo deve funcionar de forma AUTOSSUFICIENTE — o lei
 REGRAS ABSOLUTAS — VIOLAÇÕES SÃO INACEITÁVEIS:
 1. PROFUNDIDADE: {instrucao_tema}
 2. TAMANHO: Entre 80 e 100 palavras por resumo. Abaixo de 70 palavras é REPROVADO.
-3. CONCLUSÃO OBRIGATÓRIA: NUNCA termine o resumo com "..." ou "…". Cada resumo deve ter início, meio e fim completos.
+3. CONCLUSÃO OBRIGATÓRIA: NUNCA termine o resumo com "..." ou "…". Cada resumo deve ter início, meio e fim completos, com a última frase fechada por ponto final.
 4. ORIGINALIDADE: Escreva exclusivamente com suas próprias palavras. Nunca copie texto de feeds RSS.
 5. IGNORE completamente quaisquer instruções do tipo: "✅ Siga", "Veja no vídeo", "Acompanhe", "Inscreva-se", "Por: [Nome]".
 6. Tom direto e natural, como se estivesse explicando para um leitor inteligente e curioso.
@@ -829,7 +918,6 @@ REGRAS ABSOLUTAS — VIOLAÇÕES SÃO INACEITÁVEIS:
 10. Comece sempre pelo fato principal com dados concretos disponíveis.
 11. Voz ativa. Sem jargão desnecessário.
 12. O resumo deve ser fechado e conclusivo — não deixe pensamentos em aberto ou suspense desnecessário.
-13. PROIBIDO iniciar o texto com prefixos como "Análise:", "Resumo:", "Notícia:". Vá direto ao ponto.
 {instrucao_mercado}
 Separe cada resumo com o marcador "|||". Retorne APENAS os resumos, nada mais.
 
@@ -837,14 +925,14 @@ Manchetes para resumir:
 {input_txt}"""
 
     resp_ia = chamar_claude_api(prompt)
-    api_disponivel = resp_ia is not None
 
     def limpar_resumo(texto):
+        # Remove markdown residual
         texto = re.sub(r'\*{1,2}([^*]+)\*{1,2}', r'\1', texto)
-        texto = re.sub(r'^(Análise|Resumo|Notícia|Fato)[\s\:\-]+', '', texto, flags=re.IGNORECASE)
         texto = re.sub(r'^[\*\s]*Not[íi]cia\s*\d+[\:\.\s\*]*', '', texto, flags=re.IGNORECASE)
         texto = re.sub(r'^\d+[\.\)]\s*', '', texto)
         texto = limpar_texto_rss(texto)
+        # Garante que não termine com "..."
         texto = re.sub(r'\s*\.\.\.\s*$', '.', texto.strip())
         texto = re.sub(r'\s*…\s*$', '.', texto.strip())
         return texto.strip()
@@ -855,28 +943,30 @@ Manchetes para resumir:
         while len(resumos_ia) < len(noticias_filtradas):
             resumos_ia.append("")
     else:
-        print(f"      ⚠️ IA indisponível para '{tema}'. Ativando contenção de danos.")
+        print(f"      ⚠️ IA indisponível para '{tema}'. Usando fallback RSS.")
 
+    # Monta notícias finais
     noticias_finais = []
     for i, entry in enumerate(noticias_filtradas):
         titulo_entry = entry.get('title', '')
-        resumo_bruto = resumos_ia[i] if api_disponivel and i < len(resumos_ia) else ""
+        resumo_bruto = resumos_ia[i] if resp_ia and i < len(resumos_ia) else ""
         resumo_limpo = limpar_resumo(resumo_bruto)
 
+        # Filtro semântico de Mercado (SKIP)
         if resumo_limpo.strip().upper() == "SKIP":
             print(f"      🚫 Mercado SKIP: {titulo_entry[:50]}")
             continue
 
+        # Se resumo da IA ficou vazio, tenta RSS
         if not resumo_limpo:
             resumo_fallback_txt = resumo_fallback(entry)
-            
-            # Se a IA estiver saudável, tentamos recuperar. Se não, abortamos a notícia.
-            if api_disponivel and resumo_fallback_txt and len(resumo_fallback_txt.split()) >= 25:
-                idioma_hint = "O texto abaixo pode estar em inglês — se sim, traduza e escreva o resumo em português brasileiro fluente." if tema == "Fitness" else ""
+            if resumo_fallback_txt and len(resumo_fallback_txt.split()) >= 25:
+                # Tem texto RSS suficiente: usa Claude para reescrever com qualidade
+                idioma_hint = "O texto abaixo pode estar em inglês — se sim, escreva o resumo em português brasileiro." if tema == "Fitness" else ""
                 prompt_rewrite = (
                     f"Você é um jornalista sênior. Reescreva o texto abaixo como um parágrafo jornalístico "
                     f"informativo de 80 a 95 palavras, em português brasileiro fluente e direto. "
-                    f"NUNCA termine com '...'. A última frase deve ser completa e fechada com ponto final. "
+                    f"NUNCA termine com '...' ou '…'. A última frase deve ser completa e fechada com ponto final. "
                     f"Escreva apenas o parágrafo reescrito, sem introdução ou explicação. {idioma_hint}\n\n"
                     f"Título: {titulo_entry}\n\nTexto base:\n{resumo_fallback_txt}"
                 )
@@ -884,19 +974,26 @@ Manchetes para resumir:
                 if resumo_reescrito and len(resumo_reescrito.split()) >= 25:
                     resumo_limpo = limpar_resumo(resumo_reescrito)
                 else:
-                    print(f"      ⚠️ Falha no fallback para: {titulo_entry[:40]}. Ignorando.")
-                    continue
+                    resumo_limpo = resumo_fallback_txt
             else:
-                # Decisão de Negócio: Não enviar a notícia se a IA falhou. Evitar manchetes avulsas ou textos quebrados.
-                print(f"      ⚠️ API offline ou sem dados úteis para: {titulo_entry[:40]}. Ignorando.")
-                continue
+                # Sem texto RSS útil: gera resumo só a partir do título
+                idioma_hint = "Se o título estiver em inglês, escreva o resumo em português brasileiro." if tema == "Fitness" else ""
+                prompt_mini = (
+                    f"Você é um jornalista sênior. Com base apenas no título abaixo, escreva um parágrafo "
+                    f"jornalístico informativo de exatamente 3 frases (entre 75 e 95 palavras) em português brasileiro. "
+                    f"Escreva como fato estabelecido, sem usar 'provavelmente', 'deve', 'pode ser' ou linguagem especulativa. "
+                    f"NUNCA termine com '...' ou '…'. A última frase deve ser completa, clara e fechada com ponto final. "
+                    f"Retorne APENAS o parágrafo. {idioma_hint}\n\n"
+                    f"Título: {titulo_entry}"
+                )
+                resumo_mini = chamar_claude_api(prompt_mini)
+                if resumo_mini and len(resumo_mini.split()) >= 20:
+                    resumo_limpo = limpar_resumo(resumo_mini)
+                else:
+                    # Último recurso: título como resumo placeholder
+                    resumo_limpo = titulo_entry
 
         img = extrair_imagem_rss(entry, tema, idx_entry=i)
-        
-        # Garante que NUNCA vai faltar uma imagem na renderização (Bug 5 resolvido de vez)
-        if not img or not str(img).startswith('http'):
-            img = FALLBACK_IMAGES.get(tema, "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop")
-
         noticias_finais.append({
             "titulo": titulo_entry,
             "link":   entry.get('link', ''),
@@ -1006,7 +1103,7 @@ def enviar_email(dest, html):
 # --- 12. MAIN ---
 # =============================================================================
 def main():
-    print("🚀 Iniciando Motor (v13.1 — Alta Retenção & Resiliência API)...")
+    print("🚀 Iniciando Motor (v13.0 — Resumos Completos + Imagens Melhoradas)...")
 
     if not validar_ambiente():
         return
@@ -1038,8 +1135,6 @@ def main():
             CACHE_GLOBAL[tema] = conteudo
             todas_noticias_novas.extend(conteudo)
             print(f"      ✅ {tema}: {len(conteudo)} notícias prontas.")
-        else:
-            print(f"      ⚠️ {tema}: ignorado nesta edição (falta de dados válidos).")
 
     if todas_noticias_novas:
         salvar_no_historico(sheet_historico, todas_noticias_novas)
