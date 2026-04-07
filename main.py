@@ -16,10 +16,18 @@ import hashlib
 # =============================================================================
 # --- 1. CONFIGURAÇÕES ---
 # =============================================================================
-CLAUDE_KEY     = os.environ.get("CLAUDE_KEY", "").strip()
-GCP_JSON       = os.environ.get("GCP_JSON")
-EMAIL_SENDER   = os.environ.get("EMAIL_USER")
-EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+# Suporta tanto ANTHROPIC_API_KEY (novo padrão) quanto CLAUDE_KEY (legado)
+CLAUDE_KEY        = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_KEY", "")).strip()
+GCP_JSON          = os.environ.get("GCP_JSON")
+EMAIL_SENDER      = os.environ.get("EMAIL_USER")
+# Suporta tanto EMAIL_PASS (novo padrão) quanto EMAIL_PASSWORD (legado)
+EMAIL_PASSWORD    = os.environ.get("EMAIL_PASS") or os.environ.get("EMAIL_PASSWORD", "")
+EMAIL_FROM        = os.environ.get("EMAIL_FROM", EMAIL_SENDER)
+SMTP_HOST         = os.environ.get("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT         = int(os.environ.get("SMTP_PORT", "587"))
+URL_CANCELAMENTO  = os.environ.get("URL_CANCELAMENTO", "https://allnewsjournal.streamlit.app/?acao=cancelar")
+# ID da planilha Google Sheets (alternativa ao nome "noticias_db")
+GOOGLE_SHEETS_ID  = os.environ.get("GOOGLE_SHEETS_ID") or os.environ.get("GOOGLE_SHEET_ID", "")
 
 RSS_FEEDS = {
     "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
@@ -28,15 +36,26 @@ RSS_FEEDS = {
         "https://rss.uol.com.br/feed/economia.xml",
         "https://economia.uol.com.br/rss.xml",
         "https://valor.globo.com/rss/",
+        "https://www.bloomberglinea.com.br/arc/outboundfeeds/rss/",  # Bloomberg Línea BR
+        "https://exame.com/invest/feed/",                            # Exame Invest
     ],
     "Politica": ["https://g1.globo.com/rss/g1/politica/"],
-    "Tech":     ["https://rss.tecmundo.com.br/feed"],
+    "Tech":     [
+        "https://feeds.feedburner.com/TechCrunch/",  # TechCrunch
+        "https://www.theverge.com/rss/index.xml",    # The Verge
+        "https://olhardigital.com.br/feed/",         # Olhar Digital
+        "https://tecnoblog.net/feed/",               # Tecnoblog
+        "https://canaltech.com.br/rss/",             # Canaltech
+        "https://rss.tecmundo.com.br/feed",          # TecMundo (mantido)
+    ],
     "Esportes": [
         "https://pt.motorsport.com/rss/f1/news/",
         "https://www.theplayoffs.com.br/feed/",
         "https://www.espn.com.br/rss/",
         "https://sportv.globo.com/rss/sportv/",
         "https://www.uol.com.br/esporte/rss.xml",
+        "https://ge.globo.com/rss/feed.xml",         # GE Globo Esporte
+        "https://www.lance.com.br/feed/",            # Lance!
     ],
     "Cinema":   [
         "https://www.omelete.com.br/rss/",
@@ -49,7 +68,10 @@ RSS_FEEDS = {
         "https://www.runnersworld.com.br/feed/",
         "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/",
         "https://www.runnersworld.com/rss/all.xml/",
-        "https://www.menshealth.com/rss/all.xml/",
+        "https://www.menshealth.com/rss/all.xml/",      # Men's Health
+        "https://www.womenshealthmag.com/rss/all.xml/", # Women's Health
+        "https://boaforma.abril.com.br/feed/",          # Boa Forma
+        "https://vivabem.uol.com.br/rss.xml",           # Viva Bem
         "https://www.bicycling.com/rss/all.xml/",
     ],
     "Ciencia":  [
@@ -60,15 +82,19 @@ RSS_FEEDS = {
     ],
     "Motos":    [
         "https://www.motociclismoonline.com.br/feed/",
+        "https://motoo.uol.com.br/rss.xml",             # Motoo UOL
         "https://www.motoo.com.br/feed/",
         "https://motoblog.uol.com.br/feed/",
+        "https://www.motonline.com.br/feed/",            # Motonline
+        "https://www.duasrodas.com/feed/",               # Duas Rodas
+        "https://www.motor1.com/rss/category/motos/",   # Motor1 Motos
         "https://www.icarros.com.br/noticias/motos/rss.xml",
         "https://revistaautoesporte.globo.com/rss/",
     ],
-    # FIX A: Fofoca agora usa fontes com foco internacional/cultura pop global
+    # Fofoca: foco em cultura pop internacional/global
     "Fofoca":   [
-        "https://hugogloss.uol.com.br/feed/",      # Hugo Gloss — melhor cobertura internacional BR
-        "https://revistaquem.globo.com/rss/quem/", # Revista Quem — foco em celebridades globais
+        "https://hugogloss.uol.com.br/feed/",      # Hugo Gloss — cobertura internacional BR
+        "https://revistaquem.globo.com/rss/quem/", # Revista Quem — celebridades globais
     ],
 }
 
@@ -95,18 +121,22 @@ FILTROS_TEMA = {
         "lotofácil", "mega-sena", "mega sena", "quina", "lotomania",
         "timemania", "dupla sena", "resultado sorteado",
         "prêmio da loteria", "números sorteados",
-        # NOVO FIX B — Política sem gancho econômico direto
+        # Política / eleitoral / governo — sem gancho econômico direto
         "lula", "bolsonaro", "lulismo", "bolsonarismo",
         "stf", "congresso", "senado", "câmara dos deputados",
-        "eleições", "eleição municipal", "eleição presidencial",
-        "haddad", "palocci", "petista", "pt ", " pt,", "psdb", "pl ",
-        "partido ", "voto ", "candidato", "deputado", "senador",
+        "eleições", "eleição municipal", "eleição presidencial", "eleitoral",
+        "haddad", "palocci", "petista", "pt ", " pt,", " pt.", "psdb", "pl ", " pl,",
+        "partido ", "partidos ", "voto ", "candidato", "deputado", "senador",
         "ministério da", "ministro da", "secretaria de", "governador",
-        "prefeito", "política interna", "reforma ministerial",
+        "prefeito", "vereador", "política interna", "reforma ministerial",
         "impeachment", "pec ", "proposta de emenda", "orçamento secreto",
+        "orçamento federal", "ldo ", " ppa ", "reforma tributária",
+        "cpi ", "comissão parlamentar",
+        "governo federal", "governo lula", "governo bolsonaro",
+        "presidente da república", "presidência da república",
         "arthur lira", "rodrigo pacheco", "ciro gomes",
         "flávio dino", "gilmar mendes", "alexandre de moraes",
-        "tse afirma", "tse confirma", "tse decide",
+        "tse afirma", "tse confirma", "tse decide", "tse determina",
         "stj decide", "stf decide", "supremo decide",
         "supremo julga", "moraes determina",
         "operação policial", "preso", "prisão", "mandado de busca",
@@ -140,9 +170,14 @@ FILTROS_TEMA = {
     ],
 
     "Esportes": [
-        "palpite", "apostas", "aposta", "odds", "odd:", "prognóstico",
-        "melhores apostas", "mercado de apostas", "bet", "betting",
-        "over/under", "handicap",
+        # Apostas / casas de apostas — BLOQUEIO TOTAL
+        "palpite", "palpites", "apostas", "aposta", "odds", "odd:", "prognóstico", "prognósticos",
+        "melhores apostas", "mercado de apostas", "bet", "betting", "bets",
+        "over/under", "handicap", "casa de aposta", "casas de aposta",
+        "jogo do bicho", "loteria", "lotérica",
+        "esportiva bet", "superbet", "betano", "sportingbet",
+        "pixbet", "brazino", "estrela bet",
+        # Ao vivo / transmissão
         "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
         "escalação", "prováveis-times",
         "reprisa", "reprise", "programação", "vai passar", "transmissão",
@@ -150,6 +185,7 @@ FILTROS_TEMA = {
         "nota de falecimento", "troféu best",
         "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
         "segunda-divisao", "terceira-divisao", "serie-d", "serie-c", "futsal",
+        # Futebol
         "futebol", "brasileirão", "libertadores", "copa do brasil",
         "eliminatórias", "eurocopa", "copa do mundo",
         "seleção brasileira", "seleção", "convocação", "cbf",
@@ -196,12 +232,14 @@ FILTROS_TEMA = {
 
     "Motos":    [],
 
-    # Fofoca: pré-filtros de URL/título para lixo óbvio nacional
+    # Fofoca: pré-filtros — lixo nacional e política
     "Fofoca":   [
         "ex-bbb", "ex bbb", "bbb ", "big brother",
         "fazenda ", "a fazenda", "reality show",
         "sertanejo", "pagodeiro", "funkeiro", "funk",
         "mc ", "mc.", "dj ",
+        "governo federal", "presidente lula", "bolsonaro",
+        "congresso nacional", "eleições", "partido político",
     ],
 }
 
@@ -241,10 +279,10 @@ PALAVRAS_ESPORTES_PRIORITY = [
 # =============================================================================
 def validar_ambiente():
     variaveis = {
-        "CLAUDE_KEY":     CLAUDE_KEY,
-        "GCP_JSON":       GCP_JSON,
-        "EMAIL_USER":     EMAIL_SENDER,
-        "EMAIL_PASSWORD": EMAIL_PASSWORD,
+        "ANTHROPIC_API_KEY / CLAUDE_KEY": CLAUDE_KEY,
+        "GCP_JSON":                       GCP_JSON,
+        "EMAIL_USER":                     EMAIL_SENDER,
+        "EMAIL_PASS / EMAIL_PASSWORD":    EMAIL_PASSWORD,
     }
     erros = [nome for nome, val in variaveis.items() if not val]
     if erros:
@@ -265,7 +303,11 @@ def conectar_banco():
         ]
         creds  = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
-        planilha       = client.open("noticias_db")
+        # Abre pelo ID (se disponível) ou pelo nome
+        if GOOGLE_SHEETS_ID:
+            planilha = client.open_by_key(GOOGLE_SHEETS_ID)
+        else:
+            planilha = client.open("noticias_db")
         sheet_usuarios = planilha.sheet1
 
         try:
@@ -712,12 +754,15 @@ def extrair_contexto_base(entry, max_chars: int = 800) -> str:
 # --- 12. PROCESSAMENTO DE TEMA ---
 # =============================================================================
 def aplicar_filtros(entry, tema):
+    """Filtra artigos por palavras-chave no título, link E corpo do artigo."""
     palavras = FILTROS_TEMA.get(tema, [])
     if not palavras:
         return True
     titulo = entry.get("title", "").lower()
     link   = entry.get("link",  "").lower()
-    return not any(p in titulo or p in link for p in palavras)
+    # Também verifica o corpo do artigo (até 400 chars para ser rápido)
+    corpo  = extrair_contexto_base(entry, max_chars=400).lower()
+    return not any(p in titulo or p in link or p in corpo for p in palavras)
 
 def e_futebol(entry):
     texto = (entry.get("title", "") + " " + entry.get("link", "")).lower()
@@ -1055,6 +1100,20 @@ ICONES_TEMA = {
     "Motos": "🏍️", "Fofoca": "⭐",
 }
 
+# Cor de destaque de cada caderno no email (hex sem #)
+CORES_TEMA = {
+    "Mundo":    "2c3e50",
+    "Mercado":  "1a6b3a",
+    "Politica": "7b0000",
+    "Tech":     "1565c0",
+    "Esportes": "b71c1c",
+    "Cinema":   "4a0080",
+    "Fitness":  "e65100",
+    "Ciencia":  "006064",
+    "Motos":    "37474f",
+    "Fofoca":   "6a1b9a",
+}
+
 def gerar_html_final(nome, dados, painel):
     TURQUESA = "0a5c5a"
     CREME    = "fdfbf7"
@@ -1098,11 +1157,12 @@ def gerar_html_final(nome, dados, painel):
     for tema, items in dados.items():
         if not items:
             continue
-        icone = ICONES_TEMA.get(tema, "📰")
+        icone  = ICONES_TEMA.get(tema, "📰")
+        cor    = CORES_TEMA.get(tema, TURQUESA)
         html += f"""
     <!-- CADERNO: {tema.upper()} -->
-    <div style="margin:35px 0 20px;border-bottom:2px solid #{TURQUESA};">
-      <span style="background-color:#{TURQUESA};color:#fff;padding:7px 16px;
+    <div style="margin:35px 0 20px;border-bottom:2px solid #{cor};">
+      <span style="background-color:#{cor};color:#fff;padding:7px 16px;
                    font-size:11px;font-weight:bold;text-transform:uppercase;
                    letter-spacing:1.5px;border-radius:4px 4px 0 0;display:inline-block;">
         {icone} {tema}
@@ -1117,7 +1177,8 @@ def gerar_html_final(nome, dados, painel):
         <img src="{n['imagem']}"
              alt="{titulo_safe}"
              style="width:100%;height:230px;object-fit:cover;border-radius:6px;
-                    border-bottom:4px solid #{TURQUESA};display:block;">
+                    border-bottom:4px solid #{cor};display:block;"
+             onerror="this.style.display='none'">
       </a>
       <div style="padding-top:18px;">
         <a href="{n['link']}" target="_blank" style="text-decoration:none;color:#111;">
@@ -1132,10 +1193,10 @@ def gerar_html_final(nome, dados, painel):
           {n['resumo']}
         </p>
         <a href="{n['link']}" target="_blank"
-           style="font-size:12px;color:#{TURQUESA};font-weight:bold;text-decoration:none;
+           style="font-size:12px;color:#{cor};font-weight:bold;text-decoration:none;
                   text-transform:uppercase;letter-spacing:1px;
-                  border-bottom:2px solid #{TURQUESA};padding-bottom:2px;">
-          Aceder à fonte original &rarr;
+                  border-bottom:2px solid #{cor};padding-bottom:2px;">
+          Ler matéria completa &rarr;
         </a>
       </div>
     </div>"""
@@ -1147,6 +1208,11 @@ def gerar_html_final(nome, dados, painel):
   <!-- RODAPÉ -->
   <div style="text-align:center;padding:25px 30px;background-color:#{ESCURO};
               color:#{CREME};font-family:'Lora','Times New Roman',serif;">
+    <p style="margin:0 0 10px;font-size:10px;color:rgba(253,251,247,0.6);line-height:1.6;">
+      Você recebe este email porque é assinante do All News Journal.<br/>
+      Para cancelar sua assinatura,
+      <a href="{URL_CANCELAMENTO}" style="color:#c9a84c;text-decoration:underline;">clique aqui</a>.
+    </p>
     <p style="margin:0;font-size:14px;letter-spacing:1px;font-weight:bold;">
       ALL NEWS JOURNAL
     </p>
@@ -1169,18 +1235,28 @@ def enviar_email(dest, html):
     try:
         hoje  = datetime.now()
         MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
-        msg   = MIMEMultipart()
+        msg   = MIMEMultipart("alternative")
         msg["Subject"] = f"📰 All News Journal — {hoje.day} de {MESES[hoje.month - 1]}. de {hoje.year}"
-        msg["From"]    = f"All News Journal <{EMAIL_SENDER}>"
+        msg["From"]    = f"All News Journal <{EMAIL_FROM or EMAIL_SENDER}>"
         msg["To"]      = dest
-        msg.attach(MIMEText(html, "html"))
+        msg["X-Mailer"] = "All News Journal Mailer"
+        msg.attach(MIMEText("Acesse a versão HTML para ler a edição completa.", "plain", "utf-8"))
+        msg.attach(MIMEText(html, "html", "utf-8"))
 
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT, timeout=30)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, dest, msg.as_string())
+        server.sendmail(EMAIL_FROM or EMAIL_SENDER, dest, msg.as_string())
         server.quit()
         return True
+    except smtplib.SMTPAuthenticationError:
+        print(f"      ❌ Falha de autenticação SMTP — verifique EMAIL_USER/EMAIL_PASSWORD")
+        return False
+    except smtplib.SMTPRecipientsRefused:
+        print(f"      ❌ Destinatário recusado: {dest}")
+        return False
     except Exception as e:
         print(f"      ❌ Erro ao enviar para {dest}: {e}")
         return False

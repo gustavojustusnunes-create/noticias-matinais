@@ -524,6 +524,10 @@ def conectar_planilha():
         ]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
         client = gspread.authorize(creds)
+        # Abre pelo ID (se disponível) ou pelo nome
+        sheet_id = st.secrets.get("GOOGLE_SHEETS_ID", "")
+        if sheet_id:
+            return client.open_by_key(sheet_id).sheet1
         return client.open("noticias_db").sheet1
     except Exception:
         return None
@@ -552,13 +556,40 @@ def salvar_assinante(nome, email, ordem_temas):
     except Exception as e:
         return False, "Ocorreu um problema ao registar a sua inscrição. Por favor, tente novamente."
 
+def cancelar_assinatura(email):
+    """Marca o assinante como inativo na planilha (coluna 'ativo' ou remove)."""
+    sheet = conectar_planilha()
+    if not sheet:
+        return False, "Não foi possível conectar. Tente novamente em alguns instantes."
+    try:
+        email = email.strip().lower()
+        registros = sheet.get_all_records()
+        todas_linhas = sheet.get_all_values()
+
+        # Localiza o email na planilha (coluna "Email" = índice 1, base 0)
+        for i, linha in enumerate(todas_linhas):
+            if not linha:
+                continue
+            email_linha = str(linha[1] if len(linha) > 1 else linha[0]).strip().lower()
+            if email_linha == email:
+                # Sobrescreve todos os temas com "Não" (desativa todos os cadernos)
+                num_cols = len(todas_linhas[0]) if todas_linhas else 10
+                for col_idx in range(2, num_cols):
+                    sheet.update_cell(i + 1, col_idx + 1, "Não")
+                return True, "A sua assinatura foi cancelada com sucesso. Lamentamos vê-lo partir!"
+
+        return False, "E-mail não encontrado na nossa lista de assinantes."
+    except Exception as e:
+        return False, "Ocorreu um erro ao processar o cancelamento. Tente novamente."
+
 # =============================================================================
 # --- 6. E-MAIL DE BOAS-VINDAS ---
 # =============================================================================
 def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
     try:
         email_sender   = st.secrets.get("EMAIL_USER")
-        email_password = st.secrets.get("EMAIL_PASSWORD")
+        # Suporta EMAIL_PASS (novo) e EMAIL_PASSWORD (legado)
+        email_password = st.secrets.get("EMAIL_PASS") or st.secrets.get("EMAIL_PASSWORD")
         if not email_sender or not email_password:
             return
 
@@ -864,7 +895,7 @@ with st.sidebar:
         else:
             ordem_temas[tema] = "Não"
 
-    if st.button("SUBSCREVER AGORA 🗞️", use_container_width=True, key="btn_subscribe", type="primary"):
+    if st.button("ASSINAR AGORA — É GRATUITO 🗞️", use_container_width=True, key="btn_subscribe", type="primary"):
         erros = []
 
         if not validar_nome(nome):
@@ -900,6 +931,47 @@ with st.sidebar:
                             st.session_state.ativos = {t: True for t in RSS_FEEDS.keys()}
                         else:
                             st.error(f"❌ {mensagem}")
+
+    # ── Seção de cancelamento ──────────────────────────────────────────────
+    st.markdown("<hr style='border-color:rgba(253,251,247,0.15);margin:20px 0 12px;'>", unsafe_allow_html=True)
+    st.markdown(
+        "<p style='font-size:0.78rem;opacity:0.7;text-align:center;margin-bottom:8px;'>"
+        "Deseja cancelar sua assinatura?</p>",
+        unsafe_allow_html=True
+    )
+
+    # Detecta parâmetro ?acao=cancelar na URL
+    params = st.query_params
+    mostrar_cancelamento = params.get("acao", "") == "cancelar"
+
+    if "mostrar_cancelamento" not in st.session_state:
+        st.session_state.mostrar_cancelamento = mostrar_cancelamento
+
+    if st.button("Cancelar minha assinatura", key="btn_cancelar_toggle", use_container_width=True):
+        st.session_state.mostrar_cancelamento = not st.session_state.get("mostrar_cancelamento", False)
+        st.rerun()
+
+    if st.session_state.get("mostrar_cancelamento", False):
+        with st.form("form_cancelamento", clear_on_submit=True):
+            email_cancel = st.text_input("Seu e-mail cadastrado", key="inp_email_cancel",
+                                          placeholder="seuemail@exemplo.com")
+            confirmar = st.checkbox("Confirmo que desejo cancelar minha assinatura")
+            btn_cancelar = st.form_submit_button("Confirmar cancelamento")
+
+        if btn_cancelar:
+            if not email_cancel:
+                st.warning("Por favor, informe o seu e-mail.")
+            elif not validar_email(email_cancel):
+                st.warning("E-mail inválido. Verifique e tente novamente.")
+            elif not confirmar:
+                st.warning("Marque a caixa de confirmação para continuar.")
+            else:
+                with st.spinner("Processando..."):
+                    ok, msg_cancel = cancelar_assinatura(email_cancel)
+                    if ok:
+                        st.success(f"✅ {msg_cancel}")
+                    else:
+                        st.error(f"❌ {msg_cancel}")
 
 # =============================================================================
 # --- 10. CONTEÚDO PRINCIPAL ---

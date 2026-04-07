@@ -1,0 +1,51 @@
+# ═══════════════════════════════════════
+# All News Journal — .gitignore
+# ═══════════════════════════════════════
+
+# Variáveis de ambiente e credenciais (NUNCA commitar)
+.env
+*.env
+credentials.json
+service_account.json
+*-credentials.json
+*_credentials.json
+gcp_credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*~
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Streamlit
+.streamlit/secrets.toml
