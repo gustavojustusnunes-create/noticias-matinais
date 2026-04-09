@@ -1,0 +1,198 @@
+"""
+claude_api.py — Camada de integração com a API Anthropic (Claude)
+Inclui: chamada com retry/fallback, limpeza de texto RSS, extração de contexto base.
+"""
+import re
+import time
+
+import requests
+
+from config import CLAUDE_KEY
+
+
+def chamar_claude_api(prompt, max_tokens=4096):
+    """
+    Chama a API do Claude com fallback automático entre modelos.
+    Retorna o texto gerado ou None em caso de falha total.
+    """
+    if not CLAUDE_KEY:
+        print("      ❌ CLAUDE_KEY não definida.")
+        return None
+
+    modelos = [
+        ("claude-sonnet-4-6",         90),
+        ("claude-haiku-4-5-20251001", 60),
+    ]
+    headers = {
+        "x-api-key":         CLAUDE_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type":      "application/json",
+    }
+
+    for modelo, timeout in modelos:
+        print(f"      🤖 {modelo}...")
+        for tentativa in range(1, 4):
+            try:
+                r = requests.post(
+                    "https://api.anthropic.com/v1/messages",
+                    headers=headers,
+                    json={
+                        "model":      modelo,
+                        "max_tokens": max_tokens,
+                        "messages":   [{"role": "user", "content": prompt}],
+                    },
+                    timeout=timeout,
+                )
+                if r.status_code == 200:
+                    data   = r.json()
+                    texto  = data["content"][0]["text"]
+                    tokens = data.get("usage", {})
+                    print(
+                        f"      ✅ OK  in={tokens.get('input_tokens','?')}  "
+                        f"out={tokens.get('output_tokens','?')}"
+                    )
+                    return texto
+                elif r.status_code == 429:
+                    espera = 20 * tentativa
+                    print(f"      ⏳ Rate-limit. Aguardando {espera}s…")
+                    time.sleep(espera)
+                elif r.status_code == 404:
+                    print(f"      ❌ Modelo não encontrado: {modelo}")
+                    break
+                elif r.status_code == 401:
+                    print("      ❌ CLAUDE_KEY inválida.")
+                    return None
+                elif r.status_code == 529:
+                    print("      ⚠️ Sobrecarga. Próximo modelo…")
+                    break
+                else:
+                    print(f"      ⚠️ HTTP {r.status_code}: {r.text[:150]}")
+                    break
+            except requests.exceptions.Timeout:
+                print(f"      ⚠️ Timeout ({timeout}s) em {modelo}.")
+                break
+            except Exception as e:
+                print(f"      ⚠️ Exceção: {e}")
+                break
+
+    print("      ❌ Todos os modelos falharam.")
+    return None
+
+
+def chamar_claude_haiku(prompt, max_tokens=300):
+    """
+    Chamada rápida usando apenas Haiku (para tarefas leves como tradução de título).
+    Retorna o texto ou None.
+    """
+    if not CLAUDE_KEY:
+        return None
+
+    headers = {
+        "x-api-key":         CLAUDE_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type":      "application/json",
+    }
+    try:
+        r = requests.post(
+            "https://api.anthropic.com/v1/messages",
+            headers=headers,
+            json={
+                "model":      "claude-haiku-4-5-20251001",
+                "max_tokens": max_tokens,
+                "messages":   [{"role": "user", "content": prompt}],
+            },
+            timeout=15,
+        )
+        if r.status_code == 200:
+            return r.json()["content"][0]["text"].strip()
+    except Exception:
+        pass
+    return None
+
+
+def limpar_texto_rss(texto):
+    """Remove HTML, entidades, CTAs de engajamento e lixo de feeds RSS."""
+    texto = re.sub(r"<[^>]+>", "", texto)
+
+    entidades = {
+        "&#8220;": '"', "&#8221;": '"', "&#8216;": "'", "&#8217;": "'",
+        "&amp;": "&", "&quot;": '"', "&nbsp;": " ", "&#38;": "&",
+        "&#8230;": "", "[&#8230;]": "", "[…]": "", "[...]": "",
+    }
+    for ent, sub in entidades.items():
+        texto = texto.replace(ent, sub)
+
+    # Rodapés WordPress
+    texto = re.sub(
+        r"\s*The post .+?appeared first on .+?\.?\s*", " ",
+        texto, flags=re.DOTALL | re.IGNORECASE
+    )
+    texto = re.sub(r"\s*appeared first on .+", "", texto, flags=re.IGNORECASE)
+
+    # CTAs e ruído de redes sociais
+    padroes_cta = [
+        r"✅\s*Siga\b.*",
+        r"🔔\s*Siga\b.*",
+        r"Siga\s+o\s+canal.*",
+        r"Veja\s+no\s+vídeo\s+acima\.?",
+        r"Acompanhe\s+as\s+notícias.*",
+        r"Acompanhe\s+ao\s+vivo.*",
+        r"Clique\s+aqui\s+e.*",
+        r"Inscreva-se\s+no.*",
+        r"Acesse\s+o\s+canal.*",
+        r"Por:\s+[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú][a-zà-ú]+",
+        r"nfoMoney\.?\s*$",
+        r"Notícia\.\.\.",
+        r"\[&#\d+;\]",
+    ]
+    for padrao in padroes_cta:
+        texto = re.sub(padrao, " ", texto, flags=re.DOTALL | re.IGNORECASE)
+
+    # Créditos de foto
+    texto = re.sub(
+        r"\b(Reuters|AFP|AP|EFE|G1|Globo|GE|Getty)[\s/][^\.\n]{0,60}",
+        " ", texto, flags=re.IGNORECASE
+    )
+
+    texto = re.sub(r"\s*\.\.\.\s*$", ".", texto.strip())
+    texto = re.sub(r"\s*…\s*$", ".", texto.strip())
+
+    return re.sub(r"\s+", " ", texto).strip()
+
+
+def extrair_contexto_base(entry, max_chars: int = 800) -> str:
+    """
+    Extrai o melhor texto disponível da entrada RSS.
+    Hierarquia: content > summary > description.
+    Remove lixo e garante que termina em frase completa.
+    """
+    texto = ""
+    if "content" in entry:
+        for c in entry.content:
+            texto += c.value
+    if not texto.strip() and "summary" in entry:
+        texto = entry.summary
+    if not texto.strip():
+        texto = entry.get("description", "")
+
+    texto = limpar_texto_rss(texto)
+
+    if len(texto) > max_chars:
+        cortado     = texto[:max_chars]
+        ultimo_ponto = max(cortado.rfind("."), cortado.rfind("!"), cortado.rfind("?"))
+        if ultimo_ponto > max_chars // 2:
+            cortado = cortado[: ultimo_ponto + 1]
+        texto = cortado
+
+    return texto.strip()
+
+
+def limpar_resumo(texto: str) -> str:
+    """Limpa markdown, numerações e artefatos do texto retornado pela IA."""
+    texto = re.sub(r"\*{1,2}([^*]+)\*{1,2}", r"\1", texto)
+    texto = re.sub(r"^[\*\s]*Not[íi]cia\s*\d+[\:\.\s\*]*", "", texto, flags=re.IGNORECASE)
+    texto = re.sub(r"^\d+[\.\)]\s*", "", texto)
+    texto = limpar_texto_rss(texto)
+    texto = re.sub(r"\s*\.\.\.\s*$", ".", texto.strip())
+    texto = re.sub(r"\s*…\s*$", ".", texto.strip())
+    return texto.strip()

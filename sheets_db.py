@@ -1,0 +1,116 @@
+"""
+sheets_db.py — Integração com Google Sheets (banco de dados do All News Journal)
+Inclui: conexão, histórico de notícias, logs de envio.
+"""
+import json
+import hashlib
+from datetime import datetime, timedelta
+
+import gspread
+from google.oauth2.service_account import Credentials
+
+from config import GCP_JSON, GOOGLE_SHEETS_ID
+
+
+def conectar_banco():
+    """Abre a planilha e retorna (sheet_usuarios, sheet_historico, sheet_logs)."""
+    try:
+        creds_dict = json.loads(GCP_JSON)
+        scopes = [
+            "https://www.googleapis.com/auth/spreadsheets",
+            "https://www.googleapis.com/auth/drive",
+        ]
+        creds  = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        client = gspread.authorize(creds)
+
+        if GOOGLE_SHEETS_ID:
+            planilha = client.open_by_key(GOOGLE_SHEETS_ID)
+        else:
+            planilha = client.open("noticias_db")
+
+        sheet_usuarios = planilha.sheet1
+
+        try:
+            sheet_historico = planilha.worksheet("historico")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_historico = planilha.add_worksheet(title="historico", rows=5000, cols=3)
+            sheet_historico.append_row(["hash", "titulo", "data"])
+
+        try:
+            sheet_logs = planilha.worksheet("logs")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_logs = planilha.add_worksheet(title="logs", rows=5000, cols=5)
+            sheet_logs.append_row(["data", "nome", "email", "status", "temas"])
+
+        return sheet_usuarios, sheet_historico, sheet_logs
+
+    except Exception as e:
+        print(f"❌ Erro ao conectar ao banco: {e}")
+        return None, None, None
+
+
+def gerar_hash(titulo, link):
+    """Gera hash MD5 único para deduplicação de notícias."""
+    return hashlib.md5(f"{titulo}{link}".encode("utf-8")).hexdigest()
+
+
+def carregar_historico(sheet_historico):
+    """Carrega hashes dos últimos 30 dias e remove entradas antigas."""
+    try:
+        registros = sheet_historico.get_all_records()
+        if not registros:
+            return set()
+
+        limite  = datetime.now() - timedelta(days=30)
+        hashes  = set()
+        remover = []
+
+        for i, r in enumerate(registros, start=2):
+            try:
+                data = datetime.strptime(r.get("data", "")[:10], "%d/%m/%Y")
+                if data >= limite:
+                    hashes.add(r["hash"])
+                else:
+                    remover.append(i)
+            except Exception:
+                hashes.add(r.get("hash", ""))
+
+        for idx in reversed(remover):
+            try:
+                sheet_historico.delete_rows(idx)
+            except Exception:
+                pass
+
+        if remover:
+            print(f"   🧹 Histórico: {len(remover)} entradas antigas removidas.")
+
+        print(f"   🗂️ Histórico: {len(hashes)} notícias nos últimos 30 dias.")
+        return hashes
+
+    except Exception as e:
+        print(f"⚠️ Histórico indisponível: {e}")
+        return set()
+
+
+def salvar_no_historico(sheet_historico, noticias_novas):
+    """Salva hashes das novas notícias no histórico para evitar duplicatas futuras."""
+    hoje   = datetime.now().strftime("%d/%m/%Y %H:%M")
+    linhas = [
+        [gerar_hash(n["titulo"], n["link"]), n["titulo"][:80], hoje]
+        for n in noticias_novas
+    ]
+    if linhas:
+        sheet_historico.append_rows(linhas)
+
+
+def registrar_log(sheet_logs, nome, email, status, temas_enviados):
+    """Registra cada envio na aba de logs da planilha."""
+    try:
+        sheet_logs.append_row([
+            datetime.now().strftime("%d/%m/%Y %H:%M"),
+            nome, email,
+            "✅ Enviado" if status else "❌ Falhou",
+            ", ".join(temas_enviados),
+        ])
+    except Exception as e:
+        print(f"⚠️ Log não registrado ({nome}): {e}")

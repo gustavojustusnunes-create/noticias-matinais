@@ -1,58 +1,23 @@
-name: Despertador do Site Premium
+name: Keep Alive (Lightweight)
 
 on:
   schedule:
-    - cron: '*/15 * * * *'   # A cada 15 minutos
+    - cron: '*/25 * * * *'   # A cada 25 minutos
   workflow_dispatch:           # Permite rodar manualmente
 
 jobs:
-  wake_up:
+  ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 2
 
     steps:
-      - name: Instalar Python e Playwright
+      - name: Ping Streamlit
         run: |
-          pip install playwright -q
-          python -m playwright install chromium --with-deps
-
-      - name: Acordar o Streamlit
-        run: |
-          python3 - << 'EOF'
-          import asyncio
-          from playwright.async_api import async_playwright
-
-          URL = "https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/"
-          TIMEOUT = 60000  # 60 segundos
-
-          async def acordar():
-              async with async_playwright() as p:
-                  browser = await p.chromium.launch(headless=True)
-                  page    = await browser.new_page()
-
-                  print(f"🌐 Acessando {URL}...")
-                  await page.goto(URL, timeout=TIMEOUT)
-
-                  # Aguarda até 15s para ver se aparece o botão de despertar
-                  try:
-                      botao = page.get_by_role("button", name="Yes, get this app back up!")
-                      await botao.wait_for(timeout=15000)
-                      await botao.click()
-                      print("🔔 App estava dormindo — botão clicado!")
-                  except Exception:
-                      print("✅ App já estava acordado.")
-
-                  # Aguarda o app carregar de verdade (elemento do Streamlit visível)
-                  try:
-                      await page.wait_for_selector(
-                          "[data-testid='stApp'], [data-testid='stAppViewContainer']",
-                          timeout=TIMEOUT
-                      )
-                      print("✅ App carregado com sucesso!")
-                  except Exception:
-                      print("⚠️ Timeout ao aguardar o app — pode estar demorando mais que o normal.")
-
-                  await browser.close()
-
-          asyncio.run(acordar())
-          EOF
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 30 \
+            "https://all-news-journal-w3utkdwxerflwqytjyc7p2.streamlit.app/")
+          echo "Status: $HTTP_CODE"
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 400 ]; then
+            echo "⚠️ App pode estar com problema (HTTP $HTTP_CODE)"
+            exit 1
+          fi
+          echo "✅ App respondeu OK (HTTP $HTTP_CODE)"

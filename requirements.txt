@@ -22,3 +22,7 @@ streamlit==1.43.2
 
 # ── Variáveis de ambiente ─────────────────────────────────────────
 python-dotenv==1.0.1
+
+# ── Instagram (BLOCO 6) ───────────────────────────────────────────
+Pillow>=10.0.0
+instagrapi>=2.1.0

@@ -1,0 +1,43 @@
+name: Instagram Daily Posts
+
+on:
+  schedule:
+    - cron: '15 9 * * *'   # 15 minutos após o daily.yml (09:15 UTC = 06:15 BRT)
+  workflow_dispatch:         # Permite rodar manualmente
+
+jobs:
+  post_instagram:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Postar no Instagram
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
+          CLAUDE_KEY:        ${{ secrets.CLAUDE_KEY }}
+          GCP_JSON:          ${{ secrets.GCP_JSON }}
+          INSTAGRAM_USER:    ${{ secrets.INSTAGRAM_USER }}
+          INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
+          INSTAGRAM_ENABLED: ${{ secrets.INSTAGRAM_ENABLED }}
+        run: python instagram_poster.py
+
+      - name: Salvar imagens geradas (artefato)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instagram-posts-${{ github.run_id }}
+          path: /tmp/instagram_posts/
+          if-no-files-found: ignore
+          retention-days: 7

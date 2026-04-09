@@ -10,6 +10,18 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
 
+# Importa constantes centralizadas do config.py
+from config import (
+    RSS_FEEDS as RSS_FEEDS_MAIN,
+    FILTROS_TEMA as FILTROS_TEMA_MAIN,
+    FALLBACK_IMAGES as FALLBACK_IMAGES_MAIN,
+    SPORT_ROTATIONS as SPORT_ROTATIONS_MAIN,
+    SPORT_KEYWORDS as SPORT_KEYWORDS_MAIN,
+    FALLBACK_ESPORTES_GENERIC as FALLBACK_ESPORTES_GENERIC_MAIN,
+    FEEDS_INGLES,
+    ICONES_TEMA,
+)
+
 # =============================================================================
 # --- 1. CONFIGURAÇÃO DA PÁGINA ---
 # =============================================================================
@@ -284,34 +296,59 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =============================================================================
-# --- 3. DADOS E FEEDS ---
+# --- 3. DADOS E FEEDS (constantes importadas de config.py) ---
 # =============================================================================
-def traduzir_titulo_se_ingles(titulo):
+RSS_FEEDS            = RSS_FEEDS_MAIN
+FILTROS_TEMA         = FILTROS_TEMA_MAIN
+FALLBACK_IMAGES      = FALLBACK_IMAGES_MAIN
+SPORT_ROTATIONS      = SPORT_ROTATIONS_MAIN
+SPORT_KEYWORDS       = SPORT_KEYWORDS_MAIN
+FALLBACK_ESPORTES_GENERIC = FALLBACK_ESPORTES_GENERIC_MAIN
+
+
+def traduzir_titulo_se_ingles(titulo, url_fonte=""):
+    """
+    Detecta se o título veio de feed em inglês e traduz via Claude Haiku.
+    Usa FEEDS_INGLES de config.py para detecção precisa por URL de origem.
+    Se a tradução falhar, retorna o título original sem prefixo.
+    """
     if not titulo:
         return titulo
-    palavras_ingles = ["the", "how", "why", "what", "best", "your", "you",
-                       "with", "this", "that", "and", "for", "are", "was",
-                       "running", "workout", "training", "fitness", "marathon",
-                       "i ran", "i didn", "i found", "my ", "me ", "review:",
-                       "things no", "could benefit", "summer", "winter", "spring",
-                       "tried", "defense", "softer", "faster", "better",
-                       "scared", "shorts", "pillow", "sleeper"]
-    titulo_lower = titulo.lower()
-    palavras_encontradas = sum(1 for p in palavras_ingles if p in titulo_lower)
-    if palavras_encontradas < 2:
+
+    # Detecção por URL de origem (precisa)
+    e_ingles = url_fonte in FEEDS_INGLES if url_fonte else False
+
+    # Detecção por vocabulário (fallback para o app onde não temos a URL)
+    if not e_ingles:
+        palavras_ingles = [
+            "the ", "how to", "why ", "what ", "best ", "your ", "you ",
+            "with ", "this ", "that ", " and ", " for ", " are ", " was ",
+            "running", "workout", "training", "fitness", "marathon",
+            "i ran", "i didn", "i found", " my ", "review:",
+            "things no", "could benefit", "summer", "winter", "spring",
+            "tried ", "defense", "softer", "faster", "better",
+            "scared", "shorts", "pillow", "sleeper",
+            "celebrity", "award", "season", "episode", "premiere",
+        ]
+        titulo_lower = titulo.lower()
+        palavras_encontradas = sum(1 for p in palavras_ingles if p in titulo_lower)
+        e_ingles = palavras_encontradas >= 2
+
+    if not e_ingles:
         return titulo
 
+    # Obtém chave Claude
     claude_key = ""
     try:
-        claude_key = st.secrets.get("CLAUDE_KEY", "")
+        claude_key = st.secrets.get("ANTHROPIC_API_KEY", "") or st.secrets.get("CLAUDE_KEY", "")
     except Exception:
         pass
     if not claude_key:
         import os
-        claude_key = os.environ.get("CLAUDE_KEY", "")
+        claude_key = os.environ.get("ANTHROPIC_API_KEY", "") or os.environ.get("CLAUDE_KEY", "")
 
     if not claude_key:
-        return f"🌐 {titulo}"
+        return titulo  # sem prefixo "🌐" — retorna original limpo
 
     try:
         prompt = (
@@ -339,165 +376,7 @@ def traduzir_titulo_se_ingles(titulo):
                 return traduzido
     except Exception:
         pass
-    return titulo
-
-RSS_FEEDS = {
-    "Mundo":    ["https://g1.globo.com/rss/g1/mundo/"],
-    "Mercado":  [
-        "https://www.infomoney.com.br/feed/",
-        "https://rss.uol.com.br/feed/economia.xml",
-        "https://economia.uol.com.br/rss.xml",
-        "https://valor.globo.com/rss/",
-    ],
-    "Politica": ["https://g1.globo.com/rss/g1/politica/"],
-    "Tech":     ["https://rss.tecmundo.com.br/feed"],
-    "Esportes": [
-        "https://pt.motorsport.com/rss/f1/news/",
-        "https://www.theplayoffs.com.br/feed/",
-        "https://www.espn.com.br/rss/",
-        "https://sportv.globo.com/rss/sportv/",
-        "https://www.uol.com.br/esporte/rss.xml",
-    ],
-    "Cinema":   [
-        "https://www.omelete.com.br/rss/",
-        "https://www.cinepop.com.br/feed",
-        "https://www.papodecinema.com.br/feed/",
-        "https://www.adorocinema.com/rss/",
-    ],
-    "Fitness":  [
-        "https://ge.globo.com/rss/eu-atleta/",
-        "https://www.runnersworld.com.br/feed/",
-        "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/",
-        "https://www.runnersworld.com/rss/all.xml/",
-        "https://www.menshealth.com/rss/all.xml/",
-        "https://www.bicycling.com/rss/all.xml/",
-    ],
-    "Ciencia":  [
-        "https://g1.globo.com/rss/g1/ciencia-e-saude/",
-        "https://gizmodo.uol.com.br/feed/",
-        "https://www.inovacaotecnologica.com.br/boletim/rss.xml",
-        "https://www.tecmundo.com.br/ciencia/rss",
-    ],
-    "Motos":    [
-        "https://www.motociclismoonline.com.br/feed/",
-        "https://www.motoo.com.br/feed/",
-        "https://motoblog.uol.com.br/feed/",
-        "https://www.icarros.com.br/noticias/motos/rss.xml",
-        "https://revistaautoesporte.globo.com/rss/",
-    ],
-    "Fofoca":   ["https://revistaquem.globo.com/rss/quem/"],
-}
-
-FILTROS_TEMA = {
-    "Mundo":    [],
-    "Mercado":  ["horóscopo", "moda", "futebol", "brasileirão", "campeonato",
-                 "onde assistir", "ao vivo", "ao-vivo", "gol", "escalação",
-                 "lollapalooza", "festival", "show", "ingresso",
-                 "previsão do tempo", "clima", "chuva",
-                 "bbb", "big brother", "reality",
-                 "tênis", "fonseca", "alcaraz", "sinner", "nadal",
-                 "israel:", "irã:", "civil morto", "guerra de fronteira",
-                 "ataque", "bombardeio", "teerã", "netanyahu", "míssil",
-                 "lotofácil", "mega-sena", "mega sena", "quina", "lotomania",
-                 "resultado sorteado", "concurso 3", "concurso 4", "concurso 5",
-                 "números sorteados", "prêmio da loteria"],
-    "Politica": [],
-    "Tech":     ["aposta", "palpite", "futebol", "bônus", "cassino", "bet",
-                 "guia-de-compras", "em-oferta", "promoção", "desconto",
-                 "homenagem", "morre", "falece", "morte", "aniversário",
-                 "ator", "atriz", "celebridade",
-                 "troféus", "conquistas", "ps store", "xbox game pass",
-                 "jogos grátis", "resgate agora", "marinheiro", "porta-avião",
-                 "entenda o final", "spoiler", "temporada final",
-                 "séries live-action", "live-action", "temporada", "episódio",
-                 "netflix planeja", "disney+", "hbo planeja",
-                 "filmes e séries", "para ver na netflix", "para assistir",
-                 "jogos para jogar", "jogos cooperativos", "melhores jogos",
-                 "% off", "com até", "em oferta", "jogo grátis", "resgate grátis",
-                 "de graça", "baratinhos", "games da semana", "jogos da semana",
-                 "peaky blinders", "invencível", "house of", "the last of",
-                 "pets em ", "roupas para", "como ter pets"],
-    "Esportes": ["palpite", "apostas", "aposta", "odds", "odd:", "prognóstico",
-                 "melhores apostas", "mercado de apostas", "bet", "betting",
-                 "ao-vivo", "ao vivo", "/jogo/", "onde-assistir", "ingressos",
-                 "escalação", "prováveis-times",
-                 "reprisa", "reprise", "programação", "vai passar", "transmissão",
-                 "o que assistir", "disney+", "para assistir",
-                 "nota de falecimento", "troféu best", "mensagem de despedida",
-                 "/base/", "sub-13", "sub-15", "sub-17", "sub-20",
-                 "segunda-divisao", "terceira-divisao", "serie-d", "serie-c", "futsal",
-                 "futebol", "brasileirão", "libertadores", "copa do brasil", "brasileirao",
-                 "eliminatórias", "eurocopa", "copa do mundo",
-                 "seleção brasileira", "seleção", "convocação", "cbf",
-                 "amistoso", "brasil x ", "seleção x ",
-                 "neymar", "vinicius", "vinícius", "rodrygo", "endrick", "richarlison",
-                 "memphis", "raphinha", "militão", "marquinhos", "casemiro", "paquetá",
-                 "palmeiras", "flamengo", "corinthians", "são paulo", "santos",
-                 "grêmio", "internacional", "atlético", "cruzeiro", "vasco",
-                 "botafogo", "fluminense", "fortaleza", "bahia", "athletico",
-                 "salah", "mbappé", "mbappe", "haaland", "bellingham",
-                 "modric", "benzema", "lewandowski", "kane", "de bruyne",
-                 "messi", "ronaldo", "kroos", "pedri", "yamal",
-                 "liverpool", "real madrid", "barcelona", "manchester",
-                 "arsenal", "chelsea", "psg", "bayern", "juventus",
-                 "premier league", "la liga", "champions league",
-                 "ancelotti", "guardiola", "klopp", "mourinho"],
-    "Cinema":   ["aposta", "bet", "cassino", "futebol", "esporte",
-                 "aniversário", "tatuagem", "look", "moda", "relacionamento",
-                 "casamento", "separação", "gravidez", "filhos",
-                 "morte de", "falecimento", "luto",
-                 "lamenta morte", "celebra aniversário", "faz anos"],
-    "Fitness":  ["aposta", "bet", "cassino", "futebol", "moda",
-                 "maquiagem", "cabelo", "unhas", "beleza", "tatuagem",
-                 "câncer", "tumor", "cirurgia", "hospital",
-                 "remédio", "medicamento", "vacina", "dengue", "vírus",
-                 "doença", "diagnóstico", "sintomas",
-                 "famoso", "celebridade", "ator", "atriz", "novela",
-                 "bbb", "big brother", "reality",
-                 "resfriado", "alergia", "gripe",
-                 "erros na cozinha", "receita de", "culinária",
-                 "velhice", "envelhecimento", "idoso", "terceira idade"],
-    "Ciencia":  ["mão de obra", "mercado de trabalho", "emprego",
-                 "carreira", "concurso público", "salário"],
-    "Motos":    [],
-    "Fofoca":   [],
-}
-
-FALLBACK_IMAGES = {
-    "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
-    "Mercado":  "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
-    "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-    "Tech":     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=300&fit=crop",
-    "Esportes": "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-    "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
-    "Fitness":  "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
-    "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-    "Motos":    "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=300&fit=crop",
-    "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
-}
-
-SPORT_ROTATIONS = {
-    "nba":   ["https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=300&fit=crop",
-               "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=600&h=300&fit=crop"],
-    "f1":    ["https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=600&h=300&fit=crop",
-               "https://images.unsplash.com/photo-1541447271487-09612b3f49f7?w=600&h=300&fit=crop"],
-    "mma":   ["https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=300&fit=crop",
-               "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=600&h=300&fit=crop"],
-    "tenis": ["https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=600&h=300&fit=crop",
-               "https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?w=600&h=300&fit=crop"],
-}
-SPORT_KEYWORDS = {
-    "nba":   ["nba","basquete","lebron","durant","curry","lakers","celtics","warriors"],
-    "f1":    ["f1","formula","grand prix","gp de","verstappen","hamilton","ferrari","leclerc","norris"],
-    "mma":   ["mma","ufc","silva","evloev","volkanovski","poatan","adesanya"],
-    "tenis": ["tênis","tennis","fonseca","alcaraz","sinner","open","nadal"],
-}
-FALLBACK_ESPORTES_GENERIC = [
-    "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=600&h=300&fit=crop",
-    "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
-    "https://images.unsplash.com/photo-1540747913346-19212a4b32b8?w=600&h=300&fit=crop",
-    "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=600&h=300&fit=crop",
-]
+    return titulo  # fallback: original sem modificação
 
 # =============================================================================
 # --- 4. VALIDAÇÕES ---
@@ -974,7 +853,17 @@ with st.sidebar:
                         st.error(f"❌ {msg_cancel}")
 
 # =============================================================================
-# --- 10. CONTEÚDO PRINCIPAL ---
+# --- 10. META TAGS SEO ---
+# =============================================================================
+st.markdown("""
+<meta property="og:title" content="All News Journal — Curadoria Premium de Notícias">
+<meta property="og:description" content="Receba as notícias que importam, todas as manhãs. Gratuito.">
+<meta property="og:type" content="website">
+<meta name="description" content="All News Journal — curadoria premium e automatizada das notícias do dia. 10 cadernos temáticos. Gratuito.">
+""", unsafe_allow_html=True)
+
+# =============================================================================
+# --- 11. CONTEÚDO PRINCIPAL ---
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
@@ -992,6 +881,29 @@ col_loc.markdown(
     "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global · Digital</div>",
     unsafe_allow_html=True
 )
+
+# ── Contador de assinantes ────────────────────────────────────────────────────
+@st.cache_data(ttl=600)
+def obter_total_assinantes():
+    sheet = conectar_planilha()
+    if not sheet:
+        return 0
+    try:
+        registros = sheet.get_all_records()
+        return sum(
+            1 for r in registros
+            if any(str(r.get(t, "")).strip().isdigit() for t in RSS_FEEDS)
+        )
+    except Exception:
+        return 0
+
+total_assinantes = obter_total_assinantes()
+if total_assinantes > 0:
+    st.markdown(
+        f"<div style='text-align:center;padding:8px;color:#0a5c5a;font-size:0.88rem;'>"
+        f"📊 <b>{total_assinantes}</b> leitores já recebem nossa curadoria</div>",
+        unsafe_allow_html=True
+    )
 
 st.write("")
 
@@ -1035,6 +947,32 @@ if noticias_display:
             """, unsafe_allow_html=True)
 elif not noticias_display and tema_atual == "Capa (Destaques)":
     st.info("A carregar as manchetes mais recentes...")
+
+# ── Seção "Sobre" ─────────────────────────────────────────────────────────────
+st.markdown("<br>", unsafe_allow_html=True)
+with st.expander("📖 Sobre o All News Journal"):
+    st.markdown("""
+**Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, resumidas e entregues diretamente no seu e-mail todas as manhãs.
+
+**Frequência:** Edição diária enviada às **6h da manhã** (horário de Brasília), de segunda a domingo.
+
+**Cadernos disponíveis:**
+
+| Caderno | Foco |
+|---|---|
+| 🌎 Mundo | Geopolítica e eventos internacionais |
+| 📈 Mercado | Economia, investimentos e finanças |
+| 🏛️ Política | Brasil: Congresso, governo e Judiciário |
+| 💻 Tech | Tecnologia, IA e inovação |
+| 🏎️ Esportes | F1, NBA, MMA, Tênis (sem futebol) |
+| 🎬 Cinema | Filmes, séries e streaming |
+| 🏃 Fitness | Treino, corrida, nutrição e performance |
+| 🔬 Ciência | Descobertas científicas e saúde |
+| 🏍️ Motos | Motociclismo e novidades do segmento |
+| ⭐ Fofoca | Celebridades internacionais e Hollywood |
+
+**100% automatizado com inteligência artificial** — Claude AI (Anthropic) gera resumos jornalísticos de 85 a 105 palavras por notícia, em Português Brasileiro.
+    """)
 
 # Rodapé profissional
 st.markdown("<br><br>", unsafe_allow_html=True)
