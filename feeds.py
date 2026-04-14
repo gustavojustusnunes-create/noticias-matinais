@@ -49,11 +49,20 @@ def buscar_og_image(url_artigo, timeout=10):
         html = r.text
 
         padroes = [
+            # og:image:secure_url (CDNs como Valor/Bloomberg expõem só esta)
+            r'<meta[^>]+property=["\']og:image:secure_url["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image:secure_url["\']',
+            # og:image padrão
             r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
             r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
+            # twitter:image
             r'<meta[^>]+name=["\']twitter:image["\'][^>]+content=["\']([^"\']+)["\']',
             r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']twitter:image["\']',
+            # og:image:url
             r'<meta[^>]+property=["\']og:image:url["\'][^>]+content=["\']([^"\']+)["\']',
+            # link rel="image_src" (portais mais antigos)
+            r'<link[^>]+rel=["\']image_src["\'][^>]+href=["\']([^"\']+)["\']',
+            r'<link[^>]+href=["\']([^"\']+)["\'][^>]+rel=["\']image_src["\']',
         ]
         for padrao in padroes:
             m = re.search(padrao, html, re.IGNORECASE)
@@ -62,8 +71,31 @@ def buscar_og_image(url_artigo, timeout=10):
                 if url.startswith("http") and len(url) > 15:
                     return url
 
-        # Fallback: primeira imagem grande na página
         extensoes = (".jpg", ".jpeg", ".png", ".webp")
+
+        # Fallback preferencial: <img> com width >= 600 dentro de <article> ou <main>
+        for bloco_padrao in (r"<article[^>]*>(.*?)</article>", r"<main[^>]*>(.*?)</main>"):
+            bloco_m = re.search(bloco_padrao, html, re.IGNORECASE | re.DOTALL)
+            if bloco_m:
+                bloco = bloco_m.group(1)
+                for m in re.findall(
+                    r'<img[^>]+(?:src=["\']([^"\']+)["\'][^>]*width=["\'](\d+)["\']'
+                    r'|width=["\'](\d+)["\'][^>]*src=["\']([^"\']+)["\'])',
+                    bloco, re.IGNORECASE
+                ):
+                    src   = m[0] or m[3]
+                    width = int(m[1] or m[2] or 0)
+                    if (
+                        width >= 600
+                        and any(ext in src.lower() for ext in extensoes)
+                        and src.startswith("http")
+                        and "pixel" not in src
+                        and "logo"  not in src.lower()
+                        and "icon"  not in src.lower()
+                    ):
+                        return src
+
+        # Fallback geral: primeira imagem grande na página
         for m in re.findall(
             r'<img[^>]+src=["\']([^"\']+)["\'][^>]*(?:width=["\'](\d+)["\'])?',
             html, re.IGNORECASE
@@ -264,6 +296,22 @@ def _traduzir_titulo(titulo):
     return titulo  # fallback: retorna original sem prefixo
 
 
+_VOCAB_INGLES = [
+    "the ", "how to", "why ", "what ", "best ", "your ", "you ",
+    "with ", "this ", "that ", " and ", " for ", " are ", " was ",
+    "running", "workout", "training", "marathon", "i ran",
+    "tried ", "defense", "faster", "better", "recovery",
+    "should ", "guide to", "relief", "prevention", "benefits of",
+    "celebrity", "award", "season", "episode", "premiere",
+]
+
+
+def _titulo_parece_ingles(titulo: str) -> bool:
+    """Detecta heuristicamente se um título está em inglês via vocabulário."""
+    t = titulo.lower()
+    return sum(1 for p in _VOCAB_INGLES if p in t) >= 2
+
+
 # =============================================================================
 # --- RANKING DE RELEVÂNCIA (BLOCO 7A) ---
 # =============================================================================
@@ -391,113 +439,91 @@ def processar_tema(tema, historico_hashes):
         print(f"      ⚠️ '{tema}' vazio após deduplicação.")
         return None
 
-    # ── Tradução de títulos de feeds em inglês ───────────────────────────────
-    for entry in noticias_filtradas:
-        if _e_feed_ingles(entry):
-            titulo_original = entry.get("title", "")
-            entry.title = _traduzir_titulo(titulo_original)
-            entry._titulo_original_en = titulo_original
-
-    # ── Monta input COM contexto base ────────────────────────────────────────
-    input_txt = ""
-    for i, e in enumerate(noticias_filtradas):
-        titulo   = e.get("title", "")
-        contexto = extrair_contexto_base(e, max_chars=800)
-
-        # Se veio de feed inglês, avisa a IA no corpo
-        aviso_ingles = ""
-        if _e_feed_ingles(e):
-            titulo_en = getattr(e, "_titulo_original_en", "")
-            aviso_ingles = (
-                f"ATENÇÃO: O texto base abaixo está em INGLÊS. "
-                f"O resumo DEVE ser 100% em Português Brasileiro.\n"
-                f"Título original em inglês: {titulo_en}\n"
-            )
-
-        if contexto and contexto.lower() != titulo.lower():
-            input_txt += (
-                f"Notícia {i + 1}:\n"
-                f"Título: {titulo}\n"
-                f"{aviso_ingles}"
-                f"Texto Base: {contexto}\n\n"
-            )
-        else:
-            input_txt += (
-                f"Notícia {i + 1}:\n"
-                f"Título: {titulo}\n"
-                f"{aviso_ingles}\n"
-            )
-
     instrucao = INSTRUCAO_TEMA.get(tema, "Inclua dados, números e contexto relevantes.")
 
-    # ── Prompt principal ─────────────────────────────────────────────────────
-    prompt = f"""Você é um repórter sênior do All News Journal, jornal digital premium brasileiro.
-Escreva resumos jornalísticos COMPLETOS e AUTOSSUFICIENTES para o caderno de {tema}.
-
-O leitor NÃO vai clicar em nenhum link — o resumo é a notícia inteira.
-
-═══════════════════════════════════════
-DIRETRIZES EDITORIAIS — {tema.upper()}
-═══════════════════════════════════════
-{instrucao}
-
-═══════════════════════════════════════
-REGRAS ABSOLUTAS DE FORMATO
-═══════════════════════════════════════
-1. TAMANHO: 85 a 105 palavras por resumo. Abaixo de 70 = REPROVADO.
-2. CONCLUSÃO: NUNCA termine com "…" ou "...". Última frase fechada com ponto final.
-3. IDIOMA: Sempre em Português Brasileiro fluente. Mesmo que o texto base esteja em inglês.
-4. TOM: Direto, ativo, jornalístico. Sem jargões. Sem linguagem de teaser.
-5. PROIBIDO: "o artigo fala", "a notícia informa", "segundo a publicação", "vale destacar".
-6. PROIBIDO: numeração ("1.", "Notícia 1:"), markdown (asteriscos, negrito, bullets).
-7. INÍCIO: Comece sempre pelo fato principal com dados concretos.
-
-Separe cada resumo com "|||". Retorne APENAS os resumos.
-
-═══════════════════════════════════════
-MANCHETES E CONTEXTO
-═══════════════════════════════════════
-{input_txt}"""
-
-    resp_ia = chamar_claude_api(prompt)
-
-    # ── Limpeza dos resumos retornados ───────────────────────────────────────
-    resumos_ia: list[str] = []
-    if resp_ia:
-        resumos_ia = [r.strip() for r in resp_ia.split("|||") if r.strip()]
-        while len(resumos_ia) < len(noticias_filtradas):
-            resumos_ia.append("")
-    else:
-        print(f"      ⚠️ IA indisponível para '{tema}'. Ativando fallbacks.")
-
-    # ── Monta notícias finais com fallback em cascata ────────────────────────
+    # ── Gera uma notícia por vez (sem batch) ─────────────────────────────────
     noticias_finais = []
 
     for i, entry in enumerate(noticias_filtradas):
-        titulo_entry = entry.get("title", "")
-        resumo_bruto = resumos_ia[i] if i < len(resumos_ia) else ""
-        resumo_limpo = limpar_resumo(resumo_bruto)
+        # ── Tradução de título ────────────────────────────────────────────────
+        titulo_original = entry.get("title", "")
+        e_ingles = _e_feed_ingles(entry)
 
-        # SKIP funciona para qualquer tema
+        # Fitness: usa também detecção vocabular como fallback da URL
+        if not e_ingles and tema == "Fitness":
+            e_ingles = _titulo_parece_ingles(titulo_original)
+
+        if e_ingles:
+            titulo_traduzido = _traduzir_titulo(titulo_original)
+            entry.title = titulo_traduzido
+            entry._titulo_original_en = titulo_original
+        else:
+            titulo_traduzido = titulo_original
+
+        titulo_entry = titulo_traduzido
+
+        # ── Contexto base ─────────────────────────────────────────────────────
+        contexto = extrair_contexto_base(entry, max_chars=800)
+
+        aviso_ingles = ""
+        if e_ingles:
+            aviso_ingles = (
+                f"ATENÇÃO: O texto base abaixo pode estar em INGLÊS. "
+                f"O resumo DEVE ser 100% em Português Brasileiro.\n"
+                f"Título original em inglês: {titulo_original}\n"
+            )
+
+        if contexto and contexto.lower() != titulo_entry.lower():
+            input_individual = (
+                f"Título: {titulo_entry}\n"
+                f"{aviso_ingles}"
+                f"Texto Base: {contexto}"
+            )
+        else:
+            input_individual = f"Título: {titulo_entry}\n{aviso_ingles}"
+
+        # ── Prompt individual ─────────────────────────────────────────────────
+        prompt = (
+            f"Você é um repórter sênior do All News Journal, jornal digital premium brasileiro.\n"
+            f"Escreva UM resumo jornalístico COMPLETO e AUTOSSUFICIENTE para o caderno de {tema}.\n\n"
+            f"O leitor NÃO vai clicar em nenhum link — o resumo é a notícia inteira.\n\n"
+            f"═══════════════════════════════════════\n"
+            f"DIRETRIZES EDITORIAIS — {tema.upper()}\n"
+            f"═══════════════════════════════════════\n"
+            f"{instrucao}\n\n"
+            f"═══════════════════════════════════════\n"
+            f"REGRAS ABSOLUTAS DE FORMATO\n"
+            f"═══════════════════════════════════════\n"
+            f"1. TAMANHO: 85 a 105 palavras. Abaixo de 70 = REPROVADO.\n"
+            f"2. CONCLUSÃO: NUNCA termine com '…' ou '...'. Última frase fechada com ponto final.\n"
+            f"3. IDIOMA: Sempre em Português Brasileiro fluente. Mesmo que o texto base esteja em inglês.\n"
+            f"4. TOM: Direto, ativo, jornalístico. Sem jargões. Sem linguagem de teaser.\n"
+            f"5. PROIBIDO: 'o artigo fala', 'a notícia informa', 'segundo a publicação', 'vale destacar'.\n"
+            f"6. PROIBIDO: numeração, markdown (asteriscos, negrito, bullets).\n"
+            f"7. INÍCIO: Comece sempre pelo fato principal com dados concretos.\n"
+            f"Retorne APENAS o parágrafo de resumo, sem qualquer marcação.\n\n"
+            f"═══════════════════════════════════════\n"
+            f"MANCHETE E CONTEXTO\n"
+            f"═══════════════════════════════════════\n"
+            f"{input_individual}"
+        )
+
+        resp_ia = chamar_claude_api(prompt)
+        resumo_limpo = limpar_resumo(resp_ia) if resp_ia else ""
+
+        # SKIP semântico
         if resumo_limpo.strip().upper() == "SKIP":
             print(f"      🚫 SKIP [{tema}]: {titulo_entry[:60]}")
             continue
 
-        # ── Fallback 1: Claude reescreve o contexto base ──────────────────────
+        # ── Fallback 1: Claude reescreve contexto base ────────────────────────
         if not resumo_limpo:
             contexto_base = extrair_contexto_base(entry, max_chars=800)
             if contexto_base and len(contexto_base.split()) >= 20:
-                idioma_hint = ""
-                if _e_feed_ingles(entry):
-                    idioma_hint = (
-                        "O texto base pode estar em inglês. "
-                        "O resumo DEVE ser escrito em Português Brasileiro fluente."
-                    )
-                elif tema == "Fitness":
-                    idioma_hint = (
-                        "O texto base pode estar em inglês. "
-                        "O resumo DEVE ser escrito em Português Brasileiro fluente."
-                    )
+                idioma_hint = (
+                    "O texto base pode estar em inglês. "
+                    "O resumo DEVE ser escrito em Português Brasileiro fluente."
+                ) if e_ingles else ""
                 prompt_rewrite = (
                     f"Você é um jornalista sênior. Reescreva o texto abaixo como um "
                     f"parágrafo jornalístico de 85 a 100 palavras em Português Brasileiro "
@@ -512,9 +538,9 @@ MANCHETES E CONTEXTO
 
         # ── Fallback 2: Claude gera a partir do título apenas ─────────────────
         if not resumo_limpo:
-            idioma_hint = ""
-            if _e_feed_ingles(entry) or tema == "Fitness":
-                idioma_hint = "Escreva em Português Brasileiro mesmo que o título esteja em inglês."
+            idioma_hint = (
+                "Escreva em Português Brasileiro mesmo que o título esteja em inglês."
+            ) if e_ingles else ""
             prompt_mini = (
                 f"Você é um jornalista sênior. Com base APENAS no título abaixo, "
                 f"escreva um parágrafo jornalístico de 3 frases (80 a 95 palavras) "

@@ -144,6 +144,17 @@ def limpar_texto_rss(texto):
         r"nfoMoney\.?\s*$",
         r"Notícia\.\.\.",
         r"\[&#\d+;\]",
+        # WordPress PT-BR "apareceu primeiro em"
+        r"\s*O\s+post\s+.+?apareceu\s+primeiro\s+em\s+.+?\.?\s*",
+        r"\s*apareceu\s+primeiro\s+em\s+.+",
+        # Resíduo de [&#8230;] e similares
+        r"\[\s*\]",
+        # "Leia também" + texto atrelado
+        r"Leia\s+tamb[eé]m\s*[A-ZÀ-Úa-zà-ú].*?(?=\.|$)",
+        # Créditos de foto entre parênteses
+        r"\(Foto:\s*[^)]+\)",
+        # Dateline Reuters/agências: "13 Abr (Reuters) –"
+        r"^\d{1,2}\s+(?:Jan|Fev|Mar|Abr|Mai|Jun|Jul|Ago|Set|Out|Nov|Dez)\s+\([^)]+\)\s*[–—\-]\s*",
     ]
     for padrao in padroes_cta:
         texto = re.sub(padrao, " ", texto, flags=re.DOTALL | re.IGNORECASE)
@@ -158,6 +169,20 @@ def limpar_texto_rss(texto):
     texto = re.sub(r"\s*…\s*$", ".", texto.strip())
 
     return re.sub(r"\s+", " ", texto).strip()
+
+
+def remover_titulo_duplicado(titulo: str, corpo: str) -> str:
+    """
+    Remove repetição do título no início do corpo do texto.
+    Resolve o padrão da Revista Quem e feeds que incluem título + texto no summary.
+    """
+    if not titulo or not corpo:
+        return corpo
+    titulo_norm = re.sub(r"\s+", " ", titulo.lower().strip())
+    corpo_norm  = re.sub(r"\s+", " ", corpo.lower().strip())
+    if corpo_norm.startswith(titulo_norm):
+        corpo = corpo[len(titulo):].lstrip(".,;: \n")
+    return corpo
 
 
 def extrair_contexto_base(entry, max_chars: int = 800) -> str:
@@ -177,8 +202,12 @@ def extrair_contexto_base(entry, max_chars: int = 800) -> str:
 
     texto = limpar_texto_rss(texto)
 
+    titulo = entry.get("title", "")
+    if titulo:
+        texto = remover_titulo_duplicado(titulo, texto)
+
     if len(texto) > max_chars:
-        cortado     = texto[:max_chars]
+        cortado      = texto[:max_chars]
         ultimo_ponto = max(cortado.rfind("."), cortado.rfind("!"), cortado.rfind("?"))
         if ultimo_ponto > max_chars // 2:
             cortado = cortado[: ultimo_ponto + 1]

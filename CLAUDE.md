@@ -1,4 +1,4 @@
-# All News Journal — Guia para o Claude Code (v15.0)
+# All News Journal — Guia para o Claude Code (v15.1)
 
 > Este arquivo existe para que futuras sessões do Claude Code entendam o projeto instantaneamente.
 
@@ -37,7 +37,7 @@ noticias-matinais/
 └── .github/
     └── workflows/
         ├── daily.yml           <- GitHub Actions (6h BRT, timeout 30min)
-        ├── keep_alive.yml      <- Ping leve no Streamlit a cada 25 min (curl)
+        ├── keep_alive.yml      <- Ping leve curl a cada 6h (secret STREAMLIT_URL)
         └── instagram.yml       <- Posts Instagram (09:15 UTC = 06:15 BRT)
 ```
 
@@ -59,6 +59,7 @@ noticias-matinais/
 | `INSTAGRAM_USER` | instagram_poster.py | Usuario do Instagram |
 | `INSTAGRAM_PASS` | instagram_poster.py | Senha do Instagram |
 | `INSTAGRAM_ENABLED` | instagram_poster.py | "true" para ativar posts (padrao: "false") |
+| `STREAMLIT_URL` | keep_alive.yml | URL do app Streamlit para o ping de keep-alive |
 
 **No Streamlit Cloud**, as variaveis sao configuradas em `st.secrets` com os mesmos nomes.
 
@@ -165,6 +166,68 @@ Resumo de status dos feeds (FEEDS_STATUS)
 
 ---
 
+## Melhorias implementadas na v15.1 (14/04/2026)
+
+### BLOCO A — Chamadas individuais por noticia (anti-batch)
+- `feeds.processar_tema` agora chama `chamar_claude_api` UMA VEZ por noticia, com prompt individual
+- Removida logica de `|||` (separador) e split do resultado em batch
+- Falha em uma noticia nao contamina as outras — cada uma tem seu proprio fallback em cascata
+- Prompt individual e mais preciso (sem instrucao de separador, sem ruido de outras noticias)
+
+### BLOCO B — Traducao de titulo Fitness ampliada
+- `feeds._titulo_parece_ingles()`: deteccao vocabular (heuristica) como fallback da deteccao por URL
+- Para o tema Fitness: traduz titulo se `_e_feed_ingles` OU `_titulo_parece_ingles` = True
+- Titulo traduzido e o `titulo_entry` final — vai para o email sem emoji ou prefixo
+- Outros temas: sem mudanca (traducao apenas para URLs em `FEEDS_INGLES`)
+
+### BLOCO C — Blocklist explicito Fofoca
+- `FILTROS_TEMA["Fofoca"]` ampliado com lista de subcelebridades brasileiras sem projecao global
+- Nomes incluidos: Carlinhos Maia, Virginia Fonseca, Ze Felipe, Simaria, Simone Mendes,
+  Ana Castela, Maiara, Maraisa, Robinho, Tremembé, Thiago Brennand, Suzane Richthofen,
+  MC Guime, MC Daniel, MC Kevin, Pocah, Jojo Todynho, GKay, Gracyanne, Deolane, Biel,
+  Naldo Benny, Leo Santana, Safadao, Gusttavo Lima, Leonardo (cantor)
+- Anitta mantida (projecao internacional confirmada)
+- SKIP semantico da IA continua como segunda camada de defesa
+
+### BLOCO D — Limpeza de texto RSS ampliada (claude_api.py)
+- `limpar_texto_rss`: novos padroes em `padroes_cta`:
+  - "O post ... apareceu primeiro em ..." (WordPress PT-BR)
+  - "apareceu primeiro em ..."
+  - `[]` residuo de `[&#8230;]`
+  - "Leia tambem" + texto atrelado
+  - `(Foto: ...)` creditos de foto
+  - Dateline de agencias: "13 Abr (Reuters) –"
+- Nova funcao `remover_titulo_duplicado(titulo, corpo)`: remove repeticao do titulo
+  no inicio do corpo (resolve padrao Revista Quem e feeds similares)
+- `extrair_contexto_base` agora chama `remover_titulo_duplicado` antes de retornar
+
+### BLOCO E — Imagens mais robustas (feeds.py)
+- `buscar_og_image` agora tenta, em ordem:
+  1. `og:image:secure_url` (CDNs como Valor/Bloomberg)
+  2. `og:image` (padrao)
+  3. `twitter:image`
+  4. `og:image:url`
+  5. `link rel="image_src"` (portais antigos)
+  6. `<img>` com width >= 600 dentro de `<article>` ou `<main>`
+  7. Primeira imagem grande (width >= 300) na pagina geral
+  8. Fallback Unsplash tematico (ultimo recurso)
+
+### BLOCO F — keep_alive.yml reescrito
+- Cron alterado: de `*/25 * * * *` (cada 25 min) para `0 */6 * * *` (cada 6h)
+- Usa `curl` simples — sem Playwright, sem Chromium, sem dependencias pesadas
+- URL lida do secret `STREAMLIT_URL` (nao hard-coded)
+- 3 tentativas com 30s de intervalo se HTTP != 2xx/3xx
+- **IMPORTANTE**: criar o secret `STREAMLIT_URL` no GitHub com a URL real do app
+
+### BLOCO G — Portal Streamlit (app.py)
+- **Politica de Privacidade**: `st.expander` na sidebar abaixo do cancelamento
+- **Indicadores na Capa**: cards USD/BRL, IBOV, BTC com variacao colorida
+  (funcao `obter_indicadores_app` com `@st.cache_data(ttl=900)`, usa yfinance)
+- **Fale conosco**: link `mailto:` discreto no rodape principal
+- Sem prints de debug
+
+---
+
 ## Como rodar localmente
 
 ```bash
@@ -212,6 +275,7 @@ URL_CANCELAMENTO
 INSTAGRAM_USER
 INSTAGRAM_PASS
 INSTAGRAM_ENABLED
+STREAMLIT_URL
 ```
 
 ---

@@ -231,12 +231,26 @@ FILTROS_TEMA = {
     "Motos":    [],
 
     "Fofoca":   [
+        # Realities e subcelebridades de reality
         "ex-bbb", "ex bbb", "bbb ", "big brother",
         "fazenda ", "a fazenda", "reality show",
+        # Gêneros musicais de nicho brasileiro sem relevância global
         "sertanejo", "pagodeiro", "funkeiro", "funk",
         "mc ", "mc.", "dj ",
+        # Política (não pertence ao caderno)
         "governo federal", "presidente lula", "bolsonaro",
         "congresso nacional", "eleições", "partido político",
+        # Subcelebridades brasileiras sem projeção internacional
+        "carlinhos maia", "virgínia", "virginia fonseca",
+        "zé felipe", "ze felipe",
+        "simaria", "simone mendes",
+        "ana castela", "maiara", "maraisa",
+        "robinho", "tremembé", "thiago brennand", "suzane richthofen",
+        "mc guimê", "mc guime", "mc daniel", "mc kevin", "pocah",
+        "jojo todynho", "gkay", "gracyanne barbosa", "deolane",
+        "biel ", "naldo benny",
+        "leo santana", "safadão", "safadao",
+        "gusttavo lima", "leonardo (cantor)", "leonardo cantor",
     ],
 }
 

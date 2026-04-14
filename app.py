@@ -683,7 +683,53 @@ def buscar_noticias(tema):
     return noticias
 
 # =============================================================================
-# --- 9. SIDEBAR: FORMULÁRIO ---
+# --- 9. INDICADORES FINANCEIROS (para a Capa) ---
+# =============================================================================
+@st.cache_data(ttl=900)
+def obter_indicadores_app():
+    """Busca USD/BRL, IBOV e BTC via yfinance. Retorna lista de dicts ou []."""
+    try:
+        import yfinance as yf
+    except ImportError:
+        return []
+
+    dados = []
+
+    def _variacao(hist):
+        if len(hist) >= 2:
+            atual = hist["Close"].iloc[-1]
+            ant   = hist["Close"].iloc[-2]
+            return atual, (atual - ant) / ant * 100
+        return None, None
+
+    for ticker_id, nome, fmt in [
+        ("BRL=X",  "USD/BRL",  lambda v: f"R$ {v:.2f}"),
+        ("^BVSP",  "IBOV",     lambda v: f"{int(v):,} pts".replace(",", ".")),
+    ]:
+        try:
+            hist = yf.Ticker(ticker_id).history(period="5d")
+            atual, var = _variacao(hist)
+            if atual is not None:
+                dados.append({"nome": nome, "valor": fmt(atual), "var": var})
+        except Exception:
+            pass
+
+    for ticker_id, moeda in [("BTC-BRL", "BRL"), ("BTC-USD", "USD")]:
+        try:
+            hist = yf.Ticker(ticker_id).history(period="5d")
+            atual, var = _variacao(hist)
+            if atual is not None:
+                label = f"R$ {atual/1000:.1f}k" if moeda == "BRL" else f"US$ {atual/1000:.1f}k"
+                dados.append({"nome": "BTC", "valor": label, "var": var})
+                break
+        except Exception:
+            pass
+
+    return dados
+
+
+# =============================================================================
+# --- 10. SIDEBAR: FORMULÁRIO ---
 # =============================================================================
 ICONES = {
     "Mundo":    "🌎", "Mercado":  "📈", "Politica": "🏛️",
@@ -852,6 +898,28 @@ with st.sidebar:
                     else:
                         st.error(f"❌ {msg_cancel}")
 
+    # ── Política de Privacidade ────────────────────────────────────────────
+    st.markdown(
+        "<hr style='border-color:rgba(253,251,247,0.10);margin:16px 0 8px;'>",
+        unsafe_allow_html=True
+    )
+    with st.expander("🔒 Política de Privacidade"):
+        st.markdown("""
+**All News Journal — Política de Privacidade**
+
+Coletamos apenas o nome e e-mail fornecidos voluntariamente no formulário de inscrição.
+Esses dados são utilizados exclusivamente para o envio da edição diária do All News Journal.
+
+- Não compartilhamos suas informações com terceiros.
+- Não utilizamos cookies de rastreamento.
+- Você pode cancelar a assinatura e ter seus dados removidos a qualquer momento.
+
+Para dúvidas ou solicitações de remoção, entre em contato via
+[gustavojustusnunes@gmail.com](mailto:gustavojustusnunes@gmail.com).
+
+*Última atualização: Abril de 2026.*
+        """)
+
 # =============================================================================
 # --- 10. META TAGS SEO ---
 # =============================================================================
@@ -913,6 +981,33 @@ st.markdown("<br>", unsafe_allow_html=True)
 noticias_display = []
 
 if tema_atual == "Capa (Destaques)":
+    # ── Painel de Indicadores ────────────────────────────────────────────
+    indicadores = obter_indicadores_app()
+    if indicadores:
+        st.markdown(
+            "<h3 style='text-align:center; font-size:1.0rem; letter-spacing:1px;'>"
+            "📈 Indicadores do Dia</h3>",
+            unsafe_allow_html=True
+        )
+        cols_ind = st.columns(len(indicadores))
+        for col_i, ind in zip(cols_ind, indicadores):
+            cor   = "#0a7c00" if (ind["var"] or 0) >= 0 else "#cc0000"
+            seta  = "▲" if (ind["var"] or 0) >= 0 else "▼"
+            sinal = "+" if (ind["var"] or 0) > 0 else ""
+            var_str = f"{seta} {sinal}{ind['var']:.2f}%" if ind["var"] is not None else ""
+            col_i.markdown(
+                f"<div style='text-align:center; background:#fff; border:1px solid #e5e3de; "
+                f"border-radius:8px; padding:10px 6px; margin-bottom:12px;'>"
+                f"<div style='font-size:0.72rem; text-transform:uppercase; "
+                f"letter-spacing:1px; color:#888; font-weight:bold;'>{ind['nome']}</div>"
+                f"<div style='font-size:1.05rem; font-weight:bold; color:#2c2c2c; margin:4px 0;'>"
+                f"{ind['valor']}</div>"
+                f"<div style='font-size:0.80rem; color:{cor}; font-weight:bold;'>{var_str}</div>"
+                f"</div>",
+                unsafe_allow_html=True
+            )
+        st.markdown("<br>", unsafe_allow_html=True)
+
     for t in RSS_FEEDS.keys():
         res = buscar_noticias(t)
         if res:
@@ -988,6 +1083,10 @@ st.markdown(
         <p style='font-size:1.1rem; font-weight:bold; letter-spacing:2px; margin:0;'>ALL NEWS JOURNAL</p>
         <p style='font-size:0.75rem; color:#888; margin:8px 0 0;'>
             © """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
+        </p>
+        <p style='font-size:0.72rem; color:#aaa; margin:6px 0 0;'>
+            <a href='mailto:gustavojustusnunes@gmail.com?subject=Contato%20All%20News%20Journal'
+               style='color:#0a5c5a; text-decoration:none;'>Fale conosco</a>
         </p>
     </div>
     """,
