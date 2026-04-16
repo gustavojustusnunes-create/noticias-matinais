@@ -242,15 +242,23 @@ FILTROS_TEMA = {
         "congresso nacional", "eleições", "partido político",
         # Subcelebridades brasileiras sem projeção internacional
         "carlinhos maia", "virgínia", "virginia fonseca",
-        "zé felipe", "ze felipe",
-        "simaria", "simone mendes",
+        "zé felipe", "ze felipe", "whindersson",
+        "simaria", "simone mendes", "marília mendonça",
         "ana castela", "maiara", "maraisa",
         "robinho", "tremembé", "thiago brennand", "suzane richthofen",
         "mc guimê", "mc guime", "mc daniel", "mc kevin", "pocah",
-        "jojo todynho", "gkay", "gracyanne barbosa", "deolane",
+        "jojo todynho", "jojo toddynho", "gkay", "gracyanne barbosa", "deolane",
         "biel ", "naldo benny",
         "leo santana", "safadão", "safadao",
         "gusttavo lima", "leonardo (cantor)", "leonardo cantor",
+        # Ex-BBB e ex-reality sem carreira sólida
+        "jade picon", "larissa manoela", "maísa",
+        "juliette", "gil do vigor", "arthur aguiar",
+        "davi brito", "matteus", "beatriz reis", "lucas souza",
+        # Apresentadores/comentaristas locais
+        "denílson", "galvão bueno", "datena", "ratinho",
+        "faustão", "silvio santos", "patrícia abravanel", "celso portiolli",
+        "ícaro silva", "joão vicente de castro",
     ],
 }
 

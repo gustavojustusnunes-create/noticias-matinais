@@ -15,11 +15,9 @@ jobs:
         env:
           STREAMLIT_URL: ${{ secrets.STREAMLIT_URL }}
         run: |
-          URL="${STREAMLIT_URL}"
-          if [ -z "$URL" ]; then
-            echo "❌ STREAMLIT_URL não configurado. Configure o secret no repositório."
-            exit 1
-          fi
+          # Usa o secret; se não existir, usa a URL padrão do projeto
+          URL="${STREAMLIT_URL:-https://allnewsjournal.streamlit.app/}"
+          echo "🌐 Pingando: $URL"
 
           for tentativa in 1 2 3; do
             echo "🔁 Tentativa $tentativa de 3..."

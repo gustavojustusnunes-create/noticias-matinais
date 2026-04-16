@@ -3,6 +3,7 @@ feeds.py — Coleta, filtro e processamento de feeds RSS do All News Journal
 Inclui: busca de imagem, filtros de conteúdo, deduplicação e pipeline completo por tema.
 """
 import re
+import time
 
 import feedparser
 import requests
@@ -443,6 +444,7 @@ def processar_tema(tema, historico_hashes):
 
     # ── Gera uma notícia por vez (sem batch) ─────────────────────────────────
     noticias_finais = []
+    imagens_usadas  = set()
 
     for i, entry in enumerate(noticias_filtradas):
         # ── Tradução de título ────────────────────────────────────────────────
@@ -501,7 +503,9 @@ def processar_tema(tema, historico_hashes):
             f"5. PROIBIDO: 'o artigo fala', 'a notícia informa', 'segundo a publicação', 'vale destacar'.\n"
             f"6. PROIBIDO: numeração, markdown (asteriscos, negrito, bullets).\n"
             f"7. INÍCIO: Comece sempre pelo fato principal com dados concretos.\n"
-            f"Retorne APENAS o parágrafo de resumo, sem qualquer marcação.\n\n"
+            f"8. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é irrelevante, "
+            f"retorne EXATAMENTE: SKIP\n"
+            f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n\n"
             f"═══════════════════════════════════════\n"
             f"MANCHETE E CONTEXTO\n"
             f"═══════════════════════════════════════\n"
@@ -510,6 +514,10 @@ def processar_tema(tema, historico_hashes):
 
         resp_ia = chamar_claude_api(prompt)
         resumo_limpo = limpar_resumo(resp_ia) if resp_ia else ""
+
+        # Pequena pausa para evitar rate-limit entre notícias
+        if i < len(noticias_filtradas) - 1:
+            time.sleep(1)
 
         # SKIP semântico
         if resumo_limpo.strip().upper() == "SKIP":
@@ -560,6 +568,15 @@ def processar_tema(tema, historico_hashes):
             resumo_limpo = ctx if len(ctx.split()) >= 10 else titulo_entry
 
         img = extrair_imagem_rss(entry, tema, idx_entry=i)
+        # Evita imagem duplicada dentro do mesmo caderno
+        if img in imagens_usadas:
+            fallback = FALLBACK_IMAGES.get(
+                tema,
+                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+            )
+            img = f"{fallback}&sig={i}"
+        imagens_usadas.add(img)
+
         noticias_finais.append({
             "titulo": titulo_entry,
             "link":   entry.get("link", ""),

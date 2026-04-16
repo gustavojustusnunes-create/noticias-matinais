@@ -155,6 +155,12 @@ def limpar_texto_rss(texto):
         r"\(Foto:\s*[^)]+\)",
         # Dateline Reuters/agências: "13 Abr (Reuters) –"
         r"^\d{1,2}\s+(?:Jan|Fev|Mar|Abr|Mai|Jun|Jul|Ago|Set|Out|Nov|Dez)\s+\([^)]+\)\s*[–—\-]\s*",
+        # Créditos de imagem entre parênteses
+        r"\(Imagem:\s*[^)]+\)",
+        # Caracteres Unicode invisíveis (zero-width, BOM)
+        r"[\u200b\u200c\u200d\u2060\ufeff]",
+        # Emojis de CTA frequentes em feeds
+        r"[📲💬🎯🔗]",
     ]
     for padrao in padroes_cta:
         texto = re.sub(padrao, " ", texto, flags=re.DOTALL | re.IGNORECASE)

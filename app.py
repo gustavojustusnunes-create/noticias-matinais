@@ -29,7 +29,7 @@ st.set_page_config(
     page_title="All News Journal",
     page_icon="📰",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
     menu_items={
         'Get Help': None,
         'Report a bug': None,
@@ -934,6 +934,36 @@ st.markdown("""
 # --- 11. CONTEÚDO PRINCIPAL ---
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
+
+# Banner de inscrição visível apenas em mobile (sidebar fica oculta por padrão)
+st.markdown("""
+<style>
+    .mobile-subscribe-banner {
+        display: none;
+        background: linear-gradient(135deg, #0a5c5a 0%, #084c4a 100%);
+        color: #fdfbf7;
+        text-align: center;
+        padding: 14px 20px;
+        border-radius: 8px;
+        margin: 10px 0 20px;
+        cursor: pointer;
+        font-family: 'Playfair Display', serif;
+        font-size: 0.95rem;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 12px rgba(10, 92, 90, 0.3);
+    }
+    .mobile-subscribe-banner:hover { opacity: 0.9; }
+    @media (max-width: 768px) {
+        .mobile-subscribe-banner { display: block; }
+    }
+</style>
+<div class="mobile-subscribe-banner"
+     onclick="window.parent.document.querySelector('[data-testid=stSidebar]').style.display='block';
+              window.parent.document.querySelector('[data-testid=stSidebar]').style.transform='translateX(0)';">
+    ✉️ ASSINE GRATUITAMENTE — Receba sua edição diária →
+</div>
+""", unsafe_allow_html=True)
 
 hoje = datetime.now()
 meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
