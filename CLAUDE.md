@@ -1,4 +1,4 @@
-# All News Journal — Guia para o Claude Code (v15.1)
+# All News Journal — Guia para o Claude Code (v15.2)
 
 > Este arquivo existe para que futuras sessões do Claude Code entendam o projeto instantaneamente.
 
@@ -7,12 +7,28 @@
 ## O que é este projeto
 
 O **All News Journal** (`noticias-matinais`) é um jornal digital premium 100% automatizado. Ele:
-1. Busca notícias via feeds RSS de 10 categorias temáticas
+1. Busca notícias via feeds RSS de **8 cadernos editoriais** (Mundo, Economia, Politica, IA, Wellness, Ciencia, Cinema, Fofoca)
 2. Gera resumos jornalísticos em português brasileiro usando a API do Claude
 3. Envia uma edição diária por email a cada assinante (às 6h, horário de Brasília)
 4. Tem um portal Streamlit que exibe as últimas notícias + formulário de inscrição na sidebar
 5. É automatizado via GitHub Actions (cron `0 9 * * *` = 09:00 UTC = 06:00 BRT)
 6. Posta automaticamente no Instagram 15 minutos após o email (via `instagram.yml`)
+
+## Cadernos e feeds RSS (v15.2)
+
+| # | Caderno  | Ícone | Foco editorial |
+|---|----------|-------|----------------|
+| 1 | Mundo    | 🌎 | Geopolítica, relações internacionais, conflitos, eventos globais |
+| 2 | Economia | 📈 | Mercados, ações, empresas, macro, política monetária |
+| 3 | Politica | 🏛️ | Política institucional brasileira simplificada e neutra |
+| 4 | IA       | 🤖 | OpenAI, Anthropic, Google AI, modelos, papers, regulação de IA |
+| 5 | Wellness | 🏃 | Endurance, corrida, ciclismo, musculação, nutrição, mindset, sono |
+| 6 | Ciencia  | 🔬 | Pesquisa, descobertas, saúde científica, espaço |
+| 7 | Cinema   | 🎬 | Filmes, séries, streaming, festivais, crítica |
+| 8 | Fofoca   | ⭐ | Cultura pop INTERNACIONAL: Hollywood, K-pop, realeza, viral global |
+
+> **Removidos na v15.2:** ~~Tech~~ (genérico, sem foco), ~~Esportes~~ (futebol dominava), ~~Motos~~ (nicho pequeno)
+> **Renomeados:** Mercado → Economia | Fitness → Wellness
 
 ---
 
@@ -70,9 +86,11 @@ noticias-matinais/
 - Nome da planilha: **`noticias_db`**
 - Aba principal (sheet1): lista de assinantes
 
-| Nome | Email | Mundo | Mercado | Politica | Tech | Esportes | Cinema | Fitness | Ciencia | Motos | Fofoca |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Joao Silva | joao@email.com | 1 | 2 | Nao | 3 | 4 | Nao | 5 | Nao | 6 | Nao |
+| Nome | Email | Mundo | Economia | Politica | IA | Wellness | Ciencia | Cinema | Fofoca |
+|---|---|---|---|---|---|---|---|---|---|
+| Joao Silva | joao@email.com | 1 | 2 | Nao | 3 | 4 | Nao | 5 | 6 |
+
+> **Compatibilidade legada:** se a planilha ainda tiver as colunas antigas `Mercado` e `Fitness`, o `main.py` traduz automaticamente para `Economia` e `Wellness` em runtime via `MAPEAMENTO_LEGADO`. Renomeie no Sheets quando puder.
 
 - Colunas de tema: numero (posicao no email) ou `"Nao"` (nao receber)
 - Aba `historico`: hash + titulo + data das noticias ja enviadas (anti-duplicata)
@@ -131,7 +149,7 @@ Resumo de status dos feeds (FEEDS_STATUS)
 - `main.py` agora tem ~100 linhas (era 1350+)
 - `app.py` importa constantes de `config.py` (sem duplicacao)
 
-### BLOCO 2 — Fix Fitness em ingles
+### BLOCO 2 — Fix Wellness/IA/Cinema/Fofoca em ingles
 - `FEEDS_INGLES` em `config.py` lista os feeds americanos
 - `feeds._e_feed_ingles()` detecta entries de feeds ingleses por URL de origem
 - Titulo traduzido automaticamente via `chamar_claude_haiku` antes de gerar o resumo
@@ -174,9 +192,9 @@ Resumo de status dos feeds (FEEDS_STATUS)
 - Falha em uma noticia nao contamina as outras — cada uma tem seu proprio fallback em cascata
 - Prompt individual e mais preciso (sem instrucao de separador, sem ruido de outras noticias)
 
-### BLOCO B — Traducao de titulo Fitness ampliada
+### BLOCO B — Traducao de titulo Wellness ampliada
 - `feeds._titulo_parece_ingles()`: deteccao vocabular (heuristica) como fallback da deteccao por URL
-- Para o tema Fitness: traduz titulo se `_e_feed_ingles` OU `_titulo_parece_ingles` = True
+- Para os temas Wellness/IA/Cinema/Fofoca: traduz titulo se `_e_feed_ingles` OU `_titulo_parece_ingles` = True
 - Titulo traduzido e o `titulo_entry` final — vai para o email sem emoji ou prefixo
 - Outros temas: sem mudanca (traducao apenas para URLs em `FEEDS_INGLES`)
 

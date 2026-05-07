@@ -165,15 +165,17 @@ def gerar_imagem_post(tema: str, titulo: str, data_str: str) -> Path | None:
 # =============================================================================
 def gerar_legenda(tema: str, titulo: str, resumo: str) -> str:
     """Monta a legenda completa para o post no Instagram."""
-    icone   = ICONES_TEMA.get(tema, "📰")
+    icone    = ICONES_TEMA.get(tema, "📰")
     hashtags = HASHTAGS_TEMA.get(tema, "#noticias #brasil")
     legenda = (
         f"{icone} {tema.upper()}\n\n"
         f"{titulo}\n\n"
         f"{resumo}\n\n"
-        f"—\n"
+        f"━━━━━━━━━━━━━━━━━━━━\n"
+        f"📰 Edição completa todas as manhãs no e-mail.\n"
+        f"Inscreva-se no link da bio.\n\n"
         f"{hashtags}\n"
-        f"📰 Link na bio | @allnewsjournal"
+        f"@allnews_journal"
     )
     return legenda
 
@@ -181,9 +183,13 @@ def gerar_legenda(tema: str, titulo: str, resumo: str) -> str:
 # =============================================================================
 # --- PUBLICAÇÃO NO INSTAGRAM ---
 # =============================================================================
+SESSION_FILE = Path("session.json")
+
+
 def postar_instagram(caminho_imagem: Path, legenda: str) -> bool:
     """
     Faz upload da imagem com legenda no Instagram.
+    Reusa sessão salva (session.json) para evitar challenges repetidos.
     Retorna True em caso de sucesso, False caso contrário.
     """
     if not INSTA_OK:
@@ -194,23 +200,57 @@ def postar_instagram(caminho_imagem: Path, legenda: str) -> bool:
         print("   ❌ INSTAGRAM_USER ou INSTAGRAM_PASS não definidos.")
         return False
 
+    # Importa exceções específicas do instagrapi
     try:
-        cl = InstaClient()
-        cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
-        print("   ✅ Login Instagram OK.")
+        from instagrapi.exceptions import (
+            ChallengeRequired,
+            LoginRequired,
+            PleaseWaitFewMinutes,
+        )
+    except ImportError:
+        ChallengeRequired = LoginRequired = PleaseWaitFewMinutes = Exception
 
+    cl = InstaClient()
+    cl.delay_range = [2, 5]
+
+    # ── Tenta reusar sessão salva ─────────────────────────────────────────
+    try:
+        if SESSION_FILE.exists():
+            cl.load_settings(str(SESSION_FILE))
+            cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
+            cl.get_timeline_feed()
+            print("   ✅ Sessão Instagram restaurada.")
+        else:
+            cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
+            cl.dump_settings(str(SESSION_FILE))
+            print("   ✅ Login Instagram OK. Sessão salva em session.json.")
+    except LoginRequired:
+        print("   ⚠️ Sessão expirada — fazendo login completo.")
+        cl = InstaClient()
+        cl.delay_range = [2, 5]
+        try:
+            cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
+            cl.dump_settings(str(SESSION_FILE))
+        except Exception as e:
+            print(f"   ❌ Falha no login após sessão expirada: {e}")
+            return False
+    except ChallengeRequired as e:
+        print(f"   ⚠️ Instagram solicitou challenge (verificação manual): {e}")
+        return False
+    except PleaseWaitFewMinutes as e:
+        print(f"   ⚠️ Instagram pediu para aguardar alguns minutos: {e}")
+        return False
+    except Exception as e:
+        print(f"   ❌ Erro inesperado no login: {e}")
+        return False
+
+    # ── Upload da imagem ──────────────────────────────────────────────────
+    try:
         cl.photo_upload(str(caminho_imagem), legenda)
         print("   ✅ Post publicado com sucesso!")
         return True
-
     except Exception as e:
-        err = str(e).lower()
-        if "challenge" in err or "2fa" in err or "two_factor" in err:
-            print(f"   ⚠️ Autenticação em duas etapas necessária: {e}")
-        elif "rate" in err or "spam" in err:
-            print(f"   ⚠️ Rate limit detectado: {e}")
-        else:
-            print(f"   ❌ Erro ao postar: {e}")
+        print(f"   ❌ Erro ao publicar foto: {e}")
         return False
 
 
