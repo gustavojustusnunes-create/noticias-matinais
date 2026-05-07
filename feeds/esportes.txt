@@ -1,0 +1,3 @@
+https://ge.globo.com/rss/ge/
+https://rss.uol.com.br/feed/noticias/esporte.xml
+https://www.espn.com.br/espn/rss
