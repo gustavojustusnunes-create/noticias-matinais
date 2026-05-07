@@ -5,7 +5,7 @@ Para detalhes de cada etapa, veja os módulos especializados.
 """
 import re
 
-from config import RSS_FEEDS, CLAUDE_KEY, EMAIL_SENDER, EMAIL_PASSWORD, GCP_JSON
+from config import RSS_FEEDS, CLAUDE_KEY, EMAIL_SENDER, EMAIL_PASSWORD, GCP_JSON, MAPEAMENTO_LEGADO
 from sheets_db import conectar_banco, carregar_historico, salvar_no_historico, registrar_log
 from feeds import processar_tema, FEEDS_STATUS
 from email_builder import obter_indicadores, gerar_html_final, enviar_email, montar_subject
@@ -68,7 +68,20 @@ def main():
         return
 
     historico_hashes = carregar_historico(sheet_historico)
-    usuarios         = sheet_usuarios.get_all_records()
+    usuarios_raw     = sheet_usuarios.get_all_records()
+    # Compatibilidade com colunas legadas da planilha (Mercado→Economia, Fitness→Wellness)
+    usuarios = []
+    for usr in usuarios_raw:
+        for legado, novo in MAPEAMENTO_LEGADO.items():
+            if legado in usr and novo not in usr:
+                usr[novo] = usr.pop(legado)
+        usuarios.append(usr)
+    if any(MAPEAMENTO_LEGADO.keys() & set(usuarios_raw[0].keys() if usuarios_raw else [])):
+        print("⚠️  AVISO: A planilha ainda tem colunas com nomes antigos.")
+        print("   Por favor, renomeie no Google Sheets:")
+        for legado, novo in MAPEAMENTO_LEGADO.items():
+            print(f"   '{legado}' → '{novo}'")
+        print("   Adicione também a coluna 'IA' e remova 'Tech', 'Esportes', 'Motos'.")
     print(f"   👥 {len(usuarios)} assinantes encontrados.")
 
     # Descobre temas necessários

@@ -10,10 +10,7 @@ import requests
 
 from config import (
     RSS_FEEDS, FILTROS_TEMA, INSTRUCAO_TEMA,
-    FALLBACK_IMAGES, FALLBACK_ESPORTES_GENERIC,
-    SPORT_ROTATIONS, SPORT_KEYWORDS,
-    PALAVRAS_FUTEBOL, PALAVRAS_ESPORTES_PRIORITY,
-    FEEDS_INGLES,
+    FALLBACK_IMAGES, FEEDS_INGLES,
 )
 from claude_api import (
     chamar_claude_api, chamar_claude_haiku,
@@ -160,21 +157,10 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
                 break
 
     if not image_url:
-        if tema == "Esportes":
-            titulo    = entry.get("title", "").lower()
-            categoria = next(
-                (cat for cat, kws in SPORT_KEYWORDS.items() if any(kw in titulo for kw in kws)),
-                None
-            )
-            if categoria:
-                image_url = SPORT_ROTATIONS[categoria][ord(titulo[0]) % 2]
-            else:
-                image_url = FALLBACK_ESPORTES_GENERIC[idx_entry % len(FALLBACK_ESPORTES_GENERIC)]
-        else:
-            image_url = FALLBACK_IMAGES.get(
-                tema,
-                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
-            )
+        image_url = FALLBACK_IMAGES.get(
+            tema,
+            "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+        )
 
     return image_url
 
@@ -193,15 +179,6 @@ def aplicar_filtros(entry, tema):
     return not any(p in titulo or p in link or p in corpo for p in palavras)
 
 
-def e_futebol(entry):
-    texto = (entry.get("title", "") + " " + entry.get("link", "")).lower()
-    return any(p in texto for p in PALAVRAS_FUTEBOL)
-
-
-def e_esporte_prioritario(entry):
-    texto = (entry.get("title", "") + " " + entry.get("link", "")).lower()
-    return any(p in texto for p in PALAVRAS_ESPORTES_PRIORITY)
-
 
 def titulos_similares(t1, t2):
     """Verifica se dois títulos cobrem o mesmo evento (similaridade ≥ 50%)."""
@@ -215,26 +192,6 @@ def titulos_similares(t1, t2):
 # =============================================================================
 # --- COLETA DE FEEDS ---
 # =============================================================================
-def coletar_entries_esportes():
-    """Coleta entries de todos os feeds de Esportes, rastreando status."""
-    todas, vistos = [], set()
-    for url in RSS_FEEDS["Esportes"]:
-        try:
-            feed = feedparser.parse(url)
-            count = 0
-            for e in feed.entries:
-                link = e.get("link", "")
-                if link not in vistos:
-                    vistos.add(link)
-                    e._fonte_url = url
-                    todas.append(e)
-                    count += 1
-            FEEDS_STATUS[url] = f"ok ({count} entries)"
-        except Exception as ex:
-            FEEDS_STATUS[url] = f"falha: {ex}"
-            print(f"      ⚠️ Esportes ({url}): {ex}")
-    return todas
-
 
 def coletar_entries_multi(tema):
     """Coleta entries de múltiplos feeds para um tema, rastreando status."""
@@ -371,12 +328,10 @@ def processar_tema(tema, historico_hashes):
     """
     print(f"   📂 Processando: {tema}")
 
-    TEMAS_MULTI_FONTE = {"Esportes", "Cinema", "Fitness", "Ciencia", "Motos", "Fofoca"}
+    TEMAS_MULTI_FONTE = {"IA", "Wellness", "Cinema", "Ciencia", "Fofoca"}
 
     # ── Coleta ──────────────────────────────────────────────────────────────
-    if tema == "Esportes":
-        valid_entries = coletar_entries_esportes()
-    elif tema in TEMAS_MULTI_FONTE:
+    if tema in TEMAS_MULTI_FONTE:
         valid_entries = coletar_entries_multi(tema)
         print(f"      📡 {len(valid_entries)} entradas coletadas.")
     else:
@@ -401,28 +356,6 @@ def processar_tema(tema, historico_hashes):
     if not candidatas:
         print(f"      ⚠️ '{tema}' vazio após filtros.")
         return None
-
-    # ── Diversidade Esportes ─────────────────────────────────────────────────
-    if tema == "Esportes":
-        prio, outros, fut = [], [], []
-        for e in candidatas:
-            if e_esporte_prioritario(e):
-                prio.append(e)
-            elif e_futebol(e):
-                fut.append(e)
-            else:
-                outros.append(e)
-        sel = prio + outros
-        for f in fut:
-            if len(sel) >= 4:
-                break
-            sel.append(f)
-        candidatas = sel[:4]
-        print(
-            f"      🏎️  F1/NBA={sum(1 for e in candidatas if e_esporte_prioritario(e))} "
-            f"| Outros={sum(1 for e in candidatas if not e_futebol(e) and not e_esporte_prioritario(e))} "
-            f"| Fut={sum(1 for e in candidatas if e_futebol(e))}"
-        )
 
     # ── Ranking de relevância ────────────────────────────────────────────────
     candidatas = rankear_por_relevancia(candidatas, tema)
@@ -451,8 +384,8 @@ def processar_tema(tema, historico_hashes):
         titulo_original = entry.get("title", "")
         e_ingles = _e_feed_ingles(entry)
 
-        # Fitness: usa também detecção vocabular como fallback da URL
-        if not e_ingles and tema == "Fitness":
+        # Wellness/IA/Cinema/Fofoca: usa também detecção vocabular como fallback da URL
+        if not e_ingles and tema in ("Wellness", "IA", "Cinema", "Fofoca"):
             e_ingles = _titulo_parece_ingles(titulo_original)
 
         if e_ingles:

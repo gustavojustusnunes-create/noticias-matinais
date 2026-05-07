@@ -1,5 +1,9 @@
 # All News Journal — Dependências Python
 # Instalar com: pip install -r requirements.txt
+# NOTA: Pillow e instagrapi ficam em requirements-instagram.txt (não misturar — quebra Streamlit Cloud)
+
+# ── IA (Claude / Anthropic) ─────────────────────────────────────
+anthropic>=0.39.0
 
 # ── RSS e parsing ───────────────────────────────────────────────
 feedparser>=6.0.11

@@ -15,11 +15,9 @@ from config import (
     RSS_FEEDS as RSS_FEEDS_MAIN,
     FILTROS_TEMA as FILTROS_TEMA_MAIN,
     FALLBACK_IMAGES as FALLBACK_IMAGES_MAIN,
-    SPORT_ROTATIONS as SPORT_ROTATIONS_MAIN,
-    SPORT_KEYWORDS as SPORT_KEYWORDS_MAIN,
-    FALLBACK_ESPORTES_GENERIC as FALLBACK_ESPORTES_GENERIC_MAIN,
     FEEDS_INGLES,
     ICONES_TEMA,
+    ORDEM_CADERNOS,
 )
 
 # =============================================================================
@@ -301,9 +299,6 @@ st.markdown("""
 RSS_FEEDS            = RSS_FEEDS_MAIN
 FILTROS_TEMA         = FILTROS_TEMA_MAIN
 FALLBACK_IMAGES      = FALLBACK_IMAGES_MAIN
-SPORT_ROTATIONS      = SPORT_ROTATIONS_MAIN
-SPORT_KEYWORDS       = SPORT_KEYWORDS_MAIN
-FALLBACK_ESPORTES_GENERIC = FALLBACK_ESPORTES_GENERIC_MAIN
 
 
 def traduzir_titulo_se_ingles(titulo, url_fonte=""):
@@ -652,26 +647,13 @@ def buscar_noticias(tema):
 
         # Fallback por tema
         if not img:
-            if tema == "Esportes":
-                titulo_lower = entry.get('title', '').lower()
-                categoria = None
-                for cat, kws in SPORT_KEYWORDS.items():
-                    if any(kw in titulo_lower for kw in kws):
-                        categoria = cat
-                        break
-                if categoria and categoria in SPORT_ROTATIONS:
-                    idx = ord(titulo_lower[0]) % len(SPORT_ROTATIONS[categoria])
-                    img = SPORT_ROTATIONS[categoria][idx]
-                else:
-                    img = FALLBACK_ESPORTES_GENERIC[len(noticias) % len(FALLBACK_ESPORTES_GENERIC)]
-            else:
-                img = FALLBACK_IMAGES.get(
-                    tema,
-                    "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
-                )
+            img = FALLBACK_IMAGES.get(
+                tema,
+                "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop"
+            )
 
         titulo_final = entry.get('title', '')
-        if tema == "Fitness":
+        if tema in ("Wellness", "IA", "Cinema", "Fofoca"):
             titulo_final = traduzir_titulo_se_ingles(titulo_final)
 
         noticias.append({
@@ -732,9 +714,13 @@ def obter_indicadores_app():
 # --- 10. SIDEBAR: FORMULÁRIO ---
 # =============================================================================
 ICONES = {
-    "Mundo":    "🌎", "Mercado":  "📈", "Politica": "🏛️",
-    "Tech":     "💻", "Esportes": "🏎️", "Cinema":   "🎬",
-    "Fitness":  "🏃", "Ciencia":  "🔬", "Motos":    "🏍️",
+    "Mundo":    "🌎",
+    "Economia": "📈",
+    "Politica": "🏛️",
+    "IA":       "🤖",
+    "Wellness": "🏃",
+    "Ciencia":  "🔬",
+    "Cinema":   "🎬",
     "Fofoca":   "⭐",
 }
 
@@ -745,12 +731,13 @@ if "ativos" not in st.session_state:
 
 with st.sidebar:
     st.markdown(
-        "<h2 style='text-align:center; font-family: Playfair Display; margin-bottom:4px;'>✍️ Junte-se ao Clube</h2>",
+        "<h2 style='text-align:center; font-family: Playfair Display; margin-bottom:4px;'>✍️ Assine o All News Journal</h2>",
         unsafe_allow_html=True
     )
     st.markdown(
-        "<p style='text-align:center; font-size: 0.88rem; opacity:0.9;'>Receba a nossa curadoria premium "
-        "de notícias todas as manhãs, gratuitamente.</p>",
+        "<p style='text-align:center; font-size: 0.88rem; opacity:0.9;'>"
+        "Receba sua edição personalizada todas as manhãs. "
+        "Escolha os cadernos, defina a ordem, e nós cuidamos do resto.</p>",
         unsafe_allow_html=True
     )
     st.write("")
@@ -927,13 +914,43 @@ st.markdown("""
 <meta property="og:title" content="All News Journal — Curadoria Premium de Notícias">
 <meta property="og:description" content="Receba as notícias que importam, todas as manhãs. Gratuito.">
 <meta property="og:type" content="website">
-<meta name="description" content="All News Journal — curadoria premium e automatizada das notícias do dia. 10 cadernos temáticos. Gratuito.">
+<meta name="description" content="All News Journal — curadoria premium e automatizada das notícias do dia. 8 cadernos temáticos. Gratuito.">
 """, unsafe_allow_html=True)
 
 # =============================================================================
 # --- 11. CONTEÚDO PRINCIPAL ---
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
+
+st.markdown("""
+<div style='
+    max-width: 720px;
+    margin: 25px auto 35px;
+    padding: 0 20px;
+    text-align: center;
+    font-family: "Lora", "Times New Roman", serif;
+    color: #2c2c2c;
+    line-height: 1.7;
+    font-size: 1.05rem;
+'>
+  <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 18px;'>
+    Notícias relevantes, sem ruído, todas as manhãs.
+  </p>
+  <p>
+    O <b>All News Journal</b> é um jornal digital independente que entrega na sua
+    caixa de e-mail, todos os dias às 6h, uma edição <b>personalizada</b> com os
+    cadernos que você escolheu — e apenas eles.
+  </p>
+  <p>
+    Cada manchete é resumida por nossa redação editorial em parágrafos completos
+    e autossuficientes. Você lê em cinco minutos o que importou no mundo e começa
+    o dia informado, sem rolar timeline, sem clicar em link nenhum.
+  </p>
+  <p style='margin-top: 22px; font-size: 0.95rem; color: #555;'>
+    Assine na barra lateral. É gratuito.
+  </p>
+</div>
+""", unsafe_allow_html=True)
 
 # Banner de inscrição visível apenas em mobile (sidebar fica oculta por padrão)
 st.markdown("""

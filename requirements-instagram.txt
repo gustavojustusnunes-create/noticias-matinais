@@ -1,0 +1,12 @@
+# Dependências exclusivas do Instagram Poster
+# NÃO adicione ao requirements.txt — quebraria o build do Streamlit Cloud
+
+feedparser>=6.0.11
+requests>=2.31.0
+python-dotenv>=1.0.0
+anthropic>=0.39.0
+beautifulsoup4>=4.12.0
+Pillow>=10.0.0
+instagrapi>=2.1.0
+gspread>=6.0.0
+google-auth>=2.20.0
