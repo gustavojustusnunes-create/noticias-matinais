@@ -555,7 +555,7 @@ def buscar_og_image(url_artigo, timeout=8):
 def buscar_noticias(tema):
     urls = RSS_FEEDS.get(tema, [])
     extensoes = ('.jpg', '.jpeg', '.png', '.webp')
-    TEMAS_MULTI_FONTE = {"Cinema", "Fitness", "Ciencia", "Esportes", "Motos"}
+    TEMAS_MULTI_FONTE = {"Cinema", "Wellness", "Ciencia", "Fofoca"}
     filtros = FILTROS_TEMA.get(tema, [])
 
     entries = []
@@ -1103,15 +1103,13 @@ with st.expander("📖 Sobre o All News Journal"):
 | Caderno | Foco |
 |---|---|
 | 🌎 Mundo | Geopolítica e eventos internacionais |
-| 📈 Mercado | Economia, investimentos e finanças |
+| 📈 Economia | Mercado, investimentos e finanças |
 | 🏛️ Política | Brasil: Congresso, governo e Judiciário |
-| 💻 Tech | Tecnologia, IA e inovação |
-| 🏎️ Esportes | F1, NBA, MMA, Tênis (sem futebol) |
-| 🎬 Cinema | Filmes, séries e streaming |
-| 🏃 Fitness | Treino, corrida, nutrição e performance |
+| 🤖 IA | Inteligência artificial, modelos e laboratórios |
+| 🏃 Wellness | Performance, treino, corrida, ciclismo, nutrição |
 | 🔬 Ciência | Descobertas científicas e saúde |
-| 🏍️ Motos | Motociclismo e novidades do segmento |
-| ⭐ Fofoca | Celebridades internacionais e Hollywood |
+| 🎬 Cinema | Filmes, séries e streaming |
+| ⭐ Fofoca | Celebridades internacionais e cultura pop global |
 
 **100% automatizado com inteligência artificial** — Claude AI (Anthropic) gera resumos jornalísticos de 85 a 105 palavras por notícia, em Português Brasileiro.
     """)
