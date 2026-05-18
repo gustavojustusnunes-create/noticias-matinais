@@ -9,6 +9,9 @@ jobs:
   post_instagram:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # Só roda quando a Variable INSTAGRAM_ENABLED estiver em "true" (Settings → Variables → Actions).
+    # Para pausar posts sem mexer no código, mude a Variable para "false".
+    if: ${{ vars.INSTAGRAM_ENABLED == 'true' }}
 
     steps:
       - name: Checkout do repositório
@@ -28,12 +31,12 @@ jobs:
 
       - name: Postar no Instagram
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          CLAUDE_KEY:        ${{ secrets.CLAUDE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
           GCP_JSON:          ${{ secrets.GCP_JSON }}
+          GOOGLE_SHEETS_ID:  ${{ secrets.GOOGLE_SHEETS_ID }}
           INSTAGRAM_USER:    ${{ secrets.INSTAGRAM_USER }}
           INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
-          INSTAGRAM_ENABLED: ${{ secrets.INSTAGRAM_ENABLED }}
+          INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
         run: python instagram_poster.py
 
       - name: Salvar imagens geradas (artefato)
