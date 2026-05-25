@@ -1,20 +1,19 @@
 """
-main.py — Motor principal do All News Journal v15.0
-Orquestra: coleta RSS → IA → email.
+main.py — Motor principal do All News Journal v15.1 (Sem IA Externa)
+Orquestra: coleta RSS → email.
 Para detalhes de cada etapa, veja os módulos especializados.
 """
 import re
+import random # Adicionado para rotacionar as aberturas
 
-from config import RSS_FEEDS, CLAUDE_KEY, EMAIL_SENDER, EMAIL_PASSWORD, GCP_JSON, MAPEAMENTO_LEGADO
+# Importações limpas: CLAUDE_KEY e claude_api removidos
+from config import RSS_FEEDS, EMAIL_SENDER, EMAIL_PASSWORD, GCP_JSON, MAPEAMENTO_LEGADO
 from sheets_db import conectar_banco, carregar_historico, salvar_no_historico, registrar_log
 from feeds import processar_tema, FEEDS_STATUS
 from email_builder import obter_indicadores, gerar_html_final, enviar_email, montar_subject
-from claude_api import chamar_claude_api
-
 
 def validar_ambiente():
     variaveis = {
-        "ANTHROPIC_API_KEY / CLAUDE_KEY": CLAUDE_KEY,
         "GCP_JSON":                       GCP_JSON,
         "EMAIL_USER":                     EMAIL_SENDER,
         "EMAIL_PASS / EMAIL_PASSWORD":    EMAIL_PASSWORD,
@@ -26,38 +25,31 @@ def validar_ambiente():
     print("✅ Ambiente validado.")
     return True
 
-
 def gerar_editorial(cache_global):
     """
-    Gera a frase de abertura editorial do dia conectando os destaques.
-    Usa Claude Haiku para ser rápido e barato.
+    Gera a frase de abertura editorial do dia.
+    Refatorado: Substitui a chamada de API (Claude) por saudações dinâmicas pré-definidas 
+    para zerar custos e aumentar a velocidade de execução.
     """
-    titulos = []
-    for tema, items in cache_global.items():
-        if items:
-            titulos.append(items[0].get("titulo", ""))
-        if len(titulos) >= 6:
-            break
-
-    if not titulos:
+    # Verifica se há qualquer notícia hoje antes de gerar a abertura
+    tem_noticias = any(items for items in cache_global.values() if items)
+    
+    if not tem_noticias:
         return ""
 
-    manchetes_str = "\n".join(f"- {t}" for t in titulos)
-    prompt = (
-        f"Dadas as manchetes do dia:\n{manchetes_str}\n\n"
-        f"Escreva uma FRASE DE ABERTURA de 20 a 30 palavras que conecte os destaques "
-        f"do dia num tom elegante de editor-chefe. "
-        f"Português brasileiro. Retorne APENAS a frase, sem aspas."
-    )
-    resultado = chamar_claude_api(prompt, max_tokens=100)
-    if resultado:
-        return resultado.strip().strip('"\'')
-    return ""
-
+    aberturas = [
+        "Aqui estão os principais destaques selecionados para você hoje.",
+        "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
+        "Sua dose diária de informação essencial, direto ao ponto.",
+        "As notícias que vão ditar o ritmo do seu dia já estão aqui.",
+        "Uma curadoria exclusiva com os temas que mais importam para você hoje."
+    ]
+    
+    return random.choice(aberturas)
 
 def main():
-    print("🚀 All News Journal — Motor v15.0")
-    print("   Módulos: config | feeds | claude_api | email_builder | sheets_db")
+    print("🚀 All News Journal — Motor v15.1 (Lean Edition)")
+    print("   Módulos: config | feeds | email_builder | sheets_db")
     print("─" * 65)
 
     if not validar_ambiente():
@@ -69,6 +61,7 @@ def main():
 
     historico_hashes = carregar_historico(sheet_historico)
     usuarios_raw     = sheet_usuarios.get_all_records()
+    
     # Compatibilidade com colunas legadas da planilha (Mercado→Economia, Fitness→Wellness)
     usuarios = []
     for usr in usuarios_raw:
@@ -76,6 +69,7 @@ def main():
             if legado in usr and novo not in usr:
                 usr[novo] = usr.pop(legado)
         usuarios.append(usr)
+        
     if any(MAPEAMENTO_LEGADO.keys() & set(usuarios_raw[0].keys() if usuarios_raw else [])):
         print("⚠️  AVISO: A planilha ainda tem colunas com nomes antigos.")
         print("   Por favor, renomeie no Google Sheets:")
@@ -112,7 +106,7 @@ def main():
         salvar_no_historico(sheet_historico, novas)
         print(f"   💾 {len(novas)} notícias salvas no histórico.")
 
-    # Gera editorial do dia (frase de abertura compartilhada por todos)
+    # Gera editorial do dia (frase de abertura dinâmica sem custo de IA)
     print("   ✍️  Gerando editorial do dia…")
     editorial = gerar_editorial(CACHE_GLOBAL)
     if editorial:
@@ -171,7 +165,6 @@ def main():
 
     print(f"\n{'─'*65}")
     print(f"✅ Concluído — Enviados: {enviados}  |  Falhas: {falhas}")
-
 
 if __name__ == "__main__":
     main()
