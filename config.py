@@ -24,6 +24,18 @@ INSTAGRAM_USER   = os.environ.get("INSTAGRAM_USER", "")
 INSTAGRAM_PASS   = os.environ.get("INSTAGRAM_PASS", "")
 INSTAGRAM_ENABLED = os.environ.get("INSTAGRAM_ENABLED", "false").lower() == "true"
 
+# ── Resend (provedor primário de email) ─────────────────────────
+# Quando RESEND_API_KEY está definido, o envio passa pelo Resend
+# (resend.com). Caso contrário, cai no SMTP do Gmail (legado).
+# RESEND_FROM aceita o formato "Nome <email@dominio.com>".
+# Fallback "onboarding@resend.dev" funciona sem domínio próprio
+# verificado, mas só envia para o email do dono da conta Resend.
+RESEND_API_KEY   = os.environ.get("RESEND_API_KEY", "").strip()
+RESEND_FROM      = os.environ.get(
+    "RESEND_FROM",
+    "All News Journal <onboarding@resend.dev>",
+).strip()
+
 # =============================================================================
 # --- ORDEM EDITORIAL DOS CADERNOS ---
 # =============================================================================
