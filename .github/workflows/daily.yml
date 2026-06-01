@@ -39,6 +39,8 @@ jobs:
           GCP_JSON: ${{ secrets.GCP_JSON }}
           GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
           URL_CANCELAMENTO: ${{ secrets.URL_CANCELAMENTO }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
         run: python main.py
 
       - name: Notificar falha por email
