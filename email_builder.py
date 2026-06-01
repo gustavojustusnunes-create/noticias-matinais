@@ -15,6 +15,7 @@ from config import (
     EMAIL_SENDER, EMAIL_PASSWORD, EMAIL_FROM,
     SMTP_HOST, SMTP_PORT, URL_CANCELAMENTO,
     ICONES_TEMA, CORES_TEMA,
+    RESEND_API_KEY, RESEND_FROM,
 )
 
 
@@ -302,17 +303,80 @@ def montar_subject(dados):
 
 
 # =============================================================================
-# --- ENVIO DE EMAIL COM RETRY ---
+# --- ENVIO DE EMAIL — SUBJECT DEFAULT ---
 # =============================================================================
-def enviar_email(dest, html, subject=None):
+def _subject_default():
+    hoje  = datetime.now()
+    MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
+    return f"📰 All News Journal — {hoje.day} de {MESES[hoje.month - 1]}. de {hoje.year}"
+
+
+# =============================================================================
+# --- ENVIO VIA RESEND (provedor primário) ---
+# =============================================================================
+def enviar_email_resend(dest, html, subject=None):
     """
-    Envia o email com retry automático (3 tentativas, backoff de 15s).
-    Retorna True em caso de sucesso, False em falha definitiva.
+    Envia email via API do Resend (resend.com).
+    3 tentativas com backoff de 15s. Retorna True/False.
     """
     if subject is None:
-        hoje  = datetime.now()
-        MESES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"]
-        subject = f"📰 All News Journal — {hoje.day} de {MESES[hoje.month - 1]}. de {hoje.year}"
+        subject = _subject_default()
+
+    try:
+        import resend
+    except ImportError:
+        print("      ❌ Pacote 'resend' não instalado — rode: pip install resend")
+        return False
+
+    resend.api_key = RESEND_API_KEY
+
+    payload = {
+        "from":    RESEND_FROM,
+        "to":      [dest],
+        "subject": subject,
+        "html":    html,
+        "text":    "Acesse a versão HTML para ler a edição completa.",
+        "headers": {"X-Mailer": "All News Journal Mailer"},
+    }
+
+    max_tentativas = 3
+    for tentativa in range(1, max_tentativas + 1):
+        try:
+            resp = resend.Emails.send(payload)
+            # SDK retorna dict com 'id' em sucesso
+            if isinstance(resp, dict) and resp.get("id"):
+                return True
+            # Resposta inesperada — trata como falha desta tentativa
+            raise RuntimeError(f"resposta inesperada do Resend: {resp!r}")
+
+        except Exception as e:
+            msg_err = str(e).lower()
+            # Erros permanentes: não vale a pena retentar
+            if any(t in msg_err for t in ("invalid api key", "unauthorized", "validation_error", "invalid_to")):
+                print(f"      ❌ Resend rejeitou definitivamente ({dest}): {e}")
+                return False
+
+            if tentativa < max_tentativas:
+                espera = 15 * tentativa
+                print(f"      ⚠️ Resend tentativa {tentativa} falhou ({e}). Aguardando {espera}s…")
+                time.sleep(espera)
+            else:
+                print(f"      ❌ Falha definitiva (Resend) ao enviar para {dest}: {e}")
+                return False
+
+    return False
+
+
+# =============================================================================
+# --- ENVIO VIA SMTP GMAIL (legado / fallback) ---
+# =============================================================================
+def enviar_email_smtp(dest, html, subject=None):
+    """
+    Envia o email via SMTP do Gmail (caminho legado).
+    3 tentativas com backoff de 15s. Retorna True/False.
+    """
+    if subject is None:
+        subject = _subject_default()
 
     max_tentativas = 3
     for tentativa in range(1, max_tentativas + 1):
@@ -350,3 +414,16 @@ def enviar_email(dest, html, subject=None):
                 return False
 
     return False
+
+
+# =============================================================================
+# --- DISPATCHER ---
+# =============================================================================
+def enviar_email(dest, html, subject=None):
+    """
+    Roteia para Resend (se RESEND_API_KEY estiver configurado) ou SMTP do Gmail.
+    Mantém a assinatura/retorno original (True/False).
+    """
+    if RESEND_API_KEY:
+        return enviar_email_resend(dest, html, subject=subject)
+    return enviar_email_smtp(dest, html, subject=subject)

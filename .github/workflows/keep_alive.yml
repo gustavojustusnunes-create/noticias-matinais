@@ -1,37 +1,98 @@
-name: Keep Alive (curl leve)
+name: Keep Alive (detecta hibernação e acorda)
 
 on:
   schedule:
-    - cron: '0 */6 * * *'   # A cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
-  workflow_dispatch:          # Permite rodar manualmente
+    - cron: '*/10 * * * *'   # A cada 10 minutos
+  workflow_dispatch:           # Permite rodar manualmente
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 5
 
     steps:
-      - name: Ping Streamlit (com retry)
+      - name: Ping + wake Streamlit
         env:
           STREAMLIT_URL: ${{ secrets.STREAMLIT_URL }}
         run: |
-          # Usa o secret; se não existir, usa a URL padrão do projeto
+          set -u
+
           URL="${STREAMLIT_URL:-https://allnewsjournal.streamlit.app/}"
-          echo "🌐 Pingando: $URL"
+          # Remove barra final para construir endpoints consistentes
+          URL_BASE="${URL%/}"
+          WAKE_ENDPOINT="${URL_BASE}/~/+/"
+          HIBERNATE_MARK="Yes, get this app back up"
+          UA="Mozilla/5.0 (compatible; AllNewsJournal-KeepAlive/1.0)"
 
-          for tentativa in 1 2 3; do
-            echo "🔁 Tentativa $tentativa de 3..."
-            HTTP_CODE=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 45 "$URL")
-            echo "   Status HTTP: $HTTP_CODE"
+          echo "🌐 URL alvo:    $URL"
+          echo "💤 Wake URL:    $WAKE_ENDPOINT"
+          echo ""
 
-            if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
-              echo "✅ App respondeu OK (HTTP $HTTP_CODE)"
-              exit 0
+          tentar_ping() {
+            local tentativa="$1"
+            echo "🔁 Tentativa ${tentativa}/3"
+
+            # GET com corpo capturado para inspecionar marcador de hibernação
+            local body_file
+            body_file=$(mktemp)
+            local http_code
+            http_code=$(curl -sSL \
+                          -A "$UA" \
+                          -o "$body_file" \
+                          -w "%{http_code}" \
+                          --max-time 60 \
+                          "$URL" || echo "000")
+
+            echo "   Status HTTP: $http_code"
+
+            if grep -qF "$HIBERNATE_MARK" "$body_file"; then
+              echo "   💤 App está HIBERNANDO — disparando wake-up…"
+
+              local wake_code
+              wake_code=$(curl -sSL \
+                            -A "$UA" \
+                            -X POST \
+                            -H "Content-Type: application/json" \
+                            -H "Origin: $URL_BASE" \
+                            -H "Referer: $URL" \
+                            -o /dev/null \
+                            -w "%{http_code}" \
+                            --max-time 60 \
+                            --data '{}' \
+                            "$WAKE_ENDPOINT" || echo "000")
+
+              echo "   📨 POST /~/+/ → HTTP $wake_code"
+              rm -f "$body_file"
+
+              if [ "$wake_code" -ge 200 ] && [ "$wake_code" -lt 400 ]; then
+                echo "   ✅ Wake-up disparado com sucesso (app vai subir em ~30s)."
+                return 0
+              fi
+
+              echo "   ⚠️ Wake-up retornou código inesperado."
+              return 1
             fi
 
-            echo "   ⚠️ Resposta inesperada (HTTP $HTTP_CODE). Aguardando 30s..."
-            sleep 30
+            rm -f "$body_file"
+
+            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 400 ]; then
+              echo "   ✅ App acordado e respondendo (HTTP $http_code)."
+              return 0
+            fi
+
+            echo "   ⚠️ Resposta inesperada (HTTP $http_code)."
+            return 1
+          }
+
+          for tentativa in 1 2 3; do
+            if tentar_ping "$tentativa"; then
+              exit 0
+            fi
+            if [ "$tentativa" -lt 3 ]; then
+              echo "   ⏳ Aguardando 30s antes da próxima tentativa…"
+              sleep 30
+            fi
           done
 
-          echo "❌ App não respondeu após 3 tentativas."
+          echo "❌ Falhou após 3 tentativas."
           exit 1

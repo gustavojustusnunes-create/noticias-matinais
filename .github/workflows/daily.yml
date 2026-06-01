@@ -39,6 +39,8 @@ jobs:
           GCP_JSON: ${{ secrets.GCP_JSON }}
           GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
           URL_CANCELAMENTO: ${{ secrets.URL_CANCELAMENTO }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
         run: python main.py
 
       - name: Notificar falha por email
@@ -60,3 +62,58 @@ jobs:
             Run ID: ${{ github.run_id }}
 
             Logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Notify failure (Resend)
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM:    ${{ secrets.RESEND_FROM }}
+          REPO:           ${{ github.repository }}
+          RUN_ID:         ${{ github.run_id }}
+        run: |
+          set -u
+
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "ℹ️  RESEND_API_KEY não configurado — pulando notificação via Resend."
+            exit 0
+          fi
+
+          FROM="${RESEND_FROM:-All News Journal CI <onboarding@resend.dev>}"
+          TO="allnewsjournal@gmail.com"
+          RUN_URL="https://github.com/${REPO}/actions/runs/${RUN_ID}"
+          SUBJECT="⚠️ All News Journal — Falha na edição (${RUN_ID})"
+
+          HTML="<p>A execução automática da edição diária <b>falhou</b>.</p>\
+          <ul>\
+          <li><b>Repositório:</b> ${REPO}</li>\
+          <li><b>Run ID:</b> ${RUN_ID}</li>\
+          <li><b>Logs:</b> <a href=\"${RUN_URL}\">${RUN_URL}</a></li>\
+          </ul>"
+
+          TEXT="A execução automática da edição diária falhou.\n\nRepositório: ${REPO}\nRun ID: ${RUN_ID}\nLogs: ${RUN_URL}"
+
+          # Monta payload com jq para escape seguro de aspas/quebras
+          PAYLOAD=$(jq -n \
+            --arg from    "$FROM" \
+            --arg to      "$TO" \
+            --arg subject "$SUBJECT" \
+            --arg html    "$HTML" \
+            --arg text    "$TEXT" \
+            '{from: $from, to: [$to], subject: $subject, html: $html, text: $text}')
+
+          HTTP_CODE=$(curl -sS -o /tmp/resend_resp.json -w "%{http_code}" \
+            -X POST "https://api.resend.com/emails" \
+            -H "Authorization: Bearer ${RESEND_API_KEY}" \
+            -H "Content-Type: application/json" \
+            --data "$PAYLOAD")
+
+          echo "📨 Resend HTTP $HTTP_CODE"
+          cat /tmp/resend_resp.json || true
+          echo ""
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Notificação de falha enviada via Resend."
+          else
+            echo "❌ Resend não aceitou a notificação (HTTP $HTTP_CODE)."
+            exit 1
+          fi
