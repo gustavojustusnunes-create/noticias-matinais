@@ -1,8 +1,8 @@
-name: Keep Alive (mantém app quente)
+name: Keep Alive Streamlit
 
 on:
   schedule:
-    - cron: '*/10 * * * *'   # A cada 10 minutos
+    - cron: '*/15 * * * *'   # Ajustado para 15 minutos para evitar rate-limit
   workflow_dispatch:
 
 jobs:
@@ -16,50 +16,58 @@ jobs:
           STREAMLIT_URL: ${{ secrets.STREAMLIT_URL }}
         run: |
           set -u
-
           URL="${STREAMLIT_URL:-https://allnewsjournal.streamlit.app/}"
-          HIBERNATE_MARK="Yes, get this app back up"
-          UA="Mozilla/5.0 (compatible; AllNewsJournal-KeepAlive/1.0; +https://github.com/${{ github.repository }})"
+          
+          # Simulando um navegador real e moderno para enganar firewalls
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-          echo "🌐 Pingando: $URL"
+          echo "🌐 Iniciando verificação de disponibilidade para: $URL"
 
           for tentativa in 1 2 3; do
-            echo ""
+            echo "---"
             echo "🔁 Tentativa ${tentativa}/3"
 
             body_file=$(mktemp)
+            
+            # Adicionando headers de aceitação padrão de navegadores
             http_code=$(curl -sSL \
                           -A "$UA" \
+                          -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8" \
+                          -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
                           -o "$body_file" \
                           -w "%{http_code}" \
-                          --max-time 60 \
+                          --max-time 30 \
                           "$URL" || echo "000")
 
             echo "   Status HTTP: $http_code"
 
-            # Detecta página de hibernação do Streamlit Cloud
-            if grep -qF "$HIBERNATE_MARK" "$body_file" 2>/dev/null; then
-              echo "   💤 App está HIBERNANDO."
-              echo "   ℹ️  Wake-up via API não é confiável no Streamlit Cloud."
-              echo "      O alerta de keyword do UptimeRobot já avisou por email —"
-              echo "      basta abrir a URL no navegador e clicar no botão de wake."
+            # Tratamento da hibernação (sem gerar erro no GitHub)
+            if grep -qF "Yes, get this app back up" "$body_file" 2>/dev/null; then
+              echo "   💤 App está HIBERNANDO (Página do Streamlit detectada)."
+              echo "   ⚠️ Atenção: Reativação via API não é garantida na nuvem pública."
               rm -f "$body_file"
-              exit 0   # Não falha o workflow — só registra
+              exit 0 
             fi
 
-            rm -f "$body_file"
-
+            # Sucesso
             if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 400 ]; then
-              echo "   ✅ App quente e respondendo (HTTP $http_code)."
+              echo "   ✅ Sucesso! App quente e respondendo."
+              rm -f "$body_file"
               exit 0
             fi
 
+            # Se chegou aqui, deu erro. Vamos imprimir o motivo real:
+            echo "   ❌ Falha na resposta."
+            echo "   🔍 Prévia do corpo do erro retornado pelo servidor:"
+            head -n 5 "$body_file"
+            rm -f "$body_file"
+
             if [ "$tentativa" -lt 3 ]; then
-              echo "   ⏳ Resposta inesperada. Aguardando 30s..."
+              echo "   ⏳ Aguardando 30s antes da próxima tentativa..."
               sleep 30
             fi
           done
 
           echo ""
-          echo "❌ App não respondeu após 3 tentativas."
+          echo "🚨 Falha crítica: O App não respondeu com sucesso após 3 tentativas."
           exit 1
