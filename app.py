@@ -290,6 +290,30 @@ st.markdown("""
         font-weight: bold;
         font-family: 'Playfair Display', serif;
     }
+
+    /* ── CTA "ASSINE GRATUITAMENTE" no main content ── */
+    section[data-testid="stMain"] button[kind="primary"] {
+        background: linear-gradient(135deg, #0a5c5a 0%, #084c4a 100%) !important;
+        color: #fdfbf7 !important;
+        border: 2px solid #fdfbf7 !important;
+        border-radius: 10px !important;
+        padding: 14px 20px !important;
+        font-family: 'Playfair Display', serif !important;
+        font-size: 1.05rem !important;
+        font-weight: bold !important;
+        letter-spacing: 0.5px !important;
+        box-shadow: 0 4px 14px rgba(10, 92, 90, 0.3) !important;
+        transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    }
+    section[data-testid="stMain"] button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #084c4a 0%, #063838 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(10, 92, 90, 0.45) !important;
+    }
+    section[data-testid="stMain"] button[kind="primary"] p {
+        color: #fdfbf7 !important;
+        font-weight: bold !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -952,64 +976,104 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Banner de inscrição: SEMPRE visível (desktop + mobile),
-# tenta abrir a sidebar via clique no botão de colapso do Streamlit.
-st.markdown("""
-<style>
-    .subscribe-cta-banner {
-        display: block;
-        background: linear-gradient(135deg, #0a5c5a 0%, #084c4a 100%);
-        color: #fdfbf7;
-        text-align: center;
-        padding: 16px 24px;
-        border-radius: 10px;
-        margin: 10px auto 28px;
-        max-width: 720px;
-        cursor: pointer;
-        font-family: 'Playfair Display', serif;
-        font-size: 1.05rem;
-        font-weight: bold;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 14px rgba(10, 92, 90, 0.3);
-        transition: transform 0.15s ease, box-shadow 0.15s ease;
-        user-select: none;
-        border: 2px solid #fdfbf7;
-    }
-    .subscribe-cta-banner:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(10, 92, 90, 0.45);
-    }
-    .subscribe-cta-banner:active {
-        transform: translateY(0);
-    }
-    @media (max-width: 768px) {
-        .subscribe-cta-banner { font-size: 0.95rem; padding: 14px 16px; }
-    }
-</style>
-<div class="subscribe-cta-banner" onclick="
-    (function(){
-        var d = window.parent.document;
-        // Seletores que o Streamlit já usou para o botão de abrir sidebar.
-        // Tentamos vários porque a versão do Streamlit pode mudar o data-testid.
-        var seletores = [
-            '[data-testid=\\'stSidebarCollapsedControl\\'] button',
-            '[data-testid=\\'collapsedControl\\'] button',
-            '[data-testid=\\'stSidebarCollapseButton\\']',
-            'button[kind=\\'header\\']',
-            'header[data-testid=\\'stHeader\\'] button[aria-label*=\\'sidebar\\' i]',
-            'header[data-testid=\\'stHeader\\'] button'
-        ];
-        for (var i = 0; i < seletores.length; i++) {
-            var el = d.querySelector(seletores[i]);
-            if (el) { el.click(); break; }
-        }
-        // Independente do clique, leva o usuário ao topo onde a sidebar aparece.
-        try { window.parent.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
-    })();
-">
-    ✉️ ASSINE GRATUITAMENTE — Toque para abrir o formulário de inscrição →
-</div>
-""", unsafe_allow_html=True)
+# =============================================================================
+# --- CTA DE INSCRIÇÃO: MODAL NATIVO DO STREAMLIT ---
+# Em vez de tentar abrir a sidebar via JS frágil, abrimos um modal real
+# (st.dialog) com um formulário simplificado. Sempre funciona.
+# =============================================================================
+@st.dialog("✉️ Assine o All News Journal", width="large")
+def modal_inscricao():
+    st.markdown(
+        "<p style='font-size:0.95rem; color:#555; line-height:1.6;'>"
+        "Receba sua edição personalizada <b>todas as manhãs às 6h</b>. "
+        "Escolha os cadernos abaixo e nós cuidamos do resto."
+        "</p>",
+        unsafe_allow_html=True
+    )
+
+    nome_dlg  = st.text_input("Seu Nome",          key="dlg_nome",  placeholder="Como gostaria de ser chamado")
+    email_dlg = st.text_input("Seu melhor E-mail", key="dlg_email", placeholder="voce@exemplo.com")
+
+    st.markdown(
+        "<p style='font-size:0.9rem; font-weight:bold; margin-top:14px; margin-bottom:4px;'>"
+        "📋 Cadernos que você quer receber:</p>",
+        unsafe_allow_html=True
+    )
+
+    cadernos_dlg = {}
+    cols_dlg = st.columns(2)
+    for i, tema in enumerate(RSS_FEEDS.keys()):
+        icone = ICONES.get(tema, "📰")
+        col   = cols_dlg[i % 2]
+        cadernos_dlg[tema] = col.checkbox(
+            f"{icone} {tema}",
+            value=True,
+            key=f"dlg_chk_{tema}",
+        )
+
+    st.markdown(
+        "<p style='font-size:0.78rem; color:#888; margin-top:10px; font-style:italic;'>"
+        "💡 Quer ordenar os cadernos na sua edição? Use o formulário completo "
+        "na barra lateral à esquerda."
+        "</p>",
+        unsafe_allow_html=True
+    )
+
+    if st.button(
+        "ASSINAR AGORA — É GRATUITO 🗞️",
+        type="primary",
+        use_container_width=True,
+        key="dlg_btn_assinar",
+    ):
+        erros_dlg = []
+        if not validar_nome(nome_dlg):
+            erros_dlg.append("Por favor, informe um nome válido (mínimo 2 caracteres).")
+        if not email_dlg:
+            erros_dlg.append("Por favor, informe o seu e-mail.")
+        elif not validar_email(email_dlg):
+            erros_dlg.append("O e-mail informado não é válido.")
+
+        temas_sel_dlg = [t for t, v in cadernos_dlg.items() if v]
+        if not temas_sel_dlg:
+            erros_dlg.append("Selecione pelo menos um caderno para receber.")
+
+        if erros_dlg:
+            for e in erros_dlg:
+                st.warning(e)
+        else:
+            with st.spinner("Processando sua inscrição..."):
+                if email_ja_cadastrado(email_dlg):
+                    st.info("📬 Este e-mail já está inscrito! Você já faz parte do clube.")
+                else:
+                    # Ordem padrão: cadernos selecionados na ordem natural do RSS_FEEDS
+                    ordem_padrao = {}
+                    pos = 1
+                    for tema in RSS_FEEDS.keys():
+                        if cadernos_dlg.get(tema):
+                            ordem_padrao[tema] = pos
+                            pos += 1
+                        else:
+                            ordem_padrao[tema] = "Não"
+
+                    ok_dlg, msg_dlg = salvar_assinante(nome_dlg, email_dlg, ordem_padrao)
+                    if ok_dlg:
+                        enviar_boas_vindas(nome_dlg, email_dlg, temas_sel_dlg)
+                        st.success("✅ Inscrição confirmada! Verifique seu e-mail — enviamos uma mensagem de boas-vindas.")
+                        st.balloons()
+                    else:
+                        st.error(f"❌ {msg_dlg}")
+
+
+# Botão centralizado que abre o modal
+col_cta_l, col_cta_c, col_cta_r = st.columns([1, 2, 1])
+with col_cta_c:
+    if st.button(
+        "✉️  ASSINE GRATUITAMENTE — É RÁPIDO  ✨",
+        type="primary",
+        use_container_width=True,
+        key="btn_abrir_modal_inscricao",
+    ):
+        modal_inscricao()
 
 hoje = datetime.now()
 meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
