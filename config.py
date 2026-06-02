@@ -36,6 +36,15 @@ RESEND_FROM      = os.environ.get(
     "All News Journal <onboarding@resend.dev>",
 ).strip()
 
+# ── URL pública da logo (header do email) ───────────────────────
+# Hospedada no próprio repo via GitHub raw URL — gratuita,
+# versionada e aceita por Gmail/Outlook/etc. Se um dia trocar a
+# imagem, é só substituir o arquivo assets/anj-logo.png e dar push.
+LOGO_URL = os.environ.get(
+    "LOGO_URL",
+    "https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/anj-logo.png",
+).strip()
+
 # =============================================================================
 # --- ORDEM EDITORIAL DOS CADERNOS ---
 # =============================================================================
