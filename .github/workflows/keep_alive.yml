@@ -1,9 +1,9 @@
-name: Keep Alive (detecta hibernação e acorda)
+name: Keep Alive (mantém app quente)
 
 on:
   schedule:
     - cron: '*/10 * * * *'   # A cada 10 minutos
-  workflow_dispatch:           # Permite rodar manualmente
+  workflow_dispatch:
 
 jobs:
   ping:
@@ -11,31 +11,23 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Ping + wake Streamlit
+      - name: Ping Streamlit
         env:
           STREAMLIT_URL: ${{ secrets.STREAMLIT_URL }}
         run: |
           set -u
 
           URL="${STREAMLIT_URL:-https://allnewsjournal.streamlit.app/}"
-          # Remove barra final para construir endpoints consistentes
-          URL_BASE="${URL%/}"
-          WAKE_ENDPOINT="${URL_BASE}/~/+/"
           HIBERNATE_MARK="Yes, get this app back up"
-          UA="Mozilla/5.0 (compatible; AllNewsJournal-KeepAlive/1.0)"
+          UA="Mozilla/5.0 (compatible; AllNewsJournal-KeepAlive/1.0; +https://github.com/${{ github.repository }})"
 
-          echo "🌐 URL alvo:    $URL"
-          echo "💤 Wake URL:    $WAKE_ENDPOINT"
-          echo ""
+          echo "🌐 Pingando: $URL"
 
-          tentar_ping() {
-            local tentativa="$1"
+          for tentativa in 1 2 3; do
+            echo ""
             echo "🔁 Tentativa ${tentativa}/3"
 
-            # GET com corpo capturado para inspecionar marcador de hibernação
-            local body_file
             body_file=$(mktemp)
-            local http_code
             http_code=$(curl -sSL \
                           -A "$UA" \
                           -o "$body_file" \
@@ -45,54 +37,29 @@ jobs:
 
             echo "   Status HTTP: $http_code"
 
-            if grep -qF "$HIBERNATE_MARK" "$body_file"; then
-              echo "   💤 App está HIBERNANDO — disparando wake-up…"
-
-              local wake_code
-              wake_code=$(curl -sSL \
-                            -A "$UA" \
-                            -X POST \
-                            -H "Content-Type: application/json" \
-                            -H "Origin: $URL_BASE" \
-                            -H "Referer: $URL" \
-                            -o /dev/null \
-                            -w "%{http_code}" \
-                            --max-time 60 \
-                            --data '{}' \
-                            "$WAKE_ENDPOINT" || echo "000")
-
-              echo "   📨 POST /~/+/ → HTTP $wake_code"
+            # Detecta página de hibernação do Streamlit Cloud
+            if grep -qF "$HIBERNATE_MARK" "$body_file" 2>/dev/null; then
+              echo "   💤 App está HIBERNANDO."
+              echo "   ℹ️  Wake-up via API não é confiável no Streamlit Cloud."
+              echo "      O alerta de keyword do UptimeRobot já avisou por email —"
+              echo "      basta abrir a URL no navegador e clicar no botão de wake."
               rm -f "$body_file"
-
-              if [ "$wake_code" -ge 200 ] && [ "$wake_code" -lt 400 ]; then
-                echo "   ✅ Wake-up disparado com sucesso (app vai subir em ~30s)."
-                return 0
-              fi
-
-              echo "   ⚠️ Wake-up retornou código inesperado."
-              return 1
+              exit 0   # Não falha o workflow — só registra
             fi
 
             rm -f "$body_file"
 
             if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 400 ]; then
-              echo "   ✅ App acordado e respondendo (HTTP $http_code)."
-              return 0
-            fi
-
-            echo "   ⚠️ Resposta inesperada (HTTP $http_code)."
-            return 1
-          }
-
-          for tentativa in 1 2 3; do
-            if tentar_ping "$tentativa"; then
+              echo "   ✅ App quente e respondendo (HTTP $http_code)."
               exit 0
             fi
+
             if [ "$tentativa" -lt 3 ]; then
-              echo "   ⏳ Aguardando 30s antes da próxima tentativa…"
+              echo "   ⏳ Resposta inesperada. Aguardando 30s..."
               sleep 30
             fi
           done
 
-          echo "❌ Falhou após 3 tentativas."
+          echo ""
+          echo "❌ App não respondeu após 3 tentativas."
           exit 1
