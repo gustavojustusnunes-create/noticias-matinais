@@ -110,9 +110,10 @@ st.markdown("""
     [data-testid="collapsedControl"] { display: none !important; }
     section[data-testid="stSidebar"] { display: none !important; }
 
-    /* Força o sumiço do avatar/badge no canto inferior direito */
-    .stApp > div:last-child { display: none !important; }
-    [data-testid="stAppViewContainer"] > div:last-child { display: none !important; }
+    /* NÃO usar :last-child aqui — Streamlit reorganiza o DOM e o último
+       filho pode acabar sendo o conteúdo principal, escondendo tudo.
+       A remoção de badges/avatares é feita pelo JS nukeStreamlitChrome
+       acima, que cata por seletores específicos. */
 
     /* ── DESIGN PREMIUM ── */
     .stApp {
