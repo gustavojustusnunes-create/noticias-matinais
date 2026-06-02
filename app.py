@@ -27,7 +27,7 @@ st.set_page_config(
     page_title="All News Journal",
     page_icon="📰",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
     menu_items={
         'Get Help': None,
         'Report a bug': None,
@@ -56,6 +56,42 @@ st.markdown("""
         }
     } catch (e) { console.warn('embed redirect skipped:', e); }
 })();
+
+// Brute-force: remove qualquer elemento de hosting/branding que sobreviva
+// ao embed mode (ex.: badge "Made with Streamlit", links para profile).
+// Executa imediatamente, no load, e em intervalos curtos para pegar elementos
+// injetados de forma assíncrona pelo wrapper do Streamlit Cloud.
+function nukeStreamlitChrome() {
+    try {
+        var seletores = [
+            'a[href*="streamlit.io"]',
+            'a[href*="share.streamlit"]',
+            'iframe[src*="streamlit.io"]',
+            'iframe[title*="streamlit" i]',
+            '[data-testid*="HostMenu"]',
+            '[data-testid*="ProfileBadge"]',
+            '[data-testid*="HostBadge"]',
+            '[data-testid*="ViewerBadge"]',
+            '[data-testid*="stToolbarAvatar"]',
+            '[data-testid*="stAppDeployButton"]',
+            '[data-testid*="stStatusWidget"]',
+            '[class*="viewerBadge"]',
+            '[class*="ViewerBadge"]',
+            '[class*="HostBadge"]',
+            '[class*="HostMenu"]',
+            '[class*="StreamlitBadge"]'
+        ];
+        seletores.forEach(function(sel) {
+            document.querySelectorAll(sel).forEach(function(el) {
+                el.style.setProperty('display', 'none', 'important');
+                el.style.setProperty('visibility', 'hidden', 'important');
+            });
+        });
+    } catch(e) {}
+}
+nukeStreamlitChrome();
+window.addEventListener('load', nukeStreamlitChrome);
+setInterval(nukeStreamlitChrome, 1500);
 </script>
 """, unsafe_allow_html=True)
 
@@ -772,174 +808,55 @@ ICONES = {
     "Fofoca":   "⭐",
 }
 
-if "ordem_lista" not in st.session_state:
-    st.session_state.ordem_lista = list(RSS_FEEDS.keys())
-if "ativos" not in st.session_state:
-    st.session_state.ativos = {t: True for t in RSS_FEEDS.keys()}
-
-with st.sidebar:
+# =============================================================================
+# --- MODAIS DE CANCELAMENTO E PRIVACIDADE ---
+# Eram secções da sidebar; agora abrem como dialogs do rodapé OU via URL.
+# =============================================================================
+@st.dialog("Cancelar assinatura")
+def modal_cancelamento():
     st.markdown(
-        "<h2 style='text-align:center; font-family: Playfair Display; margin-bottom:4px;'>✍️ Assine o All News Journal</h2>",
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        "<p style='text-align:center; font-size: 0.88rem; opacity:0.9;'>"
-        "Receba sua edição personalizada todas as manhãs. "
-        "Escolha os cadernos, defina a ordem, e nós cuidamos do resto.</p>",
-        unsafe_allow_html=True
-    )
-    st.write("")
-
-    nome  = st.text_input("O seu Nome",          key="inp_nome")
-    email = st.text_input("O seu melhor E-mail", key="inp_email")
-
-    st.markdown("<hr style='border-color: rgba(253, 251, 247, 0.2);'>", unsafe_allow_html=True)
-    st.markdown(
-        "<p style='font-size:0.82rem; font-weight:bold; margin-bottom:2px;'>"
-        "📋 Escolha e ordene os seus cadernos:</p>",
-        unsafe_allow_html=True
-    )
-    st.markdown(
-        "<p style='font-size:0.75rem; opacity:0.75; margin-top:0; margin-bottom:10px;'>"
-        "Use ↑↓ para ordenar. Desmarque os que não quer receber.</p>",
+        "<p style='font-size:0.95rem; color:#444; line-height:1.6;'>"
+        "Você vai parar de receber a edição diária do All News Journal. "
+        "Tem certeza?"
+        "</p>",
         unsafe_allow_html=True
     )
 
-    lista = st.session_state.ordem_lista
-
-    for i, tema in enumerate(lista):
-        icone = ICONES.get(tema, "📰")
-        col_chk, col_up, col_dn = st.columns([5, 1, 1])
-
-        ativo = col_chk.checkbox(
-            f"{icone} {tema}",
-            value=st.session_state.ativos.get(tema, True),
-            key=f"chk_{tema}"
+    with st.form("form_cancelamento_dlg", clear_on_submit=False):
+        email_cancel = st.text_input(
+            "Seu e-mail cadastrado",
+            key="dlg_email_cancel",
+            placeholder="voce@exemplo.com",
         )
-        st.session_state.ativos[tema] = ativo
-
-        if i > 0:
-            if col_up.button("↑", key=f"up_{tema}", use_container_width=True):
-                lista[i], lista[i - 1] = lista[i - 1], lista[i]
-                st.rerun()
-        else:
-            col_up.write("")
-
-        if i < len(lista) - 1:
-            if col_dn.button("↓", key=f"dn_{tema}", use_container_width=True):
-                lista[i], lista[i + 1] = lista[i + 1], lista[i]
-                st.rerun()
-        else:
-            col_dn.write("")
-
-    temas_ativos_preview = [
-        t for t in st.session_state.ordem_lista
-        if st.session_state.ativos.get(t, True)
-    ]
-    if temas_ativos_preview:
-        preview_txt = " → ".join(f"{ICONES.get(t,'📰')}{t}" for t in temas_ativos_preview)
-        st.markdown(
-            f"<p style='font-size:0.70rem; opacity:0.65; text-align:center; "
-            f"font-style:italic; margin-top:8px;'>📧 Ordem no e-mail:<br>{preview_txt}</p>",
-            unsafe_allow_html=True
+        confirmar = st.checkbox(
+            "Confirmo que desejo cancelar minha assinatura",
+            key="dlg_confirma_cancel",
+        )
+        btn_cancelar = st.form_submit_button(
+            "Confirmar cancelamento",
+            type="primary",
+            use_container_width=True,
         )
 
-    st.write("")
-
-    ordem_temas = {}
-    pos = 1
-    for tema in st.session_state.ordem_lista:
-        if st.session_state.ativos.get(tema, True):
-            ordem_temas[tema] = pos
-            pos += 1
+    if btn_cancelar:
+        if not email_cancel:
+            st.warning("Por favor, informe o seu e-mail.")
+        elif not validar_email(email_cancel):
+            st.warning("E-mail inválido. Verifique e tente novamente.")
+        elif not confirmar:
+            st.warning("Marque a caixa de confirmação para continuar.")
         else:
-            ordem_temas[tema] = "Não"
-
-    if st.button("ASSINAR AGORA — É GRATUITO 🗞️", use_container_width=True, key="btn_subscribe", type="primary"):
-        erros = []
-
-        if not validar_nome(nome):
-            erros.append("Por favor, informe um nome válido (mínimo 2 caracteres).")
-        if not email:
-            erros.append("Por favor, informe o seu e-mail.")
-        elif not validar_email(email):
-            erros.append("O e-mail informado não é válido. Verifique e tente novamente.")
-
-        temas_selecionados = [t for t, v in ordem_temas.items() if v != "Não"]
-        if not temas_selecionados:
-            erros.append("Selecione pelo menos um caderno para receber.")
-
-        if erros:
-            for erro in erros:
-                st.warning(erro)
-        else:
-            with st.spinner("A verificar o seu cadastro..."):
-                if email_ja_cadastrado(email):
-                    st.info("📬 Este e-mail já está inscrito! Já faz parte do clube.")
+            with st.spinner("Processando..."):
+                ok, msg_cancel = cancelar_assinatura(email_cancel)
+                if ok:
+                    st.success(f"✅ {msg_cancel}")
                 else:
-                    with st.spinner("A registar a sua inscrição..."):
-                        ok, mensagem = salvar_assinante(nome, email, ordem_temas)
-                        if ok:
-                            temas_ordenados = sorted(
-                                temas_selecionados,
-                                key=lambda t: ordem_temas[t]
-                            )
-                            enviar_boas_vindas(nome, email, temas_ordenados)
-                            st.success("✅ Inscrição confirmada! Verifique o seu e-mail — enviamos uma mensagem de boas-vindas.")
-                            st.balloons()
-                            st.session_state.ordem_lista = list(RSS_FEEDS.keys())
-                            st.session_state.ativos = {t: True for t in RSS_FEEDS.keys()}
-                        else:
-                            st.error(f"❌ {mensagem}")
+                    st.error(f"❌ {msg_cancel}")
 
-    # ── Seção de cancelamento ──────────────────────────────────────────────
-    st.markdown("<hr style='border-color:rgba(253,251,247,0.15);margin:20px 0 12px;'>", unsafe_allow_html=True)
-    st.markdown(
-        "<p style='font-size:0.78rem;opacity:0.7;text-align:center;margin-bottom:8px;'>"
-        "Deseja cancelar sua assinatura?</p>",
-        unsafe_allow_html=True
-    )
 
-    # Detecta parâmetro ?acao=cancelar na URL
-    params = st.query_params
-    mostrar_cancelamento = params.get("acao", "") == "cancelar"
-
-    if "mostrar_cancelamento" not in st.session_state:
-        st.session_state.mostrar_cancelamento = mostrar_cancelamento
-
-    if st.button("Cancelar minha assinatura", key="btn_cancelar_toggle", use_container_width=True):
-        st.session_state.mostrar_cancelamento = not st.session_state.get("mostrar_cancelamento", False)
-        st.rerun()
-
-    if st.session_state.get("mostrar_cancelamento", False):
-        with st.form("form_cancelamento", clear_on_submit=True):
-            email_cancel = st.text_input("Seu e-mail cadastrado", key="inp_email_cancel",
-                                          placeholder="seuemail@exemplo.com")
-            confirmar = st.checkbox("Confirmo que desejo cancelar minha assinatura")
-            btn_cancelar = st.form_submit_button("Confirmar cancelamento")
-
-        if btn_cancelar:
-            if not email_cancel:
-                st.warning("Por favor, informe o seu e-mail.")
-            elif not validar_email(email_cancel):
-                st.warning("E-mail inválido. Verifique e tente novamente.")
-            elif not confirmar:
-                st.warning("Marque a caixa de confirmação para continuar.")
-            else:
-                with st.spinner("Processando..."):
-                    ok, msg_cancel = cancelar_assinatura(email_cancel)
-                    if ok:
-                        st.success(f"✅ {msg_cancel}")
-                    else:
-                        st.error(f"❌ {msg_cancel}")
-
-    # ── Política de Privacidade ────────────────────────────────────────────
-    st.markdown(
-        "<hr style='border-color:rgba(253,251,247,0.10);margin:16px 0 8px;'>",
-        unsafe_allow_html=True
-    )
-    with st.expander("🔒 Política de Privacidade"):
-        st.markdown("""
+@st.dialog("🔒 Política de Privacidade", width="large")
+def modal_privacidade():
+    st.markdown("""
 **All News Journal — Política de Privacidade**
 
 Coletamos apenas o nome e e-mail fornecidos voluntariamente no formulário de inscrição.
@@ -952,8 +869,17 @@ Esses dados são utilizados exclusivamente para o envio da edição diária do A
 Para dúvidas ou solicitações de remoção, entre em contato via
 [gustavojustusnunes@gmail.com](mailto:gustavojustusnunes@gmail.com).
 
-*Última atualização: Abril de 2026.*
-        """)
+*Última atualização: Junho de 2026.*
+    """)
+
+
+# Detecta parâmetro ?acao=cancelar na URL (link vindo do email de cancelamento)
+# e abre o modal automaticamente — uma única vez por sessão.
+_params = st.query_params
+_acao = _params.get("acao", "")
+if _acao == "cancelar" and not st.session_state.get("_cancel_modal_shown", False):
+    st.session_state["_cancel_modal_shown"] = True
+    modal_cancelamento()
 
 # =============================================================================
 # --- 10. META TAGS SEO ---
@@ -995,7 +921,7 @@ st.markdown("""
     o dia informado, sem rolar timeline, sem clicar em link nenhum.
   </p>
   <p style='margin-top: 22px; font-size: 0.95rem; color: #555;'>
-    Assine na barra lateral. É gratuito.
+    Use o botão abaixo para assinar. É gratuito.
   </p>
 </div>
 """, unsafe_allow_html=True)
@@ -1037,8 +963,8 @@ def modal_inscricao():
 
     st.markdown(
         "<p style='font-size:0.78rem; color:#888; margin-top:10px; font-style:italic;'>"
-        "💡 Quer ordenar os cadernos na sua edição? Use o formulário completo "
-        "na barra lateral à esquerda."
+        "💡 Os cadernos serão entregues na ordem editorial padrão (Mundo, "
+        "Economia, Política, IA, Wellness, Ciência, Cinema, Fofoca)."
         "</p>",
         unsafe_allow_html=True
     )
@@ -1254,3 +1180,41 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
+# CSS específico para os botões discretos do rodapé (devem parecer links)
+st.markdown("""
+<style>
+    /* Botões secundários do rodapé: estilo de link minimal */
+    section[data-testid="stMain"] [data-testid="stBaseButton-secondary"] {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        color: #888 !important;
+        font-family: 'Lora', serif !important;
+        font-size: 0.78rem !important;
+        font-weight: normal !important;
+        padding: 4px 8px !important;
+        margin: 0 !important;
+        letter-spacing: normal !important;
+        text-decoration: underline !important;
+    }
+    section[data-testid="stMain"] [data-testid="stBaseButton-secondary"]:hover {
+        color: #0a5c5a !important;
+        background: transparent !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    section[data-testid="stMain"] [data-testid="stBaseButton-secondary"] p {
+        color: inherit !important;
+        font-weight: normal !important;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+col_rod_l, col_rod_c1, col_rod_c2, col_rod_r = st.columns([2, 1, 1, 2])
+with col_rod_c1:
+    if st.button("Cancelar assinatura", key="footer_btn_cancel", type="secondary", use_container_width=True):
+        modal_cancelamento()
+with col_rod_c2:
+    if st.button("Política de Privacidade", key="footer_btn_privacy", type="secondary", use_container_width=True):
+        modal_privacidade()
