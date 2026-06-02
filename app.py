@@ -27,7 +27,7 @@ st.set_page_config(
     page_title="All News Journal",
     page_icon="📰",
     layout="wide",
-    initial_sidebar_state="auto",
+    initial_sidebar_state="expanded",
     menu_items={
         'Get Help': None,
         'Report a bug': None,
@@ -952,33 +952,62 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Banner de inscrição visível apenas em mobile (sidebar fica oculta por padrão)
+# Banner de inscrição: SEMPRE visível (desktop + mobile),
+# tenta abrir a sidebar via clique no botão de colapso do Streamlit.
 st.markdown("""
 <style>
-    .mobile-subscribe-banner {
-        display: none;
+    .subscribe-cta-banner {
+        display: block;
         background: linear-gradient(135deg, #0a5c5a 0%, #084c4a 100%);
         color: #fdfbf7;
         text-align: center;
-        padding: 14px 20px;
-        border-radius: 8px;
-        margin: 10px 0 20px;
+        padding: 16px 24px;
+        border-radius: 10px;
+        margin: 10px auto 28px;
+        max-width: 720px;
         cursor: pointer;
         font-family: 'Playfair Display', serif;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
         font-weight: bold;
         letter-spacing: 0.5px;
-        box-shadow: 0 4px 12px rgba(10, 92, 90, 0.3);
+        box-shadow: 0 4px 14px rgba(10, 92, 90, 0.3);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        user-select: none;
+        border: 2px solid #fdfbf7;
     }
-    .mobile-subscribe-banner:hover { opacity: 0.9; }
+    .subscribe-cta-banner:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(10, 92, 90, 0.45);
+    }
+    .subscribe-cta-banner:active {
+        transform: translateY(0);
+    }
     @media (max-width: 768px) {
-        .mobile-subscribe-banner { display: block; }
+        .subscribe-cta-banner { font-size: 0.95rem; padding: 14px 16px; }
     }
 </style>
-<div class="mobile-subscribe-banner"
-     onclick="window.parent.document.querySelector('[data-testid=stSidebar]').style.display='block';
-              window.parent.document.querySelector('[data-testid=stSidebar]').style.transform='translateX(0)';">
-    ✉️ ASSINE GRATUITAMENTE — Receba sua edição diária →
+<div class="subscribe-cta-banner" onclick="
+    (function(){
+        var d = window.parent.document;
+        // Seletores que o Streamlit já usou para o botão de abrir sidebar.
+        // Tentamos vários porque a versão do Streamlit pode mudar o data-testid.
+        var seletores = [
+            '[data-testid=\\'stSidebarCollapsedControl\\'] button',
+            '[data-testid=\\'collapsedControl\\'] button',
+            '[data-testid=\\'stSidebarCollapseButton\\']',
+            'button[kind=\\'header\\']',
+            'header[data-testid=\\'stHeader\\'] button[aria-label*=\\'sidebar\\' i]',
+            'header[data-testid=\\'stHeader\\'] button'
+        ];
+        for (var i = 0; i < seletores.length; i++) {
+            var el = d.querySelector(seletores[i]);
+            if (el) { el.click(); break; }
+        }
+        // Independente do clique, leva o usuário ao topo onde a sidebar aparece.
+        try { window.parent.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e) {}
+    })();
+">
+    ✉️ ASSINE GRATUITAMENTE — Toque para abrir o formulário de inscrição →
 </div>
 """, unsafe_allow_html=True)
 
