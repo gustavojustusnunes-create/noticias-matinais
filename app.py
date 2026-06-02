@@ -36,6 +36,30 @@ st.set_page_config(
 )
 
 # =============================================================================
+# --- AUTO-EMBED: esconde branding e botões de admin do Streamlit Cloud ---
+# O Streamlit Cloud renderiza a badge "Made with Streamlit", o avatar do
+# dono e o botão "Manage app" FORA do iframe da app — CSS interno não
+# alcança. Forçando embed=true via redirect, esse chrome todo desaparece
+# para qualquer visitante. O sidebar e o conteúdo principal continuam
+# normais (já está expanded por padrão).
+# =============================================================================
+st.markdown("""
+<script>
+(function() {
+    try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('embed') !== 'true') {
+            params.set('embed', 'true');
+            params.set('embed_options', 'show_padding');
+            var newUrl = window.location.pathname + '?' + params.toString() + window.location.hash;
+            window.location.replace(newUrl);
+        }
+    } catch (e) { console.warn('embed redirect skipped:', e); }
+})();
+</script>
+""", unsafe_allow_html=True)
+
+# =============================================================================
 # --- 2. CSS PREMIUM — OCULTA TUDO TÉCNICO DO STREAMLIT ---
 # =============================================================================
 st.markdown("""
