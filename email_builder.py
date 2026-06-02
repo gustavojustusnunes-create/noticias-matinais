@@ -16,6 +16,7 @@ from config import (
     SMTP_HOST, SMTP_PORT, URL_CANCELAMENTO,
     ICONES_TEMA, CORES_TEMA,
     RESEND_API_KEY, RESEND_FROM,
+    LOGO_URL,
 )
 
 
@@ -147,9 +148,12 @@ def gerar_html_final(nome, dados, painel, editorial=""):
 
   <!-- CABEÇALHO -->
   <div style="padding:30px 20px 20px;text-align:center;border-bottom:3px solid #{TURQUESA};">
-    <p style="margin:0 0 6px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;">
+    <p style="margin:0 0 12px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;">
       Edição Premium Digital
     </p>
+    <img src="{LOGO_URL}" alt="All News Journal"
+         width="90" height="90"
+         style="display:block;margin:0 auto 14px;width:90px;height:90px;border-radius:50%;">
     <h1 style="margin:0;font-family:'Playfair Display',Georgia,serif;font-size:36px;
                text-transform:uppercase;letter-spacing:3px;color:#{TURQUESA};">
       ALL NEWS JOURNAL
