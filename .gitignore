@@ -55,3 +55,13 @@ logs/
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# Instagram Poster
+# cards de pré-visualização gerados localmente
+preview_insta/
+# saída padrão em produção
+/tmp/instagram_posts/
+# backups (ex.: instagram_poster.py.bak)
+*.bak
+# sessão autenticada do instagrapi (sensível)
+session.json
