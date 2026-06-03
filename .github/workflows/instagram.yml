@@ -36,7 +36,9 @@ jobs:
           GOOGLE_SHEETS_ID:  ${{ secrets.GOOGLE_SHEETS_ID }}
           INSTAGRAM_USER:    ${{ secrets.INSTAGRAM_USER }}
           INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
+          INSTAGRAM_SESSION: ${{ secrets.INSTAGRAM_SESSION }}
           INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
+          PYTHONUTF8: "1"
         run: python instagram_poster.py
 
       - name: Salvar imagens geradas (artefato)

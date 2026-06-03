@@ -13,6 +13,7 @@ Novidades v16.0:
 import os
 import sys
 import time
+import base64
 import textwrap
 from io import BytesIO
 from datetime import datetime
@@ -24,6 +25,9 @@ from pathlib import Path
 INSTAGRAM_USER    = os.environ.get("INSTAGRAM_USER", "")
 INSTAGRAM_PASS    = os.environ.get("INSTAGRAM_PASS", "")
 INSTAGRAM_ENABLED = os.environ.get("INSTAGRAM_ENABLED", "false").lower() == "true"
+# Sessão do instagrapi (dump_settings) em base64 — gerada localmente e colada
+# como secret no GitHub. Evita login completo (e challenge) no IP do Actions.
+INSTAGRAM_SESSION = os.environ.get("INSTAGRAM_SESSION", "").strip()
 CLAUDE_KEY        = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_KEY", "")).strip()
 
 OUTPUT_DIR = Path(os.environ.get("INSTAGRAM_OUTPUT_DIR", "/tmp/instagram_posts"))
@@ -275,19 +279,35 @@ def gerar_legenda(tema, titulo, resumo):
 # =============================================================================
 SESSION_FILE = Path("session.json")
 
-def postar_instagram(caminho_imagem, legenda):
-    """Faz upload com legenda. Reusa session.json. True em sucesso."""
+def _materializar_sessao_do_secret():
+    """Se INSTAGRAM_SESSION (base64 do dump_settings) estiver definido e não
+    houver session.json local, escreve o arquivo a partir do secret. É isso
+    que permite ao GitHub Actions reaproveitar a sessão gerada localmente,
+    evitando login completo (e o challenge) no IP do datacenter."""
+    if SESSION_FILE.exists() or not INSTAGRAM_SESSION:
+        return
+    try:
+        SESSION_FILE.write_bytes(base64.b64decode(INSTAGRAM_SESSION))
+        print("   🔑 Sessão restaurada a partir do secret INSTAGRAM_SESSION.")
+    except Exception as e:
+        print(f"   ⚠️ Não foi possível decodificar INSTAGRAM_SESSION: {e}")
+
+def login_instagram():
+    """Autentica UMA vez e retorna o client logado (ou None em falha).
+    Prioriza reaproveitar a sessão salva; só faz login completo se necessário."""
     if not INSTA_OK:
         print("   ❌ instagrapi não disponível.")
-        return False
+        return None
     if not INSTAGRAM_USER or not INSTAGRAM_PASS:
         print("   ❌ INSTAGRAM_USER ou INSTAGRAM_PASS não definidos.")
-        return False
+        return None
 
     try:
         from instagrapi.exceptions import ChallengeRequired, LoginRequired, PleaseWaitFewMinutes
     except ImportError:
         ChallengeRequired = LoginRequired = PleaseWaitFewMinutes = Exception
+
+    _materializar_sessao_do_secret()
 
     cl = InstaClient()
     cl.delay_range = [2, 5]
@@ -295,27 +315,37 @@ def postar_instagram(caminho_imagem, legenda):
         if SESSION_FILE.exists():
             cl.load_settings(str(SESSION_FILE))
             cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
-            cl.get_timeline_feed()
-            print("   ✅ Sessão Instagram restaurada.")
+            try:
+                cl.get_timeline_feed()  # valida a sessão carregada
+                print("   ✅ Sessão Instagram válida (reaproveitada).")
+            except LoginRequired:
+                # Sessão expirou: refaz login preservando o device (uuids),
+                # o que reduz a chance de challenge.
+                print("   ⚠️ Sessão expirada — refazendo login com o mesmo device.")
+                uuids = cl.get_settings().get("uuids", {})
+                cl = InstaClient(); cl.delay_range = [2, 5]
+                cl.set_uuids(uuids)
+                cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
         else:
             cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
-            cl.dump_settings(str(SESSION_FILE))
-            print("   ✅ Login OK. Sessão salva em session.json.")
-    except LoginRequired:
-        print("   ⚠️ Sessão expirada — login completo.")
-        cl = InstaClient(); cl.delay_range = [2, 5]
-        try:
-            cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
-            cl.dump_settings(str(SESSION_FILE))
-        except Exception as e:
-            print(f"   ❌ Falha no login: {e}"); return False
-    except ChallengeRequired as e:
-        print(f"   ⚠️ Instagram pediu verificação manual: {e}"); return False
+            print("   ✅ Login completo realizado.")
+        # Persiste a sessão (possivelmente renovada) para o próximo run/local.
+        cl.dump_settings(str(SESSION_FILE))
+        return cl
+    except ChallengeRequired:
+        print("   ❌ Instagram pediu verificação (challenge). Gere a sessão "
+              "localmente com gerar_sessao_instagram.py e atualize o secret "
+              "INSTAGRAM_SESSION.")
+        return None
     except PleaseWaitFewMinutes as e:
-        print(f"   ⚠️ Instagram pediu para aguardar: {e}"); return False
+        print(f"   ❌ Instagram pediu para aguardar: {e}")
+        return None
     except Exception as e:
-        print(f"   ❌ Erro no login: {e}"); return False
+        print(f"   ❌ Erro no login: {e}")
+        return None
 
+def postar_instagram(cl, caminho_imagem, legenda):
+    """Faz upload de uma foto com legenda usando um client já logado."""
     try:
         cl.photo_upload(str(caminho_imagem), legenda)
         print("   ✅ Post publicado!")
@@ -373,6 +403,15 @@ def main():
     if not noticias:
         print("   ❌ Nenhuma notícia disponível."); return
 
+    # Autentica UMA vez e reaproveita o client em todos os posts — bem menos
+    # arriscado do que fazer login a cada publicação.
+    cl = None
+    if INSTAGRAM_ENABLED and INSTAGRAM_USER:
+        print("\n   🔐 Autenticando no Instagram…")
+        cl = login_instagram()
+        if not cl:
+            print("   ⚠️ Sem sessão válida — os cards serão apenas gerados, sem postar.")
+
     postados = 0
     for item in noticias:
         if postados >= MAX_POSTS_DIA:
@@ -385,8 +424,8 @@ def main():
         if not caminho:
             print(f"   ⚠️ Card não gerado para {tema}."); continue
         legenda = gerar_legenda(tema, titulo, resumo)
-        if INSTAGRAM_ENABLED and INSTAGRAM_USER:
-            if postar_instagram(caminho, legenda):
+        if cl:
+            if postar_instagram(cl, caminho, legenda):
                 postados += 1
                 if postados < MAX_POSTS_DIA:
                     print(f"   ⏳ Aguardando {ESPERA_ENTRE}s antes do próximo…")
