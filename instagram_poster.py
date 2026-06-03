@@ -30,6 +30,12 @@ INSTAGRAM_ENABLED = os.environ.get("INSTAGRAM_ENABLED", "false").lower() == "tru
 INSTAGRAM_SESSION = os.environ.get("INSTAGRAM_SESSION", "").strip()
 CLAUDE_KEY        = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_KEY", "")).strip()
 
+# Modo de entrega: "email" (padrão, confiável — manda os cards p/ você postar
+# manualmente) ou "post" (tenta publicar via instagrapi).
+# `or "..."` cobre o caso da Variable existir vazia no GitHub Actions.
+INSTAGRAM_DELIVERY = (os.environ.get("INSTAGRAM_DELIVERY", "") or "email").strip().lower()
+INSTAGRAM_EMAIL_TO = (os.environ.get("INSTAGRAM_EMAIL_TO", "") or "gustavojustusnunes@gmail.com").strip()
+
 OUTPUT_DIR = Path(os.environ.get("INSTAGRAM_OUTPUT_DIR", "/tmp/instagram_posts"))
 FONTS_DIR  = Path(__file__).parent / "fonts"
 
@@ -275,6 +281,74 @@ def gerar_legenda(tema, titulo, resumo):
     )
 
 # =============================================================================
+# --- ENTREGA POR EMAIL (via Resend) — para postar manualmente ---
+# =============================================================================
+def enviar_cards_por_email(itens, destino):
+    """Envia os cards gerados (imagens anexadas) + legendas por email via Resend,
+    para publicação manual. itens: [{tema, caminho, legenda}, ...]."""
+    if not REQ_OK:
+        print("   ❌ requests indisponível — não dá para enviar email.")
+        return False
+    try:
+        from config import RESEND_API_KEY, RESEND_FROM
+    except Exception:
+        RESEND_API_KEY, RESEND_FROM = "", ""
+    if not RESEND_API_KEY:
+        print("   ❌ RESEND_API_KEY não definido — não dá para enviar os cards por email.")
+        return False
+
+    def _esc(t):
+        return (t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                 .replace("\n", "<br>"))
+
+    anexos, blocos = [], []
+    for it in itens:
+        try:
+            b64 = base64.b64encode(Path(it["caminho"]).read_bytes()).decode()
+            anexos.append({"filename": f"{it['tema'].lower()}.jpg", "content": b64})
+        except Exception as e:
+            print(f"   ⚠️ Falha ao anexar {it['tema']}: {e}")
+        blocos.append(
+            f"<h3 style='font-family:Georgia,serif;color:#0a5c5a;margin:18px 0 6px;'>"
+            f"{it['tema']}</h3>"
+            f"<div style='white-space:pre-wrap;font-family:Arial,sans-serif;"
+            f"font-size:14px;color:#222;'>{_esc(it['legenda'])}</div>"
+            f"<hr style='border:none;border-top:1px solid #e5e3de;margin:16px 0;'>"
+        )
+
+    html = (
+        "<div style='max-width:640px;margin:0 auto;'>"
+        "<h2 style='font-family:Georgia,serif;color:#0a5c5a;'>📸 Posts do Instagram de hoje</h2>"
+        "<p style='font-family:Arial,sans-serif;font-size:14px;color:#444;'>"
+        "As imagens estão <b>anexadas</b> a este email. Abaixo, a legenda de cada "
+        "card — é só baixar a imagem, copiar a legenda e postar no @allnews_journal.</p>"
+        + "".join(blocos) +
+        "</div>"
+    )
+
+    payload = {
+        "from": RESEND_FROM,
+        "to": [destino],
+        "subject": "📸 Posts do Instagram de hoje — All News Journal",
+        "html": html,
+        "attachments": anexos,
+    }
+    try:
+        r = requests.post(
+            "https://api.resend.com/emails",
+            headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
+            json=payload, timeout=30,
+        )
+        if 200 <= r.status_code < 300:
+            print(f"   ✅ Email com {len(anexos)} card(s) enviado para {destino}.")
+            return True
+        print(f"   ❌ Resend recusou (HTTP {r.status_code}): {r.text[:200]}")
+        return False
+    except Exception as e:
+        print(f"   ❌ Falha ao enviar email: {e}")
+        return False
+
+# =============================================================================
 # --- PUBLICAÇÃO NO INSTAGRAM ---
 # =============================================================================
 SESSION_FILE = Path("session.json")
@@ -403,19 +477,9 @@ def main():
     if not noticias:
         print("   ❌ Nenhuma notícia disponível."); return
 
-    # Autentica UMA vez e reaproveita o client em todos os posts — bem menos
-    # arriscado do que fazer login a cada publicação.
-    cl = None
-    if INSTAGRAM_ENABLED and INSTAGRAM_USER:
-        print("\n   🔐 Autenticando no Instagram…")
-        cl = login_instagram()
-        if not cl:
-            print("   ⚠️ Sem sessão válida — os cards serão apenas gerados, sem postar.")
-
-    postados = 0
-    for item in noticias:
-        if postados >= MAX_POSTS_DIA:
-            print(f"   ℹ️  Limite de {MAX_POSTS_DIA} posts atingido."); break
+    # 1) Gera TODOS os cards primeiro (até MAX_POSTS_DIA)
+    gerados = []
+    for item in noticias[:MAX_POSTS_DIA]:
         tema, titulo, resumo, imagem = item["tema"], item["titulo"], item["resumo"], item["imagem"]
         if not titulo:
             continue
@@ -424,19 +488,32 @@ def main():
         if not caminho:
             print(f"   ⚠️ Card não gerado para {tema}."); continue
         legenda = gerar_legenda(tema, titulo, resumo)
-        if cl:
-            if postar_instagram(cl, caminho, legenda):
-                postados += 1
-                if postados < MAX_POSTS_DIA:
-                    print(f"   ⏳ Aguardando {ESPERA_ENTRE}s antes do próximo…")
-                    time.sleep(ESPERA_ENTRE)
-            else:
-                print(f"   💾 Card salvo em: {caminho}")
-        else:
-            print(f"   💾 Card salvo em: {caminho}")
-            postados += 1
+        gerados.append({"tema": tema, "caminho": caminho, "legenda": legenda})
 
-    print(f"\n✅ Concluído — {postados} post(s).")
+    if not gerados:
+        print("   ❌ Nenhum card gerado."); return
+
+    # 2) Entrega: por email (padrão, confiável) ou postando via instagrapi
+    if INSTAGRAM_DELIVERY == "post":
+        print("\n   🔐 Autenticando no Instagram…")
+        cl = login_instagram()
+        if not cl:
+            print("   ⚠️ Login falhou — enviando os cards por email como fallback.")
+            enviar_cards_por_email(gerados, INSTAGRAM_EMAIL_TO)
+        else:
+            postados = 0
+            for i, g in enumerate(gerados):
+                print(f"\n   📤 Postando {g['tema']}…")
+                if postar_instagram(cl, g["caminho"], g["legenda"]):
+                    postados += 1
+                    if i < len(gerados) - 1:
+                        print(f"   ⏳ Aguardando {ESPERA_ENTRE}s antes do próximo…")
+                        time.sleep(ESPERA_ENTRE)
+            print(f"\n✅ Concluído — {postados} post(s) publicado(s).")
+    else:
+        print(f"\n   ✉️  Entrega por email ({len(gerados)} cards) → {INSTAGRAM_EMAIL_TO}")
+        enviar_cards_por_email(gerados, INSTAGRAM_EMAIL_TO)
+
     print(f"   📁 Imagens em: {OUTPUT_DIR}")
 
 if __name__ == "__main__":

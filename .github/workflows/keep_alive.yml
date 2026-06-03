@@ -16,7 +16,8 @@ jobs:
           STREAMLIT_URL: ${{ secrets.STREAMLIT_URL }}
         run: |
           set -u
-          URL="${STREAMLIT_URL:-https://allnewsjournal.streamlit.app/}"
+          # URL REAL do app (a antiga allnewsjournal.streamlit.app não existe).
+          URL="${STREAMLIT_URL:-https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/}"
           
           # Simulando um navegador real e moderno para enganar firewalls
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -69,5 +70,8 @@ jobs:
           done
 
           echo ""
-          echo "🚨 Falha crítica: O App não respondeu com sucesso após 3 tentativas."
-          exit 1
+          echo "⚠️ App não respondeu após 3 tentativas — seguindo sem falhar o job."
+          echo "   (keep_alive é best-effort; o monitor real é o UptimeRobot.)"
+          # exit 0 de propósito: keep_alive não deve disparar email de falha do
+          # GitHub Actions a cada blip. Se o app cair de verdade, o UptimeRobot avisa.
+          exit 0

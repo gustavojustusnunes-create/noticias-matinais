@@ -293,7 +293,11 @@ def validar_nome(nome):
 # =============================================================================
 # --- 6. GOOGLE SHEETS E REGRAS DE NEGÓCIO ---
 # =============================================================================
-@st.cache_data(ttl=300)
+# IMPORTANTE: cache_resource (não cache_data) — esta função devolve um objeto
+# de CONEXÃO (gspread Worksheet). O cache_data serializa o retorno e a conexão
+# desserializada perde a sessão autenticada, fazendo toda gravação/leitura
+# falhar silenciosamente. cache_resource mantém o objeto vivo.
+@st.cache_resource(ttl=300)
 def conectar_planilha():
     if "GCP_JSON" not in st.secrets:
         return None
@@ -324,13 +328,27 @@ def salvar_assinante(nome, email, ordem_temas):
     if not sheet:
         return False, "Não foi possível conectar. Tente novamente."
     try:
-        linha = [nome.strip(), email.strip()]
-        for chave in RSS_FEEDS.keys():
-            linha.append(ordem_temas.get(chave, "Não"))
+        # Alinha os valores à ORDEM REAL das colunas da planilha (que pode estar
+        # embaralhada), em vez de assumir a ordem do RSS_FEEDS. Assim cada caderno
+        # cai na coluna certa. Também traduz nomes legados (Mercado/Fitness).
+        legado = {"Mercado": "Economia", "Fitness": "Wellness"}
+        headers = [h.strip() for h in sheet.row_values(1)]
+        if not headers:
+            headers = ["Nome", "Email"] + list(RSS_FEEDS.keys())
+        linha = []
+        for h in headers:
+            if h.lower() == "nome":
+                linha.append(nome.strip())
+            elif h.lower() == "email":
+                linha.append(email.strip())
+            else:
+                chave = legado.get(h, h)
+                linha.append(ordem_temas.get(chave, "Não"))
         sheet.append_row(linha)
         return True, "Sucesso"
-    except Exception:
-        return False, "Ocorreu um problema ao registrar. Tente novamente."
+    except Exception as e:
+        # Mostra a causa real para facilitar o diagnóstico (ex.: permissão).
+        return False, f"Não consegui registrar: {e}"
 
 def cancelar_assinatura(email):
     sheet = conectar_planilha()

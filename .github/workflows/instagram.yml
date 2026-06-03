@@ -29,7 +29,7 @@ jobs:
       - name: Instalar dependências Instagram
         run: pip install -r requirements-instagram.txt
 
-      - name: Postar no Instagram
+      - name: Gerar e entregar cards do Instagram
         env:
           ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
           GCP_JSON:          ${{ secrets.GCP_JSON }}
@@ -38,6 +38,13 @@ jobs:
           INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
           INSTAGRAM_SESSION: ${{ secrets.INSTAGRAM_SESSION }}
           INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
+          # "email" (padrão) manda os cards por email p/ postar manualmente;
+          # "post" tenta publicar via instagrapi. Controlado por Variable.
+          INSTAGRAM_DELIVERY: ${{ vars.INSTAGRAM_DELIVERY }}
+          INSTAGRAM_EMAIL_TO: ${{ vars.INSTAGRAM_EMAIL_TO }}
+          # Resend (usado no modo "email")
+          RESEND_API_KEY:    ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM:       ${{ secrets.RESEND_FROM }}
           PYTHONUTF8: "1"
         run: python instagram_poster.py
 
