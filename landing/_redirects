@@ -1,0 +1,5 @@
+# Cloudflare Pages: redireciona TODAS as requisições para o app
+# Streamlit, preservando path e query string (ex.: ?acao=cancelar).
+# Status 302 (temporário) para facilitar mudanças futuras sem
+# pegar cache permanente nos browsers.
+/*    https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/:splat    302

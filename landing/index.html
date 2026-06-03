@@ -2,12 +2,16 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a5c5a">
-    <title>All News Journal — Curadoria Premium de Notícias</title>
-    <meta name="description" content="Receba as notícias que importam, todas as manhãs. Curadoria premium e gratuita. 8 cadernos temáticos.">
 
-    <!-- Open Graph / Facebook / WhatsApp -->
+    <!-- Redirecionamento (fallback caso o _redirects do Cloudflare Pages não pegue) -->
+    <meta http-equiv="refresh" content="0; url=https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/">
+
+    <title>All News Journal — Curadoria Premium de Notícias</title>
+    <meta name="description" content="Receba as notícias que importam, todas as manhãs. Curadoria premium e gratuita.">
+
+    <!-- Open Graph / WhatsApp / Slack preview -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://allnewsjournal.uk/">
     <meta property="og:title" content="All News Journal">
@@ -30,72 +34,46 @@
 
     <style>
         * { box-sizing: border-box; }
-
         html, body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #fdfbf7;
             font-family: 'Lora', Georgia, serif;
             color: #2c2c2c;
         }
-
-        /* Iframe ocupa a viewport inteira sem bordas */
-        #app-frame {
-            display: block;
-            width: 100%;
-            height: 100vh;
-            border: 0;
-            margin: 0;
-            padding: 0;
+        .wrapper {
+            text-align: center;
+            padding: 20px;
+            max-width: 480px;
         }
-
-        /* Tela de loading mostrada até o iframe carregar */
-        #loading {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: #fdfbf7;
-            z-index: 9999;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-        }
-        #loading.hidden {
-            opacity: 0;
-        }
-        #loading img {
-            width: 100px;
-            height: 100px;
+        .wrapper img {
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
-            margin-bottom: 24px;
             box-shadow: 0 6px 18px rgba(10, 92, 90, 0.25);
+            margin-bottom: 24px;
         }
-        #loading h1 {
+        h1 {
             font-family: 'Playfair Display', Georgia, serif;
             font-size: 2.2rem;
             color: #0a5c5a;
             margin: 0;
             letter-spacing: 3px;
             text-transform: uppercase;
-            text-align: center;
-            padding: 0 16px;
         }
-        #loading .tagline {
+        .tagline {
             font-style: italic;
             color: #0a5c5a;
-            opacity: 0.7;
-            margin-top: 10px;
+            opacity: 0.75;
+            margin: 12px 0 28px;
             font-size: 1rem;
-            text-align: center;
-            padding: 0 16px;
         }
-        #loading .spinner {
-            margin-top: 28px;
+        .spinner {
+            margin: 0 auto;
             width: 32px;
             height: 32px;
             border: 3px solid rgba(10, 92, 90, 0.15);
@@ -103,93 +81,61 @@
             border-radius: 50%;
             animation: spin 0.9s linear infinite;
         }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Fallback noscript */
-        .noscript-msg {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #fdfbf7;
+        @keyframes spin { to { transform: rotate(360deg); } }
+        a.manual-link {
+            display: inline-block;
+            margin-top: 24px;
             color: #0a5c5a;
-            font-family: 'Lora', Georgia, serif;
-            text-align: center;
-            padding: 40px 20px;
-            z-index: 10000;
+            text-decoration: underline;
+            font-size: 0.88rem;
         }
-
         @media (max-width: 600px) {
-            #loading h1 { font-size: 1.6rem; letter-spacing: 2px; }
-            #loading .tagline { font-size: 0.9rem; }
-            #loading img { width: 80px; height: 80px; }
+            h1 { font-size: 1.6rem; letter-spacing: 2px; }
+            .wrapper img { width: 90px; height: 90px; }
         }
     </style>
 </head>
 <body>
 
-<noscript>
-    <div class="noscript-msg">
-        <div>
-            <h1>All News Journal</h1>
-            <p>Este site requer JavaScript ativado. Por favor habilite no seu navegador e recarregue a página.</p>
-        </div>
-    </div>
-</noscript>
-
-<!-- Tela de loading: visível até o iframe carregar -->
-<div id="loading">
+<div class="wrapper">
     <img src="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/anj-logo.png"
          alt="All News Journal" onerror="this.style.display='none'">
-    <h1>ALL NEWS JOURNAL</h1>
+    <h1>All News Journal</h1>
     <p class="tagline">Notícias relevantes, sem ruído, todas as manhãs.</p>
     <div class="spinner"></div>
+    <noscript>
+        <p style="margin-top:24px;">
+            <a href="https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/">
+                Clique aqui para acessar o jornal →
+            </a>
+        </p>
+    </noscript>
+    <a class="manual-link" id="manual-link"
+       href="https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/"
+       style="display:none;">
+        Não foi redirecionado? Clique aqui →
+    </a>
 </div>
-
-<!-- App embutido: Streamlit em embed mode -->
-<iframe id="app-frame"
-        title="All News Journal — Curadoria Premium"
-        loading="eager"
-        allow="clipboard-read; clipboard-write"
-        referrerpolicy="no-referrer-when-downgrade"></iframe>
 
 <script>
 (function() {
-    var BASE_URL = "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/";
+    var TARGET = "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/";
 
-    // Encaminha query params do visitante (ex.: ?acao=cancelar do email)
-    // e força embed mode para o Streamlit esconder seu chrome.
-    var inboundParams = new URLSearchParams(window.location.search);
-    inboundParams.set('embed', 'true');
-    inboundParams.set('embed_options', 'show_padding');
+    // Preserva a query string (ex.: ?acao=cancelar vindo do email)
+    var search = window.location.search || '';
+    var destino = TARGET + search;
 
-    var iframeUrl = BASE_URL + '?' + inboundParams.toString();
+    // Atualiza o link manual com a URL completa
+    var manualLink = document.getElementById('manual-link');
+    if (manualLink) manualLink.href = destino;
 
-    var iframe = document.getElementById('app-frame');
-    var loading = document.getElementById('loading');
+    // Redireciona imediatamente
+    window.location.replace(destino);
 
-    function hideLoading() {
-        if (loading && !loading.classList.contains('hidden')) {
-            loading.classList.add('hidden');
-            // Remove do DOM depois da transição para não bloquear cliques
-            setTimeout(function() {
-                if (loading.parentNode) loading.parentNode.removeChild(loading);
-            }, 500);
-        }
-    }
-
-    iframe.addEventListener('load', function() {
-        // Dá um respiro para o Streamlit renderizar antes de revelar
-        setTimeout(hideLoading, 600);
-    });
-
-    // Fallback: se o iframe não disparar 'load' em 10s, mostra mesmo assim
-    setTimeout(hideLoading, 10000);
-
-    iframe.src = iframeUrl;
+    // Se o redirect demorar mais de 3 segundos, mostra o link manual
+    setTimeout(function() {
+        if (manualLink) manualLink.style.display = 'inline-block';
+    }, 3000);
 })();
 </script>
 
