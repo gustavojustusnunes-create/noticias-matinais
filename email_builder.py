@@ -3,6 +3,7 @@ email_builder.py — Geração do HTML e envio de email do All News Journal
 Inclui: painel financeiro, preheader, sumário, editorial, tempo de leitura,
         subject dinâmico e retry com backoff.
 """
+import base64
 import smtplib
 import time
 from datetime import datetime
@@ -16,7 +17,7 @@ from config import (
     SMTP_HOST, SMTP_PORT, URL_CANCELAMENTO,
     ICONES_TEMA, CORES_TEMA,
     RESEND_API_KEY, RESEND_FROM,
-    LOGO_URL,
+    LOGO_URL, LOGO_PATH, LOGO_CID,
 )
 
 
@@ -151,7 +152,7 @@ def gerar_html_final(nome, dados, painel, editorial=""):
     <p style="margin:0 0 12px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;">
       Edição Premium Digital
     </p>
-    <img src="{LOGO_URL}" alt="All News Journal"
+    <img src="cid:{LOGO_CID}" alt="All News Journal"
          width="90" height="90"
          style="display:block;margin:0 auto 14px;width:90px;height:90px;border-radius:50%;">
     <h1 style="margin:0;font-family:'Playfair Display',Georgia,serif;font-size:36px;
@@ -334,6 +335,20 @@ def enviar_email_resend(dest, html, subject=None):
 
     resend.api_key = RESEND_API_KEY
 
+    # Embute a logo inline (Content-ID) — referenciada como cid:LOGO_CID no HTML.
+    # Funciona mesmo com o repositório privado (a raw URL daria 404 no Gmail).
+    attachments = []
+    try:
+        with open(LOGO_PATH, "rb") as fh:
+            attachments.append({
+                "filename":     "anj-logo.png",
+                "content":      base64.b64encode(fh.read()).decode(),
+                "content_type": "image/png",
+                "content_id":   LOGO_CID,
+            })
+    except Exception as e:
+        print(f"      ⚠️ Logo não embutida ({e}). Email segue sem a imagem.")
+
     payload = {
         "from":    RESEND_FROM,
         "to":      [dest],
@@ -342,6 +357,8 @@ def enviar_email_resend(dest, html, subject=None):
         "text":    "Acesse a versão HTML para ler a edição completa.",
         "headers": {"X-Mailer": "All News Journal Mailer"},
     }
+    if attachments:
+        payload["attachments"] = attachments
 
     max_tentativas = 3
     for tentativa in range(1, max_tentativas + 1):
@@ -355,6 +372,15 @@ def enviar_email_resend(dest, html, subject=None):
 
         except Exception as e:
             msg_err = str(e).lower()
+            # Rede de segurança: se o anexo (logo inline) for o problema, reenvia
+            # SEM o anexo. A edição sair sem logo é melhor do que não sair.
+            if "attachments" in payload and any(
+                t in msg_err for t in ("attachment", "content_id", "validation_error")
+            ):
+                print("      ⚠️ Anexo da logo recusado — reenviando sem a logo.")
+                payload.pop("attachments", None)
+                continue
+
             # Erros permanentes: não vale a pena retentar
             if any(t in msg_err for t in ("invalid api key", "unauthorized", "validation_error", "invalid_to")):
                 print(f"      ❌ Resend rejeitou definitivamente ({dest}): {e}")

@@ -45,6 +45,13 @@ LOGO_URL = os.environ.get(
     "https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/anj-logo.png",
 ).strip()
 
+# Caminho LOCAL da logo — usado para EMBUTIR a imagem inline no email (cid).
+# Como o repositório é privado, a LOGO_URL (raw.githubusercontent) dá 404 para
+# o Gmail; embutir o arquivo resolve de vez, independente de hospedagem.
+LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "anj-logo.png")
+# Content-ID usado no <img src="cid:..."> e no anexo inline do Resend.
+LOGO_CID = "anjlogo"
+
 # =============================================================================
 # --- ORDEM EDITORIAL DOS CADERNOS ---
 # =============================================================================
