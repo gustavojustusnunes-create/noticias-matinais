@@ -250,7 +250,7 @@ def gerar_imagem_post(tema, titulo, data_str, imagem_url=None):
 
     # 6) Rodapé
     draw.line([(px, y_rodape - 18), (W - px, y_rodape - 18)], fill=OURO, width=1)
-    _texto_espacado(draw, (px, y_rodape), "@ALLNEWS_JOURNAL", _lora(22, 500), OURO_CLARO, tracking=3)
+    _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), OURO_CLARO, tracking=3)
     direita = "CURADORIA PREMIUM"
     f_r = _lora(20, 500)
     larg = sum(draw.textlength(c, font=f_r) for c in direita) + 3 * (len(direita) - 1)
@@ -277,7 +277,7 @@ def gerar_legenda(tema, titulo, resumo):
         f"📩  A edição completa chega todas as manhãs no seu e-mail.\n"
         f"Assine grátis no link da bio.\n\n"
         f"{tags}\n"
-        f"@allnews_journal"
+        f"@all.news.journal"
     )
 
 # =============================================================================
@@ -321,7 +321,7 @@ def enviar_cards_por_email(itens, destino):
         "<h2 style='font-family:Georgia,serif;color:#0a5c5a;'>📸 Posts do Instagram de hoje</h2>"
         "<p style='font-family:Arial,sans-serif;font-size:14px;color:#444;'>"
         "As imagens estão <b>anexadas</b> a este email. Abaixo, a legenda de cada "
-        "card — é só baixar a imagem, copiar a legenda e postar no @allnews_journal.</p>"
+        "card — é só baixar a imagem, copiar a legenda e postar no @all.news.journal.</p>"
         + "".join(blocos) +
         "</div>"
     )
