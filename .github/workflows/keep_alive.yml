@@ -1,77 +1,70 @@
 name: Keep Alive Streamlit
 
+# Mantém o app Streamlit acordado abrindo-o num navegador REAL (headless).
+# Um curl simples NÃO impede a hibernação do Streamlit Community Cloud —
+# ele só conta como "ativo" quando há uma sessão de navegador (WebSocket).
+# Por isso usamos Playwright para visitar a página de verdade e, se estiver
+# hibernando, clicar no botão "Yes, get this app back up".
+#
+# Requer repositório PÚBLICO (minutos de Actions ilimitados). Em repo privado
+# isso consumiria a cota mensal rapidamente.
+
 on:
   schedule:
-    - cron: '*/15 * * * *'   # Ajustado para 15 minutos para evitar rate-limit
+    - cron: '*/15 * * * *'   # a cada 15 minutos
   workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
 
     steps:
-      - name: Ping Streamlit
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar Playwright (Chromium)
+        run: |
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Visitar o app (mantém acordado)
         env:
           STREAMLIT_URL: ${{ secrets.STREAMLIT_URL }}
         run: |
-          set -u
-          # URL REAL do app (a antiga allnewsjournal.streamlit.app não existe).
-          URL="${STREAMLIT_URL:-https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/}"
-          
-          # Simulando um navegador real e moderno para enganar firewalls
-          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+          python - <<'PY'
+          import os
+          from playwright.sync_api import sync_playwright
 
-          echo "🌐 Iniciando verificação de disponibilidade para: $URL"
+          url = (os.environ.get("STREAMLIT_URL") or
+                 "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/")
+          print("🌐 Visitando:", url)
 
-          for tentativa in 1 2 3; do
-            echo "---"
-            echo "🔁 Tentativa ${tentativa}/3"
+          try:
+              with sync_playwright() as p:
+                  browser = p.chromium.launch()
+                  page = browser.new_page()
+                  page.goto(url, wait_until="domcontentloaded", timeout=120000)
 
-            body_file=$(mktemp)
-            
-            # Adicionando headers de aceitação padrão de navegadores
-            http_code=$(curl -sSL \
-                          -A "$UA" \
-                          -H "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8" \
-                          -H "Accept-Language: pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7" \
-                          -o "$body_file" \
-                          -w "%{http_code}" \
-                          --max-time 30 \
-                          "$URL" || echo "000")
+                  # Se estiver hibernando, clica no botão de reativar.
+                  try:
+                      botao = page.get_by_text("get this app back up", exact=False)
+                      if botao.count() > 0:
+                          print("💤 App hibernando — clicando para acordar…")
+                          botao.first.click()
+                          page.wait_for_timeout(45000)  # espera subir
+                  except Exception as e:
+                      print("   (sem botão de wake):", e)
 
-            echo "   Status HTTP: $http_code"
+                  # Mantém a sessão ativa um tempo para registrar atividade real.
+                  page.wait_for_timeout(20000)
+                  print("✅ Visitado. Título da página:", page.title())
+                  browser.close()
+          except Exception as e:
+              # best-effort: nunca falha o job (evita email de falha do GitHub).
+              print("⚠️ Visita não concluída (sem problema, é best-effort):", e)
 
-            # Tratamento da hibernação (sem gerar erro no GitHub)
-            if grep -qF "Yes, get this app back up" "$body_file" 2>/dev/null; then
-              echo "   💤 App está HIBERNANDO (Página do Streamlit detectada)."
-              echo "   ⚠️ Atenção: Reativação via API não é garantida na nuvem pública."
-              rm -f "$body_file"
-              exit 0 
-            fi
-
-            # Sucesso
-            if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 400 ]; then
-              echo "   ✅ Sucesso! App quente e respondendo."
-              rm -f "$body_file"
-              exit 0
-            fi
-
-            # Se chegou aqui, deu erro. Vamos imprimir o motivo real:
-            echo "   ❌ Falha na resposta."
-            echo "   🔍 Prévia do corpo do erro retornado pelo servidor:"
-            head -n 5 "$body_file"
-            rm -f "$body_file"
-
-            if [ "$tentativa" -lt 3 ]; then
-              echo "   ⏳ Aguardando 30s antes da próxima tentativa..."
-              sleep 30
-            fi
-          done
-
-          echo ""
-          echo "⚠️ App não respondeu após 3 tentativas — seguindo sem falhar o job."
-          echo "   (keep_alive é best-effort; o monitor real é o UptimeRobot.)"
-          # exit 0 de propósito: keep_alive não deve disparar email de falha do
-          # GitHub Actions a cada blip. Se o app cair de verdade, o UptimeRobot avisa.
-          exit 0
+          # exit 0 sempre.
+          PY

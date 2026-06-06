@@ -122,49 +122,65 @@ def main():
 
     # Distribui para cada assinante
     print("\n🚚 Iniciando distribuição…")
-    enviados = falhas = 0
+    print(f"   👥 {len(usuarios)} assinante(s) na planilha.")
+    enviados = falhas = pulados = erros = 0
 
     for usr in usuarios:
-        nome  = usr.get("Nome",  "").strip()
-        email = usr.get("Email", "").strip()
+        # IMPORTANTE: cada assinante é processado de forma isolada. Se UM der
+        # erro (HTML, envio, log, etc.), capturamos e seguimos para o próximo —
+        # um problema com um assinante NUNCA pode impedir os demais de receber.
+        nome = email = ""
+        try:
+            nome  = usr.get("Nome",  "").strip()
+            email = usr.get("Email", "").strip()
 
-        if not nome or not email:
-            continue
-        if not re.match(r"^[^@]+@[^@]+\.[^@]+$", email):
-            print(f"   ⚠️ E-mail inválido: '{email}' — pulando.")
-            continue
-
-        # Monta pacote respeitando a ordem personalizada do assinante
-        temas_com_ordem = []
-        for tema in RSS_FEEDS:
-            val = str(usr.get(tema, "")).strip()
-            if val.lower() in {"", "não"}:
+            if not nome or not email:
+                pulados += 1
                 continue
-            if tema not in CACHE_GLOBAL:
+            if not re.match(r"^[^@]+@[^@]+\.[^@]+$", email):
+                print(f"   ⚠️ E-mail inválido: '{email}' — pulando.")
+                pulados += 1
                 continue
-            ordem = int(val) if val.isdigit() else 999
-            temas_com_ordem.append((ordem, tema))
 
-        temas_com_ordem.sort(key=lambda x: x[0])
-        pacote = {tema: CACHE_GLOBAL[tema] for _, tema in temas_com_ordem}
+            # Monta pacote respeitando a ordem personalizada do assinante
+            temas_com_ordem = []
+            for tema in RSS_FEEDS:
+                val = str(usr.get(tema, "")).strip()
+                if val.lower() in {"", "não"}:
+                    continue
+                if tema not in CACHE_GLOBAL:
+                    continue
+                ordem = int(val) if val.isdigit() else 999
+                temas_com_ordem.append((ordem, tema))
 
-        if not pacote:
-            print(f"   ⚠️ {nome}: nenhum tema disponível.")
+            temas_com_ordem.sort(key=lambda x: x[0])
+            pacote = {tema: CACHE_GLOBAL[tema] for _, tema in temas_com_ordem}
+
+            if not pacote:
+                print(f"   ⚠️ {nome}: nenhum tema disponível hoje — pulando.")
+                pulados += 1
+                continue
+
+            subject = montar_subject(pacote)
+            print(f"   ✉️  {nome} <{email}> → {list(pacote.keys())}")
+            html = gerar_html_final(nome, pacote, painel, editorial=editorial)
+            ok   = enviar_email(email, html, subject=subject)
+            registrar_log(sheet_logs, nome, email, ok, list(pacote.keys()))
+
+            if ok:
+                enviados += 1
+            else:
+                falhas += 1
+
+        except Exception as e:
+            # Não deixa o erro de um assinante derrubar o restante da fila.
+            erros += 1
+            print(f"   ❌ Erro ao processar {nome or '?'} <{email or '?'}>: {e}")
             continue
-
-        subject = montar_subject(pacote)
-        print(f"   ✉️  {nome} → {list(pacote.keys())}")
-        html = gerar_html_final(nome, pacote, painel, editorial=editorial)
-        ok   = enviar_email(email, html, subject=subject)
-        registrar_log(sheet_logs, nome, email, ok, list(pacote.keys()))
-
-        if ok:
-            enviados += 1
-        else:
-            falhas += 1
 
     print(f"\n{'─'*65}")
-    print(f"✅ Concluído — Enviados: {enviados}  |  Falhas: {falhas}")
+    print(f"✅ Concluído — Enviados: {enviados} | Falhas: {falhas} | "
+          f"Pulados: {pulados} | Erros: {erros}")
 
 if __name__ == "__main__":
     main()
