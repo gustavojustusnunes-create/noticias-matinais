@@ -385,3 +385,26 @@ MAPEAMENTO_LEGADO = {
     "Mercado": "Economia",
     "Fitness": "Wellness",
 }
+
+# =============================================================================
+# --- PUBLICAÇÃO / SITE (v17.0) ---
+# =============================================================================
+EDICOES_DIR = "edicoes"
+# Domínio público do jornal (allnewsjournal.streamlit.app NÃO existe;
+# a URL real do Streamlit tem hash — o leitor vê só o domínio próprio).
+SITE_URL    = "https://allnewsjournal.uk"
+
+# =============================================================================
+# --- INSTAGRAM: CARROSSEL + REEL (v17.0) ---
+# =============================================================================
+# Handle real da conta (mudou de @allnews_journal em jun/2026).
+INSTAGRAM_HANDLE         = "@all.news.journal"
+INSTAGRAM_CARROSSEL_MODO = "rotativo"   # "rotativo" | "panorama"
+REEL_SEGUNDOS_POR_SLIDE  = 3
+REEL_FADE_SEGUNDOS       = 0.4
+
+# Numerais romanos por caderno (rótulo dos cards)
+NUMERAIS_CADERNO = {
+    "Mundo": "I", "Economia": "II", "Politica": "III", "IA": "IV",
+    "Wellness": "V", "Ciencia": "VI", "Cinema": "VII", "Fofoca": "VIII",
+}

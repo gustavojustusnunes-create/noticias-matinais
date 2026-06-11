@@ -246,6 +246,56 @@ Resumo de status dos feeds (FEEDS_STATUS)
 
 ---
 
+## Melhorias implementadas na v17.0 (11/06/2026)
+
+### Arquitetura: snapshot diário da edição
+- `main.py` chama (em try/except, ao final do envio) `site_publisher.publicar_edicao()`
+- Snapshot em `edicoes/AAAA-MM-DD.json` é a FONTE DA VERDADE para site,
+  carrossel e reel — nada reprocessa feeds nem chama a API de novo
+- `daily.yml` commita a pasta `edicoes/` (bot "ANJ Bot", GITHUB_TOKEN padrão,
+  `permissions: contents: write`)
+
+### BLOCO A — Edição do jornal no site
+- `site_publisher.py` (novo): salva `edicoes/AAAA-MM-DD.json` (snapshot),
+  `AAAA-MM-DD.html` (reusa `gerar_html_final`, neutraliza rodapé de
+  cancelamento) e `index.json` (máx. 60 itens, mais novo primeiro)
+- `app.py`: seção "📰 Edição de hoje" + selectbox de edições anteriores,
+  renderiza via `st.components.v1.html`; suporta `?edicao=AAAA-MM-DD`.
+  Tudo em try/except — sem `edicoes/`, a seção simplesmente não aparece
+
+### BLOCO B — Carrossel diário no Instagram
+- `instagram_diario.py` (novo, independente do instagram_poster.py):
+  CLI `--modo carrossel|reel` + `--dry-run` (gera mídia, não posta)
+- Slides 1080x1350: capa turquesa (masthead + data + caderno do dia),
+  notícias (foto cover + gradiente + Playfair/Lora + numeral romano),
+  CTA creme com monograma ANJ. Máx. 10 slides (limite do Instagram)
+- Modos (config `INSTAGRAM_CARROSSEL_MODO`): `rotativo` (caderno do dia =
+  dia_do_ano % 8, até 4 notícias) | `panorama` (1 notícia por caderno)
+- `.github/workflows/instagram_carousel.yml`: cron `20 10 * * *` (07:20 BRT),
+  upload-artifact dos JPGs, input `dry_run` no workflow_dispatch
+
+### BLOCO C — Reel diário no Instagram
+- Mesmo motor de slides em 1080x1920; montagem com ffmpeg via subprocess
+  (segmentos com fade in/out 0.4s, ~3s/quadro, concat, áudio AAC silencioso
+  via anullsrc — trilha futura: royalty-free em `assets/audio/`, lida só se existir)
+- Postagem via `clip_upload`; `.github/workflows/instagram_reels.yml`:
+  cron `30 21 * * *` (18:30 BRT), artifact do .mp4
+
+### Constantes novas em config.py
+- `EDICOES_DIR`, `SITE_URL` (= https://allnewsjournal.uk, domínio público real)
+- `INSTAGRAM_HANDLE` (= @all.news.journal — handle centralizado),
+  `INSTAGRAM_CARROSSEL_MODO`, `REEL_SEGUNDOS_POR_SLIDE`, `REEL_FADE_SEGUNDOS`,
+  `NUMERAIS_CADERNO` (I·Mundo … VIII·Fofoca)
+
+### Observações
+- Fontes da marca: `fonts/PlayfairDisplay.ttf` e `fonts/Lora.ttf` são TTFs
+  VARIÁVEIS (eixo de peso) — `carregar_fonte()` faz a cascata
+  empacotada → sistema → default
+- `INSTAGRAM_ENABLED` é uma **Variable** do GitHub (não secret);
+  `INSTAGRAM_SESSION` (secret) carrega a sessão do instagrapi em base64
+
+---
+
 ## Como rodar localmente
 
 ```bash

@@ -182,5 +182,13 @@ def main():
     print(f"✅ Concluído — Enviados: {enviados} | Falhas: {falhas} | "
           f"Pulados: {pulados} | Erros: {erros}")
 
+    # ── [NOVO] Publica a edição do dia no site (não afeta o e-mail) ──
+    try:
+        from site_publisher import publicar_edicao
+        print("\n🌐 Publicando edição no site…")
+        publicar_edicao(CACHE_GLOBAL, painel, editorial)
+    except Exception as e:
+        print(f"   ⚠️ Falha ao publicar no site (e-mail não afetado): {e}")
+
 if __name__ == "__main__":
     main()

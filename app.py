@@ -876,6 +876,43 @@ if noticias_display:
 elif not noticias_display and tema_atual == "Capa (Destaques)":
     st.info("A carregar as manchetes mais recentes...")
 
+# =============================================================================
+# --- EDIÇÃO DO DIA (publicada pelo daily — lê edicoes/index.json) ---
+# =============================================================================
+try:
+    import os as _os
+    import streamlit.components.v1 as _components
+
+    _idx_path = _os.path.join("edicoes", "index.json")
+    if _os.path.exists(_idx_path):
+        with open(_idx_path, encoding="utf-8") as _f:
+            _indice = json.load(_f)
+        if _indice:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(
+                "<h3 style='text-align:center; letter-spacing:1px;'>📰 Edição de hoje</h3>",
+                unsafe_allow_html=True,
+            )
+            _datas   = [e["data"] for e in _indice]
+            _rotulos = {
+                e["data"]: f"{e.get('data_extenso', e['data'])} — {e.get('manchete', '')[:60]}"
+                for e in _indice
+            }
+            _param  = st.query_params.get("edicao", "")
+            _padrao = _param if _param in _datas else _datas[0]
+            _sel = st.selectbox(
+                "🗞️ Edições anteriores:",
+                _datas,
+                index=_datas.index(_padrao),
+                format_func=lambda d: _rotulos.get(d, d),
+            )
+            _arq = _os.path.join("edicoes", f"{_sel}.html")
+            if _os.path.exists(_arq):
+                with open(_arq, encoding="utf-8") as _f:
+                    _components.html(_f.read(), height=2400, scrolling=True)
+except Exception:
+    pass  # sem edicoes/, a seção simplesmente não aparece
+
 # Seção "Sobre"
 st.markdown("<br>", unsafe_allow_html=True)
 with st.expander("📖 Sobre o All News Journal"):
