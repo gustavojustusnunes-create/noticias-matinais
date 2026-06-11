@@ -1,0 +1,64 @@
+name: Instagram Reel Diário
+
+on:
+  schedule:
+    # 21:30 UTC = 18:30 BRT — horário de pico no Brasil, bem separado do
+    # carrossel da manhã (reduz risco de antibot).
+    - cron: '30 21 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Gerar o vídeo sem postar (--dry-run)'
+        type: boolean
+        default: true
+
+jobs:
+  reel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout do repositório (lê edicoes/)
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Garantir ffmpeg
+        run: |
+          if ! command -v ffmpeg >/dev/null; then
+            sudo apt-get update && sudo apt-get install -y ffmpeg
+          fi
+          ffmpeg -version | head -1
+
+      - name: Instalar dependências Instagram
+        run: pip install -r requirements-instagram.txt
+
+      - name: Gerar (e postar) reel
+        env:
+          INSTAGRAM_USER:    ${{ secrets.INSTAGRAM_USER }}
+          INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
+          INSTAGRAM_SESSION: ${{ secrets.INSTAGRAM_SESSION }}
+          INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
+          # Fallback (só se não houver snapshot em edicoes/)
+          ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
+          GCP_JSON:          ${{ secrets.GCP_JSON }}
+          GOOGLE_SHEETS_ID:  ${{ secrets.GOOGLE_SHEETS_ID }}
+          DRY_RUN:           ${{ inputs.dry_run }}
+          PYTHONUTF8: "1"
+        run: |
+          EXTRA=""
+          [ "${DRY_RUN:-false}" = "true" ] && EXTRA="--dry-run"
+          python instagram_diario.py --modo reel $EXTRA
+
+      - name: Salvar reel gerado (artefato)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anj-reel-${{ github.run_id }}
+          path: /tmp/anj_reel/*.mp4
+          if-no-files-found: ignore
+          retention-days: 7

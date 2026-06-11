@@ -1,0 +1,57 @@
+name: Instagram Carrossel Diário
+
+on:
+  schedule:
+    # 10:20 UTC = 07:20 BRT — logo após a edição da manhã, FORA do minuto 0
+    # (o cron do GitHub atrasa muito no minuto cheio).
+    - cron: '20 10 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Gerar mídia sem postar (--dry-run)'
+        type: boolean
+        default: true
+
+jobs:
+  carrossel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout do repositório (lê edicoes/)
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependências Instagram
+        run: pip install -r requirements-instagram.txt
+
+      - name: Gerar (e postar) carrossel
+        env:
+          INSTAGRAM_USER:    ${{ secrets.INSTAGRAM_USER }}
+          INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
+          INSTAGRAM_SESSION: ${{ secrets.INSTAGRAM_SESSION }}
+          INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
+          # Fallback (só se não houver snapshot em edicoes/)
+          ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
+          GCP_JSON:          ${{ secrets.GCP_JSON }}
+          GOOGLE_SHEETS_ID:  ${{ secrets.GOOGLE_SHEETS_ID }}
+          DRY_RUN:           ${{ inputs.dry_run }}
+          PYTHONUTF8: "1"
+        run: |
+          EXTRA=""
+          [ "${DRY_RUN:-false}" = "true" ] && EXTRA="--dry-run"
+          python instagram_diario.py --modo carrossel $EXTRA
+
+      - name: Salvar slides gerados (artefato)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: anj-carrossel-${{ github.run_id }}
+          path: /tmp/anj_carrossel/
+          if-no-files-found: ignore
+          retention-days: 7
