@@ -1,5 +1,5 @@
 # Dependências para geração de vídeo (video_builder.py)
 # Separado para não inflar o ambiente do Streamlit Cloud
-moviepy>=1.0.3
+moviepy==1.0.3
 edge-tts>=6.1.9
 Pillow>=10.0.0

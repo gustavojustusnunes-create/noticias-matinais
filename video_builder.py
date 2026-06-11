@@ -50,12 +50,14 @@ def _buscar_fonte(tamanho: int, negrito: bool = False):
     candidatas = []
     if negrito:
         candidatas = [
+            "fonts/PlayfairDisplay.ttf",
             "C:/Windows/Fonts/georgiab.ttf",
             "C:/Windows/Fonts/timesbd.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf",
         ]
     else:
         candidatas = [
+            "fonts/Lora.ttf",
             "C:/Windows/Fonts/georgia.ttf",
             "C:/Windows/Fonts/times.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
