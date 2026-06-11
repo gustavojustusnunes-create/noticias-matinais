@@ -615,7 +615,7 @@ def obter_indicadores_app():
 def modal_inscricao():
     st.markdown(
         "<p style='font-size:0.95rem; color:#555;'>"
-        "Receba sua edição personalizada <b>todas as manhãs às 6h</b>.</p>",
+        "Receba sua edição personalizada <b>todas as manhãs</b>.</p>",
         unsafe_allow_html=True
     )
 
@@ -754,7 +754,7 @@ st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 st.markdown("""
 <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
   <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 18px;'>Notícias relevantes, sem ruído, todas as manhãs.</p>
-  <p>O <b>All News Journal</b> é um jornal digital independente que entrega na sua caixa de e-mail, todos os dias às 6h, uma edição <b>personalizada</b> com os cadernos que você escolheu.</p>
+  <p>O <b>All News Journal</b> é um jornal digital independente que entrega na sua caixa de e-mail, <b>todas as manhãs</b>, uma edição <b>personalizada</b> com os cadernos que você escolheu.</p>
   <p>Cada manchete é resumida por nossa redação editorial. Você lê em cinco minutos o que importou no mundo e começa o dia informado, sem rolar timeline, sem clicar em link nenhum.</p>
   <p style='margin-top: 22px; font-size: 0.95rem; color: #555;'>Use o botão abaixo para assinar. É gratuito.</p>
 </div>
@@ -882,7 +882,7 @@ with st.expander("📖 Sobre o All News Journal"):
     st.markdown("""
 **Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, resumidas e entregues diretamente no seu e-mail todas as manhãs.
 
-**Frequência:** Edição diária enviada às **6h da manhã** (horário de Brasília), de segunda a domingo.
+**Frequência:** Edição diária enviada **toda manhã** (horário de Brasília), de segunda a domingo.
 
 **Cadernos disponíveis:**
 
