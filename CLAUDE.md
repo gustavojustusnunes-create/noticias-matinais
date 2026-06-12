@@ -293,6 +293,11 @@ Resumo de status dos feeds (FEEDS_STATUS)
   empacotada → sistema → default
 - `INSTAGRAM_ENABLED` é uma **Variable** do GitHub (não secret);
   `INSTAGRAM_SESSION` (secret) carrega a sessão do instagrapi em base64
+- **Entrega** (mesma convenção do instagram_poster): Variable
+  `INSTAGRAM_DELIVERY` = `email` (padrão — manda carrossel/reel + legenda
+  por email via Resend p/ postagem manual) | `post` (publica direto via
+  instagrapi, com fallback p/ email se o login falhar).
+  `INSTAGRAM_EMAIL_TO` define o destinatário
 
 ---
 
