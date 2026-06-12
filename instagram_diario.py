@@ -39,6 +39,13 @@ INSTAGRAM_ENABLED = os.environ.get("INSTAGRAM_ENABLED", "false").lower() == "tru
 # Sessão do instagrapi (dump_settings) em base64 — mesma convenção do projeto.
 INSTAGRAM_SESSION = os.environ.get("INSTAGRAM_SESSION", "").strip()
 
+# Modo de entrega (mesma convenção do instagram_poster.py):
+#   "email" (padrão) → envia a mídia + legenda por email para postagem manual
+#   "post"           → publica direto via instagrapi
+# `or "..."` cobre o caso da Variable existir vazia no GitHub Actions.
+INSTAGRAM_DELIVERY = (os.environ.get("INSTAGRAM_DELIVERY", "") or "email").strip().lower()
+INSTAGRAM_EMAIL_TO = (os.environ.get("INSTAGRAM_EMAIL_TO", "") or "gustavojustusnunes@gmail.com").strip()
+
 CARROSSEL_DIR = Path(os.environ.get("ANJ_CARROSSEL_DIR", "/tmp/anj_carrossel"))
 REEL_DIR      = Path(os.environ.get("ANJ_REEL_DIR", "/tmp/anj_reel"))
 FONTS_DIR     = Path(__file__).parent / "fonts"
@@ -586,6 +593,76 @@ def montar_reel(frames, data_iso):
 
 
 # =============================================================================
+# --- ENTREGA POR EMAIL (via Resend) — avaliação e postagem manual ---
+# =============================================================================
+def enviar_midia_por_email(arquivos, legenda, assunto):
+    """Envia a mídia gerada (anexos) + legenda pronta por email via Resend,
+    para o Gustavo avaliar e postar manualmente até confiar na automação."""
+    if not REQ_OK:
+        print("   ❌ requests indisponível — não dá para enviar email.")
+        return False
+    try:
+        from config import RESEND_API_KEY, RESEND_FROM
+    except Exception:
+        RESEND_API_KEY, RESEND_FROM = "", ""
+    if not RESEND_API_KEY:
+        print("   ❌ RESEND_API_KEY não definido — não dá para enviar a mídia por email.")
+        return False
+
+    def _esc(t):
+        return (t.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                 .replace("\n", "<br>"))
+
+    anexos = []
+    for arq in arquivos:
+        arq = Path(arq)
+        try:
+            anexos.append({
+                "filename": arq.name,
+                "content":  base64.b64encode(arq.read_bytes()).decode(),
+            })
+        except Exception as e:
+            print(f"   ⚠️ Falha ao anexar {arq.name}: {e}")
+    if not anexos:
+        print("   ❌ Nenhum anexo válido — email não enviado.")
+        return False
+
+    html = (
+        "<div style='max-width:640px;margin:0 auto;font-family:Arial,sans-serif;'>"
+        f"<h2 style='font-family:Georgia,serif;color:#0a5c5a;'>{assunto}</h2>"
+        "<p style='font-size:14px;color:#444;'>A mídia está <b>anexada</b> a este email. "
+        f"Baixe os arquivos, copie a legenda abaixo e poste no <b>{INSTAGRAM_HANDLE}</b>.</p>"
+        "<div style='white-space:pre-wrap;font-size:14px;color:#222;"
+        "border-left:3px solid #c9a84c;padding:10px 14px;background:#faf8f4;'>"
+        f"{_esc(legenda)}</div>"
+        "</div>"
+    )
+
+    payload = {
+        "from":        RESEND_FROM,
+        "to":          [INSTAGRAM_EMAIL_TO],
+        "subject":     assunto,
+        "html":        html,
+        "attachments": anexos,
+    }
+    try:
+        r = requests.post(
+            "https://api.resend.com/emails",
+            headers={"Authorization": f"Bearer {RESEND_API_KEY}",
+                     "Content-Type": "application/json"},
+            json=payload, timeout=60,
+        )
+        if 200 <= r.status_code < 300:
+            print(f"   ✅ Email com {len(anexos)} anexo(s) enviado para {INSTAGRAM_EMAIL_TO}.")
+            return True
+        print(f"   ❌ Resend recusou (HTTP {r.status_code}): {r.text[:200]}")
+        return False
+    except Exception as e:
+        print(f"   ❌ Falha ao enviar email: {e}")
+        return False
+
+
+# =============================================================================
 # --- LOGIN / POSTAGEM ---
 # =============================================================================
 def _materializar_sessao_do_secret():
@@ -668,18 +745,25 @@ def main():
         print("   ❌ Nenhuma edição disponível. Abortando.")
         sys.exit(1)
 
-    postar = not args.dry_run and INSTAGRAM_ENABLED
     if args.dry_run:
-        print("   🧪 Modo --dry-run: gera mídia, não posta.")
+        print("   🧪 Modo --dry-run: gera mídia, não entrega.")
     elif not INSTAGRAM_ENABLED:
-        print("   ℹ️  INSTAGRAM_ENABLED=false — gerando mídia sem postar.")
+        print("   ℹ️  INSTAGRAM_ENABLED=false — gerando mídia sem entregar.")
+    elif INSTAGRAM_DELIVERY == "post":
+        print("   📤 Entrega: postagem direta via instagrapi.")
+    else:
+        print(f"   ✉️  Entrega: por email para {INSTAGRAM_EMAIL_TO} (postagem manual).")
 
     if args.modo == "carrossel":
         paths, legenda = gerar_carrossel(edicao)
         if not paths:
             sys.exit(1)
         print(f"\n   📋 Legenda:\n{legenda}\n")
-        if postar:
+        assunto = "📸 Carrossel de hoje — All News Journal"
+
+        if args.dry_run or not INSTAGRAM_ENABLED:
+            print(f"   💾 {len(paths)} slide(s) em {CARROSSEL_DIR}")
+        elif INSTAGRAM_DELIVERY == "post":
             cl = login_instagram()
             if cl:
                 try:
@@ -689,9 +773,10 @@ def main():
                     print(f"   ❌ Erro ao publicar carrossel: {e}")
                     sys.exit(1)
             else:
-                print("   ⚠️ Sem sessão — carrossel gerado mas não postado.")
+                print("   ⚠️ Login falhou — enviando por email como fallback.")
+                enviar_midia_por_email(paths, legenda, assunto)
         else:
-            print(f"   💾 {len(paths)} slide(s) em {CARROSSEL_DIR}")
+            enviar_midia_por_email(paths, legenda, assunto)
 
     else:  # reel
         frames, legenda = gerar_frames_reel(edicao)
@@ -704,7 +789,11 @@ def main():
         except subprocess.CalledProcessError as e:
             print(f"   ❌ ffmpeg falhou: {e}"); sys.exit(1)
         print(f"\n   📋 Legenda:\n{legenda}\n")
-        if postar:
+        assunto = "🎬 Reel de hoje — All News Journal"
+
+        if args.dry_run or not INSTAGRAM_ENABLED:
+            print(f"   💾 Reel em {mp4}")
+        elif INSTAGRAM_DELIVERY == "post":
             cl = login_instagram()
             if cl:
                 try:
@@ -714,9 +803,10 @@ def main():
                     print(f"   ❌ Erro ao publicar reel: {e}")
                     sys.exit(1)
             else:
-                print("   ⚠️ Sem sessão — reel gerado mas não postado.")
+                print("   ⚠️ Login falhou — enviando por email como fallback.")
+                enviar_midia_por_email([mp4], legenda, assunto)
         else:
-            print(f"   💾 Reel em {mp4}")
+            enviar_midia_por_email([mp4], legenda, assunto)
 
     print("\n✅ Concluído.")
 
