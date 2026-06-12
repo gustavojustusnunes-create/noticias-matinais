@@ -41,10 +41,18 @@ jobs:
       env:
         CLAUDE_KEY: ${{ secrets.CLAUDE_KEY }}
         ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
-        EMAIL_USER: ${{ secrets.EMAIL_USER }}
-        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+        EMAIL_USER: ${{ secrets.SMTP_USER }}
+        EMAIL_PASSWORD: ${{ secrets.SMTP_PASS }}
+        EMAIL_FROM: ${{ secrets.FROM_EMAIL }}
         SMTP_HOST: ${{ secrets.SMTP_HOST }}
         SMTP_PORT: ${{ secrets.SMTP_PORT }}
       run: |
         python enviar_video_diario.py
+
+    - name: Salvar Vídeo como Arquivo Baixável (Backup)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Video-Diario
+        path: assets/videos_gerados/*.mp4
+        retention-days: 7
