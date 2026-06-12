@@ -239,8 +239,20 @@ def criar_video(tema: str, titulo: str, resumo: str, url_fundo: str):
     # 3. Preparar Imagens de Fundo
     print("   🔄 Baixando imagens de fundo e fallback para o movimento rotativo...")
     img1_path = _baixar_e_processar(url_fundo, tema, "bg_principal")
-    fallback_url = FALLBACK_IMAGES.get(tema, url_fundo)
-    img2_path = _baixar_e_processar(fallback_url, tema, "bg_secundario")
+    
+    import random
+    fallback_urls = FALLBACK_IMAGES.get(tema, [])
+    if isinstance(fallback_urls, list) and fallback_urls:
+        amostra = random.sample(fallback_urls, min(2, len(fallback_urls)))
+        url_bg2 = amostra[0]
+        url_bg3 = amostra[1] if len(amostra) > 1 else url_bg2
+    else:
+        # Fallback de segurança legacy
+        url_bg2 = fallback_urls if isinstance(fallback_urls, str) else url_fundo
+        url_bg3 = url_fundo
+        
+    img2_path = _baixar_e_processar(url_bg2, tema, "bg_secundario")
+    img3_path = _baixar_e_processar(url_bg3, tema, "bg_terciario")
     
     # 4. Construção dos Clipes MoviePy
     print("   🎥 Preparando Efeitos Ken Burns e Camadas...")
@@ -266,21 +278,23 @@ def criar_video(tema: str, titulo: str, resumo: str, url_fundo: str):
         offset_y = int(0 + (2133 - 1920) * (t_rev / duracao_noticia) / 2)
         return f[offset_y:offset_y+1920, offset_x:offset_x+1080]
 
-    # Dividimos a duração da notícia em 2 para mostrar as duas imagens
-    d_meio = duracao_noticia / 2
+    # Dividimos a duração da notícia em 3 para mostrar as três imagens
+    d_parte = duracao_noticia / 3
     
-    c_bg1 = ImageClip(str(img1_path)).set_duration(d_meio + 1.0).fl(pan_in).set_position("center")
+    c_bg1 = ImageClip(str(img1_path)).set_duration(d_parte + 1.0).fl(pan_in).set_position("center")
     
-    # A segunda imagem faz crossfade entrando no meio do vídeo
-    c_bg2 = ImageClip(str(img2_path)).set_duration(d_meio + 1.0).fl(pan_out).set_position("center")
-    c_bg2 = c_bg2.set_start(d_meio - 1.0).crossfadein(1.0)
+    c_bg2 = ImageClip(str(img2_path)).set_duration(d_parte + 1.0).fl(pan_out).set_position("center")
+    c_bg2 = c_bg2.set_start(d_parte - 1.0).crossfadein(1.0)
+    
+    c_bg3 = ImageClip(str(img3_path)).set_duration(d_parte + 1.0).fl(pan_in).set_position("center")
+    c_bg3 = c_bg3.set_start(d_parte * 2 - 1.0).crossfadein(1.0)
     
     # Overlay Estático e Transparente
     overlay_path = gerar_overlay_transparente(tema, titulo, resumo)
     c_overlay = ImageClip(overlay_path).set_duration(duracao_noticia).set_position("center")
     
     # Junta os fundos com o Overlay por cima (Esta é a parte 2 do vídeo)
-    clip_noticia = CompositeVideoClip([c_bg1, c_bg2, c_overlay], size=(1080, 1920))
+    clip_noticia = CompositeVideoClip([c_bg1, c_bg2, c_bg3, c_overlay], size=(1080, 1920))
     clip_noticia = clip_noticia.set_duration(duracao_noticia).set_start(duracao_capa - 0.5).crossfadein(0.5)
     
     # Monta a Master

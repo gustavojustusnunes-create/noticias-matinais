@@ -42,14 +42,27 @@ def enviar_email_com_anexo(dest, html, subject, anexo_path):
 def main():
     print("🎬 Iniciando geração do Vídeo Diário...")
     try:
-        print("   📡 Buscando notícia real do caderno Economia para o vídeo...")
-        entries = feeds.coletar_entries_unico("Economia")
+        # Rotação semanal
+        temas_semana = {
+            0: "Economia",  # Segunda-feira
+            1: "IA",        # Terça-feira
+            2: "Mundo",     # Quarta-feira
+            3: "Politica",  # Quinta-feira
+            4: "Ciencia",   # Sexta-feira
+            5: "Cinema",    # Sábado
+            6: "Wellness"   # Domingo
+        }
+        dia_semana = datetime.now().weekday()
+        tema_hoje = temas_semana.get(dia_semana, "Mundo")
+        
+        print(f"   📡 Buscando notícia real do caderno {tema_hoje} para o vídeo...")
+        entries = feeds.coletar_entries_unico(tema_hoje)
         if not entries:
-            print("❌ Nenhuma notícia encontrada.")
+            print(f"❌ Nenhuma notícia encontrada para {tema_hoje}.")
             return
 
         entry = entries[0]
-        TITULO_BASE = entry.get("title", "Economia Global")
+        TITULO_BASE = entry.get("title", f"Destaques de {tema_hoje}")
         contexto = extrair_contexto_base(entry, max_chars=1500)
         
         prompt = (
@@ -68,10 +81,10 @@ def main():
             TITULO = TITULO_BASE
             RESUMO = contexto[:400].rsplit('.', 1)[0] + "."
             
-        URL_BG = feeds.extrair_imagem_rss(entry, "Economia")
+        URL_BG = feeds.extrair_imagem_rss(entry, tema_hoje)
         print(f"   📰 Notícia escolhida: {TITULO[:50]}...")
 
-        video_path = criar_video("Economia", TITULO, RESUMO, URL_BG)
+        video_path = criar_video(tema_hoje, TITULO, RESUMO, URL_BG)
         
         # Gerar legenda sugerida para o Reel
         prompt_legenda = (
@@ -91,7 +104,7 @@ def main():
                 f"{TITULO}\n\n"
                 f"{RESUMO}\n\n"
                 "Acesse o link na bio para ler sem ruídos! 📰✨\n\n"
-                "#Economia #Mercado #Noticias #AllNewsJournal\n"
+                f"#{tema_hoje} #Noticias #AllNewsJournal\n"
                 "@all.news.journal"
             )
             
@@ -103,7 +116,7 @@ def main():
             <h2 style="color: #0a5c5a;">Seu Vídeo Diário de Notícias Chegou! 🎥</h2>
             <p>Olá Gustavo,</p>
             <p>Em anexo você encontra o vídeo em formato vertical para Reels/TikTok gerado automaticamente.</p>
-            <p><b>Tema:</b> Economia<br>
+            <p><b>Tema:</b> {tema_hoje}<br>
             <b>Título:</b> {TITULO}</p>
             <br>
             <div style="background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">

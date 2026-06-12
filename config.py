@@ -327,17 +327,57 @@ INSTRUCAO_TEMA = {
 }
 
 # =============================================================================
-# --- IMAGENS DE FALLBACK ---
+# --- IMAGENS DE FALLBACK (BIBLIOTECA INTERNA) ---
 # =============================================================================
 FALLBACK_IMAGES = {
-    "Mundo":    "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=300&fit=crop",
-    "Economia": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
-    "Politica": "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=300&fit=crop",
-    "IA":       "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=300&fit=crop",
-    "Wellness": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=300&fit=crop",
-    "Ciencia":  "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=300&fit=crop",
-    "Cinema":   "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=300&fit=crop",
-    "Fofoca":   "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=300&fit=crop",
+    "Mundo": [
+        "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1526660690293-bcd32dc3b562?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=600&h=1066&fit=crop"
+    ],
+    "Economia": [
+        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=600&h=1066&fit=crop"
+    ],
+    "Politica": [
+        "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&h=1066&fit=crop"
+    ],
+    "IA": [
+        "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1655393001768-d946c98d6915?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1684369175836-829141042cb1?w=600&h=1066&fit=crop"
+    ],
+    "Wellness": [
+        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=600&h=1066&fit=crop"
+    ],
+    "Ciencia": [
+        "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1564325724739-bae0bd08762c?w=600&h=1066&fit=crop"
+    ],
+    "Cinema": [
+        "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&h=1066&fit=crop"
+    ],
+    "Fofoca": [
+        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1493225457224-ca2e6ef23b7b?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&h=1066&fit=crop"
+    ],
 }
 
 # =============================================================================
