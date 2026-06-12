@@ -8,9 +8,9 @@ from datetime import datetime
 from pathlib import Path
 import urllib.request
 import tempfile
-import textwrap
+import numpy as np
 
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
+from PIL import Image, ImageDraw
 
 try:
     from moviepy.editor import (
@@ -21,7 +21,15 @@ except ImportError:
     print("MoviePy nao instalado. Execute: pip install moviepy")
     sys.exit(1)
 
-from config import CORES_TEMA, ICONES_TEMA
+from config import CORES_TEMA, ICONES_TEMA, FALLBACK_IMAGES
+
+# Importando a identidade visual recém atualizada do instagram_diario
+from instagram_diario import (
+    slide_capa, _moldura, _masthead, _rotulo_caderno, 
+    _playfair, _lora, _texto_espacado, _largura_espacado, 
+    CREME, OURO, OURO_CLARO, INSTAGRAM_HANDLE, TURQUESA_DARK,
+    DIAS, MESES
+)
 
 # =============================================================================
 # --- VARIÁVEIS GLOBAIS E PASTAS ---
@@ -35,49 +43,60 @@ ASSETS_DIR = Path("assets")
 ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 MUSIC_FILE = ASSETS_DIR / "news_ticker.mp3"
 
-# Voz da âncora (edge-tts)
-# pt-BR-FranciscaNeural (Feminina), pt-BR-AntonioNeural (Masculino)
-VOICE = "pt-BR-FranciscaNeural" 
+VOICE = "pt-BR-AntonioNeural" # Estilo âncora masculino
 
 # =============================================================================
-# --- FUNÇÕES AUXILIARES DE CORES E FONTES ---
+# --- FUNÇÕES AUXILIARES ---
 # =============================================================================
 def _hex_to_rgb(hex_color: str) -> tuple:
     h = hex_color.lstrip("#")
     return tuple(int(h[i:i+2], 16) for i in (0, 2, 4))
 
-def _buscar_fonte(tamanho: int, negrito: bool = False):
-    candidatas = []
-    if negrito:
-        candidatas = [
-            "fonts/PlayfairDisplay.ttf",
-            "C:/Windows/Fonts/georgiab.ttf",
-            "C:/Windows/Fonts/timesbd.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSerif-Bold.ttf",
-        ]
+def _baixar_e_processar(url: str, tema: str, nome_arquivo: str) -> Path:
+    """Baixa e processa a imagem (Crop 9:16 e redimensionamento leve para Ken Burns)."""
+    cor_hex = CORES_TEMA.get(tema, "0a5c5a")
+    bg_path = TEMP_DIR / f"{nome_arquivo}.jpg"
+    
+    if url:
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+            with urllib.request.urlopen(req, timeout=10) as response, open(bg_path, 'wb') as out_file:
+                out_file.write(response.read())
+        except Exception as e:
+            print(f"   ⚠️ Erro ao baixar imagem {nome_arquivo}: {e}")
+            img = Image.new("RGB", (1080, 1920), _hex_to_rgb(cor_hex))
+            img.save(bg_path)
     else:
-        candidatas = [
-            "fonts/Lora.ttf",
-            "C:/Windows/Fonts/georgia.ttf",
-            "C:/Windows/Fonts/times.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf",
-        ]
-    for caminho in candidatas:
-        if os.path.exists(caminho):
-            try:
-                return ImageFont.truetype(caminho, tamanho)
-            except Exception:
-                continue
-    return ImageFont.load_default()
+        img = Image.new("RGB", (1080, 1920), _hex_to_rgb(cor_hex))
+        img.save(bg_path)
+        
+    img = Image.open(bg_path).convert("RGB")
+    w, h = img.size
+    target_ratio = 1080 / 1920
+    current_ratio = w / h
+    
+    if current_ratio > target_ratio:
+        new_w = int(h * target_ratio)
+        offset = (w - new_w) // 2
+        img = img.crop((offset, 0, offset + new_w, h))
+    else:
+        new_h = int(w / target_ratio)
+        offset = (h - new_h) // 2
+        img = img.crop((0, offset, w, offset + new_h))
+    
+    # Redimensiona para dar espaço de sobra para o Ken Burns (1200x2133 em vez de 1080x1920)
+    img = img.resize((1200, int(1200 / target_ratio)), Image.Resampling.LANCZOS)
+    bg_path_processed = TEMP_DIR / f"{nome_arquivo}_processed.jpg"
+    img.save(bg_path_processed, quality=95)
+    return bg_path_processed
 
 # =============================================================================
 # --- GERAÇÃO DE ÁUDIO (TTS) ---
 # =============================================================================
 async def _gerar_tts(texto: str, arquivo_saida: Path):
-    """Usa edge-tts via subprocess para gerar o áudio."""
     comando = [
         sys.executable, "-m", "edge_tts",
-        "--voice", "pt-BR-AntonioNeural",
+        "--voice", VOICE,
         "--rate=-10%",
         "--text", texto,
         "--write-media", str(arquivo_saida)
@@ -91,223 +110,203 @@ async def _gerar_tts(texto: str, arquivo_saida: Path):
     if proc.returncode != 0:
         print(f"❌ Erro ao gerar TTS para: {texto[:30]}...")
 
-def gerar_narracao(titulo: str, resumo: str) -> AudioFileClip:
-    """Gera os trechos de áudio e os concatena com pausas."""
-    arquivo_titulo = TEMP_DIR / "titulo.mp3"
-    arquivo_resumo = TEMP_DIR / "resumo.mp3"
-    arquivo_cta = TEMP_DIR / "cta.mp3"
+def gerar_audios(tema: str, titulo: str, resumo: str):
+    intro_texto = f"All News Journal. Edição diária, caderno de {tema}."
+    cta_texto = "Leia a edição completa e sem ruídos no seu e-mail. Assine gratuitamente no link da bio."
     
-    cta = "Leia a edição completa e sem ruídos no seu e-mail. Assine gratuitamente no link da bio."
+    arq_intro = TEMP_DIR / "intro.mp3"
+    arq_tit = TEMP_DIR / "titulo.mp3"
+    arq_res = TEMP_DIR / "resumo.mp3"
+    arq_cta = TEMP_DIR / "cta.mp3"
     
-    # Roda assíncrono para gerar os arquivos
     async def gerar_todos():
         await asyncio.gather(
-            _gerar_tts(titulo, arquivo_titulo),
-            _gerar_tts(resumo, arquivo_resumo),
-            _gerar_tts(cta, arquivo_cta)
+            _gerar_tts(intro_texto, arq_intro),
+            _gerar_tts(titulo, arq_tit),
+            _gerar_tts(resumo, arq_res),
+            _gerar_tts(cta_texto, arq_cta)
         )
-    
     asyncio.run(gerar_todos())
     
-    audio_t = AudioFileClip(str(arquivo_titulo))
-    audio_r = AudioFileClip(str(arquivo_resumo))
-    audio_c = AudioFileClip(str(arquivo_cta))
+    a_intro = AudioFileClip(str(arq_intro))
+    a_tit = AudioFileClip(str(arq_tit))
+    a_res = AudioFileClip(str(arq_res))
+    a_cta = AudioFileClip(str(arq_cta))
     
     from moviepy.audio.AudioClip import AudioArrayClip
-    import numpy as np
+    sil_curto = AudioArrayClip(np.zeros((int(44100 * 0.3), 2)), fps=44100)
+    sil_longo = AudioArrayClip(np.zeros((int(44100 * 0.5), 2)), fps=44100)
     
-    # Pausa de 0.5s
-    # Criar clip de silencio (0.5s)
-    silencio = AudioArrayClip(np.zeros((int(44100 * 0.5), 2)), fps=44100)
+    audio_capa = concatenate_audioclips([a_intro, sil_longo])
+    audio_noticia = concatenate_audioclips([a_tit, sil_longo, a_res, sil_curto, a_cta])
     
-    # Concatena: Titulo -> Pausa -> Resumo -> Pausa curta -> CTA
-    audio_final = concatenate_audioclips([audio_t, silencio, audio_r, silencio.subclip(0, 0.3), audio_c])
-    
-    return audio_final
+    return audio_capa, audio_noticia
 
 # =============================================================================
-# --- GERAÇÃO DE OVERLAYS (VISUAIS) ---
+# --- GERAÇÃO DE OVERLAYS VISUAIS ---
 # =============================================================================
-def gerar_overlay_base(tema: str, icone: str, cor_hex: str) -> str:
-    """Cria uma imagem PNG transparente com o gradiente inferior e a faixa superior."""
-    img = Image.new("RGBA", (1080, 1920), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(img)
+def gerar_overlay_transparente(tema: str, titulo: str, resumo: str) -> str:
+    """Gera apenas o gradiente, bordas e textos em PNG transparente (Identidade Visual)."""
+    W, H = 1080, 1920
+    canvas = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(canvas)
     
-    cor_rgb = _hex_to_rgb(cor_hex)
+    # 1. Gradiente Turquesa Translúcido (Baixo para Cima)
+    base = tuple(int(c * 0.55) for c in TURQUESA_DARK)
+    for y in range(H):
+        t = y / H
+        alpha = int(255 * (0.10 + 0.88 * (t ** 1.6)))
+        draw.line([(0, y), (W, y)], fill=(*base, alpha))
+        
+    topo = int(H * 0.18)
+    for y in range(topo):
+        a = int(140 * (1 - y / topo))
+        draw.line([(0, y), (W, y)], fill=(*TURQUESA_DARK, a))
+        
+    # 2. Moldura dupla dourada e Masthead
+    _moldura(draw, W, H)
+    px = 70
+    _masthead(draw, W, px)
     
-    # 1. Gradiente escuro de baixo para cima
-    for i in range(1920):
-        # Vai de 0 no y=0 até 220 no y=1920
-        # Mas queremos que o escuro comece no y=1000 e fique bem escuro no rodapé
-        if i > 1000:
-            alpha = int(240 * ((i - 1000) / 920))
-            draw.line([(0, i), (1080, i)], fill=(*cor_rgb[:], alpha))
+    # 3. Resumo em Lora (adaptativo, max 3 linhas)
+    resumo = (resumo or "").strip()
+    if len(resumo) > 200:
+        corte = resumo[:200].rsplit(" ", 1)[0]
+        resumo = corte + "…"
+    linhas_resumo = textwrap.wrap(resumo, width=52)[:3] if resumo else []
+    f_resumo, lh_resumo = _lora(28, 500), 38
+    
+    # 4. Título em Playfair (adaptativo)
+    titulo = (titulo or "").strip()
+    linhas_t = textwrap.wrap(titulo, width=18)
+    if len(linhas_t) <= 3:
+        f_t, lh_t = _playfair(72, 800), 82
+    else:
+        f_t, lh_t = _playfair(58, 800), 68
+        linhas_t = textwrap.wrap(titulo, width=22)
+        if len(linhas_t) > 4:
+            linhas_t = linhas_t[:4]
+            linhas_t[-1] = linhas_t[-1].rstrip(".,;") + "…"
             
-    # 2. Faixa superior com 60% de opacidade
-    faixa_cor = (*cor_rgb, int(255 * 0.6))
-    draw.rectangle([(0, 0), (1080, 200)], fill=faixa_cor)
+    y_rodape  = H - 88
+    y_resumo  = y_rodape - 40 - (lh_resumo * len(linhas_resumo) if linhas_resumo else 0)
+    y_titulo  = y_resumo - 24 - lh_t * len(linhas_t)
     
-    # 3. Textos superiores
-    fonte_logo = _buscar_fonte(45, negrito=True)
-    draw.text((54, 40), "ALL NEWS JOURNAL", font=fonte_logo, fill=(255, 255, 255, 255))
+    # 5. Rótulo do Tema
+    selo = _rotulo_caderno(tema)
+    draw.line([(px, y_titulo - 40), (px + 54, y_titulo - 40)], fill=OURO, width=3)
+    _texto_espacado(draw, (px, y_titulo - 30), selo, _lora(24, 700), OURO_CLARO, tracking=4)
     
-    fonte_tema = _buscar_fonte(55, negrito=True)
-    draw.text((54, 110), f"{icone} {tema.upper()}", font=fonte_tema, fill=(255, 255, 255, 255))
-    
-    # 4. Rodapé fixo
-    draw.rectangle([(0, 1820), (1080, 1920)], fill=(0, 0, 0, 180))
-    fonte_rodape = _buscar_fonte(35)
-    draw.text((54, 1850), "@all.news.journal", font=fonte_rodape, fill=(220, 220, 220, 255))
-    
-    caminho_overlay = TEMP_DIR / "overlay_base.png"
-    img.save(caminho_overlay)
-    return str(caminho_overlay)
-
-def desenhar_texto_sombra(texto: str, tamanho: int) -> str:
-    """Cria uma imagem transparente com o texto centralizado dinâmico e sombra."""
-    img = Image.new("RGBA", (1080, 1920), (0, 0, 0, 0))
-    draw = ImageDraw.Draw(img)
-    fonte = _buscar_fonte(tamanho, negrito=True)
-    
-    linhas = textwrap.wrap(texto, width=22)
-    altura_linha = tamanho + 20
-    altura_total = len(linhas) * altura_linha
-    y_inicio = (1920 - altura_total) // 2
-    
-    for i, linha in enumerate(linhas):
-        bbox = draw.textbbox((0, 0), linha, font=fonte)
-        largura_txt = bbox[2] - bbox[0]
-        x = (1080 - largura_txt) // 2
-        y = y_inicio + i * altura_linha
+    # 6. Desenhar Textos Principais
+    y = y_titulo
+    for ln in linhas_t:
+        draw.text((px, y), ln, font=f_t, fill=CREME)
+        y += lh_t
         
-        # Sombra
-        deslocamentos = [(3,3), (-3,-3), (3,-3), (-3,3), (0,4), (0,-4), (4,0), (-4,0)]
-        for dx, dy in deslocamentos:
-            draw.text((x + dx, y + dy), linha, font=fonte, fill=(0, 0, 0, 200))
+    y = y_resumo
+    for ln in linhas_resumo:
+        draw.text((px, y), ln, font=f_resumo, fill=(235, 232, 226))
+        y += lh_resumo
         
-        # Texto Principal
-        draw.text((x, y), linha, font=fonte, fill=(255, 255, 255, 255))
-        
-    arquivo_temp = TEMP_DIR / f"texto_{hash(texto)}.png"
-    img.save(arquivo_temp)
-    return str(arquivo_temp)
+    # 7. Rodapé do Insta
+    draw.line([(px, y_rodape - 16), (W - px, y_rodape - 16)], fill=OURO, width=1)
+    _texto_espacado(draw, (px, y_rodape), INSTAGRAM_HANDLE.upper(), _lora(20, 500), OURO_CLARO, tracking=3)
+    
+    caminho = TEMP_DIR / "overlay_jornal.png"
+    canvas.save(caminho, "PNG")
+    return str(caminho)
 
 # =============================================================================
-# --- MONTAGEM DO VÍDEO ---
+# --- MONTAGEM DO VÍDEO COMPLETO ---
 # =============================================================================
 def criar_video(tema: str, titulo: str, resumo: str, url_fundo: str):
-    print(f"🎬 Iniciando criação de vídeo para: {tema} - {titulo[:30]}...")
+    print(f"🎬 Iniciando criação de vídeo Reel contínuo para: {tema}...")
     
-    # 1. Obter Ícone e Cor
-    icone = ICONES_TEMA.get(tema, "📰")
-    cor_hex = CORES_TEMA.get(tema, "0a5c5a")
+    # 1. Gerar e Salvar Capa Estática
+    agora = datetime.now()
+    data_extenso = f"{DIAS[agora.weekday()]}, {agora.day} de {MESES[agora.month - 1]} de {agora.year}"
+    capa_img = slide_capa(1080, 1920, data_extenso, caderno=tema)
+    capa_path = TEMP_DIR / "capa.jpg"
+    capa_img.save(capa_path, "JPEG", quality=95)
     
-    # 2. Baixar Imagem de Fundo
-    print("   ⬇️ Baixando imagem de fundo...")
-    bg_path = TEMP_DIR / "bg.jpg"
-    try:
-        req = urllib.request.Request(url_fundo, headers={'User-Agent': 'Mozilla/5.0'})
-        with urllib.request.urlopen(req) as response, open(bg_path, 'wb') as out_file:
-            out_file.write(response.read())
-    except Exception as e:
-        print(f"   ⚠️ Erro ao baixar imagem: {e}")
-        # Criar fundo sólido em caso de falha
-        img = Image.new("RGB", (1080, 1920), _hex_to_rgb(cor_hex))
-        img.save(bg_path)
+    # 2. Gerar Áudio Total
+    print("   🎙️ Gerando locução completa...")
+    audio_capa, audio_noticia = gerar_audios(tema, titulo, resumo)
+    duracao_capa = audio_capa.duration
+    duracao_noticia = audio_noticia.duration
+    duracao_total = duracao_capa + duracao_noticia - 0.5 # Overlap na transição
+    
+    # 3. Preparar Imagens de Fundo
+    print("   🔄 Baixando imagens de fundo e fallback para o movimento rotativo...")
+    img1_path = _baixar_e_processar(url_fundo, tema, "bg_principal")
+    fallback_url = FALLBACK_IMAGES.get(tema, url_fundo)
+    img2_path = _baixar_e_processar(fallback_url, tema, "bg_secundario")
+    
+    # 4. Construção dos Clipes MoviePy
+    print("   🎥 Preparando Efeitos Ken Burns e Camadas...")
+    
+    # Capa Initial (Mostrada durante a locução de intro)
+    clip_capa = ImageClip(str(capa_path)).set_duration(duracao_capa)
+    
+    # Background Animado: Intercalando as imagens para "rodam para dar impressão de movimento"
+    # Animação de Pan/Zoom In
+    def pan_in(get_frame, t):
+        f = get_frame(t)
+        # Move levemente o offset
+        offset_x = int(0 + (1200 - 1080) * (t / duracao_noticia) / 2)
+        offset_y = int(0 + (2133 - 1920) * (t / duracao_noticia) / 2)
+        return f[offset_y:offset_y+1920, offset_x:offset_x+1080]
         
-    # Processar imagem de fundo (cortar para 9:16)
-    img = Image.open(bg_path).convert("RGB")
-    w, h = img.size
-    target_ratio = 1080 / 1920
-    current_ratio = w / h
-    if current_ratio > target_ratio:
-        # Imagem é mais larga -> cortar laterais
-        new_w = int(h * target_ratio)
-        offset = (w - new_w) // 2
-        img = img.crop((offset, 0, offset + new_w, h))
-    else:
-        # Imagem é mais alta -> cortar topo/base
-        new_h = int(w / target_ratio)
-        offset = (h - new_h) // 2
-        img = img.crop((0, offset, w, offset + new_h))
+    # Animação de Pan/Zoom Out
+    def pan_out(get_frame, t):
+        f = get_frame(t)
+        # Reversa: Inicia deslocado e vai voltando pro centro
+        t_rev = duracao_noticia - t
+        offset_x = int(0 + (1200 - 1080) * (t_rev / duracao_noticia) / 2)
+        offset_y = int(0 + (2133 - 1920) * (t_rev / duracao_noticia) / 2)
+        return f[offset_y:offset_y+1920, offset_x:offset_x+1080]
+
+    # Dividimos a duração da notícia em 2 para mostrar as duas imagens
+    d_meio = duracao_noticia / 2
     
-    # Redimensiona para ser ligeiramente maior que a tela para o Ken Burns
-    img = img.resize((1200, int(1200 / target_ratio)), Image.Resampling.LANCZOS)
-    bg_path_processed = TEMP_DIR / "bg_processed.jpg"
-    img.save(bg_path_processed)
+    c_bg1 = ImageClip(str(img1_path)).set_duration(d_meio + 1.0).fl(pan_in).set_position("center")
     
-    # 3. Gerar Áudio
-    print("   🎙️ Gerando narração TTS...")
-    audio_narracao = gerar_narracao(titulo, resumo)
-    duracao_total = audio_narracao.duration
+    # A segunda imagem faz crossfade entrando no meio do vídeo
+    c_bg2 = ImageClip(str(img2_path)).set_duration(d_meio + 1.0).fl(pan_out).set_position("center")
+    c_bg2 = c_bg2.set_start(d_meio - 1.0).crossfadein(1.0)
     
-    # 4. Música de Fundo
-    audio_final = audio_narracao
+    # Overlay Estático e Transparente
+    overlay_path = gerar_overlay_transparente(tema, titulo, resumo)
+    c_overlay = ImageClip(overlay_path).set_duration(duracao_noticia).set_position("center")
+    
+    # Junta os fundos com o Overlay por cima (Esta é a parte 2 do vídeo)
+    clip_noticia = CompositeVideoClip([c_bg1, c_bg2, c_overlay], size=(1080, 1920))
+    clip_noticia = clip_noticia.set_duration(duracao_noticia).set_start(duracao_capa - 0.5).crossfadein(0.5)
+    
+    # Monta a Master
+    video = CompositeVideoClip([clip_capa, clip_noticia], size=(1080, 1920))
+    
+    # Combina o Áudio Total
+    audio_master = CompositeAudioClip([
+        audio_capa.set_start(0),
+        audio_noticia.set_start(duracao_capa - 0.5)
+    ])
+    
+    # Adicionar Música de Fundo (Se houver)
     if MUSIC_FILE.exists():
-        musica = AudioFileClip(str(MUSIC_FILE))
-        # Loop na musica se for menor que o video
         from moviepy.audio.fx.all import volumex
+        musica = AudioFileClip(str(MUSIC_FILE))
+        # Loop simplificado
         if musica.duration < duracao_total:
-            # Isso é simplificado, o certo seria um loop, mas pra n complicar:
             pass
         musica = musica.subclip(0, min(musica.duration, duracao_total))
-        musica = volumex(musica, 0.10) # 10% do volume
-        audio_final = CompositeAudioClip([audio_narracao, musica])
+        musica = volumex(musica, 0.08) # 8% do volume para não ofuscar o âncora
+        audio_master = CompositeAudioClip([audio_master, musica.set_start(0)])
         
-    # 5. Efeito Ken Burns (Movimentação simples ao longo do tempo)
-    print("   🎥 Preparando clipes e Ken Burns...")
-    # Ao invés de resize dinâmico (muito lento), vamos usar crop dinâmico (Pan)
-    bg_clip = ImageClip(str(bg_path_processed)).set_duration(duracao_total)
-    
-    def pan_zoom(get_frame, t):
-        # A imagem tem 1200x2133, a tela é 1080x1920. 
-        # Movemos do centro para uma das bordas suavemente
-        frame = get_frame(t)
-        # Corta a parte da imagem com base no t
-        x_center = 1200 / 2
-        y_center = 2133 / 2
-        
-        # Fator de zoom leve:
-        # começa com 1200x2133 e termina exibindo uma janela menor (ex: 1080x1920)
-        # Na verdade, basta cortar um 1080x1920 movendo o offset
-        offset_x = int(0 + (1200 - 1080) * (t / duracao_total) / 2)
-        offset_y = int(0 + (2133 - 1920) * (t / duracao_total) / 2)
-        return frame[offset_y:offset_y+1920, offset_x:offset_x+1080]
-
-    bg_clip = bg_clip.fl(pan_zoom)
-    bg_clip = bg_clip.set_position("center")
-    
-    # 6. Sobreposições
-    overlay_path = gerar_overlay_base(tema, icone, cor_hex)
-    overlay_clip = ImageClip(overlay_path).set_duration(duracao_total)
-    
-    # 7. Textos Dinâmicos (Título no centro)
-    # Mostraremos o título durante os primeiros 5 segundos
-    path_txt = desenhar_texto_sombra(titulo, 75)
-    duracao_titulo = min(6.0, duracao_total)
-    txt_clip = ImageClip(path_txt).set_duration(duracao_titulo).crossfadeout(1.0)
-    
-    # Mostrar resumo aos poucos (fracionado em 2 partes se for longo)
-    partes_resumo = textwrap.wrap(resumo, width=60)
-    resumo_clips = []
-    t_inicio = duracao_titulo - 0.5
-    
-    for i, p in enumerate(partes_resumo):
-        d_p = (duracao_total - duracao_titulo - 4) / len(partes_resumo) # Reserva 4s pro CTA
-        if d_p < 2: d_p = 2
-        pt_path = desenhar_texto_sombra(p, 65)
-        rc = ImageClip(pt_path).set_start(t_inicio).set_duration(d_p).crossfadein(0.5).crossfadeout(0.5)
-        resumo_clips.append(rc)
-        t_inicio += d_p
-        
-    # Compor tudo
-    video = CompositeVideoClip(
-        [bg_clip, overlay_clip, txt_clip] + resumo_clips,
-        size=(1080, 1920)
-    ).set_audio(audio_final)
+    video = video.set_audio(audio_master)
     
     arquivo_saida = OUTPUT_DIR / f"{tema.lower()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
-    print(f"   💾 Renderizando vídeo final: {arquivo_saida}")
+    print(f"   💾 Renderizando arquivo final: {arquivo_saida}")
     
     video.write_videofile(
         str(arquivo_saida),
@@ -316,17 +315,17 @@ def criar_video(tema: str, titulo: str, resumo: str, url_fundo: str):
         audio_codec="aac",
         threads=4,
         preset="fast",
-        logger=None # desativa a barra de progresso no console que polui o output
+        logger=None # desativa logs poluidos do tqdm
     )
     
-    print(f"✅ Vídeo gerado com sucesso em {arquivo_saida}")
+    print(f"✅ Vídeo estilo Reel contínuo gerado com sucesso em {arquivo_saida}")
     return arquivo_saida
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
     
-    print("🎥 Teste Rápido do Video Builder (Tom Sério/Telejornal)")
+    print("🎥 Teste Rápido do Video Builder (Estilo Capa de Jornal)")
     
     TEMA = "Economia"
     TITULO = ""
@@ -336,17 +335,14 @@ if __name__ == "__main__":
     try:
         import feeds
         from claude_api import extrair_contexto_base, chamar_claude_api
-        print("   📡 Buscando notícia real do caderno Economia para o teste...")
+        print("   📡 Buscando notícia real do caderno Economia...")
         
-        # Coleta as entries de Economia
         entries = feeds.coletar_entries_unico("Economia")
         if entries:
             entry = entries[0]
             TITULO_BASE = entry.get("title", "Economia Global")
-            # Extrai até 1500 caracteres do artigo real
             contexto = extrair_contexto_base(entry, max_chars=1500)
             
-            # Tenta gerar um roteiro profissional via IA
             prompt = (
                 "Você é o âncora principal de um telejornal/podcast muito respeitado. "
                 "Crie um roteiro aprofundado, analítico e de tom sério (aprox. 80-100 palavras) "
@@ -360,34 +356,26 @@ if __name__ == "__main__":
                 RESUMO = resumo_ia.strip().strip('"')
                 TITULO = TITULO_BASE
             else:
-                # Fallback sem IA: Usa o próprio texto base
-                print("   ⚠️ Sem API Key ou erro na IA. Usando texto extraído diretamente do RSS.")
+                print("   ⚠️ Sem IA. Usando texto base.")
                 TITULO = TITULO_BASE
-                # Pega as primeiras frases (aprox 400 caracteres)
                 RESUMO = contexto[:400].rsplit('.', 1)[0] + "."
                 
             URL_BG = feeds.extrair_imagem_rss(entry, TEMA)
-            print(f"   📰 Notícia escolhida: {TITULO[:50]}...")
             
     except Exception as e:
         print(f"   ⚠️ Erro ao buscar notícia real: {e}")
         
     if not TITULO or not RESUMO:
-        print("   ⚠️ Usando texto de demonstração estendido.")
+        print("   ⚠️ Usando texto de demonstração.")
         TITULO = "Banco Central eleva projeção de inflação para 2026 e alerta mercado"
         RESUMO = (
-            "Boa noite. O cenário econômico brasileiro sofreu um forte abalo nesta manhã. "
+            "O cenário econômico brasileiro sofreu um forte abalo nesta manhã. "
             "O comitê central de política monetária divulgou uma revisão drástica em suas "
             "projeções de inflação para os próximos anos, apontando riscos fiscais e "
             "incertezas globais como os principais vetores de instabilidade. Analistas de "
             "mercado já precificam um ciclo prolongado de juros altos, o que impactou "
-            "imediatamente a bolsa de valores, fechando em queda de mais de dois por cento. "
-            "O dólar, como reflexo de proteção, disparou. Continuaremos acompanhando as "
-            "consequências desta decisão."
+            "imediatamente a bolsa de valores."
         )
         URL_BG = "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?q=80&w=1080&auto=format&fit=crop"
 
-    if not MUSIC_FILE.exists():
-        print("⚠️ Música de fundo não encontrada. O vídeo será gerado sem música.")
-        
     criar_video(TEMA, TITULO, RESUMO, URL_BG)
