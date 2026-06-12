@@ -72,6 +72,30 @@ def main():
         print(f"   📰 Notícia escolhida: {TITULO[:50]}...")
 
         video_path = criar_video("Economia", TITULO, RESUMO, URL_BG)
+        
+        # Gerar legenda sugerida para o Reel
+        prompt_legenda = (
+            "Crie uma legenda curta e engajadora para o Instagram/TikTok para um vídeo sobre a seguinte notícia: "
+            f"\n\nTítulo: {TITULO}\nResumo: {RESUMO}\n\n"
+            "Regras: "
+            "1. Escreva 1 parágrafo chamativo.\n"
+            "2. Adicione um CTA para ler mais no link da bio.\n"
+            "3. Inclua 4-6 hashtags relevantes ao tema e a hashtag #AllNewsJournal.\n"
+            "4. A última linha deve obrigatoriamente marcar '@all.news.journal'.\n"
+            "Responda apenas com o texto da legenda, sem introduções."
+        )
+        legenda_ia = chamar_claude_api(prompt_legenda, max_tokens=150)
+        
+        if not legenda_ia:
+            legenda_ia = (
+                f"{TITULO}\n\n"
+                f"{RESUMO}\n\n"
+                "Acesse o link na bio para ler sem ruídos! 📰✨\n\n"
+                "#Economia #Mercado #Noticias #AllNewsJournal\n"
+                "@all.news.journal"
+            )
+            
+        legenda_html = legenda_ia.strip().replace("\n", "<br>")
 
         html = f"""
         <html>
@@ -81,6 +105,11 @@ def main():
             <p>Em anexo você encontra o vídeo em formato vertical para Reels/TikTok gerado automaticamente.</p>
             <p><b>Tema:</b> Economia<br>
             <b>Título:</b> {TITULO}</p>
+            <br>
+            <div style="background: #ffffff; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
+                <h3 style="color: #0a5c5a; margin-top: 0;">Sugestão de Legenda (Copie e Cole):</h3>
+                <p style="font-family: monospace; font-size: 14px; color: #333;">{legenda_html}</p>
+            </div>
             <br>
             <p><i>All News Journal Automation</i></p>
         </body>
