@@ -97,7 +97,7 @@ async def _gerar_tts(texto: str, arquivo_saida: Path):
     comando = [
         sys.executable, "-m", "edge_tts",
         "--voice", VOICE,
-        "--rate=-10%",
+        "--rate=+20%",
         "--text", texto,
         "--write-media", str(arquivo_saida)
     ]
