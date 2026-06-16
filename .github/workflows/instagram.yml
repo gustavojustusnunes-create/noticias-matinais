@@ -2,7 +2,9 @@ name: Instagram Daily Posts
 
 on:
   schedule:
-    - cron: '15 9 * * *'   # 15 minutos após o daily.yml (09:15 UTC = 06:15 BRT)
+    # Roda a cada 2 horas espalhadas pelo dia, para os 8 cadernos (UTC: 12, 14, 16, 18, 20, 22, 00, 02)
+    # Equivalente em BRT (Brasília): 09h, 11h, 13h, 15h, 17h, 19h, 21h, 23h
+    - cron: '15 0,2,12,14,16,18,20,22 * * *'
   workflow_dispatch:         # Permite rodar manualmente
 
 jobs:

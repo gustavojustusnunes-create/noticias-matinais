@@ -431,7 +431,7 @@ def postar_instagram(cl, caminho_imagem, legenda):
 # =============================================================================
 # --- COLETA DAS NOTÍCIAS (1 por caderno, com imagem) ---
 # =============================================================================
-def obter_noticias_para_instagram():
+def obter_noticias_para_instagram(tema_alvo=None):
     """Retorna lista ordenada: [{tema, titulo, resumo, imagem}, ...] (1 por caderno)."""
     from sheets_db import conectar_banco, carregar_historico
     from feeds import processar_tema
@@ -441,7 +441,10 @@ def obter_noticias_para_instagram():
     historico = carregar_historico(sheet_historico) if sheet_historico else set()
 
     noticias = []
-    for tema in ORDEM_CADERNOS:
+    # Se um tema específico for solicitado, processamos apenas ele. Senão, todos.
+    temas_para_processar = [tema_alvo] if tema_alvo and tema_alvo in ORDEM_CADERNOS else ORDEM_CADERNOS
+
+    for tema in temas_para_processar:
         try:
             resultado = processar_tema(tema, historico)
             if resultado:
@@ -470,10 +473,34 @@ def main():
     if not PIL_OK:
         print("   ❌ Pillow não instalado: pip install Pillow"); sys.exit(1)
 
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--caderno", type=str, help="Nome do caderno a ser postado")
+    # Para capturar quaisquer outros argumentos sem quebrar (útil no github actions se mudar)
+    args, _ = parser.parse_known_args()
+
+    tema_alvo = args.caderno
+    if not tema_alvo:
+        # Lógica de Horários (Tabela baseada no CRON em UTC)
+        # 12 UTC = 09h BRT | 14 UTC = 11h BRT | 16 UTC = 13h BRT | 18 UTC = 15h BRT
+        # 20 UTC = 17h BRT | 22 UTC = 19h BRT | 00 UTC = 21h BRT | 02 UTC = 23h BRT
+        from config import ORDEM_CADERNOS
+        hora_utc = datetime.utcnow().hour
+        mapa_horarios = {12: 0, 14: 1, 16: 2, 18: 3, 20: 4, 22: 5, 0: 6, 2: 7}
+        idx = mapa_horarios.get(hora_utc)
+        
+        if idx is not None and idx < len(ORDEM_CADERNOS):
+            tema_alvo = ORDEM_CADERNOS[idx]
+            print(f"   ⏰ {hora_utc}h UTC detectado. Caderno escolhido: {tema_alvo}")
+        else:
+            print(f"   ℹ️  Hora atual ({hora_utc}h UTC) não está na grade fixa. Executando para TODOS os cadernos.")
+    else:
+        print(f"   🎯 Tema Alvo fornecido manualmente: {tema_alvo}")
+
     hoje = datetime.now()
     data_str = f"{hoje.day:02d} {MESES_ABREV[hoje.month - 1]} {hoje.year}"
 
-    noticias = obter_noticias_para_instagram()
+    noticias = obter_noticias_para_instagram(tema_alvo)
     if not noticias:
         print("   ❌ Nenhuma notícia disponível."); return
 
