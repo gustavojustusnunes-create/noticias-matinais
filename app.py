@@ -752,222 +752,226 @@ st.markdown("""
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-st.markdown("""
-<div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
-  <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 18px;'>Notícias relevantes, sem ruído, todas as manhãs.</p>
-  <p>O <b>All News Journal</b> é um jornal digital independente que entrega na sua caixa de e-mail, <b>todas as manhãs</b>, uma edição <b>personalizada</b> com os cadernos que você escolheu.</p>
-  <p>Cada manchete é resumida por nossa redação editorial. Você lê em cinco minutos o que importou no mundo e começa o dia informado, sem rolar timeline, sem clicar em link nenhum.</p>
-  <p style='margin-top: 22px; font-size: 0.95rem; color: #555;'>Use o botão abaixo para assinar. É gratuito.</p>
-</div>
-""", unsafe_allow_html=True)
+aba_inicio, aba_edicao = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje"])
 
-# Botão CTA centralizado que abre o modal
-col_cta_l, col_cta_c, col_cta_r = st.columns([1, 2, 1])
-with col_cta_c:
-    if st.button("✉️ ASSINE GRATUITAMENTE — É RÁPIDO ✨", type="primary", use_container_width=True, key="btn_open_signup"):
-        modal_inscricao()
+with aba_inicio:
+    st.markdown("""
+    <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
+      <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 18px;'>Notícias relevantes, sem ruído, todas as manhãs.</p>
+      <p>O <b>All News Journal</b> é um jornal digital independente que entrega na sua caixa de e-mail, <b>todas as manhãs</b>, uma edição <b>personalizada</b> com os cadernos que você escolheu.</p>
+      <p>Cada manchete é resumida por nossa redação editorial. Você lê em cinco minutos o que importou no mundo e começa o dia informado, sem rolar timeline, sem clicar em link nenhum.</p>
+      <p style='margin-top: 22px; font-size: 0.95rem; color: #555;'>Use o botão abaixo para assinar. É gratuito.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Data + Edição
-hoje = datetime.now()
-meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
-dias_semana = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
-data_ptbr = f"{dias_semana[hoje.weekday()]}, {hoje.day} de {meses[hoje.month-1]} de {hoje.year}"
+    # Botão CTA centralizado que abre o modal
+    col_cta_l, col_cta_c, col_cta_r = st.columns([1, 2, 1])
+    with col_cta_c:
+        if st.button("✉️ ASSINE GRATUITAMENTE — É RÁPIDO ✨", type="primary", use_container_width=True, key="btn_open_signup"):
+            modal_inscricao()
 
-col_date, col_loc = st.columns(2)
-col_date.markdown(
-    f"<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>📅 {data_ptbr}</div>",
-    unsafe_allow_html=True
-)
-col_loc.markdown(
-    "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global · Digital</div>",
-    unsafe_allow_html=True
-)
+    # Data + Edição
+    hoje = datetime.now()
+    meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
+    dias_semana = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
+    data_ptbr = f"{dias_semana[hoje.weekday()]}, {hoje.day} de {meses[hoje.month-1]} de {hoje.year}"
 
-# Contador de assinantes
-@st.cache_data(ttl=600)
-def obter_total_assinantes():
-    sheet = conectar_planilha()
-    if not sheet:
-        return 0
-    try:
-        registros = sheet.get_all_records()
-        return sum(
-            1 for r in registros
-            if any(str(r.get(t, "")).strip().isdigit() for t in RSS_FEEDS)
-        )
-    except Exception:
-        return 0
-
-total_assinantes = obter_total_assinantes()
-if total_assinantes > 0:
-    st.markdown(
-        f"<div style='text-align:center;padding:8px;color:#0a5c5a;font-size:0.88rem;'>"
-        f"📊 <b>{total_assinantes}</b> leitores já recebem nossa curadoria</div>",
+    col_date, col_loc = st.columns(2)
+    col_date.markdown(
+        f"<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>📅 {data_ptbr}</div>",
+        unsafe_allow_html=True
+    )
+    col_loc.markdown(
+        "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global · Digital</div>",
         unsafe_allow_html=True
     )
 
-st.write("")
+    # Contador de assinantes
+    @st.cache_data(ttl=600)
+    def obter_total_assinantes():
+        sheet = conectar_planilha()
+        if not sheet:
+            return 0
+        try:
+            registros = sheet.get_all_records()
+            return sum(
+                1 for r in registros
+                if any(str(r.get(t, "")).strip().isdigit() for t in RSS_FEEDS)
+            )
+        except Exception:
+            return 0
 
-# Selectbox para escolher caderno
-tema_atual = st.selectbox("📖 Selecione o Caderno:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
-st.markdown("<br>", unsafe_allow_html=True)
-
-noticias_display = []
-
-if tema_atual == "Capa (Destaques)":
-    indicadores = obter_indicadores_app()
-    if indicadores:
+    total_assinantes = obter_total_assinantes()
+    if total_assinantes > 0:
         st.markdown(
-            "<h3 style='text-align:center; font-size:1.0rem; letter-spacing:1px;'>"
-            "📈 Indicadores do Dia</h3>",
+            f"<div style='text-align:center;padding:8px;color:#0a5c5a;font-size:0.88rem;'>"
+            f"📊 <b>{total_assinantes}</b> leitores já recebem nossa curadoria</div>",
             unsafe_allow_html=True
         )
-        cols_ind = st.columns(len(indicadores))
-        for col_i, ind in zip(cols_ind, indicadores):
-            cor   = "#0a7c00" if (ind["var"] or 0) >= 0 else "#cc0000"
-            seta  = "▲" if (ind["var"] or 0) >= 0 else "▼"
-            sinal = "+" if (ind["var"] or 0) > 0 else ""
-            var_str = f"{seta} {sinal}{ind['var']:.2f}%" if ind["var"] is not None else ""
-            col_i.markdown(
-                f"<div style='text-align:center; background:#fff; border:1px solid #e5e3de; "
-                f"border-radius:8px; padding:10px 6px; margin-bottom:12px;'>"
-                f"<div style='font-size:0.72rem; text-transform:uppercase; "
-                f"letter-spacing:1px; color:#888; font-weight:bold;'>{ind['nome']}</div>"
-                f"<div style='font-size:1.05rem; font-weight:bold; color:#2c2c2c; margin:4px 0;'>"
-                f"{ind['valor']}</div>"
-                f"<div style='font-size:0.80rem; color:{cor}; font-weight:bold;'>{var_str}</div>"
-                f"</div>",
+
+    st.write("")
+
+    # Selectbox para escolher caderno
+    tema_atual = st.selectbox("📖 Selecione o Caderno:", ["Capa (Destaques)"] + list(RSS_FEEDS.keys()))
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    noticias_display = []
+
+    if tema_atual == "Capa (Destaques)":
+        indicadores = obter_indicadores_app()
+        if indicadores:
+            st.markdown(
+                "<h3 style='text-align:center; font-size:1.0rem; letter-spacing:1px;'>"
+                "📈 Indicadores do Dia</h3>",
                 unsafe_allow_html=True
             )
-        st.markdown("<br>", unsafe_allow_html=True)
-
-    for t in RSS_FEEDS.keys():
-        res = buscar_noticias(t)
-        if res:
-            item = res[0]
-            item['tema'] = t
-            noticias_display.append(item)
-else:
-    res = buscar_noticias(tema_atual)
-    if not res:
-        st.warning(f"⚠️ As notícias de **{tema_atual}** estão temporariamente indisponíveis. Tente novamente em alguns minutos.")
-    for item in res:
-        item['tema'] = tema_atual
-        noticias_display.append(item)
-
-if noticias_display:
-    cols = st.columns(3)
-    for i, n in enumerate(noticias_display):
-        col = cols[i % 3]
-        with col:
-            fallback_url = FALLBACK_IMAGES.get(n['tema'], 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop')
-            st.markdown(f"""
-            <div class="news-card">
-                <a href="{n['link']}" target="_blank" rel="noopener noreferrer">
-                    <img src="{n['img']}" class="news-img"
-                         onerror="this.src='{fallback_url}'">
-                </a>
-                <div class="news-content">
-                    <span class="news-tag">{n['tema']}</span>
-                    <a href="{n['link']}" target="_blank" rel="noopener noreferrer" class="news-title">{n['titulo']}</a>
-                    <a href="{n['link']}" target="_blank" rel="noopener noreferrer" class="news-source">Ler na fonte original →</a>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-elif not noticias_display and tema_atual == "Capa (Destaques)":
-    st.info("A carregar as manchetes mais recentes...")
-
-# =============================================================================
-# --- EDIÇÃO DO DIA (publicada pelo daily — lê edicoes/index.json) ---
-# =============================================================================
-try:
-    import os as _os
-    import streamlit.components.v1 as _components
-
-    _idx_path = _os.path.join("edicoes", "index.json")
-    if _os.path.exists(_idx_path):
-        with open(_idx_path, encoding="utf-8") as _f:
-            _indice = json.load(_f)
-        if _indice:
+            cols_ind = st.columns(len(indicadores))
+            for col_i, ind in zip(cols_ind, indicadores):
+                cor   = "#0a7c00" if (ind["var"] or 0) >= 0 else "#cc0000"
+                seta  = "▲" if (ind["var"] or 0) >= 0 else "▼"
+                sinal = "+" if (ind["var"] or 0) > 0 else ""
+                var_str = f"{seta} {sinal}{ind['var']:.2f}%" if ind["var"] is not None else ""
+                col_i.markdown(
+                    f"<div style='text-align:center; background:#fff; border:1px solid #e5e3de; "
+                    f"border-radius:8px; padding:10px 6px; margin-bottom:12px;'>"
+                    f"<div style='font-size:0.72rem; text-transform:uppercase; "
+                    f"letter-spacing:1px; color:#888; font-weight:bold;'>{ind['nome']}</div>"
+                    f"<div style='font-size:1.05rem; font-weight:bold; color:#2c2c2c; margin:4px 0;'>"
+                    f"{ind['valor']}</div>"
+                    f"<div style='font-size:0.80rem; color:{cor}; font-weight:bold;'>{var_str}</div>"
+                    f"</div>",
+                    unsafe_allow_html=True
+                )
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown(
-                "<h3 style='text-align:center; letter-spacing:1px;'>📰 Edição de hoje</h3>",
-                unsafe_allow_html=True,
-            )
-            _datas   = [e["data"] for e in _indice]
-            _rotulos = {
-                e["data"]: f"{e.get('data_extenso', e['data'])} — {e.get('manchete', '')[:60]}"
-                for e in _indice
-            }
-            _param  = st.query_params.get("edicao", "")
-            _padrao = _param if _param in _datas else _datas[0]
-            _sel = st.selectbox(
-                "🗞️ Edições anteriores:",
-                _datas,
-                index=_datas.index(_padrao),
-                format_func=lambda d: _rotulos.get(d, d),
-            )
-            _arq = _os.path.join("edicoes", f"{_sel}.html")
-            if _os.path.exists(_arq):
-                with open(_arq, encoding="utf-8") as _f:
-                    _components.html(_f.read(), height=2400, scrolling=True)
-except Exception:
-    pass  # sem edicoes/, a seção simplesmente não aparece
 
-# Seção "Sobre"
-st.markdown("<br>", unsafe_allow_html=True)
-with st.expander("📖 Sobre o All News Journal"):
-    st.markdown("""
-**Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, resumidas e entregues diretamente no seu e-mail todas as manhãs.
+        for t in RSS_FEEDS.keys():
+            res = buscar_noticias(t)
+            if res:
+                item = res[0]
+                item['tema'] = t
+                noticias_display.append(item)
+    else:
+        res = buscar_noticias(tema_atual)
+        if not res:
+            st.warning(f"⚠️ As notícias de **{tema_atual}** estão temporariamente indisponíveis. Tente novamente em alguns minutos.")
+        for item in res:
+            item['tema'] = tema_atual
+            noticias_display.append(item)
 
-**Frequência:** Edição diária enviada **toda manhã** (horário de Brasília), de segunda a domingo.
+    if noticias_display:
+        cols = st.columns(3)
+        for i, n in enumerate(noticias_display):
+            col = cols[i % 3]
+            with col:
+                fallback_url = FALLBACK_IMAGES.get(n['tema'], 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=600&h=300&fit=crop')
+                st.markdown(f"""
+                <div class="news-card">
+                    <a href="{n['link']}" target="_blank" rel="noopener noreferrer">
+                        <img src="{n['img']}" class="news-img"
+                             onerror="this.src='{fallback_url}'">
+                    </a>
+                    <div class="news-content">
+                        <span class="news-tag">{n['tema']}</span>
+                        <a href="{n['link']}" target="_blank" rel="noopener noreferrer" class="news-title">{n['titulo']}</a>
+                        <a href="{n['link']}" target="_blank" rel="noopener noreferrer" class="news-source">Ler na fonte original →</a>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+    elif not noticias_display and tema_atual == "Capa (Destaques)":
+        st.info("A carregar as manchetes mais recentes...")
 
-**Cadernos disponíveis:**
+    # Seção "Sobre"
+    st.markdown("<br>", unsafe_allow_html=True)
+    with st.expander("📖 Sobre o All News Journal"):
+        st.markdown("""
+    **Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, resumidas e entregues diretamente no seu e-mail todas as manhãs.
 
-| Caderno | Foco |
-|---|---|
-| 🌎 Mundo | Geopolítica e eventos internacionais |
-| 📈 Economia | Mercado, investimentos e finanças |
-| 🏛️ Política | Brasil: Congresso, governo e Judiciário |
-| 🤖 IA | Inteligência artificial, modelos e laboratórios |
-| 🏃 Wellness | Performance, treino, corrida, ciclismo, nutrição |
-| 🔬 Ciência | Descobertas científicas e saúde |
-| 🎬 Cinema | Filmes, séries e streaming |
-| ⭐ Fofoca | Celebridades internacionais e cultura pop global |
+    **Frequência:** Edição diária enviada **toda manhã** (horário de Brasília), de segunda a domingo.
 
-**100% automatizado com inteligência artificial** — Claude AI (Anthropic) gera resumos jornalísticos de 85 a 105 palavras por notícia, em Português Brasileiro.
-    """)
+    **Cadernos disponíveis:**
 
-# =============================================================================
-# --- RODAPÉ PROFISSIONAL ---
-# =============================================================================
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown(
-    """
-    <div style='
-        border-top: 2px solid #0a5c5a;
-        padding: 25px 0 10px;
-        text-align: center;
-        color: #0a5c5a;
-        font-family: Playfair Display, serif;
-    '>
-        <p style='font-size:1.1rem; font-weight:bold; letter-spacing:2px; margin:0;'>ALL NEWS JOURNAL</p>
-        <p style='font-size:0.75rem; color:#888; margin:8px 0 0;'>
-            © """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
-        </p>
-        <p style='font-size:0.72rem; color:#aaa; margin:6px 0 0;'>
-            <a href='mailto:gustavojustusnunes@gmail.com?subject=Contato%20All%20News%20Journal'
-               style='color:#0a5c5a; text-decoration:none;'>Fale conosco</a>
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    | Caderno | Foco |
+    |---|---|
+    | 🌎 Mundo | Geopolítica e eventos internacionais |
+    | 📈 Economia | Mercado, investimentos e finanças |
+    | 🏛️ Política | Brasil: Congresso, governo e Judiciário |
+    | 🤖 IA | Inteligência artificial, modelos e laboratórios |
+    | 🏃 Wellness | Performance, treino, corrida, ciclismo, nutrição |
+    | 🔬 Ciência | Descobertas científicas e saúde |
+    | 🎬 Cinema | Filmes, séries e streaming |
+    | ⭐ Fofoca | Celebridades internacionais e cultura pop global |
 
-col_rod_l, col_rod_c1, col_rod_c2, col_rod_r = st.columns([2, 1, 1, 2])
-with col_rod_c1:
-    if st.button("Cancelar assinatura", key="footer_btn_cancel", type="secondary", use_container_width=True):
-        modal_cancelamento()
-with col_rod_c2:
-    if st.button("Política de Privacidade", key="footer_btn_privacy", type="secondary", use_container_width=True):
-        modal_privacidade()
+    **100% automatizado com inteligência artificial** — Google Gemini 1.5 Flash gera resumos jornalísticos de 85 a 105 palavras por notícia, em Português Brasileiro.
+        """)
+
+    # =============================================================================
+    # --- RODAPÉ PROFISSIONAL ---
+    # =============================================================================
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div style='
+            border-top: 2px solid #0a5c5a;
+            padding: 25px 0 10px;
+            text-align: center;
+            color: #0a5c5a;
+            font-family: Playfair Display, serif;
+        '>
+            <p style='font-size:1.1rem; font-weight:bold; letter-spacing:2px; margin:0;'>ALL NEWS JOURNAL</p>
+            <p style='font-size:0.75rem; color:#888; margin:8px 0 0;'>
+                © """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
+            </p>
+            <p style='font-size:0.72rem; color:#aaa; margin:6px 0 0;'>
+                <a href='mailto:gustavojustusnunes@gmail.com?subject=Contato%20All%20News%20Journal'
+                   style='color:#0a5c5a; text-decoration:none;'>Fale conosco</a>
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    col_rod_l, col_rod_c1, col_rod_c2, col_rod_r = st.columns([2, 1, 1, 2])
+    with col_rod_c1:
+        if st.button("Cancelar assinatura", key="footer_btn_cancel", type="secondary", use_container_width=True):
+            modal_cancelamento()
+    with col_rod_c2:
+        if st.button("Política de Privacidade", key="footer_btn_privacy", type="secondary", use_container_width=True):
+            modal_privacidade()
+
+with aba_edicao:
+    # =============================================================================
+    # --- EDIÇÃO DO DIA (publicada pelo daily — lê edicoes/index.json) ---
+    # =============================================================================
+    try:
+        import os as _os
+        import streamlit.components.v1 as _components
+
+        _idx_path = _os.path.join("edicoes", "index.json")
+        if _os.path.exists(_idx_path):
+            with open(_idx_path, encoding="utf-8") as _f:
+                _indice = json.load(_f)
+            if _indice:
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown(
+                    "<h3 style='text-align:center; letter-spacing:1px;'>📰 Edição de hoje</h3>",
+                    unsafe_allow_html=True,
+                )
+                _datas   = [e["data"] for e in _indice]
+                _rotulos = {
+                    e["data"]: f"{e.get('data_extenso', e['data'])} — {e.get('manchete', '')[:60]}"
+                    for e in _indice
+                }
+                _param  = st.query_params.get("edicao", "")
+                _padrao = _param if _param in _datas else _datas[0]
+                _sel = st.selectbox(
+                    "🗞️ Edições anteriores:",
+                    _datas,
+                    index=_datas.index(_padrao),
+                    format_func=lambda d: _rotulos.get(d, d),
+                )
+                _arq = _os.path.join("edicoes", f"{_sel}.html")
+                if _os.path.exists(_arq):
+                    with open(_arq, encoding="utf-8") as _f:
+                        _components.html(_f.read(), height=2400, scrolling=True)
+    except Exception:
+        pass  # sem edicoes/, a seção simplesmente não aparece
