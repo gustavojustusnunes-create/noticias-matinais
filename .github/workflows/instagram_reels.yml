@@ -1,10 +1,10 @@
 name: Instagram Reel Diário
 
 on:
-  schedule:
-    # 21:30 UTC = 18:30 BRT — horário de pico no Brasil, bem separado do
-    # carrossel da manhã (reduz risco de antibot).
-    - cron: '30 21 * * *'
+  # schedule:
+  #   # 21:30 UTC = 18:30 BRT — horário de pico no Brasil, bem separado do
+  #   # carrossel da manhã (reduz risco de antibot).
+  #   - cron: '30 21 * * *'
   workflow_dispatch:
     inputs:
       dry_run:

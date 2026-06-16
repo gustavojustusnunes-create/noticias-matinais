@@ -55,15 +55,39 @@ def main():
         dia_semana = datetime.now().weekday()
         tema_hoje = temas_semana.get(dia_semana, "Mundo")
         
-        print(f"   📡 Buscando notícia real do caderno {tema_hoje} para o vídeo...")
-        entries = feeds.coletar_entries_unico(tema_hoje)
-        if not entries:
-            print(f"❌ Nenhuma notícia encontrada para {tema_hoje}.")
+        import json
+        print(f"   📡 Buscando notícia real do caderno {tema_hoje} no jornal do dia...")
+        
+        index_path = os.path.join("edicoes", "index.json")
+        if not os.path.exists(index_path):
+            print("❌ Arquivo index.json não encontrado. A edição de hoje não foi gerada?")
+            return
+            
+        with open(index_path, "r", encoding="utf-8") as f:
+            idx_data = json.load(f)
+            
+        if not idx_data:
+            print("❌ index.json está vazio.")
+            return
+            
+        data_hoje = idx_data[0]["data"]
+        json_path = os.path.join("edicoes", f"{data_hoje}.json")
+        
+        if not os.path.exists(json_path):
+            print(f"❌ Arquivo {json_path} não encontrado.")
+            return
+            
+        with open(json_path, "r", encoding="utf-8") as f:
+            edicao_do_dia = json.load(f)
+            
+        cadernos = edicao_do_dia.get("cadernos", {})
+        if tema_hoje not in cadernos or not cadernos[tema_hoje]:
+            print(f"❌ Nenhuma notícia encontrada para o caderno {tema_hoje} na edição de hoje.")
             return
 
-        entry = entries[0]
-        TITULO_BASE = entry.get("title", f"Destaques de {tema_hoje}")
-        contexto = extrair_contexto_base(entry, max_chars=1500)
+        entry = cadernos[tema_hoje][0]
+        TITULO_BASE = entry.get("titulo", f"Destaques de {tema_hoje}")
+        contexto = entry.get("resumo", "")
         
         prompt = (
             "Você é o âncora principal de um telejornal/podcast muito respeitado. "
@@ -81,7 +105,9 @@ def main():
             TITULO = TITULO_BASE
             RESUMO = contexto[:400].rsplit('.', 1)[0] + "."
             
-        URL_BG = feeds.extrair_imagem_rss(entry, tema_hoje)
+        URL_BG = entry.get("imagem", "")
+        # Para puxar imagens relacionadas como o usuário pediu, enviamos o URL_BG (oficial)
+        # e o construtor de vídeo cuidará de misturá-lo com imagens de arquivo/banco.
         print(f"   📰 Notícia escolhida: {TITULO[:50]}...")
 
         video_path = criar_video(tema_hoje, TITULO, RESUMO, URL_BG)

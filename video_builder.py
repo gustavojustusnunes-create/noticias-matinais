@@ -112,7 +112,7 @@ async def _gerar_tts(texto: str, arquivo_saida: Path):
 
 def gerar_audios(tema: str, titulo: str, resumo: str):
     intro_texto = f"All News Journal. Edição diária, caderno de {tema}."
-    cta_texto = "Leia a edição completa e sem ruídos no seu e-mail. Assine gratuitamente no link da bio."
+    cta_texto = "Para ler o jornal completo e receber notícias como essa todas as manhãs, inscreva-se gratuitamente através do link no nosso perfil."
     
     arq_intro = TEMP_DIR / "intro.mp3"
     arq_tit = TEMP_DIR / "titulo.mp3"
