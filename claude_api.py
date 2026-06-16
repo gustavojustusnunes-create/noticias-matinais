@@ -4,110 +4,77 @@ Inclui: chamada com retry/fallback, limpeza de texto RSS, extração de contexto
 """
 import re
 import time
-
 import requests
 
-from config import CLAUDE_KEY
+from config import GEMINI_API_KEY
 
 
 def chamar_claude_api(prompt, max_tokens=4096):
     """
-    Chama a API do Claude com fallback automático entre modelos.
-    Retorna o texto gerado ou None em caso de falha total.
+    Chama a API do Google Gemini (mantendo o nome da função para retrocompatibilidade).
     """
-    if not CLAUDE_KEY:
-        print("      ❌ CLAUDE_KEY não definida.")
+    if not GEMINI_API_KEY:
+        print("      ❌ GEMINI_API_KEY não definida.")
         return None
 
-    modelos = [
-        ("claude-sonnet-4-6",         90),
-        ("claude-haiku-4-5-20251001", 60),
-    ]
     headers = {
-        "x-api-key":         CLAUDE_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type":      "application/json",
+        "Content-Type": "application/json",
     }
+    
+    # Payload para a API do Gemini
+    payload = {
+        "contents": [{
+            "parts": [{"text": prompt}]
+        }],
+        "generationConfig": {
+            "maxOutputTokens": max_tokens,
+            "temperature": 0.3
+        }
+    }
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
 
-    for modelo, timeout in modelos:
-        print(f"      🤖 {modelo}...")
-        for tentativa in range(1, 4):
-            try:
-                r = requests.post(
-                    "https://api.anthropic.com/v1/messages",
-                    headers=headers,
-                    json={
-                        "model":      modelo,
-                        "max_tokens": max_tokens,
-                        "messages":   [{"role": "user", "content": prompt}],
-                    },
-                    timeout=timeout,
-                )
-                if r.status_code == 200:
-                    data   = r.json()
-                    texto  = data["content"][0]["text"]
-                    tokens = data.get("usage", {})
-                    print(
-                        f"      ✅ OK  in={tokens.get('input_tokens','?')}  "
-                        f"out={tokens.get('output_tokens','?')}"
-                    )
-                    return texto
-                elif r.status_code == 429:
-                    espera = 20 * tentativa
-                    print(f"      ⏳ Rate-limit. Aguardando {espera}s…")
-                    time.sleep(espera)
-                elif r.status_code == 404:
-                    print(f"      ❌ Modelo não encontrado: {modelo}")
-                    break
-                elif r.status_code == 401:
-                    print("      ❌ CLAUDE_KEY inválida.")
-                    return None
-                elif r.status_code == 529:
-                    print("      ⚠️ Sobrecarga. Próximo modelo…")
-                    break
-                else:
-                    print(f"      ⚠️ HTTP {r.status_code}: {r.text[:150]}")
-                    break
-            except requests.exceptions.Timeout:
-                print(f"      ⚠️ Timeout ({timeout}s) em {modelo}.")
+    print(f"      🤖 gemini-1.5-flash...")
+    for tentativa in range(1, 4):
+        try:
+            r = requests.post(url, headers=headers, json=payload, timeout=90)
+            
+            if r.status_code == 200:
+                data = r.json()
+                texto = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                
+                # Extraindo contagem de tokens se disponível (Gemini as vezes fornece na raiz)
+                usage = data.get("usageMetadata", {})
+                print(f"      ✅ OK  in={usage.get('promptTokenCount','?')}  out={usage.get('candidatesTokenCount','?')}")
+                return texto.strip()
+                
+            elif r.status_code == 429:
+                espera = 20 * tentativa
+                print(f"      ⏳ Rate-limit (Cota Grátis). Aguardando {espera}s…")
+                time.sleep(espera)
+            elif r.status_code == 400:
+                print(f"      ❌ GEMINI_API_KEY inválida ou malformada.")
+                return None
+            else:
+                print(f"      ⚠️ HTTP {r.status_code}: {r.text[:150]}")
                 break
-            except Exception as e:
-                print(f"      ⚠️ Exceção: {e}")
-                break
+        except requests.exceptions.Timeout:
+            print(f"      ⚠️ Timeout (90s) no gemini-1.5-flash.")
+            break
+        except Exception as e:
+            print(f"      ⚠️ Exceção: {e}")
+            break
 
-    print("      ❌ Todos os modelos falharam.")
+    print("      ❌ O modelo Gemini falhou.")
     return None
 
 
 def chamar_claude_haiku(prompt, max_tokens=300):
     """
-    Chamada rápida usando apenas Haiku (para tarefas leves como tradução de título).
-    Retorna o texto ou None.
+    Alias para chamar_claude_api usando o mesmo modelo (gemini-1.5-flash é super rápido).
+    Mantido para retrocompatibilidade.
     """
-    if not CLAUDE_KEY:
-        return None
-
-    headers = {
-        "x-api-key":         CLAUDE_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type":      "application/json",
-    }
-    try:
-        r = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers=headers,
-            json={
-                "model":      "claude-haiku-4-5-20251001",
-                "max_tokens": max_tokens,
-                "messages":   [{"role": "user", "content": prompt}],
-            },
-            timeout=15,
-        )
-        if r.status_code == 200:
-            return r.json()["content"][0]["text"].strip()
-    except Exception:
-        pass
-    return None
+    return chamar_claude_api(prompt, max_tokens)
 
 
 def limpar_texto_rss(texto):

@@ -31,7 +31,7 @@ jobs:
 
       - name: Gerar e entregar cards do Instagram
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GCP_JSON:          ${{ secrets.GCP_JSON }}
           GOOGLE_SHEETS_ID:  ${{ secrets.GOOGLE_SHEETS_ID }}
           INSTAGRAM_USER:    ${{ secrets.INSTAGRAM_USER }}

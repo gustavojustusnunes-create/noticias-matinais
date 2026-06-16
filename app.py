@@ -242,15 +242,15 @@ def traduzir_titulo_se_ingles(titulo, url_fonte=""):
     if not e_ingles:
         return titulo
 
-    claude_key = ""
+    gemini_key = ""
     try:
-        claude_key = st.secrets.get("ANTHROPIC_API_KEY", "") or st.secrets.get("CLAUDE_KEY", "")
+        gemini_key = st.secrets.get("GEMINI_API_KEY", "") or st.secrets.get("ANTHROPIC_API_KEY", "")
     except Exception:
         pass
-    if not claude_key:
+    if not gemini_key:
         import os
-        claude_key = os.environ.get("ANTHROPIC_API_KEY", "") or os.environ.get("CLAUDE_KEY", "")
-    if not claude_key:
+        gemini_key = os.environ.get("GEMINI_API_KEY", "") or os.environ.get("ANTHROPIC_API_KEY", "")
+    if not gemini_key:
         return titulo
 
     try:
@@ -258,22 +258,23 @@ def traduzir_titulo_se_ingles(titulo, url_fonte=""):
             f"Traduza este título de artigo de inglês para português brasileiro, "
             f"mantendo o tom jornalístico e direto. Retorne APENAS o título traduzido:\n\n{titulo}"
         )
+        
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "generationConfig": {"maxOutputTokens": 150, "temperature": 0.3}
+        }
+        
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+        
         r = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "x-api-key":         claude_key,
-                "anthropic-version": "2023-06-01",
-                "content-type":      "application/json",
-            },
-            json={
-                "model":      "claude-haiku-4-5-20251001",
-                "max_tokens": 150,
-                "messages":   [{"role": "user", "content": prompt}],
-            },
+            url,
+            headers={"Content-Type": "application/json"},
+            json=payload,
             timeout=10,
         )
         if r.status_code == 200:
-            traduzido = r.json()["content"][0]["text"].strip().strip('"\'`')
+            data = r.json()
+            traduzido = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip().strip('"\'`')
             if 5 < len(traduzido) < 250:
                 return traduzido
     except Exception:

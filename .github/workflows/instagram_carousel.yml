@@ -43,7 +43,7 @@ jobs:
           RESEND_API_KEY:    ${{ secrets.RESEND_API_KEY }}
           RESEND_FROM:       ${{ secrets.RESEND_FROM }}
           # Fallback (só se não houver snapshot em edicoes/)
-          ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GCP_JSON:          ${{ secrets.GCP_JSON }}
           GOOGLE_SHEETS_ID:  ${{ secrets.GOOGLE_SHEETS_ID }}
           DRY_RUN:           ${{ inputs.dry_run }}

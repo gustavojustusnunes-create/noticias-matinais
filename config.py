@@ -11,7 +11,7 @@ import os
 # =============================================================================
 # --- VARIÁVEIS DE AMBIENTE ---
 # =============================================================================
-CLAUDE_KEY       = (os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("CLAUDE_KEY", "")).strip()
+GEMINI_API_KEY   = (os.environ.get("GEMINI_API_KEY") or os.environ.get("ANTHROPIC_API_KEY", "")).strip()
 GCP_JSON         = os.environ.get("GCP_JSON")
 EMAIL_SENDER     = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD   = os.environ.get("EMAIL_PASS") or os.environ.get("EMAIL_PASSWORD", "")

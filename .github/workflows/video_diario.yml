@@ -39,8 +39,8 @@ jobs:
 
     - name: Generate and Email Video
       env:
-        CLAUDE_KEY: ${{ secrets.CLAUDE_KEY }}
-        ANTHROPIC_API_KEY: ${{ secrets.CLAUDE_KEY }}
+        CLAUDE_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         EMAIL_USER: ${{ secrets.SMTP_USER }}
         EMAIL_PASSWORD: ${{ secrets.SMTP_PASS }}
         EMAIL_FROM: ${{ secrets.FROM_EMAIL }}
