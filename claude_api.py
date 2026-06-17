@@ -32,9 +32,9 @@ def chamar_claude_api(prompt, max_tokens=4096):
         }
     }
     
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
 
-    print(f"      🤖 gemini-1.5-flash...")
+    print(f"      🤖 gemini-1.5-flash-latest...")
     for tentativa in range(1, 4):
         try:
             r = requests.post(url, headers=headers, json=payload, timeout=90)
