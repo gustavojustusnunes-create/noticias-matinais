@@ -486,12 +486,15 @@ def main():
         # 20 UTC = 17h BRT | 22 UTC = 19h BRT | 00 UTC = 21h BRT | 02 UTC = 23h BRT
         from config import ORDEM_CADERNOS
         hora_utc = datetime.utcnow().hour
+        # Como o GitHub Actions pode atrasar a execução em até 1 hora, arredondamos a hora para par
+        hora_base = hora_utc if hora_utc % 2 == 0 else hora_utc - 1
+        
         mapa_horarios = {12: 0, 14: 1, 16: 2, 18: 3, 20: 4, 22: 5, 0: 6, 2: 7}
-        idx = mapa_horarios.get(hora_utc)
+        idx = mapa_horarios.get(hora_base)
         
         if idx is not None and idx < len(ORDEM_CADERNOS):
             tema_alvo = ORDEM_CADERNOS[idx]
-            print(f"   ⏰ {hora_utc}h UTC detectado. Caderno escolhido: {tema_alvo}")
+            print(f"   ⏰ {hora_utc}h UTC detectado (Arredondado para {hora_base}h). Caderno escolhido: {tema_alvo}")
         else:
             print(f"   ℹ️  Hora atual ({hora_utc}h UTC) não está na grade fixa. Executando para TODOS os cadernos.")
     else:
