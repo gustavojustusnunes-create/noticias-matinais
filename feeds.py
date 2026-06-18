@@ -170,12 +170,16 @@ def extrair_imagem_rss(entry, tema, idx_entry=0):
 # =============================================================================
 def aplicar_filtros(entry, tema):
     """Filtra artigos por palavras-chave no título, link e corpo do artigo."""
-    palavras = FILTROS_TEMA.get(tema, [])
-    if not palavras:
-        return True
+    from config import FILTRO_GLOBAL
+    palavras_tema = FILTROS_TEMA.get(tema, [])
+    palavras = FILTRO_GLOBAL + palavras_tema
     titulo = entry.get("title", "").lower()
     link   = entry.get("link",  "").lower()
     corpo  = extrair_contexto_base(entry, max_chars=400).lower()
+    
+    if _titulo_parece_ingles(titulo):
+        return False
+        
     return not any(p in titulo or p in link or p in corpo for p in palavras)
 
 
@@ -380,42 +384,18 @@ def processar_tema(tema, historico_hashes):
     imagens_usadas  = set()
 
     for i, entry in enumerate(noticias_filtradas):
-        # ── Tradução de título ────────────────────────────────────────────────
-        titulo_original = entry.get("title", "")
-        e_ingles = _e_feed_ingles(entry)
-
-        # Wellness/IA/Cinema/Fofoca: usa também detecção vocabular como fallback da URL
-        if not e_ingles and tema in ("Wellness", "IA", "Cinema", "Fofoca"):
-            e_ingles = _titulo_parece_ingles(titulo_original)
-
-        if e_ingles:
-            titulo_traduzido = _traduzir_titulo(titulo_original)
-            entry.title = titulo_traduzido
-            entry._titulo_original_en = titulo_original
-        else:
-            titulo_traduzido = titulo_original
-
-        titulo_entry = titulo_traduzido
+        titulo_entry = entry.get("title", "")
 
         # ── Contexto base ─────────────────────────────────────────────────────
         contexto = extrair_contexto_base(entry, max_chars=800)
 
-        aviso_ingles = ""
-        if e_ingles:
-            aviso_ingles = (
-                f"ATENÇÃO: O texto base abaixo pode estar em INGLÊS. "
-                f"O resumo DEVE ser 100% em Português Brasileiro.\n"
-                f"Título original em inglês: {titulo_original}\n"
-            )
-
         if contexto and contexto.lower() != titulo_entry.lower():
             input_individual = (
                 f"Título: {titulo_entry}\n"
-                f"{aviso_ingles}"
                 f"Texto Base: {contexto}"
             )
         else:
-            input_individual = f"Título: {titulo_entry}\n{aviso_ingles}"
+            input_individual = f"Título: {titulo_entry}\n"
 
         # ── Prompt individual ─────────────────────────────────────────────────
         prompt = (
@@ -430,14 +410,14 @@ def processar_tema(tema, historico_hashes):
             f"REGRAS ABSOLUTAS DE FORMATO\n"
             f"═══════════════════════════════════════\n"
             f"1. TAMANHO: 85 a 105 palavras. Abaixo de 70 = REPROVADO.\n"
-            f"2. CONCLUSÃO: NUNCA termine com '…' ou '...'. Última frase fechada com ponto final.\n"
-            f"3. IDIOMA: Sempre em Português Brasileiro fluente. Mesmo que o texto base esteja em inglês.\n"
-            f"4. TOM: Direto, ativo, jornalístico. Sem jargões. Sem linguagem de teaser.\n"
-            f"5. PROIBIDO: 'o artigo fala', 'a notícia informa', 'segundo a publicação', 'vale destacar'.\n"
-            f"6. PROIBIDO: numeração, markdown (asteriscos, negrito, bullets).\n"
-            f"7. INÍCIO: Comece sempre pelo fato principal com dados concretos.\n"
-            f"8. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é irrelevante, "
-            f"retorne EXATAMENTE: SKIP\n"
+            f"2. CORTES BRUSCOS: O texto DEVE ser uma notícia completa com raciocínio finalizado. NUNCA termine de forma abrupta ou no meio de uma frase. Última frase fechada com ponto final.\n"
+            f"3. IDIOMA E TOM: Sempre em Português Brasileiro fluente. Direto, ativo, jornalístico. Sem jargões.\n"
+            f"4. CRÉDITOS: REMOVA qualquer crédito de fotógrafo, agência ou jornal no início ou fim do texto (ex: LEANDRO CHEMALLE/THENEWS2/ESTADÃO CONTEÚDO).\n"
+            f"5. CTAs E PERGUNTAS: NUNCA faça perguntas ao leitor. NUNCA inclua frases como 'Tem alguma sugestão de reportagem?' ou chamadas para ação.\n"
+            f"6. EMOJIS: O texto deve ser 100% formal. É ABSOLUTAMENTE PROIBIDO o uso de qualquer emoji.\n"
+            f"7. TÍTULO: NÃO REPITA o título no corpo do resumo. Escreva o resumo de forma complementar.\n"
+            f"8. PROIBIDO: 'o artigo fala', 'a notícia informa', 'segundo a publicação', 'vale destacar', numeração, markdown.\n"
+            f"9. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é irrelevante, retorne EXATAMENTE: SKIP\n\n"
             f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n\n"
             f"═══════════════════════════════════════\n"
             f"MANCHETE E CONTEXTO\n"
@@ -461,16 +441,12 @@ def processar_tema(tema, historico_hashes):
         if not resumo_limpo:
             contexto_base = extrair_contexto_base(entry, max_chars=800)
             if contexto_base and len(contexto_base.split()) >= 20:
-                idioma_hint = (
-                    "O texto base pode estar em inglês. "
-                    "O resumo DEVE ser escrito em Português Brasileiro fluente."
-                ) if e_ingles else ""
                 prompt_rewrite = (
                     f"Você é um jornalista sênior. Reescreva o texto abaixo como um "
                     f"parágrafo jornalístico de 85 a 100 palavras em Português Brasileiro "
                     f"direto e fluente. NUNCA termine com '...' ou '…'. "
                     f"Última frase fechada com ponto final. "
-                    f"Retorne APENAS o parágrafo. {idioma_hint}\n\n"
+                    f"Retorne APENAS o parágrafo.\n\n"
                     f"Título: {titulo_entry}\n\nTexto base:\n{contexto_base}"
                 )
                 reescrito = chamar_claude_api(prompt_rewrite, max_tokens=512)
@@ -479,16 +455,13 @@ def processar_tema(tema, historico_hashes):
 
         # ── Fallback 2: Claude gera a partir do título apenas ─────────────────
         if not resumo_limpo:
-            idioma_hint = (
-                "Escreva em Português Brasileiro mesmo que o título esteja em inglês."
-            ) if e_ingles else ""
             prompt_mini = (
                 f"Você é um jornalista sênior. Com base APENAS no título abaixo, "
                 f"escreva um parágrafo jornalístico de 3 frases (80 a 95 palavras) "
                 f"em Português Brasileiro. Escreva como fato estabelecido — sem "
                 f"'provavelmente', 'deve' ou linguagem especulativa. "
-                f"NUNCA termine com '...' ou '…'. Ponto final obrigatório na última frase. "
-                f"Retorne APENAS o parágrafo. {idioma_hint}\n\n"
+                f"NUNCA termine com '...' ou '…'. Ponto final obrigatório na última frase.\n"
+                f"Retorne APENAS o parágrafo.\n\n"
                 f"Título: {titulo_entry}"
             )
             mini = chamar_claude_api(prompt_mini, max_tokens=512)

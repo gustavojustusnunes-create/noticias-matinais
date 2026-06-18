@@ -69,6 +69,7 @@ RSS_FEEDS = {
         "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml",
     ],
     "Economia": [
+        "https://g1.globo.com/rss/g1/economia/",
         "https://www.infomoney.com.br/feed/",
         "https://rss.uol.com.br/feed/economia.xml",
         "https://economia.uol.com.br/rss.xml",
@@ -83,15 +84,11 @@ RSS_FEEDS = {
         "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml",
     ],
     "IA": [
-        "https://techcrunch.com/category/artificial-intelligence/feed/",
-        "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
-        "https://venturebeat.com/category/ai/feed/",
-        "https://www.wired.com/feed/tag/ai/latest/rss",
-        "https://feeds.feedburner.com/blogspot/gJZg",
-        "https://openai.com/blog/rss.xml",
-        "https://www.anthropic.com/news/rss.xml",
         "https://olhardigital.com.br/editorias/inteligencia-artificial/feed/",
         "https://canaltech.com.br/inteligencia-artificial/rss/",
+        "https://g1.globo.com/rss/g1/tecnologia/",
+        "https://rss.uol.com.br/feed/tilt.xml",
+        "https://www.tecmundo.com.br/rss",
     ],
     "Wellness": [
         "https://ge.globo.com/rss/eu-atleta/",
@@ -99,12 +96,6 @@ RSS_FEEDS = {
         "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/",
         "https://boaforma.abril.com.br/feed/",
         "https://vivabem.uol.com.br/rss.xml",
-        "https://www.runnersworld.com/rss/all.xml/",
-        "https://www.bicycling.com/rss/all.xml/",
-        "https://www.menshealth.com/rss/all.xml/",
-        "https://www.womenshealthmag.com/rss/all.xml/",
-        "https://www.outsideonline.com/rss/all/",
-        "https://www.triathlete.com/feed/",
     ],
     "Ciencia": [
         "https://g1.globo.com/rss/g1/ciencia-e-saude/",
@@ -119,47 +110,27 @@ RSS_FEEDS = {
         "https://www.cinepop.com.br/feed",
         "https://www.papodecinema.com.br/feed/",
         "https://www.adorocinema.com/rss/",
-        "https://variety.com/v/film/feed/",
-        "https://deadline.com/category/film/feed/",
+        "https://g1.globo.com/rss/g1/pop-arte/cinema/",
     ],
     "Fofoca": [
         "https://hugogloss.uol.com.br/feed/",
         "https://revistaquem.globo.com/rss/quem/",
-        "https://people.com/feed/",
-        "https://variety.com/feed/",
-        "https://ew.com/feed/",
-        "https://pagesix.com/feed/",
-        "https://www.dailymail.co.uk/tvshowbiz/index.rss",
+        "https://g1.globo.com/rss/g1/pop-arte/",
     ],
-}
-
-# Feeds cujo conteúdo está em inglês (requerem tradução automática)
-FEEDS_INGLES = {
-    "https://techcrunch.com/category/artificial-intelligence/feed/",
-    "https://www.theverge.com/ai-artificial-intelligence/rss/index.xml",
-    "https://venturebeat.com/category/ai/feed/",
-    "https://www.wired.com/feed/tag/ai/latest/rss",
-    "https://feeds.feedburner.com/blogspot/gJZg",
-    "https://openai.com/blog/rss.xml",
-    "https://www.anthropic.com/news/rss.xml",
-    "https://www.runnersworld.com/rss/all.xml/",
-    "https://www.menshealth.com/rss/all.xml/",
-    "https://www.womenshealthmag.com/rss/all.xml/",
-    "https://www.bicycling.com/rss/all.xml/",
-    "https://www.outsideonline.com/rss/all/",
-    "https://www.triathlete.com/feed/",
-    "https://people.com/feed/",
-    "https://variety.com/feed/",
-    "https://variety.com/v/film/feed/",
-    "https://deadline.com/category/film/feed/",
-    "https://ew.com/feed/",
-    "https://pagesix.com/feed/",
-    "https://www.dailymail.co.uk/tvshowbiz/index.rss",
 }
 
 # =============================================================================
 # --- FILTROS DE CONTEÚDO ---
 # =============================================================================
+# =============================================================================
+# --- FILTROS DE CONTEÚDO ---
+# =============================================================================
+FILTRO_GLOBAL = [
+    "vídeo", "veja vídeo", "veja o momento", "veja momento", 
+    "imagens mostram", "assista", "drone", "flagra", "câmera de segurança",
+    "galeria de fotos", "veja fotos",
+]
+
 FILTROS_TEMA = {
     "Mundo": [],
 
@@ -292,10 +263,6 @@ INSTRUCAO_TEMA = {
         "de tecnologia experiente, não como entusiasta."
     ),
     "Wellness": (
-        "REGRA CRÍTICA DE IDIOMA: O texto base pode estar em inglês. "
-        "Independentemente disso, o resumo final DEVE ser escrito EXCLUSIVAMENTE "
-        "em Português Brasileiro fluente e natural — jamais use palavras em inglês "
-        "no corpo do texto.\n"
         "FOCO: cultura de saúde, performance e longevidade. Cobre corrida, "
         "ciclismo, triatlo, musculação, mobilidade, nutrição esportiva, sono, "
         "recuperação e mindset atlético. Inclua dados práticos "
