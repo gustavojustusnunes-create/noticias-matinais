@@ -1,0 +1,44 @@
+# Palavras-chave para FILTRAR (remover) notícias
+# Uma palavra ou frase por linha
+# Linhas começando com # são ignoradas
+# IMPORTANTE: Use frases específicas para evitar falsos positivos
+
+# Apostas e jogos de azar
+bet365
+betano
+sportingbet
+casa de apostas
+casas de apostas
+jogo de azar
+jogos de azar
+bônus de cadastro
+site de apostas
+sites de apostas
+aposta esportiva
+apostas esportivas
+aposta online
+apostas online
+
+# Loteria
+mega-sena
+megasena
+quina acumula
+lotofácil
+lotomania
+timemania
+loteca
+dupla sena
+resultado da loteria
+concurso sorteio
+
+# Horóscopo e astrologia
+horóscopo
+horoscopo
+previsão dos signos
+mapa astral
+previsão dos astros
+
+# Conteúdo patrocinado / clickbait
+patrocinado
+publipost
+publieditorial

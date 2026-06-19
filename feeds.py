@@ -398,6 +398,23 @@ def processar_tema(tema, historico_hashes):
             input_individual = f"Título: {titulo_entry}\n"
 
         # ── Prompt individual ─────────────────────────────────────────────────
+        regras_absolutas = (
+            f"═══════════════════════════════════════\n"
+            f"REGRAS ABSOLUTAS DE FORMATO\n"
+            f"═══════════════════════════════════════\n"
+            f"1. TAMANHO: 65 a 105 palavras. Seja denso em informações, sem encheção de linguiça.\n"
+            f"2. PROFUNDIDADE: Se a notícia não tiver profundidade jornalística (ex: apenas listar elenco de filme, ou repetir o título duas vezes), retorne EXATAMENTE: SKIP\n"
+            f"3. CORTES BRUSCOS: O texto DEVE ser uma notícia completa com raciocínio finalizado. NUNCA termine de forma abrupta. Última frase fechada com ponto final.\n"
+            f"4. IDIOMA E TOM: Sempre em Português Brasileiro fluente. Direto, ativo, jornalístico. Sem jargões.\n"
+            f"5. CRÉDITOS: REMOVA qualquer crédito de fotógrafo, agência ou jornal (ex: ESTADÃO CONTEÚDO).\n"
+            f"6. CTAs E PERGUNTAS: NUNCA faça perguntas. NUNCA inclua frases como 'Tem alguma sugestão de reportagem?'.\n"
+            f"7. EMOJIS: O texto deve ser 100% formal. É ABSOLUTAMENTE PROIBIDO o uso de qualquer emoji.\n"
+            f"8. TÍTULO: NÃO REPITA o título no corpo do resumo. Vá direto ao assunto.\n"
+            f"9. PROIBIDO: 'o artigo fala', 'segundo a publicação', numeração, markdown.\n"
+            f"10. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n\n"
+            f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n"
+        )
+
         prompt = (
             f"Você é um repórter sênior do All News Journal, jornal digital premium brasileiro.\n"
             f"Escreva UM resumo jornalístico COMPLETO e AUTOSSUFICIENTE para o caderno de {tema}.\n\n"
@@ -406,19 +423,7 @@ def processar_tema(tema, historico_hashes):
             f"DIRETRIZES EDITORIAIS — {tema.upper()}\n"
             f"═══════════════════════════════════════\n"
             f"{instrucao}\n\n"
-            f"═══════════════════════════════════════\n"
-            f"REGRAS ABSOLUTAS DE FORMATO\n"
-            f"═══════════════════════════════════════\n"
-            f"1. TAMANHO: 85 a 105 palavras. Abaixo de 70 = REPROVADO.\n"
-            f"2. CORTES BRUSCOS: O texto DEVE ser uma notícia completa com raciocínio finalizado. NUNCA termine de forma abrupta ou no meio de uma frase. Última frase fechada com ponto final.\n"
-            f"3. IDIOMA E TOM: Sempre em Português Brasileiro fluente. Direto, ativo, jornalístico. Sem jargões.\n"
-            f"4. CRÉDITOS: REMOVA qualquer crédito de fotógrafo, agência ou jornal no início ou fim do texto (ex: LEANDRO CHEMALLE/THENEWS2/ESTADÃO CONTEÚDO).\n"
-            f"5. CTAs E PERGUNTAS: NUNCA faça perguntas ao leitor. NUNCA inclua frases como 'Tem alguma sugestão de reportagem?' ou chamadas para ação.\n"
-            f"6. EMOJIS: O texto deve ser 100% formal. É ABSOLUTAMENTE PROIBIDO o uso de qualquer emoji.\n"
-            f"7. TÍTULO: NÃO REPITA o título no corpo do resumo. Escreva o resumo de forma complementar.\n"
-            f"8. PROIBIDO: 'o artigo fala', 'a notícia informa', 'segundo a publicação', 'vale destacar', numeração, markdown.\n"
-            f"9. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é irrelevante, retorne EXATAMENTE: SKIP\n\n"
-            f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n\n"
+            f"{regras_absolutas}\n"
             f"═══════════════════════════════════════\n"
             f"MANCHETE E CONTEXTO\n"
             f"═══════════════════════════════════════\n"
@@ -442,11 +447,9 @@ def processar_tema(tema, historico_hashes):
             contexto_base = extrair_contexto_base(entry, max_chars=800)
             if contexto_base and len(contexto_base.split()) >= 20:
                 prompt_rewrite = (
-                    f"Você é um jornalista sênior. Reescreva o texto abaixo como um "
-                    f"parágrafo jornalístico de 85 a 100 palavras em Português Brasileiro "
-                    f"direto e fluente. NUNCA termine com '...' ou '…'. "
-                    f"Última frase fechada com ponto final. "
-                    f"Retorne APENAS o parágrafo.\n\n"
+                    f"Você é um jornalista sênior. Reescreva o texto abaixo como uma "
+                    f"notícia completa em Português Brasileiro.\n\n"
+                    f"{regras_absolutas}\n"
                     f"Título: {titulo_entry}\n\nTexto base:\n{contexto_base}"
                 )
                 reescrito = chamar_claude_api(prompt_rewrite, max_tokens=512)

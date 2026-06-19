@@ -114,6 +114,10 @@ def limpar_texto_rss(texto):
         # WordPress PT-BR "apareceu primeiro em"
         r"\s*O\s+post\s+.+?apareceu\s+primeiro\s+em\s+.+?\.?\s*",
         r"\s*apareceu\s+primeiro\s+em\s+.+",
+        # CTAs de jornalismo (Estadão, g1, etc)
+        r"Tem\s+alguma\s+sugestão\s+de\s+reportagem\?.*",
+        r"Envie\s+para\s+o\s+WhatsApp.*",
+        r"Ouça\s+o\s+podcast.*",
         # Resíduo de [&#8230;] e similares
         r"\[\s*\]",
         # "Leia também" + texto atrelado

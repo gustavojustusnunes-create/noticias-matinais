@@ -59,11 +59,55 @@ def main():
         except Exception:
             pass
 
+    from instagrapi.exceptions import TwoFactorRequired
+
     try:
         cl.login(USER, PASS)
         cl.get_timeline_feed()  # valida
+    except TwoFactorRequired as e:
+        code = input("📱 O Instagram pediu o código de Autenticação de Dois Fatores (2FA). Digite aqui: ").strip()
+        cl.login(USER, PASS, verification_code=code)
+        cl.get_timeline_feed()
     except Exception as e:
-        sys.exit(f"❌ Falha no login: {e}")
+        if "login_required" in str(e).lower() and SESSION_FILE.exists():
+            print("   Sessão anterior expirada ou inválida. Limpando e tentando do zero...")
+            SESSION_FILE.unlink()
+            cl = Client()
+            cl.delay_range = [2, 5]
+            cl.challenge_code_handler = _code_handler
+            try:
+                cl.login(USER, PASS)
+                cl.get_timeline_feed()
+            except TwoFactorRequired as e2:
+                code = input("📱 O Instagram pediu o código de Autenticação de Dois Fatores (2FA). Digite aqui: ").strip()
+                cl.login(USER, PASS, verification_code=code)
+                cl.get_timeline_feed()
+            except Exception as e2:
+                sys.exit(f"❌ Falha no login do zero: {e2}")
+        elif "STEP_NAME" in str(e) or "challenge" in str(e).lower():
+            print(f"\n❌ O Instagram bloqueou o login automático via senha (Erro: {e}).")
+            print("\nVamos usar o plano B: Login via Cookie do Navegador!")
+            print("1. Abra o Google Chrome ou Edge e acesse instagram.com e faça o login no seu jornal.")
+            print("2. Aperte a tecla F12 (Ferramentas de Desenvolvedor).")
+            print("3. Vá na aba 'Application' (ou 'Aplicativo') na barra superior.")
+            print("4. No menu esquerdo, abra 'Cookies' -> 'https://www.instagram.com'.")
+            print("5. Encontre o cookie chamado 'sessionid' e copie o Valor dele.")
+            session_id = input("\nCole o valor do sessionid aqui (ou dê Ctrl+C para sair): ").strip()
+            
+            if not session_id:
+                sys.exit("Nenhum sessionid fornecido. Abortando.")
+                
+            import urllib.parse
+            session_id = urllib.parse.unquote(session_id)
+                
+            try:
+                print(f"⏳ Autenticando com o sessionid (descodificado se necessário)...")
+                cl.login_by_sessionid(session_id)
+                cl.get_timeline_feed()
+            except Exception as e3:
+                sys.exit(f"❌ Falha ao logar com sessionid: {e3}")
+        else:
+            sys.exit(f"❌ Falha no login: {e}")
 
     cl.dump_settings(str(SESSION_FILE))
     b64 = base64.b64encode(SESSION_FILE.read_bytes()).decode()

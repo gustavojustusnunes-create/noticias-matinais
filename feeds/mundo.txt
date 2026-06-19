@@ -1,0 +1,3 @@
+https://g1.globo.com/rss/g1/mundo/
+https://www.bbc.com/portuguese/index.xml
+https://rss.uol.com.br/feed/noticias/internacional.xml
