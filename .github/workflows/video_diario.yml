@@ -41,11 +41,9 @@ jobs:
       env:
         CLAUDE_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        EMAIL_USER: ${{ secrets.SMTP_USER }}
-        EMAIL_PASSWORD: ${{ secrets.SMTP_PASS }}
-        EMAIL_FROM: ${{ secrets.FROM_EMAIL }}
-        SMTP_HOST: ${{ secrets.SMTP_HOST }}
-        SMTP_PORT: ${{ secrets.SMTP_PORT }}
+        EMAIL_USER: ${{ secrets.EMAIL_USER }}
+        EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+        EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       run: |
         python enviar_video_diario.py
 

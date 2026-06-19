@@ -10,7 +10,7 @@ import requests
 
 from config import (
     RSS_FEEDS, FILTROS_TEMA, INSTRUCAO_TEMA,
-    FALLBACK_IMAGES, FEEDS_INGLES,
+    FALLBACK_IMAGES, FILTRO_GLOBAL,
 )
 from claude_api import (
     chamar_claude_api, chamar_claude_haiku,
