@@ -488,6 +488,7 @@ def processar_tema(tema, historico_hashes):
 
         # Garante que a IA não repetiu o título no começo do texto
         if resumo_limpo:
+            resumo_limpo = limpar_resumo(resumo_limpo)
             resumo_limpo = remover_titulo_duplicado(titulo_entry, resumo_limpo)
 
         noticias_finais.append({
