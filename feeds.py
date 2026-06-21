@@ -14,7 +14,7 @@ from config import (
 )
 from claude_api import (
     chamar_claude_api, chamar_claude_haiku,
-    extrair_contexto_base, limpar_resumo,
+    extrair_contexto_base, limpar_resumo, remover_titulo_duplicado
 )
 from sheets_db import gerar_hash
 
@@ -485,6 +485,10 @@ def processar_tema(tema, historico_hashes):
             )
             img = f"{fallback}&sig={i}"
         imagens_usadas.add(img)
+
+        # Garante que a IA não repetiu o título no começo do texto
+        if resumo_limpo:
+            resumo_limpo = remover_titulo_duplicado(titulo_entry, resumo_limpo)
 
         noticias_finais.append({
             "titulo": titulo_entry,

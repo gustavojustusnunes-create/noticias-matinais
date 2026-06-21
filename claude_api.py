@@ -194,10 +194,14 @@ def extrair_contexto_base(entry, max_chars: int = 800) -> str:
 
 
 def limpar_resumo(texto: str) -> str:
-    """Limpa markdown, numerações e artefatos do texto retornado pela IA."""
+    """Limpa markdown, numerações, artefatos e emojis do texto retornado pela IA."""
     texto = re.sub(r"\*{1,2}([^*]+)\*{1,2}", r"\1", texto)
     texto = re.sub(r"^[\*\s]*Not[íi]cia\s*\d+[\:\.\s\*]*", "", texto, flags=re.IGNORECASE)
     texto = re.sub(r"^\d+[\.\)]\s*", "", texto)
+    
+    # Remove emojis e símbolos pictográficos comuns usando ranges Unicode
+    texto = re.sub(r'[\U00010000-\U0010ffff\u2600-\u27BF\u2300-\u23FF\u2B50\u2139]', '', texto)
+    
     texto = limpar_texto_rss(texto)
     texto = re.sub(r"\s*\.\.\.\s*$", ".", texto.strip())
     texto = re.sub(r"\s*…\s*$", ".", texto.strip())
