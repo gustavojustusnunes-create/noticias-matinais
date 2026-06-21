@@ -437,7 +437,7 @@ def obter_noticias_para_instagram(tema_alvo=None):
     from feeds import processar_tema
     from config import ORDEM_CADERNOS
 
-    _, sheet_historico, _ = conectar_banco()
+    _, _, sheet_historico, _ = conectar_banco()
     historico = carregar_historico(sheet_historico) if sheet_historico else set()
 
     noticias = []
