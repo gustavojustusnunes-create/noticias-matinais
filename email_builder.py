@@ -83,11 +83,12 @@ def obter_indicadores():
 # =============================================================================
 # --- GERAÇÃO DO HTML DO EMAIL ---
 # =============================================================================
-def gerar_html_final(nome, dados, painel, editorial=""):
+def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
     """
     Gera o HTML completo do email com:
     - Preheader invisível para preview no Gmail
     - Editorial do dia (se fornecido)
+    - Coluna do Autor (se fornecido)
     - Sumário/índice clicável
     - Tempo de leitura estimado
     - Fallback de imagem com gradiente colorido
@@ -116,6 +117,8 @@ def gerar_html_final(nome, dados, painel, editorial=""):
         for items in dados.values() if items
         for n in items
     )
+    if coluna_autor:
+        total_palavras += len(coluna_autor.get("texto", "").split())
     tempo_leitura = max(1, round(total_palavras / 200))
 
     # ── Sumário ──────────────────────────────────────────────────────────────
@@ -174,7 +177,7 @@ def gerar_html_final(nome, dados, painel, editorial=""):
     </p>
 """
 
-    # ── Editorial do dia ────────────────────────────────────────────────────
+    # ── Abertura ────────────────────────────────────────────────────────────
     if editorial:
         html += f"""
     <p style="font-size:15px;color:#444;font-style:italic;text-align:center;
@@ -182,6 +185,31 @@ def gerar_html_final(nome, dados, painel, editorial=""):
               line-height:1.7;">
       "{editorial}"
     </p>
+"""
+
+    # ── Coluna do Autor (Editorial Escrito) ──────────────────────────────────
+    if coluna_autor:
+        html += f"""
+    <div style="margin-bottom:40px;padding-bottom:30px;border-bottom:2px solid #333;">
+      <span style="background-color:#333;color:#fff;padding:7px 16px;
+                   font-size:11px;font-weight:bold;text-transform:uppercase;
+                   letter-spacing:1.5px;border-radius:4px 4px 0 0;display:inline-block;">
+        🖋️ EDITORIAL
+      </span>
+      <img src="{coluna_autor['imagem']}"
+           alt="Editorial"
+           style="width:100%;height:230px;object-fit:cover;border-radius:0 6px 6px 6px;
+                  border-bottom:4px solid #333;display:block;margin-top:0;">
+      <div style="padding-top:18px;">
+        <h3 style="margin:0 0 14px;font-size:21px;
+                   font-family:'Playfair Display',Georgia,serif;
+                   line-height:1.35;color:#111;">
+          {coluna_autor['titulo']}
+        </h3>
+        <p style="margin:0 0 16px;font-size:15px;color:#3a3a3a;line-height:1.75;
+                  font-family:'Lora','Times New Roman',serif;white-space:pre-wrap;">{coluna_autor['texto']}</p>
+      </div>
+    </div>
 """
 
     # ── Sumário ──────────────────────────────────────────────────────────────

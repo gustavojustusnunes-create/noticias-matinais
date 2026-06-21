@@ -25,13 +25,13 @@ def _data_extenso(dt):
     return f"{DIAS[dt.weekday()]}, {dt.day} de {MESES[dt.month - 1]} de {dt.year}"
 
 
-def _html_publico(dados, painel, editorial):
+def _html_publico(dados, painel, editorial, coluna_autor=None):
     """Gera o HTML da edição reusando gerar_html_final e neutraliza o rodapé
     de assinatura (a edição pública não é personalizada). Import tardio para
     que `import site_publisher` funcione sem as dependências do e-mail."""
     from email_builder import gerar_html_final
 
-    html = gerar_html_final("Leitor", dados, painel, editorial=editorial)
+    html = gerar_html_final("Leitor", dados, painel, editorial=editorial, coluna_autor=coluna_autor)
 
     # Neutraliza o bloco de cancelamento (substituições simples de string;
     # se o template mudar, a edição sai com o rodapé original — sem quebrar)
@@ -54,7 +54,7 @@ def _html_publico(dados, painel, editorial):
     return html
 
 
-def publicar_edicao(cache_global, painel, editorial):
+def publicar_edicao(cache_global, painel, editorial, coluna_autor=None):
     """Salva snapshot JSON + HTML público + índice. Retorna dict de status."""
     status = {"ok": False, "json": None, "html": None, "index": None}
     try:
@@ -101,7 +101,7 @@ def publicar_edicao(cache_global, painel, editorial):
 
         # 2) HTML público da edição
         try:
-            html = _html_publico(dados, painel, editorial)
+            html = _html_publico(dados, painel, editorial, coluna_autor)
             caminho_html = ed_dir / f"{data_iso}.html"
             caminho_html.write_text(html, encoding="utf-8")
             status["html"] = str(caminho_html)

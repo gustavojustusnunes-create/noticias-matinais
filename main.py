@@ -8,9 +8,10 @@ import random # Adicionado para rotacionar as aberturas
 
 # Importações limpas: CLAUDE_KEY e claude_api removidos
 from config import RSS_FEEDS, EMAIL_SENDER, EMAIL_PASSWORD, GCP_JSON, MAPEAMENTO_LEGADO
-from sheets_db import conectar_banco, carregar_historico, salvar_no_historico, registrar_log
+from sheets_db import conectar_banco, carregar_historico, salvar_no_historico, registrar_log, obter_coluna_editorial
 from feeds import processar_tema, FEEDS_STATUS
 from email_builder import obter_indicadores, gerar_html_final, enviar_email, montar_subject
+from claude_api import gerar_keyword_imagem
 
 def validar_ambiente():
     variaveis = {
@@ -55,7 +56,7 @@ def main():
     if not validar_ambiente():
         return
 
-    sheet_usuarios, sheet_historico, sheet_logs = conectar_banco()
+    planilha, sheet_usuarios, sheet_historico, sheet_logs = conectar_banco()
     if not sheet_usuarios:
         return
 
@@ -106,11 +107,19 @@ def main():
         salvar_no_historico(sheet_historico, novas)
         print(f"   💾 {len(novas)} notícias salvas no histórico.")
 
-    # Gera editorial do dia (frase de abertura dinâmica sem custo de IA)
-    print("   ✍️  Gerando editorial do dia…")
-    editorial = gerar_editorial(CACHE_GLOBAL)
-    if editorial:
-        print(f"   📝 Editorial: {editorial[:80]}…")
+    # Busca coluna do autor (se houver agendada para hoje)
+    print("   ✍️  Verificando Coluna do Autor (Editorial) no banco…")
+    coluna_autor = obter_coluna_editorial(planilha)
+    
+    # Frase de abertura padrão
+    abertura_padrao = gerar_editorial(CACHE_GLOBAL)
+
+    if coluna_autor:
+        print(f"   📝 Editorial encontrado: {coluna_autor['titulo']}")
+        keyword = gerar_keyword_imagem(coluna_autor['texto'])
+        coluna_autor["imagem"] = f"https://images.unsplash.com/featured/600x300/?{keyword}&sig=editorial"
+    else:
+        print("   ℹ️  Nenhum editorial para hoje.")
 
     # Resumo de status dos feeds
     feeds_ok     = sum(1 for s in FEEDS_STATUS.values() if s.startswith("ok"))
@@ -163,7 +172,7 @@ def main():
 
             subject = montar_subject(pacote)
             print(f"   ✉️  {nome} <{email}> → {list(pacote.keys())}")
-            html = gerar_html_final(nome, pacote, painel, editorial=editorial)
+            html = gerar_html_final(nome, pacote, painel, editorial=abertura_padrao, coluna_autor=coluna_autor)
             ok   = enviar_email(email, html, subject=subject)
             registrar_log(sheet_logs, nome, email, ok, list(pacote.keys()))
 
@@ -186,7 +195,7 @@ def main():
     try:
         from site_publisher import publicar_edicao
         print("\n🌐 Publicando edição no site…")
-        publicar_edicao(CACHE_GLOBAL, painel, editorial)
+        publicar_edicao(CACHE_GLOBAL, painel, abertura_padrao, coluna_autor)
     except Exception as e:
         print(f"   ⚠️ Falha ao publicar no site (e-mail não afetado): {e}")
 

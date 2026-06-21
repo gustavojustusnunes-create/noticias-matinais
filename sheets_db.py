@@ -42,11 +42,36 @@ def conectar_banco():
             sheet_logs = planilha.add_worksheet(title="logs", rows=5000, cols=5)
             sheet_logs.append_row(["data", "nome", "email", "status", "temas"])
 
-        return sheet_usuarios, sheet_historico, sheet_logs
+        return planilha, sheet_usuarios, sheet_historico, sheet_logs
 
     except Exception as e:
         print(f"❌ Erro ao conectar ao banco: {e}")
-        return None, None, None
+        return None, None, None, None
+
+
+def obter_coluna_editorial(planilha):
+    """Lê a aba 'Editorial' e retorna o texto agendado para hoje, se houver."""
+    try:
+        try:
+            sheet_editorial = planilha.worksheet("Editorial")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_editorial = planilha.add_worksheet(title="Editorial", rows=100, cols=3)
+            sheet_editorial.append_row(["data", "titulo", "texto"])
+            return None
+
+        registros = sheet_editorial.get_all_records()
+        hoje = datetime.now().strftime("%d/%m/%Y")
+        for r in reversed(registros):  # Pega o último caso haja vários
+            if str(r.get("data", "")).strip() == hoje:
+                texto = str(r.get("texto", "")).strip()
+                if texto:
+                    return {
+                        "titulo": str(r.get("titulo", "")).strip(),
+                        "texto": texto
+                    }
+    except Exception as e:
+        print(f"⚠️ Erro ao ler aba Editorial: {e}")
+    return None
 
 
 def gerar_hash(titulo, link):

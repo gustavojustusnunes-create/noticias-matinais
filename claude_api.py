@@ -206,3 +206,20 @@ def limpar_resumo(texto: str) -> str:
     texto = re.sub(r"\s*\.\.\.\s*$", ".", texto.strip())
     texto = re.sub(r"\s*…\s*$", ".", texto.strip())
     return texto.strip()
+
+def gerar_keyword_imagem(texto: str) -> str:
+    """Usa IA para gerar uma única palavra-chave em inglês para buscar uma imagem no Unsplash."""
+    prompt = (
+        f"Leia o texto abaixo e resuma o tema visual central em EXATAMENTE UMA PALAVRA em INGLÊS. "
+        f"A palavra deve ser um substantivo visualizável e bom para busca de banco de imagens "
+        f"(ex: business, technology, health, nature, politics). "
+        f"Retorne APENAS a palavra e absolutamente mais nada.\n\n"
+        f"Texto:\n{texto[:1000]}"
+    )
+    keyword = chamar_claude_api(prompt, max_tokens=10)
+    if keyword:
+        # Limpa qualquer aspa ou ponto
+        keyword = re.sub(r"[^a-zA-Z]", "", keyword).strip().lower()
+        if len(keyword) > 2:
+            return keyword
+    return "news"
