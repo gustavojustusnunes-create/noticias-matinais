@@ -66,7 +66,7 @@ def obter_coluna_editorial(planilha):
                 texto = str(r.get("texto", "")).strip()
                 if texto:
                     return {
-                        "titulo": str(r.get("titulo", "")).strip(),
+                        "titulo": str(r.get("titulo") or r.get("título", "")).strip(),
                         "texto": texto
                     }
     except Exception as e:
