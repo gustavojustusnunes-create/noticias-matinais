@@ -132,6 +132,13 @@ def limpar_texto_rss(texto):
         r"[\u200b\u200c\u200d\u2060\ufeff]",
         # Emojis de CTA frequentes em feeds
         r"[📲💬🎯🔗]",
+        # Lixo de newsletter e ofertas (Grupo Abril, etc)
+        r"Newsletter(?:\s+Dicas\s+de)?.*?Inscreva-se.*?Cadastro efetuado com sucesso!?",
+        r"Inscreva-se(?: aqui)? para receber a nossa newsletter.*",
+        r"Aceito receber ofertas.*?Grupo Abril.*",
+        r"E o melhor:\s*sem pagar nada por isso.*",
+        r"Cadastro efetuado com sucesso!?",
+        r"Assine a newsletter.*",
     ]
     for padrao in padroes_cta:
         texto = re.sub(padrao, " ", texto, flags=re.DOTALL | re.IGNORECASE)
