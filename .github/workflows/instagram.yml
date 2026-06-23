@@ -40,9 +40,8 @@ jobs:
           INSTAGRAM_PASS:    ${{ secrets.INSTAGRAM_PASS }}
           INSTAGRAM_SESSION: ${{ secrets.INSTAGRAM_SESSION }}
           INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
-          # "email" (padrão) manda os cards por email p/ postar manualmente;
-          # "post" tenta publicar via instagrapi. Controlado por Variable.
-          INSTAGRAM_DELIVERY: ${{ vars.INSTAGRAM_DELIVERY }}
+          # "email" (padrão) envia a mídia p/ postagem manual; "post" publica direto
+          INSTAGRAM_DELIVERY: "post"
           INSTAGRAM_EMAIL_TO: ${{ vars.INSTAGRAM_EMAIL_TO }}
           # Resend (usado no modo "email")
           RESEND_API_KEY:    ${{ secrets.RESEND_API_KEY }}

@@ -44,7 +44,7 @@ jobs:
           INSTAGRAM_SESSION: ${{ secrets.INSTAGRAM_SESSION }}
           INSTAGRAM_ENABLED: ${{ vars.INSTAGRAM_ENABLED }}
           # "email" (padrão) envia a mídia p/ postagem manual; "post" publica direto
-          INSTAGRAM_DELIVERY: ${{ vars.INSTAGRAM_DELIVERY }}
+          INSTAGRAM_DELIVERY: "post"
           INSTAGRAM_EMAIL_TO: ${{ vars.INSTAGRAM_EMAIL_TO }}
           # Resend (usado no modo "email")
           RESEND_API_KEY:    ${{ secrets.RESEND_API_KEY }}
