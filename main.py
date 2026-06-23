@@ -93,9 +93,10 @@ def main():
     painel       = obter_indicadores()
     CACHE_GLOBAL = {}
     novas        = []
+    titulos_selecionados = []
 
     for tema in temas_demandados:
-        resultado = processar_tema(tema, historico_hashes)
+        resultado = processar_tema(tema, historico_hashes, titulos_selecionados)
         if resultado:
             CACHE_GLOBAL[tema] = resultado
             novas.extend(resultado)

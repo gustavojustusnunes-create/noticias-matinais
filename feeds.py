@@ -316,10 +316,25 @@ def rankear_por_relevancia(candidatas, tema):
         return candidatas
 
 
+def limpar_titulo_entry(titulo: str) -> str:
+    """Detecta e remove duplicação no próprio título do feed RSS."""
+    if not titulo: return ""
+    titulo = titulo.strip()
+    meio = len(titulo) // 2
+    for split_idx in range(meio - 5, meio + 5):
+        if split_idx <= 0 or split_idx >= len(titulo): continue
+        m1 = titulo[:split_idx].strip()
+        m2 = titulo[split_idx:].strip()
+        m1_clean = re.sub(r'[^\w\s]', '', m1).lower()
+        m2_clean = re.sub(r'[^\w\s]', '', m2).lower()
+        if m1_clean and m1_clean == m2_clean:
+            return m1
+    return titulo
+
 # =============================================================================
 # --- PIPELINE PRINCIPAL ---
 # =============================================================================
-def processar_tema(tema, historico_hashes):
+def processar_tema(tema, historico_hashes, titulos_selecionados=None):
     """
     Pipeline completo para um tema:
     1. Coleta multi-fonte ou fonte única
@@ -365,11 +380,18 @@ def processar_tema(tema, historico_hashes):
     candidatas = rankear_por_relevancia(candidatas, tema)
 
     # ── Deduplicação por similaridade de título ──────────────────────────────
+    if titulos_selecionados is None:
+        titulos_selecionados = []
+
     noticias_filtradas = []
     for entry in candidatas:
-        if not any(titulos_similares(entry.get("title", ""), e.get("title", ""))
-                   for e in noticias_filtradas):
-            noticias_filtradas.append(entry)
+        t = limpar_titulo_entry(entry.get("title", ""))
+        entry["title"] = t
+        if any(titulos_similares(t, e.get("title", "")) for e in noticias_filtradas):
+            continue
+        if any(titulos_similares(t, ts) for ts in titulos_selecionados):
+            continue
+        noticias_filtradas.append(entry)
         if len(noticias_filtradas) >= 4:
             break
 
@@ -497,5 +519,6 @@ def processar_tema(tema, historico_hashes):
             "imagem": img,
             "resumo": resumo_limpo,
         })
+        titulos_selecionados.append(titulo_entry)
 
     return noticias_finais if noticias_finais else None

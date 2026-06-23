@@ -133,6 +133,7 @@ def limpar_texto_rss(texto):
         # Emojis de CTA frequentes em feeds
         r"[📲💬🎯🔗]",
         # Lixo de newsletter e ofertas (Grupo Abril, etc)
+        r"Você receberá nossa newsletter em breve.*",
         r"Newsletter(?:\s+Dicas\s+de)?.*?Inscreva-se.*?Cadastro efetuado com sucesso!?",
         r"Inscreva-se(?: aqui)? para receber a nossa newsletter.*",
         r"Aceito receber ofertas.*?Grupo Abril.*",
@@ -148,6 +149,9 @@ def limpar_texto_rss(texto):
         r"\b(Reuters|AFP|AP|EFE|G1|Globo|GE|Getty)[\s/][^\.\n]{0,60}",
         " ", texto, flags=re.IGNORECASE
     )
+
+    # Remove perguntas no final do texto
+    texto = re.sub(r"\s*[^.!?]+\?\s*$", ".", texto)
 
     texto = re.sub(r"\s*\.\.\.\s*$", ".", texto.strip())
     texto = re.sub(r"\s*…\s*$", ".", texto.strip())
