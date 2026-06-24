@@ -212,6 +212,23 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
     </div>
 """
 
+    # ── Podcast Promocional ──────────────────────────────────────────────────
+    html += f"""
+    <div style="background-color:#0a5c5a;padding:25px 20px;border-radius:8px;margin-bottom:30px;text-align:center;">
+      <h3 style="color:#ffffff;margin:0 0 10px;font-family:'Playfair Display',Georgia,serif;font-size:20px;">
+        🎧 Escute a Edição de Hoje!
+      </h3>
+      <p style="color:#e0ecec;font-size:14px;margin:0 0 18px;line-height:1.5;">
+        O All News Journal agora também é podcast. Ana e Leo comentam as principais notícias do dia.
+      </p>
+      <a href="https://allnewsjournal.streamlit.app?edicao={datetime.now().strftime('%Y-%m-%d')}"
+         style="display:inline-block;background-color:#ffffff;color:#0a5c5a;padding:10px 24px;
+                border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px;">
+        ▶️ Dar o Play no Site
+      </a>
+    </div>
+"""
+
     # ── Sumário ──────────────────────────────────────────────────────────────
     if linhas_sumario:
         html += f"""

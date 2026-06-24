@@ -900,6 +900,12 @@ with aba_edicao:
                 )
                 _arq = _os.path.join("edicoes", f"{_sel}.html")
                 if _os.path.exists(_arq):
+                    # Tenta carregar o podcast do dia, se existir
+                    _podcast_path = _os.path.join("edicoes", "podcasts", f"podcast_{_sel}.mp3")
+                    if _os.path.exists(_podcast_path):
+                        st.markdown("<div style='text-align: center; margin-bottom: 10px; color: #0a5c5a; font-weight: bold;'>🎧 Ouça o Podcast Diário (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+                        st.audio(_podcast_path, format="audio/mpeg")
+                        
                     with open(_arq, encoding="utf-8") as _f:
                         _components.html(_f.read(), height=2400, scrolling=True)
     except Exception:

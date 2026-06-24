@@ -200,5 +200,16 @@ def main():
     except Exception as e:
         print(f"   ⚠️ Falha ao publicar no site (e-mail não afetado): {e}")
 
+    # ── [NOVO] Gera Podcast da Edição (Estilo NotebookLM) ──
+    try:
+        from podcast_builder import compilar_podcast
+        print("\n🎙️  Gerando Podcast Diário...")
+        # Usa o mesmo CACHE_GLOBAL. Adiciona a data para a função compilar_podcast
+        edicao_podcast = CACHE_GLOBAL.copy()
+        edicao_podcast["data"] = datetime.now().strftime("%Y-%m-%d")
+        compilar_podcast(edicao_podcast)
+    except Exception as e:
+        print(f"   ⚠️ Falha ao gerar podcast: {e}")
+
 if __name__ == "__main__":
     main()
