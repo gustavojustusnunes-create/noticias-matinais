@@ -1,10 +1,10 @@
 name: Instagram Carrossel Diário
 
 on:
-  schedule:
-    # 10:20 UTC = 07:20 BRT — logo após a edição da manhã, FORA do minuto 0
-    # (o cron do GitHub atrasa muito no minuto cheio).
-    - cron: '20 10 * * *'
+  # schedule:
+  #   # 10:20 UTC = 07:20 BRT — logo após a edição da manhã, FORA do minuto 0
+  #   # (o cron do GitHub atrasa muito no minuto cheio).
+  #   - cron: '20 10 * * *'
   workflow_dispatch:
     inputs:
       dry_run:

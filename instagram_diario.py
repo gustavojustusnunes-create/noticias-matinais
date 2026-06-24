@@ -517,11 +517,6 @@ def gerar_frames_reel(edicao):
         return [], ""
 
     frames = []
-    capa = slide_capa(W, H, edicao.get("data_extenso", ""), caderno=caderno)
-    p = frames_dir / "f00.png"
-    capa.save(str(p), "PNG")
-    frames.append(p)
-
     for i, (tema, noticia) in enumerate(itens, start=1):
         img = slide_noticia(W, H, tema, noticia)
         p = frames_dir / f"f{i:02d}.png"
