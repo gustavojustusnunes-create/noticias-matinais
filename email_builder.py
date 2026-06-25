@@ -221,7 +221,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
       <p style="color:#e0ecec;font-size:14px;margin:0 0 18px;line-height:1.5;">
         O All News Journal agora também é podcast. Ana e Leo comentam as principais notícias do dia.
       </p>
-      <a href="https://allnewsjournal.streamlit.app?edicao={datetime.now().strftime('%Y-%m-%d')}"
+      <a href="https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app?edicao={datetime.now().strftime('%Y-%m-%d')}"
          style="display:inline-block;background-color:#ffffff;color:#0a5c5a;padding:10px 24px;
                 border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px;">
         ▶️ Dar o Play no Site

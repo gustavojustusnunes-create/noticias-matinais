@@ -127,7 +127,7 @@ def atualizar_rss(mp3_filename, date_str, size_bytes):
         rss = ET.Element("rss", version="2.0", attrib={"xmlns:itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd"})
         channel = ET.SubElement(rss, "channel")
         ET.SubElement(channel, "title").text = PODCAST_TITLE
-        ET.SubElement(channel, "link").text = "https://allnewsjournal.streamlit.app"
+        ET.SubElement(channel, "link").text = "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app"
         ET.SubElement(channel, "description").text = PODCAST_DESC
         ET.SubElement(channel, "language").text = "pt-br"
         ET.SubElement(channel, "itunes:author").text = "All News Journal"
@@ -136,7 +136,7 @@ def atualizar_rss(mp3_filename, date_str, size_bytes):
         image = ET.SubElement(channel, "image")
         ET.SubElement(image, "url").text = "https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/logo.png"
         ET.SubElement(image, "title").text = PODCAST_TITLE
-        ET.SubElement(image, "link").text = "https://allnewsjournal.streamlit.app"
+        ET.SubElement(image, "link").text = "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app"
         
     item = ET.Element("item")
     ET.SubElement(item, "title").text = f"Edição de {date_str}"
