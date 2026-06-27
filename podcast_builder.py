@@ -138,6 +138,10 @@ def atualizar_rss(mp3_filename, date_str, size_bytes):
         ET.SubElement(image, "title").text = PODCAST_TITLE
         ET.SubElement(image, "link").text = "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app"
         
+        owner = ET.SubElement(channel, "itunes:owner")
+        ET.SubElement(owner, "itunes:name").text = "Gustavo Justus"
+        ET.SubElement(owner, "itunes:email").text = "gustavojustusnunes@gmail.com"
+        
     item = ET.Element("item")
     ET.SubElement(item, "title").text = f"Edição de {date_str}"
     ET.SubElement(item, "description").text = f"As notícias desta manhã: {date_str}. Apresentado por Leo e Ana."

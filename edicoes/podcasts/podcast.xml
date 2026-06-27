@@ -12,5 +12,16 @@
       <title>All News Journal - Podcast Diário</title>
       <link>https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app</link>
     </image>
+    <itunes:owner>
+      <itunes:name>Gustavo Justus</itunes:name>
+      <itunes:email>gustavojustusnunes@gmail.com</itunes:email>
+    </itunes:owner>
+    <item>
+      <title>Bem-vindo ao All News Journal - Podcast Diário</title>
+      <description>Este é o episódio de introdução ao nosso podcast. A partir de amanhã, você receberá um resumo diário das principais notícias.</description>
+      <pubDate>Thu, 25 Jun 2026 12:00:00 +0000</pubDate>
+      <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/audio/trilha.mp3" length="102400" type="audio/mpeg"/>
+      <guid isPermaLink="false">anj-intro</guid>
+    </item>
   </channel>
 </rss>
