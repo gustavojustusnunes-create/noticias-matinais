@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+  <channel>
+    <title>All News Journal - Podcast Diário</title>
+    <link>https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app</link>
+    <description>Um resumo matinal ágil e descontraído das principais notícias do Brasil e do mundo, direto da curadoria do All News Journal.</description>
+    <language>pt-br</language>
+    <itunes:author>All News Journal</itunes:author>
+    <itunes:category text="News"/>
+    <image>
+      <url>https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/logo.png</url>
+      <title>All News Journal - Podcast Diário</title>
+      <link>https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app</link>
+    </image>
+  </channel>
+</rss>
