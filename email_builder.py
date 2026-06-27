@@ -223,8 +223,13 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
       </p>
       <a href="https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app?edicao={datetime.now().strftime('%Y-%m-%d')}"
          style="display:inline-block;background-color:#ffffff;color:#0a5c5a;padding:10px 24px;
+                border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:10px;">
+        ▶️ Play no Site
+      </a>
+      <a href="https://open.spotify.com/show/033FwFJeZTyXrigyvfXpt3"
+         style="display:inline-block;background-color:#1db954;color:#ffffff;padding:10px 24px;
                 border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px;">
-        ▶️ Dar o Play no Site
+        🎧 Ouvir no Spotify
       </a>
     </div>
 """
