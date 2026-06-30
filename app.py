@@ -867,7 +867,31 @@ with aba_inicio:
             modal_privacidade()
 
 with aba_podcast:
-    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição de hoje no Spotify</h2><br>", unsafe_allow_html=True)
+    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição de hoje</h2><br>", unsafe_allow_html=True)
+    
+    # ── Player Nativo (Fallback/Direto) ──
+    import os as _os
+    _param  = st.query_params.get("edicao", "")
+    _podcast_path = None
+    _idx_path = _os.path.join("edicoes", "index.json")
+    if _os.path.exists(_idx_path):
+        with open(_idx_path, encoding="utf-8") as _f:
+            _indice = json.load(_f)
+        if _indice:
+            _datas = [e["data"] for e in _indice]
+            _data_atual = _param if _param in _datas else _datas[0]
+            _podcast_path = _os.path.join("edicoes", "podcasts", f"podcast_{_data_atual}.mp3")
+    
+    if _podcast_path and _os.path.exists(_podcast_path):
+        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'>Reproduzir áudio original (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+        st.audio(_podcast_path, format="audio/mpeg")
+    else:
+        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O áudio de hoje ainda está sendo gerado ou não está disponível.</em></div>", unsafe_allow_html=True)
+
+    st.markdown("<br><hr style='border:1px solid #e0ecec;'><br>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'><strong>Ou se preferir, escute pelo Spotify:</strong></div>", unsafe_allow_html=True)
+    
+    # ── Player Spotify ──
     iframe_spotify = '''
     <div style="display: flex; justify-content: center;">
         <iframe style="border-radius:12px; max-width: 720px;" src="https://open.spotify.com/embed/show/033FwFJeZTyXrigyvfXpt3?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
