@@ -750,8 +750,7 @@ st.markdown("""
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje"])
-
+aba_inicio, aba_edicao, aba_podcast = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "🎙️ Ouvir no Spotify"])
 with aba_inicio:
     st.markdown("""
     <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -866,6 +865,16 @@ with aba_inicio:
     with col_rod_c2:
         if st.button("Política de Privacidade", key="footer_btn_privacy", type="secondary", use_container_width=True):
             modal_privacidade()
+
+with aba_podcast:
+    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição de hoje no Spotify</h2><br>", unsafe_allow_html=True)
+    iframe_spotify = '''
+    <div style="display: flex; justify-content: center;">
+        <iframe style="border-radius:12px; max-width: 720px;" src="https://open.spotify.com/embed/show/033FwFJeZTyXrigyvfXpt3?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+    '''
+    import streamlit.components.v1 as _components
+    _components.html(iframe_spotify, height=400)
 
 with aba_edicao:
     # =============================================================================
