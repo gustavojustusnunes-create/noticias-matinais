@@ -321,7 +321,7 @@ def limpar_titulo_entry(titulo: str) -> str:
     if not titulo: return ""
     titulo = titulo.strip()
     meio = len(titulo) // 2
-    for split_idx in range(meio - 5, meio + 5):
+    for split_idx in range(meio - 15, meio + 15):
         if split_idx <= 0 or split_idx >= len(titulo): continue
         m1 = titulo[:split_idx].strip()
         m2 = titulo[split_idx:].strip()
@@ -429,11 +429,12 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             f"3. CORTES BRUSCOS: O texto DEVE ser uma notícia completa com raciocínio finalizado. NUNCA termine de forma abrupta. Última frase fechada com ponto final.\n"
             f"4. IDIOMA E TOM: Sempre em Português Brasileiro fluente. Direto, ativo, jornalístico. Sem jargões.\n"
             f"5. CRÉDITOS: REMOVA qualquer crédito de fotógrafo, agência ou jornal (ex: ESTADÃO CONTEÚDO).\n"
-            f"6. CTAs E PERGUNTAS: NUNCA faça perguntas. NUNCA inclua frases como 'Tem alguma sugestão de reportagem?'.\n"
+            f"6. CTAs E PERGUNTAS: NUNCA faça perguntas. NUNCA termine com perguntas (ex: 'O que a ciência diz?'). NUNCA inclua frases como 'Tem alguma sugestão?'.\n"
             f"7. EMOJIS: O texto deve ser 100% formal. É ABSOLUTAMENTE PROIBIDO o uso de qualquer emoji.\n"
             f"8. TÍTULO: NÃO REPITA o título no corpo do resumo. Vá direto ao assunto.\n"
-            f"9. PROIBIDO: 'o artigo fala', 'segundo a publicação', numeração, markdown.\n"
-            f"10. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n\n"
+            f"9. NEWSLETTERS: NUNCA cite a existência de newsletters do site fonte (ex: 'Você receberá nossa newsletter em breve.').\n"
+            f"10. PROIBIDO: 'o artigo fala', 'segundo a publicação', numeração, markdown.\n"
+            f"11. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n\n"
             f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n"
         )
 
