@@ -888,18 +888,6 @@ with aba_podcast:
     else:
         st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O áudio de hoje ainda está sendo gerado ou não está disponível.</em></div>", unsafe_allow_html=True)
 
-    st.markdown("<br><hr style='border:1px solid #e0ecec;'><br>", unsafe_allow_html=True)
-    st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'><strong>Ou se preferir, escute pelo Spotify:</strong></div>", unsafe_allow_html=True)
-    
-    # ── Player Spotify ──
-    iframe_spotify = '''
-    <div style="display: flex; justify-content: center;">
-        <iframe style="border-radius:12px; max-width: 720px;" src="https://open.spotify.com/embed/show/033FwFJeZTyXrigyvfXpt3?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-    </div>
-    '''
-    import streamlit.components.v1 as _components
-    _components.html(iframe_spotify, height=400)
-
 with aba_edicao:
     # =============================================================================
     # --- EDIÇÃO DO DIA (publicada pelo daily — lê edicoes/index.json) ---

@@ -15,7 +15,7 @@ try:
 except ImportError:
     AUDIO_OK = False
 
-from claude_api import chamar_claude
+from claude_api import chamar_claude_api
 from config import GCP_JSON
 
 PODCAST_DIR = Path("edicoes/podcasts")
@@ -57,7 +57,7 @@ def gerar_roteiro(edicao):
         f"{texto_resumo}"
     )
     
-    roteiro = chamar_claude(prompt, context="podcast_script")
+    roteiro = chamar_claude_api(prompt)
     
     # Filtra apenas linhas válidas do roteiro
     linhas_finais = []

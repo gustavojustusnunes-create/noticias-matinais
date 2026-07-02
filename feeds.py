@@ -434,7 +434,8 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             f"8. TÍTULO: NÃO REPITA o título no corpo do resumo. Vá direto ao assunto.\n"
             f"9. NEWSLETTERS: NUNCA cite a existência de newsletters do site fonte (ex: 'Você receberá nossa newsletter em breve.').\n"
             f"10. PROIBIDO: 'o artigo fala', 'segundo a publicação', numeração, markdown.\n"
-            f"11. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n\n"
+            f"11. CLICKBAIT: Se o título prometer uma lista (ex: '5 motivos', '3 coisas') ou fizer mistério, mas o texto não tiver o conteúdo real, retorne EXATAMENTE: SKIP\n"
+            f"12. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n\n"
             f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n"
         )
 

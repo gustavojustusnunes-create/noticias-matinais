@@ -228,10 +228,12 @@ def gerar_imagem_post(tema, titulo, data_str, imagem_url=None):
         f_titulo, lh = _playfair(78), 88
     elif len(linhas) == 4:
         f_titulo, lh = _playfair(64), 74
+    elif len(linhas) == 5:
+        f_titulo, lh = _playfair(54), 64
+        linhas = textwrap.wrap(titulo, width=20)
     else:
-        f_titulo = _playfair(54)
-        linhas = textwrap.wrap(titulo, width=20)[:5]
-        lh = 64
+        f_titulo, lh = _playfair(44), 54
+        linhas = textwrap.wrap(titulo, width=24)[:7]
     altura_manchete = lh * len(linhas)
     y_rodape = H - 88
     y_titulo = (y_rodape - 80) - altura_manchete
