@@ -349,6 +349,48 @@ def salvar_assinante(nome, email, ordem_temas):
         # Mostra a causa real para facilitar o diagnóstico (ex.: permissão).
         return False, f"Não consegui registrar: {e}"
 
+def conectar_planilha_finance():
+    if "GCP_JSON" not in st.secrets:
+        return None
+    try:
+        creds_dict = json.loads(st.secrets["GCP_JSON"])
+        scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
+        creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+        client = gspread.authorize(creds)
+        sheet_id = st.secrets.get("GOOGLE_SHEETS_ID", "")
+        planilha = client.open_by_key(sheet_id) if sheet_id else client.open("noticias_db")
+        try:
+            sheet_finance = planilha.worksheet("all news finance")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_finance = planilha.add_worksheet(title="all news finance", rows=2000, cols=4)
+            sheet_finance.append_row(["data_inscricao", "nome", "email", "status"])
+        return sheet_finance
+    except Exception as e:
+        return None
+
+def salvar_assinante_finance(nome, email):
+    sheet = conectar_planilha_finance()
+    if not sheet:
+        return False, "Não foi possível conectar. Tente novamente."
+    try:
+        email_limpo = email.strip().lower()
+        nome_limpo = nome.strip()
+        registros = sheet.get_all_records()
+        for idx, reg in enumerate(registros, start=2):
+            reg_email = str(reg.get("email", reg.get("E-mail", reg.get("Email", "")))).strip().lower()
+            if reg_email == email_limpo:
+                status = str(reg.get("status", reg.get("Status", ""))).strip().lower()
+                if status == "cancelado":
+                    sheet.update_cell(idx, 4, "ativo")
+                    return True, "Sua assinatura foi reativada no All News Finance!"
+                return True, "Este e-mail já está cadastrado no All News Finance."
+        hoje = datetime.now().strftime("%d/%m/%Y %H:%M")
+        sheet.append_row([hoje, nome_limpo, email_limpo, "ativo"])
+        return True, "Inscrição confirmada!"
+    except Exception as e:
+        return False, f"Não consegui registrar: {e}"
+
+
 def cancelar_assinatura(email):
     sheet = conectar_planilha()
     if not sheet:
@@ -750,7 +792,7 @@ st.markdown("""
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_podcast = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "🎙️ Ouvir no Spotify"])
+aba_inicio, aba_edicao, aba_finance, aba_podcast = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎙️ Ouvir no Site"])
 with aba_inicio:
     st.markdown("""
     <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -867,10 +909,12 @@ with aba_inicio:
             modal_privacidade()
 
 with aba_podcast:
-    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição de hoje</h2><br>", unsafe_allow_html=True)
+    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição em áudio</h2><br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #555; max-width: 620px; margin: 0 auto 25px; line-height: 1.6;'>O nosso podcast diário é apresentado por <b>Leo e Ana</b> com os destaques da manhã. Ouça diretamente do seu navegador sem precisar de Spotify ou outros aplicativos!</p>", unsafe_allow_html=True)
     
     # ── Player Nativo (Fallback/Direto) ──
     import os as _os
+    import glob as _glob
     _param  = st.query_params.get("edicao", "")
     _podcast_path = None
     _idx_path = _os.path.join("edicoes", "index.json")
@@ -883,10 +927,158 @@ with aba_podcast:
             _podcast_path = _os.path.join("edicoes", "podcasts", f"podcast_{_data_atual}.mp3")
     
     if _podcast_path and _os.path.exists(_podcast_path):
-        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'>Reproduzir áudio original (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'>Reproduzir áudio original</div>", unsafe_allow_html=True)
         st.audio(_podcast_path, format="audio/mpeg")
     else:
-        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O áudio de hoje ainda está sendo gerado ou não está disponível.</em></div>", unsafe_allow_html=True)
+        _mp3s = sorted(_glob.glob(_os.path.join("edicoes", "podcasts", "podcast_*.mp3")), reverse=True)
+        if _mp3s:
+            _ultimo_mp3 = _mp3s[0]
+            _data_ultimo = _os.path.basename(_ultimo_mp3).replace("podcast_", "").replace(".mp3", "")
+            st.info(f"🎙️ O áudio de hoje está em processamento. Reproduzindo o episódio mais recente disponível ({_data_ultimo}):")
+            st.audio(_ultimo_mp3, format="audio/mpeg")
+        else:
+            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O episódio em áudio de hoje está em processamento pela nossa redação. Por favor, volte em breve!</em></div>", unsafe_allow_html=True)
+
+with aba_finance:
+    st.markdown("""
+    <style>
+      .finance-header {
+        background: linear-gradient(135deg, #0a2540 0%, #0f3156 100%);
+        padding: 35px 25px;
+        border-radius: 12px;
+        text-align: center;
+        color: #ffffff;
+        border-bottom: 4px solid #c9a84c;
+        margin-top: 15px;
+        margin-bottom: 25px;
+      }
+      .finance-header h2 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 2rem;
+        margin: 0;
+        color: #ffffff;
+        letter-spacing: 1px;
+      }
+      .finance-header .sub {
+        color: #c9a84c;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-top: 8px;
+      }
+      .finance-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .finance-card {
+        background-color: #f8fafc;
+        border-left: 4px solid #0a2540;
+        padding: 15px 18px;
+        border-radius: 6px;
+      }
+      .finance-card h4 {
+        color: #0a2540;
+        margin: 0 0 6px 0;
+        font-size: 1.05rem;
+      }
+      .finance-card p {
+        color: #475569;
+        font-size: 0.9rem;
+        margin: 0;
+        line-height: 1.5;
+      }
+      @media (max-width: 600px) {
+        .finance-grid { grid-template-columns: 1fr; }
+      }
+    </style>
+    <div class="finance-header">
+      <h2>📈 ALL NEWS FINANCE</h2>
+      <div class="sub">Economia &bull; Mercados &bull; Negócios</div>
+    </div>
+    <div style="max-width: 700px; margin: 0 auto; text-align: center; color: #334155; line-height: 1.6; font-size: 1.05rem; margin-bottom: 25px;">
+      <p>O <b>All News Finance</b> é o nosso braço editorial voltado a investidores, profissionais do mercado financeiro e empresários.</p>
+      <p>Entregamos de <b>Segunda a Sexta-feira</b>, antes da abertura do pregão, uma curadoria analítica completa das 4 principais seções econômicas do Brasil e do mundo.</p>
+    </div>
+    <div class="finance-grid">
+      <div class="finance-card">
+        <h4>📊 Mercado &amp; Bolsa</h4>
+        <p>Bovespa, Wall Street, Câmbio e tendências de renda variável direto ao ponto.</p>
+      </div>
+      <div class="finance-card">
+        <h4>🏢 Empresas &amp; Negócios</h4>
+        <p>Resultados trimestrais, fusões, aquisições e destaques do setor corporativo.</p>
+      </div>
+      <div class="finance-card">
+        <h4>🌎 Macroeconomia</h4>
+        <p>Selic, Fed, inflação, política monetária e impacto fiscal no Brasil e no exterior.</p>
+      </div>
+      <div class="finance-card">
+        <h4>🚀 Cripto &amp; FinTechs</h4>
+        <p>Bitcoin, ativos digitais, inovação e transformações no setor financeiro.</p>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<h3 style='text-align:center; color:#0a2540; margin-top:10px;'>Assine grátis o All News Finance</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#64748b; font-size:0.95rem; margin-bottom:20px;'>Receba todas as manhãs de segunda a sexta-feira na sua caixa de entrada.</p>", unsafe_allow_html=True)
+
+    col_fin1, col_fin2 = st.columns([1, 1])
+    with col_fin1:
+        nome_fin = st.text_input("Seu Nome", key="fin_nome", placeholder="Ex.: Ana Souza")
+    with col_fin2:
+        email_fin = st.text_input("Seu E-mail", key="fin_email", placeholder="Ex.: ana@empresa.com.br")
+
+    if st.button("INSCREVER-SE NO ALL NEWS FINANCE 📈", key="btn_fin_subscribe", type="primary", use_container_width=True):
+        if not nome_fin or len(nome_fin.strip()) < 2:
+            st.warning("Por favor, informe seu nome.")
+        elif not email_fin or "@" not in email_fin or "." not in email_fin:
+            st.warning("Por favor, informe um e-mail válido.")
+        else:
+            with st.spinner("Conectando à aba 'all news finance'..."):
+                ok_fin, msg_fin = salvar_assinante_finance(nome_fin, email_fin)
+                if ok_fin:
+                    st.success(f"✅ {msg_fin}")
+                    st.balloons()
+                else:
+                    st.error(f"❌ {msg_fin}")
+
+    st.markdown("<hr style='margin: 35px 0; border: none; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
+    
+    # ── LEITOR WEB DO ALL NEWS FINANCE (edicoes_finance/) ──
+    import os as _os
+    import streamlit.components.v1 as _components
+    _fin_idx_path = _os.path.join("edicoes_finance", "index.json")
+    if _os.path.exists(_fin_idx_path):
+        try:
+            with open(_fin_idx_path, encoding="utf-8") as _ff:
+                _fin_indice = json.load(_ff)
+            if _fin_indice:
+                st.markdown("<h4 style='text-align:center; color:#0a2540;'>📰 Edições publicadas do All News Finance</h4>", unsafe_allow_html=True)
+                _fin_datas = [e["data"] for e in _fin_indice]
+                _fin_rotulos = {
+                    e["data"]: f"{e['data']} — {e.get('titulo', 'Edição Finance').replace('All News Finance — ', '')} ({e.get('noticias_count', '?')} notícias)"
+                    for e in _fin_indice
+                }
+                _fin_sel = st.selectbox(
+                    "Selecione uma edição financeira para ler:",
+                    options=_fin_datas,
+                    format_func=lambda x: _fin_rotulos.get(x, x),
+                    key="select_fin_edicao"
+                )
+                _fin_html_path = _os.path.join("edicoes_finance", f"{_fin_sel}.html")
+                if _os.path.exists(_fin_html_path):
+                    with open(_fin_html_path, encoding="utf-8") as _fh:
+                        _fin_html = _fh.read()
+                    _components.html(_fin_html, height=800, scrolling=True)
+                else:
+                    st.info("Arquivo HTML desta edição não foi encontrado.")
+        except Exception as _fe:
+            st.error(f"Erro ao carregar edições financeiras: {_fe}")
+    else:
+        st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.95rem;'><em>A primeira edição do All News Finance será exibida aqui após a próxima curadoria.</em></div>", unsafe_allow_html=True)
 
 with aba_edicao:
     # =============================================================================

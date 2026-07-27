@@ -139,3 +139,92 @@ def registrar_log(sheet_logs, nome, email, status, temas_enviados):
         ])
     except Exception as e:
         print(f"⚠️ Log não registrado ({nome}): {e}")
+
+
+# =============================================================================
+# --- BANCO DE DADOS — ALL NEWS FINANCE ---
+# =============================================================================
+
+def conectar_aba_finance(planilha=None):
+    """Retorna a aba 'all news finance' da planilha, criando-a se não existir."""
+    if planilha is None:
+        planilha, _, _, _ = conectar_banco()
+    if not planilha:
+        return None
+    try:
+        try:
+            sheet_finance = planilha.worksheet("all news finance")
+        except gspread.exceptions.WorksheetNotFound:
+            sheet_finance = planilha.add_worksheet(title="all news finance", rows=2000, cols=4)
+            sheet_finance.append_row(["data_inscricao", "nome", "email", "status"])
+        return sheet_finance
+    except Exception as e:
+        print(f"❌ Erro ao conectar na aba all news finance: {e}")
+        return None
+
+
+def adicionar_assinante_finance(nome, email):
+    """Adiciona um novo assinante na aba 'all news finance'."""
+    sheet_finance = conectar_aba_finance()
+    if not sheet_finance:
+        return False, "Falha na conexão com o banco de dados."
+    
+    try:
+        email_limpo = email.strip().lower()
+        nome_limpo = nome.strip()
+        registros = sheet_finance.get_all_records()
+        
+        for idx, reg in enumerate(registros, start=2):
+            if str(reg.get("email", reg.get("E-mail", reg.get("Email", "")))).strip().lower() == email_limpo:
+                # Se estava cancelado, reativa
+                if str(reg.get("status", reg.get("Status", ""))).strip().lower() == "cancelado":
+                    sheet_finance.update_cell(idx, 4, "ativo")
+                    return True, "Sua assinatura foi reativada com sucesso!"
+                return True, "Este e-mail já está inscrito no All News Finance."
+        
+        hoje = datetime.now().strftime("%d/%m/%Y %H:%M")
+        sheet_finance.append_row([hoje, nome_limpo, email_limpo, "ativo"])
+        return True, "Inscrição realizada com sucesso no All News Finance!"
+    except Exception as e:
+        print(f"❌ Erro ao inscrever em finanças: {e}")
+        return False, f"Erro ao salvar inscrição: {e}"
+
+
+def listar_assinantes_finance():
+    """Retorna lista de assinantes ativos da aba 'all news finance'."""
+    sheet_finance = conectar_aba_finance()
+    if not sheet_finance:
+        return []
+    try:
+        registros = sheet_finance.get_all_records()
+        ativos = []
+        for reg in registros:
+            status = str(reg.get("status", reg.get("Status", "ativo"))).strip().lower()
+            email = str(reg.get("email", reg.get("E-mail", reg.get("Email", "")))).strip()
+            nome = str(reg.get("nome", reg.get("Nome", ""))).strip()
+            if email and status != "cancelado":
+                ativos.append({"nome": nome or "Leitor(a)", "email": email})
+        print(f"   👥 All News Finance: {len(ativos)} assinantes ativos.")
+        return ativos
+    except Exception as e:
+        print(f"⚠️ Erro ao ler assinantes do All News Finance: {e}")
+        return []
+
+
+def cancelar_assinatura_finance(email):
+    """Cancela a assinatura alterando status para 'cancelado'."""
+    sheet_finance = conectar_aba_finance()
+    if not sheet_finance:
+        return False, "Falha na conexão."
+    try:
+        email_limpo = email.strip().lower()
+        registros = sheet_finance.get_all_records()
+        for idx, reg in enumerate(registros, start=2):
+            reg_email = str(reg.get("email", reg.get("E-mail", reg.get("Email", "")))).strip().lower()
+            if reg_email == email_limpo:
+                sheet_finance.update_cell(idx, 4, "cancelado")
+                return True, "Assinatura cancelada com sucesso no All News Finance."
+        return False, "E-mail não encontrado."
+    except Exception as e:
+        return False, f"Erro ao cancelar: {e}"
+

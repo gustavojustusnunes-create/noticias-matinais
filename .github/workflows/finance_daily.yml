@@ -1,0 +1,79 @@
+name: All News Finance — Edição Diária (Seg-Sex)
+
+on:
+  # 08:30 UTC = 05:30 BRT, apenas de Segunda (1) a Sexta (5)
+  schedule:
+    - cron: '30 8 * * 1-5'
+  # Botão manual no GitHub Actions para testar
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Forçar execução mesmo aos fins de semana'
+        required: false
+        default: 'false'
+
+jobs:
+  publicar-finance:
+    name: Publicar All News Finance
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar curadoria e envio (All News Finance)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          GCP_JSON: ${{ secrets.GCP_JSON }}
+          GOOGLE_SHEETS_ID: ${{ secrets.GOOGLE_SHEETS_ID }}
+          URL_CANCELAMENTO: ${{ secrets.URL_CANCELAMENTO }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            python finance_main.py --force
+          else
+            python finance_main.py
+          fi
+
+      - name: Publicar edições de finanças no repositório
+        run: |
+          [ -d edicoes_finance ] || { echo "ℹ️ Sem pasta edicoes_finance/ — nada a commitar."; exit 0; }
+          git config user.name  "ANJ Bot"
+          git config user.email "actions@github.com"
+          git add edicoes_finance/
+          git diff --staged --quiet || git commit -m "All News Finance — Edição $(date +%F)"
+          git push
+
+      - name: Notificar falha por email
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          secure: false
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "❌ Falha no GitHub Actions — All News Finance"
+          to: ${{ secrets.EMAIL_USER }}
+          from: "ANJ Finance Bot <${{ secrets.EMAIL_USER }}>"
+          body: "A execução do workflow do All News Finance falhou. Verifique os logs no GitHub Actions."

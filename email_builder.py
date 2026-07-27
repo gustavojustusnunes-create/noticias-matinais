@@ -10,7 +10,10 @@ from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-import yfinance as yf
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None
 
 from config import (
     EMAIL_SENDER, EMAIL_PASSWORD, EMAIL_FROM,
@@ -36,6 +39,8 @@ def formatar_indicador(nome, valor, variacao, prefixo=""):
 
 def obter_indicadores():
     """Busca USD/BRL, IBOV e BTC via yfinance e retorna HTML do painel."""
+    if yf is None:
+        return ""
     html_items = []
 
     def buscar_btc():
