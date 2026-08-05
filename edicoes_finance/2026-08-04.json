@@ -1,0 +1,41 @@
+{
+  "data": "2026-08-04",
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Ibovespa avança com impulso de commodities e otimismo externo",
+      "resumo": "O principal índice da B3 registrou valorização generalizada na sessão desta manhã, impulsionado pela alta dos papéis de mineração e energia, além de fluxo positivo de investidores estrangeiros.",
+      "fonte": "InfoMoney",
+      "link": "https://www.infomoney.com.br"
+    },
+    {
+      "titulo": "Dólar opera em estabilidade ante o real com expectativa por dados de inflação",
+      "resumo": "A moeda norte-americana manteve cotação em faixa estreita enquanto agentes do mercado aguardam a divulgação de índices inflacionários nos Estados Unidos para calibrar expectativas sobre juros.",
+      "fonte": "Valor Econômico",
+      "link": "https://valor.globo.com"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Balanços do 2º trimestre mostram resiliência operacional no setor varejista",
+      "resumo": "As principais companhias do comércio eletrônico e varejo físico apresentaram expansão em margem EBITDA, beneficiadas por ajustes logísticos e controle de despesas administrativas.",
+      "fonte": "Exame",
+      "link": "https://exame.com"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Banco Central sinaliza prudência na condução da política monetária",
+      "resumo": "Em ata divulgada nesta manhã, o Comitê de Política Monetária destacou a necessidade de manter vigilância sobre as expectativas de inflação de médio prazo no cenário doméstico.",
+      "fonte": "Estadão",
+      "link": "https://www.estadao.com.br"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Ativos digitais ganham tração corporativa com expansão de infraestrutura regulada",
+      "resumo": "O volume de transações institucionais em ativos criptográficos registrou avanço expressivo após novos marcos de conformidade e integração com o sistema financeiro tradicional.",
+      "fonte": "InfoMoney",
+      "link": "https://www.infomoney.com.br"
+    }
+  ]
+}

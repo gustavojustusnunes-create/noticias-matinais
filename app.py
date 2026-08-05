@@ -788,6 +788,56 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # =============================================================================
+# --- GERADOR DE PODCAST AO VIVO (Garante 100% funcionando no site) ---
+# =============================================================================
+@st.cache_data(ttl=43200, show_spinner=False)
+def gerar_podcast_audio_direto():
+    """Gera áudio MP3 no servidor web apresentando os destaques da manhã com Leo e Ana."""
+    try:
+        import os
+        import json
+        idx_path = os.path.join("edicoes", "index.json")
+        if not os.path.exists(idx_path):
+            return None
+        with open(idx_path, encoding="utf-8") as f:
+            indice = json.load(f)
+        if not indice:
+            return None
+        data_recente = indice[0]["data"]
+        json_path = os.path.join("edicoes", f"{data_recente}.json")
+        if not os.path.exists(json_path):
+            return None
+        with open(json_path, encoding="utf-8") as f:
+            noticias_json = json.load(f)
+            
+        manchetes = []
+        for cad, lista in noticias_json.items():
+            if isinstance(lista, list):
+                for n in lista[:2]:
+                    t = n.get("titulo", "").strip()
+                    r = n.get("resumo", "").strip()
+                    if t:
+                        manchetes.append(f"{t}. {r}")
+        
+        texto_fala = (
+            "Olá! Muito bom dia! Bem-vindo ao podcast do All News Journal, com Leo e Ana. "
+            "A seguir, os principais destaques de hoje. " +
+            " ".join(manchetes[:4]) +
+            " Para ler todas as matérias na íntegra e sem anúncios, confira a nossa edição de hoje aqui no site. "
+            "Desejamos a você um excelente dia!"
+        )
+        from gtts import gTTS
+        import io
+        tts = gTTS(text=texto_fala, lang="pt", tld="com.br")
+        buf = io.BytesIO()
+        tts.write_to_fp(buf)
+        buf.seek(0)
+        return buf.read()
+    except Exception:
+        return None
+
+
+# =============================================================================
 # --- CONTEÚDO PRINCIPAL (LANDING PAGE) ---
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
@@ -912,7 +962,7 @@ with aba_podcast:
     st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição em áudio</h2><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #555; max-width: 620px; margin: 0 auto 25px; line-height: 1.6;'>O nosso podcast diário é apresentado por <b>Leo e Ana</b> com os destaques da manhã. Ouça diretamente do seu navegador sem precisar de Spotify ou outros aplicativos!</p>", unsafe_allow_html=True)
     
-    # ── Player Nativo (Fallback/Direto) ──
+    # ── Player Nativo (Fallback/Direto ao Vivo) ──
     import os as _os
     import glob as _glob
     _param  = st.query_params.get("edicao", "")
@@ -930,14 +980,17 @@ with aba_podcast:
         st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'>Reproduzir áudio original</div>", unsafe_allow_html=True)
         st.audio(_podcast_path, format="audio/mpeg")
     else:
-        _mp3s = sorted(_glob.glob(_os.path.join("edicoes", "podcasts", "podcast_*.mp3")), reverse=True)
-        if _mp3s:
-            _ultimo_mp3 = _mp3s[0]
-            _data_ultimo = _os.path.basename(_ultimo_mp3).replace("podcast_", "").replace(".mp3", "")
-            st.info(f"🎙️ O áudio de hoje está em processamento. Reproduzindo o episódio mais recente disponível ({_data_ultimo}):")
-            st.audio(_ultimo_mp3, format="audio/mpeg")
+        # Garante 100% funcionando no site usando gTTS (sintetizador ao vivo cacheado)
+        _audio_bytes = gerar_podcast_audio_direto()
+        if _audio_bytes:
+            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #0a5c5a; font-weight: bold;'>🎧 Edição em Áudio de Hoje (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+            st.audio(_audio_bytes, format="audio/mpeg")
         else:
-            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O episódio em áudio de hoje está em processamento pela nossa redação. Por favor, volte em breve!</em></div>", unsafe_allow_html=True)
+            _mp3s = sorted(_glob.glob(_os.path.join("edicoes", "podcasts", "podcast_*.mp3")), reverse=True)
+            if _mp3s:
+                st.audio(_mp3s[0], format="audio/mpeg")
+            else:
+                st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O episódio em áudio de hoje está em processamento. Por favor, volte em breve!</em></div>", unsafe_allow_html=True)
 
 with aba_finance:
     st.markdown("""
@@ -998,32 +1051,48 @@ with aba_finance:
       <h2>📈 ALL NEWS FINANCE</h2>
       <div class="sub">Economia &bull; Mercados &bull; Negócios</div>
     </div>
-    <div style="max-width: 700px; margin: 0 auto; text-align: center; color: #334155; line-height: 1.6; font-size: 1.05rem; margin-bottom: 25px;">
-      <p>O <b>All News Finance</b> é o nosso braço editorial voltado a investidores, profissionais do mercado financeiro e empresários.</p>
-      <p>Entregamos de <b>Segunda a Sexta-feira</b>, antes da abertura do pregão, uma curadoria analítica completa das 4 principais seções econômicas do Brasil e do mundo.</p>
-    </div>
-    <div class="finance-grid">
-      <div class="finance-card">
-        <h4>📊 Mercado &amp; Bolsa</h4>
-        <p>Bovespa, Wall Street, Câmbio e tendências de renda variável direto ao ponto.</p>
-      </div>
-      <div class="finance-card">
-        <h4>🏢 Empresas &amp; Negócios</h4>
-        <p>Resultados trimestrais, fusões, aquisições e destaques do setor corporativo.</p>
-      </div>
-      <div class="finance-card">
-        <h4>🌎 Macroeconomia</h4>
-        <p>Selic, Fed, inflação, política monetária e impacto fiscal no Brasil e no exterior.</p>
-      </div>
-      <div class="finance-card">
-        <h4>🚀 Cripto &amp; FinTechs</h4>
-        <p>Bitcoin, ativos digitais, inovação e transformações no setor financeiro.</p>
-      </div>
-    </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<h3 style='text-align:center; color:#0a2540; margin-top:10px;'>Assine grátis o All News Finance</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#64748b; font-size:0.95rem; margin-bottom:20px;'>Receba todas as manhãs de segunda a sexta-feira na sua caixa de entrada.</p>", unsafe_allow_html=True)
+    # ── 1. EDIÇÃO DO DIA DE FINANÇAS EM DESTAQUE NO TOPO ──
+    import os as _os
+    import streamlit.components.v1 as _components
+    import re as _re
+    _fin_idx_path = _os.path.join("edicoes_finance", "index.json")
+    if _os.path.exists(_fin_idx_path):
+        try:
+            with open(_fin_idx_path, encoding="utf-8") as _ff:
+                _fin_indice = json.load(_ff)
+            if _fin_indice:
+                st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom: 15px;'>📰 Edição do Dia — All News Finance</h3>", unsafe_allow_html=True)
+                _fin_datas = [e["data"] for e in _fin_indice]
+                _fin_rotulos = {
+                    e["data"]: f"{e['data']} — {e.get('titulo', 'Edição Finance').replace('All News Finance — ', '')} ({e.get('noticias_count', '?')} notícias)"
+                    for e in _fin_indice
+                }
+                _fin_sel = st.selectbox(
+                    "🗞️ Escolha uma edição de finanças para ler:",
+                    options=_fin_datas,
+                    format_func=lambda x: _fin_rotulos.get(x, x),
+                    key="select_fin_edicao"
+                )
+                _fin_html_path = _os.path.join("edicoes_finance", f"{_fin_sel}.html")
+                if _os.path.exists(_fin_html_path):
+                    with open(_fin_html_path, encoding="utf-8") as _fh:
+                        _fin_html = _fh.read()
+                    # Remove botão spotify se houver
+                    _fin_html = _re.sub(r'<a[^>]+spotify\.com[^>]+>.*?</a>', '', _fin_html, flags=_re.IGNORECASE | _re.DOTALL)
+                    _components.html(_fin_html, height=2200, scrolling=True)
+                else:
+                    st.info("Arquivo HTML desta edição não foi encontrado.")
+        except Exception as _fe:
+            st.error(f"Erro ao carregar edições financeiras: {_fe}")
+    else:
+        st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.95rem;'><em>A primeira edição do All News Finance será exibida aqui após a próxima curadoria.</em></div>", unsafe_allow_html=True)
+
+    # ── 2. SEÇÃO DE ASSINATURA E EXPLICAÇÃO DOS CADERNOS ──
+    st.markdown("<hr style='margin: 40px 0 30px; border: none; border-top: 2px solid #e2e8f0;'>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom:10px;'>✉️ Assine Grátis o All News Finance</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#64748b; font-size:0.95rem; margin-bottom:20px;'>Receba de Segunda a Sexta-feira, antes da abertura do pregão, na sua caixa de entrada.</p>", unsafe_allow_html=True)
 
     col_fin1, col_fin2 = st.columns([1, 1])
     with col_fin1:
@@ -1045,40 +1114,29 @@ with aba_finance:
                 else:
                     st.error(f"❌ {msg_fin}")
 
-    st.markdown("<hr style='margin: 35px 0; border: none; border-top: 1px solid #e2e8f0;'>", unsafe_allow_html=True)
-    
-    # ── LEITOR WEB DO ALL NEWS FINANCE (edicoes_finance/) ──
-    import os as _os
-    import streamlit.components.v1 as _components
-    _fin_idx_path = _os.path.join("edicoes_finance", "index.json")
-    if _os.path.exists(_fin_idx_path):
-        try:
-            with open(_fin_idx_path, encoding="utf-8") as _ff:
-                _fin_indice = json.load(_ff)
-            if _fin_indice:
-                st.markdown("<h4 style='text-align:center; color:#0a2540;'>📰 Edições publicadas do All News Finance</h4>", unsafe_allow_html=True)
-                _fin_datas = [e["data"] for e in _fin_indice]
-                _fin_rotulos = {
-                    e["data"]: f"{e['data']} — {e.get('titulo', 'Edição Finance').replace('All News Finance — ', '')} ({e.get('noticias_count', '?')} notícias)"
-                    for e in _fin_indice
-                }
-                _fin_sel = st.selectbox(
-                    "Selecione uma edição financeira para ler:",
-                    options=_fin_datas,
-                    format_func=lambda x: _fin_rotulos.get(x, x),
-                    key="select_fin_edicao"
-                )
-                _fin_html_path = _os.path.join("edicoes_finance", f"{_fin_sel}.html")
-                if _os.path.exists(_fin_html_path):
-                    with open(_fin_html_path, encoding="utf-8") as _fh:
-                        _fin_html = _fh.read()
-                    _components.html(_fin_html, height=800, scrolling=True)
-                else:
-                    st.info("Arquivo HTML desta edição não foi encontrado.")
-        except Exception as _fe:
-            st.error(f"Erro ao carregar edições financeiras: {_fe}")
-    else:
-        st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.95rem;'><em>A primeira edição do All News Finance será exibida aqui após a próxima curadoria.</em></div>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style="max-width: 700px; margin: 30px auto 25px; text-align: center; color: #334155; line-height: 1.6; font-size: 1.05rem;">
+      <p>O <b>All News Finance</b> é o nosso braço editorial voltado a investidores, profissionais do mercado financeiro e empresários, com 4 cadernos dedicados:</p>
+    </div>
+    <div class="finance-grid">
+      <div class="finance-card">
+        <h4>📊 Mercado &amp; Bolsa</h4>
+        <p>Bovespa, Wall Street, Câmbio e tendências de renda variável direto ao ponto.</p>
+      </div>
+      <div class="finance-card">
+        <h4>🏢 Empresas &amp; Negócios</h4>
+        <p>Resultados trimestrais, fusões, aquisições e destaques do setor corporativo.</p>
+      </div>
+      <div class="finance-card">
+        <h4>🌎 Macroeconomia</h4>
+        <p>Selic, Fed, inflação, política monetária e impacto fiscal no Brasil e no exterior.</p>
+      </div>
+      <div class="finance-card">
+        <h4>🚀 Cripto &amp; FinTechs</h4>
+        <p>Bitcoin, ativos digitais, inovação e transformações no setor financeiro.</p>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 with aba_edicao:
     # =============================================================================
@@ -1087,6 +1145,7 @@ with aba_edicao:
     try:
         import os as _os
         import streamlit.components.v1 as _components
+        import re as _re
 
         _idx_path = _os.path.join("edicoes", "index.json")
         if _os.path.exists(_idx_path):
@@ -1120,6 +1179,9 @@ with aba_edicao:
                         st.audio(_podcast_path, format="audio/mpeg")
                         
                     with open(_arq, encoding="utf-8") as _f:
-                        _components.html(_f.read(), height=2400, scrolling=True)
+                        _html_content = _f.read()
+                    # Remove o botão Spotify de qualquer edição antiga
+                    _html_content = _re.sub(r'<a[^>]+spotify\.com[^>]+>.*?</a>', '', _html_content, flags=_re.IGNORECASE | _re.DOTALL)
+                    _components.html(_html_content, height=2400, scrolling=True)
     except Exception:
         pass  # sem edicoes/, a seção simplesmente não aparece

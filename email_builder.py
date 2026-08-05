@@ -224,17 +224,12 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
         🎧 Escute a Edição de Hoje!
       </h3>
       <p style="color:#e0ecec;font-size:14px;margin:0 0 18px;line-height:1.5;">
-        O All News Journal agora também é podcast. Ana e Leo comentam as principais notícias do dia.
+        O All News Journal também está em formato de áudio. Ana e Leo comentam as principais notícias do dia.
       </p>
-      <a href="https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app?edicao={datetime.now().strftime('%Y-%m-%d')}"
-         style="display:inline-block;background-color:#ffffff;color:#0a5c5a;padding:10px 24px;
-                border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px;margin-right:10px;">
-        ▶️ Play no Site
-      </a>
-      <a href="https://open.spotify.com/show/033FwFJeZTyXrigyvfXpt3"
-         style="display:inline-block;background-color:#1db954;color:#ffffff;padding:10px 24px;
-                border-radius:20px;text-decoration:none;font-weight:bold;font-size:14px;">
-        🎧 Ouvir no Spotify
+      <a href="https://allnewsjournal.streamlit.app/?edicao={datetime.now().strftime('%Y-%m-%d')}"
+         style="display:inline-block;background-color:#ffffff;color:#0a5c5a;padding:12px 28px;
+                border-radius:24px;text-decoration:none;font-weight:bold;font-size:15px;box-shadow:0 2px 5px rgba(0,0,0,0.15);">
+        🎧 Ouvir Podcast no Site &rarr;
       </a>
     </div>
 """
