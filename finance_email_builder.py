@@ -97,8 +97,12 @@ def construir_html_finance(edicao, nome_destinatario="Leitor(a)"):
             resumo = item.get("resumo", "")
             link = item.get("link", "#")
             fonte = item.get("fonte", "Mercado")
+            imagem = item.get("imagem", "")
+
+            img_tag = f"""<a href="{link}" style="display:block; text-decoration:none;"><img src="{imagem}" alt="{titulo.replace('"', '')}" style="width:100%; max-width:100%; height:auto; border-radius:8px; margin-bottom:12px; display:block; object-fit:cover; max-height:300px;" /></a>""" if imagem else ""
 
             html += f"""    <div class="news-item">
+      {img_tag}
       <div class="news-title"><a href="{link}" style="color: #0f172a; text-decoration: none;">{titulo}</a></div>
       <div class="news-summary">{resumo}</div>
       <div class="news-meta">

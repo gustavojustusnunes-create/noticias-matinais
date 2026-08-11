@@ -43,13 +43,13 @@ def gerar_roteiro(edicao):
     prompt = (
         "Você é o roteirista de um podcast diário de notícias chamado 'All News Journal'.\n"
         "Com base nas notícias fornecidas abaixo, escreva um roteiro de áudio com duração "
-        "estimada de 3 minutos.\n\n"
+        "estimada de 5 a 8 minutos, sendo bem denso, aprofundado e rico em detalhes.\n\n"
         "REGRAS:\n"
         "1. Apresentadores: LEO e ANA. Eles são simpáticos, dinâmicos e conversam entre si.\n"
         "2. Eles devem apresentar as notícias principais, um complementando a fala do outro, "
-        "com reações naturais (ex: 'Nossa', 'Pois é', 'É verdade').\n"
+        "trazendo análises, contexto e reações naturais (ex: 'Nossa', 'Pois é', 'É verdade').\n"
         "3. Não invente notícias que não estão no texto.\n"
-        "4. No final, eles se despedem desejando um ótimo dia e pedem para o ouvinte ler a newsletter completa.\n"
+        "4. No final, eles se despedem desejando um ótimo dia e pedem para o ouvinte ler a edição completa.\n"
         "5. O formato de saída DEVE ser estritamente linha por linha começando com o nome. Exemplo:\n"
         "LEO: Olá, muito bom dia! Bem-vindo a mais um podcast do All News Journal.\n"
         "ANA: Bom dia, Leo! Hoje as notícias estão fervendo...\n"
@@ -57,7 +57,7 @@ def gerar_roteiro(edicao):
         f"{texto_resumo}"
     )
     
-    roteiro = chamar_claude_api(prompt)
+    roteiro = chamar_claude_api(prompt, max_tokens=1500)
     
     # Filtra apenas linhas válidas do roteiro
     linhas_finais = []
@@ -70,47 +70,26 @@ def gerar_roteiro(edicao):
 
 
 def inicializar_tts():
-    """Retorna o cliente do Google Cloud TTS usando a credential do GCP_JSON."""
-    if not GCP_JSON:
-        print("   ❌ GCP_JSON não configurado. Impossível gerar áudio.")
-        return None
-    try:
-        info = json.loads(GCP_JSON)
-        creds = service_account.Credentials.from_service_account_info(info)
-        client = texttospeech.TextToSpeechClient(credentials=creds)
-        return client
-    except Exception as e:
-        print(f"   ❌ Erro ao inicializar TTS Client: {e}")
-        return None
+    """Retorna True para indicar que o TTS está disponível (edge-tts não precisa de init)."""
+    return True
 
 
 def gerar_audio_linha(client, texto, locutor, indice):
-    """Gera um pequeno MP3 para a fala individual."""
+    """Gera um pequeno MP3 para a fala individual usando edge-tts."""
+    import edge_tts
+    import asyncio
+    
     if locutor == "LEO":
-        voz = texttospeech.VoiceSelectionParams(
-            language_code="pt-BR",
-            name="pt-BR-Neural2-B" # Voz masculina premium
-        )
+        voz = "pt-BR-AntonioNeural"
     else:
-        voz = texttospeech.VoiceSelectionParams(
-            language_code="pt-BR",
-            name="pt-BR-Neural2-A" # Voz feminina premium
-        )
-
-    audio_config = texttospeech.AudioConfig(
-        audio_encoding=texttospeech.AudioEncoding.MP3,
-        speaking_rate=1.1 # Fala levemente acelerada para dinamismo
-    )
-    
-    synthesis_input = texttospeech.SynthesisInput(text=texto)
-    
-    resposta = client.synthesize_speech(
-        input=synthesis_input, voice=voz, audio_config=audio_config
-    )
-    
+        voz = "pt-BR-FranciscaNeural"
+        
     temp_file = PODCAST_DIR / f"temp_{indice}.mp3"
-    with open(temp_file, "wb") as out:
-        out.write(resposta.audio_content)
+    
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    communicate = edge_tts.Communicate(texto, voz)
+    loop.run_until_complete(communicate.save(str(temp_file)))
         
     return temp_file
 

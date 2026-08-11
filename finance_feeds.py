@@ -84,15 +84,15 @@ TÍTULO: {titulo}
 TEXTO ORIGINAL: {texto_bruto}
 
 REGRAS ESTREITAS DE JORNALISMO FINANCEIRO:
-1. COMPRIMENTO: O resumo DEVE ter entre 65 e 105 palavras.
-2. CONTEÚDO: Vá direto ao ponto com fatos, números, porcentagens, tickers ou impactos financeiros. NUNCA faça mistério ("veja 5 motivos...", "descubra por que...").
+1. COMPRIMENTO: O resumo DEVE ter entre 150 e 250 palavras.
+2. CONTEÚDO: Vá direto ao ponto com fatos, números, porcentagens, tickers ou impactos financeiros. NUNCA faça mistério ("veja 5 motivos...", "descubra por que..."). Forneça contexto, os antecedentes e uma breve análise do impacto no cenário atual.
 3. Se a notícia for apenas caça-clique/clickbait ou não trouxer informação real, responda APENAS a palavra: SKIP
 4. TOM: Português brasileiro formal, culto, objetivo e analítico.
 5. PROIBIDO: Emojis, bullet points, asteriscos ou formatação markdown. Escreva em 1 ou 2 parágrafos corridos de texto puro.
 6. NUNCA use as palavras "promessa", "revolucionário" ou exageros de marketing sem dados."""
 
-    resumo = chamar_claude_api(prompt, max_tokens=300)
-    if not resumo or "SKIP" in resumo.upper() or len(resumo.split()) < 25:
+    resumo = chamar_claude_api(prompt, max_tokens=600)
+    if not resumo or "SKIP" in resumo.upper() or len(resumo.split()) < 40:
         return None
     return resumo.strip()
 
@@ -105,6 +105,9 @@ def coletar_noticias_finance(max_por_caderno=4):
     print("\n📈 Iniciando curadoria do All News Finance...")
     edicao = {secao: [] for secao in ORDEM_CADERNOS_FINANCE}
     hashes_vistos = set()
+
+    # Imagem genérica para mercado financeiro/bolsa
+    IMAGEM_GENERICA = "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800"
 
     for secao in ORDEM_CADERNOS_FINANCE:
         feeds = FEEDS_FINANCE.get(secao, [])
@@ -144,6 +147,9 @@ def coletar_noticias_finance(max_por_caderno=4):
                         continue
 
                     imagem = extrair_imagem_rss(entry)
+                    if not imagem:
+                        imagem = IMAGEM_GENERICA
+
                     edicao[secao].append({
                         "titulo": titulo,
                         "link": link,

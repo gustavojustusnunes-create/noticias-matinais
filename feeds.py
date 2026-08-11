@@ -424,7 +424,7 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             f"═══════════════════════════════════════\n"
             f"REGRAS ABSOLUTAS DE FORMATO\n"
             f"═══════════════════════════════════════\n"
-            f"1. TAMANHO: 65 a 105 palavras. Seja denso em informações, sem encheção de linguiça.\n"
+            f"1. TAMANHO: 150 a 250 palavras. Seja profundo e explicativo. Construa uma notícia completa com contexto, antecedentes e análise dos impactos, sem encheção de linguiça.\n"
             f"2. PROFUNDIDADE: Se a notícia não tiver profundidade jornalística (ex: apenas listar elenco de filme, ou repetir o título duas vezes), retorne EXATAMENTE: SKIP\n"
             f"3. CORTES BRUSCOS: O texto DEVE ser uma notícia completa com raciocínio finalizado. NUNCA termine de forma abrupta. Última frase fechada com ponto final.\n"
             f"4. IDIOMA E TOM: Sempre em Português Brasileiro fluente. Direto, ativo, jornalístico. Sem jargões.\n"

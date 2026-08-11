@@ -820,20 +820,33 @@ def gerar_podcast_audio_direto():
                         manchetes.append(f"{t}. {r}")
         
         texto_fala = (
-            "Olá! Muito bom dia! Bem-vindo ao podcast do All News Journal, com Leo e Ana. "
-            "A seguir, os principais destaques de hoje. " +
-            " ".join(manchetes[:4]) +
-            " Para ler todas as matérias na íntegra e sem anúncios, confira a nossa edição de hoje aqui no site. "
+            "Olá! Muito bom dia! Bem-vindo ao podcast do All News Journal, com os principais destaques da edição de hoje. "
+            "A seguir, vamos nos aprofundar nas notícias que estão moldando o nosso dia. " +
+            " ".join(manchetes[:5]) +
+            " Para ler todas as matérias na íntegra e sem anúncios, confira a nossa edição completa aqui no site. "
             "Desejamos a você um excelente dia!"
         )
-        from gtts import gTTS
-        import io
-        tts = gTTS(text=texto_fala, lang="pt", tld="com.br")
-        buf = io.BytesIO()
-        tts.write_to_fp(buf)
-        buf.seek(0)
-        return buf.read()
-    except Exception:
+        import edge_tts
+        import asyncio
+        import tempfile
+        
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        # Voz hiper-realista do AntonioNeural
+        communicate = edge_tts.Communicate(texto_fala, "pt-BR-AntonioNeural")
+        
+        fd, path = tempfile.mkstemp(suffix=".mp3")
+        os.close(fd)
+        
+        loop.run_until_complete(communicate.save(path))
+        
+        with open(path, "rb") as f:
+            audio_data = f.read()
+        os.remove(path)
+        
+        return audio_data
+    except Exception as e:
+        print(f"Erro ao gerar áudio direto: {e}")
         return None
 
 
