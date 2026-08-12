@@ -11,60 +11,47 @@ from config import GEMINI_API_KEY
 
 def chamar_claude_api(prompt, max_tokens=4096):
     """
-    Chama a API do Google Gemini (mantendo o nome da função para retrocompatibilidade).
+    Chama a API do Google Gemini usando o SDK oficial para evitar erros de versão de modelo.
+    (Mantém o nome da função para retrocompatibilidade)
     """
     if not GEMINI_API_KEY:
         print("      ❌ GEMINI_API_KEY não definida.")
         return None
 
-    headers = {
-        "Content-Type": "application/json",
-    }
+    import google.generativeai as genai
     
-    # Payload para a API do Gemini
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }],
-        "generationConfig": {
-            "maxOutputTokens": max_tokens,
-            "temperature": 0.3
-        }
-    }
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
-
-    print(f"      🤖 gemini-1.5-flash...")
+    genai.configure(api_key=GEMINI_API_KEY)
+    
+    # Usa um modelo estável
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+    except Exception:
+        # Fallback para o modelo padrão caso 1.5 seja totalmente removido
+        model = genai.GenerativeModel('gemini-pro')
+        
+    print(f"      🤖 Consultando SDK Gemini...")
     for tentativa in range(1, 4):
         try:
-            r = requests.post(url, headers=headers, json=payload, timeout=90)
-            
-            if r.status_code == 200:
-                data = r.json()
-                texto = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
-                
-                # Extraindo contagem de tokens se disponível (Gemini as vezes fornece na raiz)
-                usage = data.get("usageMetadata", {})
-                print(f"      ✅ OK  in={usage.get('promptTokenCount','?')}  out={usage.get('candidatesTokenCount','?')}")
-                return texto.strip()
-                
-            elif r.status_code == 429:
-                espera = 20 * tentativa
-                print(f"      ⏳ Rate-limit (Cota Grátis). Aguardando {espera}s…")
-                time.sleep(espera)
-            elif r.status_code == 400:
-                print(f"      ❌ GEMINI_API_KEY inválida ou malformada.")
-                return None
-            else:
-                print(f"      ⚠️ HTTP {r.status_code}: {r.text[:150]}")
-                break
-        except requests.exceptions.Timeout:
-            print(f"      ⚠️ Timeout (90s) no gemini-1.5-flash.")
-            break
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=max_tokens,
+                    temperature=0.3
+                )
+            )
+            print(f"      ✅ OK (Gemini SDK)")
+            return response.text.strip()
         except Exception as e:
-            print(f"      ⚠️ Exceção: {e}")
-            break
+            msg = str(e).lower()
+            if "429" in msg or "quota" in msg:
+                espera = 20 * tentativa
+                print(f"      ⏳ Rate-limit. Aguardando {espera}s…")
+                time.sleep(espera)
+            else:
+                print(f"      ⚠️ Exceção no SDK: {e}")
+                break
 
-    print("      ❌ O modelo Gemini falhou.")
+    print("      ❌ O modelo Gemini falhou via SDK.")
     return None
 
 
