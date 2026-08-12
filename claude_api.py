@@ -21,11 +21,29 @@ def chamar_claude_api(prompt, max_tokens=4096):
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
     
-    model_names = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+    print(f"      🤖 Consultando SDK Gemini e buscando modelos disponíveis...")
+    available_models = []
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                # Preferencia por flash ou pro (1.5 ou mais recente)
+                if 'flash' in m.name or 'pro' in m.name:
+                    available_models.append(m.name)
+    except Exception as e:
+        print(f"      ⚠️ Erro ao listar modelos: {e}")
+        available_models = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']
+
+    # Ordena para preferir 'flash' sobre 'pro', mas aceitar o que vier
+    available_models.sort(key=lambda x: (not 'flash' in x, x))
     
-    print(f"      🤖 Consultando SDK Gemini...")
-    for model_name in model_names:
-        model = genai.GenerativeModel(model_name)
+    if not available_models:
+        print("      ❌ Nenhum modelo Gemini suporta generateContent com esta chave.")
+        return None
+        
+    for model_name in available_models:
+        # Se o model_name ja tiver models/ o SDK cuida disso, mas melhor limpar
+        clean_name = model_name.replace('models/', '')
+        model = genai.GenerativeModel(clean_name)
         try:
             response = model.generate_content(
                 prompt,
@@ -34,19 +52,19 @@ def chamar_claude_api(prompt, max_tokens=4096):
                     temperature=0.3
                 )
             )
-            print(f"      ✅ OK (Gemini SDK - {model_name})")
+            print(f"      ✅ OK (Gemini SDK - {clean_name})")
             return response.text.strip()
         except Exception as e:
             msg = str(e).lower()
             if "429" in msg or "quota" in msg:
-                print(f"      ⏳ Rate-limit ({model_name}). Tentando próximo modelo ou aguardando...")
-                time.sleep(5)
+                print(f"      ⏳ Rate-limit ({clean_name}). Tentando próximo ou aguardando...")
+                time.sleep(3)
                 continue
             elif "404" in msg or "not found" in msg or "supported" in msg:
-                print(f"      ⚠️ Modelo {model_name} indisponível (404). Tentando próximo...")
+                print(f"      ⚠️ Modelo {clean_name} indisponível (404). Tentando próximo...")
                 continue
             else:
-                print(f"      ⚠️ Exceção no SDK ({model_name}): {e}")
+                print(f"      ⚠️ Exceção no SDK ({clean_name}): {e}")
                 continue
 
     print("      ❌ Todos os modelos Gemini falharam via SDK.")
