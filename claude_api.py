@@ -19,18 +19,13 @@ def chamar_claude_api(prompt, max_tokens=4096):
         return None
 
     import google.generativeai as genai
-    
     genai.configure(api_key=GEMINI_API_KEY)
     
-    # Usa um modelo estável
-    try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
-    except Exception:
-        # Fallback para o modelo padrão caso 1.5 seja totalmente removido
-        model = genai.GenerativeModel('gemini-pro')
-        
+    model_names = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+    
     print(f"      🤖 Consultando SDK Gemini...")
-    for tentativa in range(1, 4):
+    for model_name in model_names:
+        model = genai.GenerativeModel(model_name)
         try:
             response = model.generate_content(
                 prompt,
@@ -39,19 +34,22 @@ def chamar_claude_api(prompt, max_tokens=4096):
                     temperature=0.3
                 )
             )
-            print(f"      ✅ OK (Gemini SDK)")
+            print(f"      ✅ OK (Gemini SDK - {model_name})")
             return response.text.strip()
         except Exception as e:
             msg = str(e).lower()
             if "429" in msg or "quota" in msg:
-                espera = 20 * tentativa
-                print(f"      ⏳ Rate-limit. Aguardando {espera}s…")
-                time.sleep(espera)
+                print(f"      ⏳ Rate-limit ({model_name}). Tentando próximo modelo ou aguardando...")
+                time.sleep(5)
+                continue
+            elif "404" in msg or "not found" in msg or "supported" in msg:
+                print(f"      ⚠️ Modelo {model_name} indisponível (404). Tentando próximo...")
+                continue
             else:
-                print(f"      ⚠️ Exceção no SDK: {e}")
-                break
+                print(f"      ⚠️ Exceção no SDK ({model_name}): {e}")
+                continue
 
-    print("      ❌ O modelo Gemini falhou via SDK.")
+    print("      ❌ Todos os modelos Gemini falharam via SDK.")
     return None
 
 
