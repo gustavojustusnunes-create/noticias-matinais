@@ -92,8 +92,19 @@ REGRAS ESTREITAS DE JORNALISMO FINANCEIRO:
 6. NUNCA use as palavras "promessa", "revolucionário" ou exageros de marketing sem dados."""
 
     resumo = chamar_claude_api(prompt, max_tokens=600)
-    if not resumo or "SKIP" in resumo.upper() or len(resumo.split()) < 40:
+    if not resumo:
+        print("         ⏭️ Pulado: Resumo nulo")
         return None
+    
+    if "SKIP" in resumo.upper():
+        print(f"         ⏭️ Pulado: Modelo respondeu SKIP. Resposta: {resumo[:100]}...")
+        return None
+        
+    num_palavras = len(resumo.split())
+    if num_palavras < 40:
+        print(f"         ⏭️ Pulado: Resumo muito curto ({num_palavras} palavras). Resposta: {resumo[:100]}...")
+        return None
+        
     return resumo.strip()
 
 
