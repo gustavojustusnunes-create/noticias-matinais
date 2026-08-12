@@ -5,6 +5,7 @@ Focado em economia, mercado financeiro, empresas e macroeconomia.
 import re
 import feedparser
 from datetime import datetime
+import random
 
 from claude_api import chamar_claude_api
 from sheets_db import gerar_hash
@@ -84,11 +85,11 @@ TÍTULO: {titulo}
 TEXTO ORIGINAL: {texto_bruto}
 
 REGRAS ESTREITAS DE JORNALISMO FINANCEIRO:
-1. COMPRIMENTO: O resumo DEVE ter entre 150 e 250 palavras.
+1. COMPRIMENTO: Desenvolva o texto de forma aprofundada (entre 1 e 3 parágrafos), extraindo o máximo de informações e contexto do texto original, mesmo se o original for curto.
 2. CONTEÚDO: Vá direto ao ponto com fatos, números, porcentagens, tickers ou impactos financeiros. NUNCA faça mistério ("veja 5 motivos...", "descubra por que..."). Forneça contexto, os antecedentes e uma breve análise do impacto no cenário atual.
 3. Se a notícia for apenas caça-clique/clickbait ou não trouxer informação real, responda APENAS a palavra: SKIP
 4. TOM: Português brasileiro formal, culto, objetivo e analítico.
-5. PROIBIDO: Emojis, bullet points, asteriscos ou formatação markdown. Escreva em 1 ou 2 parágrafos corridos de texto puro.
+5. PROIBIDO: Emojis, bullet points, asteriscos ou formatação markdown. Escreva em parágrafos corridos de texto puro.
 6. NUNCA use as palavras "promessa", "revolucionário" ou exageros de marketing sem dados."""
 
     resumo = chamar_claude_api(prompt, max_tokens=600)
@@ -101,7 +102,7 @@ REGRAS ESTREITAS DE JORNALISMO FINANCEIRO:
         return None
         
     num_palavras = len(resumo.split())
-    if num_palavras < 40:
+    if num_palavras < 20:
         print(f"         ⏭️ Pulado: Resumo muito curto ({num_palavras} palavras). Resposta: {resumo[:100]}...")
         return None
         
@@ -118,7 +119,30 @@ def coletar_noticias_finance(max_por_caderno=4):
     hashes_vistos = set()
 
     # Imagem genérica para mercado financeiro/bolsa
-    IMAGEM_GENERICA = "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800"
+    IMAGENS_GENERICAS = {
+        "Mercado & Bolsa": [
+            "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1535320903710-d993d3d77d29?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800"
+        ],
+        "Empresas & Negócios": [
+            "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800"
+        ],
+        "Macroeconomia": [
+            "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800"
+        ],
+        "Cripto & FinTechs": [
+            "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800"
+        ]
+    }
 
     for secao in ORDEM_CADERNOS_FINANCE:
         feeds = FEEDS_FINANCE.get(secao, [])
@@ -159,7 +183,7 @@ def coletar_noticias_finance(max_por_caderno=4):
 
                     imagem = extrair_imagem_rss(entry)
                     if not imagem:
-                        imagem = IMAGEM_GENERICA
+                        imagem = random.choice(IMAGENS_GENERICAS.get(secao, IMAGENS_GENERICAS["Mercado & Bolsa"]))
 
                     edicao[secao].append({
                         "titulo": titulo,
