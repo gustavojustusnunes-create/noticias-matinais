@@ -252,65 +252,127 @@ def gerar_slide_1(tema, titulo, data_str, foto):
     return canvas
 
 # =============================================================================
-# --- SLIDE 2 (NOTÍCIA COMPLETA COM AUTO-SCALING) ---
+# --- SLIDES INTERMEDIÁRIOS (NOTÍCIA PAGINADA) ---
 # =============================================================================
-def gerar_slide_2(tema, resumo, data_str):
+def gerar_slides_noticia(tema, resumo, data_str):
     W, H = FORMATO
-    canvas = Image.new("RGB", (W, H), CREME)
+    px = 70
+    m = 34
+    y_rodape = H - 88
+    max_w = W - (px * 2)
+    max_h = y_rodape - 220
+    y_inicio = 160
+    
+    tamanho = 50
+    font = _lora(tamanho, 400)
+    lh = int(tamanho * 1.6)
+    max_linhas_por_slide = max_h // lh
+
+    # Divide o texto em linhas
+    draw_mock = ImageDraw.Draw(Image.new("RGB", (1,1)))
+    palavras = resumo.split()
+    linhas = []
+    linha_atual = ""
+    for p in palavras:
+        teste = linha_atual + " " + p if linha_atual else p
+        if draw_mock.textlength(teste, font=font) <= max_w:
+            linha_atual = teste
+        else:
+            linhas.append(linha_atual)
+            linha_atual = p
+    if linha_atual:
+        linhas.append(linha_atual)
+
+    # Agrupa as linhas em páginas
+    paginas = []
+    for i in range(0, len(linhas), max_linhas_por_slide):
+        paginas.append(linhas[i:i + max_linhas_por_slide])
+
+    slides = []
+    total_paginas = len(paginas)
+    
+    for i, pagina in enumerate(paginas):
+        canvas = Image.new("RGB", (W, H), CREME)
+        draw = ImageDraw.Draw(canvas)
+        
+        draw.rectangle([m, m, W - m, H - m], outline=TURQUESA_DARK, width=2)
+        draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=TURQUESA, width=1)
+        
+        _texto_espacado(draw, (px, 64), "ALL NEWS JOURNAL", _lora(25, 600), TURQUESA_DARK, tracking=6)
+        draw.line([(px, 104), (px + 168, 104)], fill=OURO, width=2)
+        
+        draw.line([(px, y_rodape - 18), (W - px, y_rodape - 18)], fill=OURO, width=1)
+        _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), TURQUESA, tracking=3)
+
+        # Numeração e Seta indicativa
+        num_str = f"Parte {i+1} de {total_paginas}"
+        f_r = _lora(20, 500)
+        larg_num = sum(draw.textlength(c, font=f_r) for c in num_str) + 3 * (len(num_str) - 1)
+        _texto_espacado(draw, (W - px - larg_num, y_rodape + 1), num_str, f_r, TURQUESA_DARK, tracking=3)
+        
+        # Seta maior no canto superior direito para guiar a leitura
+        seta = "CONTINUA 👉"
+        larg_seta = sum(draw.textlength(c, font=f_r) for c in seta) + 3 * (len(seta) - 1)
+        _texto_espacado(draw, (W - px - larg_seta, 66), seta, f_r, TURQUESA, tracking=3)
+
+        # Centraliza verticalmente o texto no slide
+        altura_total = len(pagina) * lh
+        folga_y = max(0, (max_h - altura_total) // 2)
+        y = y_inicio + folga_y
+        for ln in pagina:
+            draw.text((px, y), ln, font=font, fill=TURQUESA_DARK)
+            y += lh
+            
+        slides.append(canvas)
+        
+    return slides
+
+# =============================================================================
+# --- SLIDE FINAL (CTA) ---
+# =============================================================================
+def gerar_slide_cta(data_str):
+    W, H = FORMATO
+    canvas = Image.new("RGB", (W, H), TURQUESA_DARK)
     draw = ImageDraw.Draw(canvas)
     
     px = 70
     m = 34
-    draw.rectangle([m, m, W - m, H - m], outline=TURQUESA_DARK, width=2)
-    draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=TURQUESA, width=1)
+    draw.rectangle([m, m, W - m, H - m], outline=OURO, width=2)
+    draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=OURO_CLARO, width=1)
     
-    _texto_espacado(draw, (px, 64), "ALL NEWS JOURNAL", _lora(25, 600), TURQUESA_DARK, tracking=6)
+    _texto_espacado(draw, (px, 64), "ALL NEWS JOURNAL", _lora(25, 600), CREME, tracking=6)
     draw.line([(px, 104), (px + 168, 104)], fill=OURO, width=2)
     
     y_rodape = H - 88
     draw.line([(px, y_rodape - 18), (W - px, y_rodape - 18)], fill=OURO, width=1)
-    _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), TURQUESA, tracking=3)
+    _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), OURO_CLARO, tracking=3)
 
-    max_w = W - (px * 2)
-    max_h = y_rodape - 190
-    y_inicio = 150
+    # Texto central de Inscrição
+    f_titulo = _playfair(62, 800)
+    f_sub = _lora(36, 400)
     
-    tamanho = 55
-    font = _lora(tamanho, 500)
-    linhas_final = []
+    msg1 = "Gostou da leitura?"
+    msg2 = "A edição completa"
+    msg3 = "chega todas as manhãs."
     
-    while tamanho > 20:
-        font = _lora(tamanho, 400)
-        palavras = resumo.split()
-        linhas = []
-        linha_atual = ""
-        for p in palavras:
-            teste = linha_atual + " " + p if linha_atual else p
-            if draw.textlength(teste, font=font) <= max_w:
-                linha_atual = teste
-            else:
-                linhas.append(linha_atual)
-                linha_atual = p
-        if linha_atual:
-            linhas.append(linha_atual)
-            
-        lh = int(tamanho * 1.5)
-        altura_total = len(linhas) * lh
+    y_centro = (H // 2) - 160
+    
+    for text in [msg1, msg2, msg3]:
+        w_txt = draw.textlength(text, font=f_titulo)
+        draw.text(((W - w_txt)//2, y_centro), text, font=f_titulo, fill=CREME)
+        y_centro += 80
         
-        if altura_total <= max_h:
-            linhas_final = [(ln, lh) for ln in linhas]
-            break
-        tamanho -= 2
-
-    if linhas_final:
-        lh = linhas_final[0][1]
-        altura_total = len(linhas_final) * lh
-        folga_y = max(0, (max_h - altura_total) // 2)
-        y = y_inicio + folga_y
-        for ln, lh in linhas_final:
-            draw.text((px, y), ln, font=font, fill=TURQUESA_DARK)
-            y += lh
-
+    y_centro += 40
+    # Botão visual
+    w_btn = 500
+    h_btn = 90
+    x_btn = (W - w_btn) // 2
+    draw.rounded_rectangle([x_btn, y_centro, x_btn + w_btn, y_centro + h_btn], radius=45, fill=OURO)
+    
+    txt_btn = "Assine no link da Bio"
+    w_btn_txt = draw.textlength(txt_btn, font=f_sub)
+    draw.text((x_btn + (w_btn - w_btn_txt)//2, y_centro + 20), txt_btn, font=f_sub, fill=TURQUESA_DARK)
+    
     return canvas
 
 # =============================================================================
@@ -383,17 +445,22 @@ def main():
 
         foto = _baixar_imagem(imagem)
         
-        slide1 = gerar_slide_1(tema, titulo, data_str, foto)
-        slide2 = gerar_slide_2(tema, resumo, data_str)
+        slide_capa = gerar_slide_1(tema, titulo, data_str, foto)
+        slides_meio = gerar_slides_noticia(tema, resumo, data_str)
+        slide_cta = gerar_slide_cta(data_str)
         
-        p1 = OUTPUT_DIR / f"post_{i:02d}_slide1.jpg"
-        p2 = OUTPUT_DIR / f"post_{i:02d}_slide2.jpg"
-        slide1.save(str(p1), "JPEG", quality=92)
-        slide2.save(str(p2), "JPEG", quality=92)
+        # Junta tudo no álbum
+        album_imagens = [slide_capa] + slides_meio + [slide_cta]
+        
+        paths = []
+        for j, img_canvas in enumerate(album_imagens, 1):
+            p = OUTPUT_DIR / f"post_{i:02d}_slide{j:02d}.jpg"
+            img_canvas.save(str(p), "JPEG", quality=92)
+            paths.append(str(p))
         
         legenda = gerar_legenda(tema, titulo, resumo)
-        gerados.append({"tema": tema, "paths": [str(p1), str(p2)], "legenda": legenda})
-        print(f"   🖼️  Álbum {i} gerado: {tema}")
+        gerados.append({"tema": tema, "paths": paths, "legenda": legenda})
+        print(f"   🖼️  Carrossel {i} gerado: {tema} ({len(paths)} fotos)")
 
     if INSTAGRAM_DELIVERY == "post":
         print("\n   🔐 Autenticando no Instagram…")
