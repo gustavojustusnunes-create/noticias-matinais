@@ -1,0 +1,24 @@
+{
+  "Mercado & Bolsa": [],
+  "Empresas & Negócios": [],
+  "Macroeconomia": [],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitpanda é a primeira empresa a sofrer multa de R$ 420 mil por violações ao MiCA na Europa",
+      "link": "https://www.moneytimes.com.br/bitpanda-e-a-primeira-empresa-a-sofrer-multa-de-r-420-mil-por-violacoes-ao-mica-na-europa-rens/",
+      "resumo": "A autoridade do mercado financeiro da Áustria impôs uma multa de 70 mil euros, equivalente a aproximadamente 420 mil reais, à corretora de criptoativos Bitpanda, marcando a primeira sanção aplicada sob o novo regulamento da União Europeia para Mercados de Criptoativos, conhecido como MiCA. A penalidade decorre de falhas procedimentais no cumprimento das normas de transparência e conformidade, especificamente pela ausência de envio do white paper de um ativo digital ao regulador com a antecedência mínima de 20 dias úteis antes de sua listagem, além da veiculação de material publicitário em desacordo com os prazos e exigências legais estabelecidos pelo bloco europeu.\n\nO episódio sinaliza um endurecimento na fiscalização do setor de ativos digitais, evidenciando que o MiCA não é apenas um arcabouço teórico, mas uma ferramenta ativa de controle sobre as operações das plataformas de negociação. O white paper, documento central na regulação, é o instrumento que permite aos órgãos competentes classificar a natureza jurídica dos ativos e mitigar riscos de assimetria de informação. Embora a Bitpanda tenha optado por uma resolução consensual e rápida, declarando a correção das irregularidades, o precedente estabelecido pela autoridade austríaca serve como um alerta para o mercado sobre a necessidade de rigor operacional imediato, sob pena de sanções que podem escalar à medida que a implementação do MiCA avança em toda a zona do euro.",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800",
+      "fonte": "Money Times Cripto",
+      "data": "2026-08-20"
+    },
+    {
+      "titulo": "Bitcoin tem leve alta, a US$ 63 mil; confira os preços das criptomoedas neste domingo (16)",
+      "link": "https://www.moneytimes.com.br/bitcoin-16-8-26-apsa/",
+      "resumo": "O Bitcoin inicia este domingo cotado a 63 mil dólares, registrando uma variação marginal positiva de 0,1% nas últimas 24 horas. Apesar da estabilidade pontual, o ativo enfrenta um cenário de pressão vendedora no curto prazo, acumulando desvalorização de 3% na semana e recuo de 0,1% no período de 30 dias. O comportamento do mercado reflete um posicionamento defensivo dos investidores, evidenciado pelo índice de medo e ganância, que recuou de 39 para 37 pontos, mantendo-se na zona de medo e indicando uma aversão ao risco predominante no setor de ativos digitais.\n\nA cautela dos agentes financeiros está diretamente atrelada à agenda macroeconômica dos Estados Unidos, com foco voltado para a divulgação da ata do Comitê Federal de Mercado Aberto (FOMC) na próxima quarta-feira. O mercado busca identificar sinais sobre a trajetória futura das taxas de juros e as divergências internas na última decisão do Federal Reserve, que manteve os juros no intervalo entre 3,50% e 3,75%. A expectativa é que o documento forneça diretrizes sobre as condições de liquidez e o apetite por ativos de risco, fatores que têm ditado o fluxo de capital no mercado cripto nas últimas semanas.",
+      "imagem": "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=800",
+      "fonte": "Money Times Cripto",
+      "data": "2026-08-20"
+    }
+  ],
+  "data": "2026-08-20"
+}
