@@ -127,11 +127,16 @@ def _texto_espacado(draw, xy, texto, font, fill, tracking=0):
 # --- MEMÓRIA DO SUPERVISOR (FOTOS REPETIDAS) ---
 # =============================================================================
 def carregar_memoria():
-    if not MEMORY_FILE.exists(): return {}
+    if not MEMORY_FILE.exists(): return {"erros": [], "imagens_recentes": []}
     try:
-        return json.loads(MEMORY_FILE.read_text(encoding="utf-8"))
+        data = json.loads(MEMORY_FILE.read_text(encoding="utf-8"))
+        if isinstance(data, list):
+            return {"erros": data, "imagens_recentes": []}
+        if "imagens_recentes" not in data:
+            data["imagens_recentes"] = []
+        return data
     except:
-        return {}
+        return {"erros": [], "imagens_recentes": []}
 
 def salvar_memoria(memoria):
     MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)

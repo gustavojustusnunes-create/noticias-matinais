@@ -29,7 +29,7 @@ jobs:
           cache: 'pip'
 
       - name: Instalar dependências (OS)
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: sudo apt-get update -y || true; sudo apt-get install -y ffmpeg
 
       - name: Instalar dependências (Python)
         run: |
@@ -57,8 +57,9 @@ jobs:
           [ -d edicoes ] || { echo "ℹ️ Sem pasta edicoes/ — nada a commitar."; exit 0; }
           git config user.name  "ANJ Bot"
           git config user.email "actions@github.com"
-          git add edicoes/
+          git add edicoes/ logs/
           git diff --staged --quiet || git commit -m "Edição $(date +%F)"
+          git pull --rebase origin main
           git push
 
       - name: Notificar falha por email

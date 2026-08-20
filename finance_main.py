@@ -73,6 +73,14 @@ def main():
 
     # 1. Coleta e resumo por IA
     edicao = coletar_noticias_finance()
+
+    # 1.5. Agente Supervisor de Qualidade da IA
+    try:
+        from ai_supervisor import revisar_edicao_diaria
+        edicao = revisar_edicao_diaria(edicao)
+    except Exception as e:
+        print(f"   ⚠️ Falha ao rodar o Supervisor de IA (ignorando e seguindo): {e}")
+
     total = sum(len(n) for n in edicao.values() if isinstance(n, list))
     if total == 0:
         print("❌ Nenhuma notícia financeira foi coletada ou resumida. Abortando envio.")

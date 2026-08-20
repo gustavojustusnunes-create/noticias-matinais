@@ -22,20 +22,28 @@ FEEDS_FINANCE = {
         ("InfoMoney Mercados", "https://www.infomoney.com.br/mercados/feed/"),
         ("Money Times", "https://www.moneytimes.com.br/feed/"),
         ("E-Investidor", "https://einvestidor.estadao.com.br/feed/"),
+        ("Valor Econômico", "https://valor.globo.com/rss/"),
+        ("Suno Notícias", "https://www.suno.com.br/noticias/feed/"),
+        ("CNN Brasil Economia", "https://www.cnnbrasil.com.br/economia/feed/")
     ],
     "Empresas & Negócios": [
         ("InfoMoney Negócios", "https://www.infomoney.com.br/negocios/feed/"),
         ("Exame Negócios", "https://exame.com/negocios/feed/"),
         ("Money Times Empresas", "https://www.moneytimes.com.br/empresas/feed/"),
+        ("Época Negócios", "https://epocanegocios.globo.com/rss/"),
+        ("UOL Economia", "https://economia.uol.com.br/rss.xml")
     ],
     "Macroeconomia": [
         ("InfoMoney Economia", "https://www.infomoney.com.br/economia/feed/"),
         ("Exame Economia", "https://exame.com/economia/feed/"),
-        ("CNN Brasil Economia", "https://www.cnnbrasil.com.br/economia/feed/"),
+        ("Bloomberg Línea", "https://www.bloomberglinea.com.br/arc/outboundfeeds/rss/"),
+        ("Folha Mercado", "https://feeds.folha.uol.com.br/mercado/rss091.xml"),
+        ("Agência Brasil", "https://agenciabrasil.ebc.com.br/rss/economia/feed.xml")
     ],
     "Cripto & FinTechs": [
         ("InfoMoney Cripto", "https://www.infomoney.com.br/onde-investir/criptoativos/feed/"),
         ("Money Times Cripto", "https://www.moneytimes.com.br/criptomoedas/feed/"),
+        ("Exame Future of Money", "https://exame.com/future-of-money/feed/")
     ],
 }
 
@@ -143,6 +151,8 @@ def coletar_noticias_finance(max_por_caderno=4):
             "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800"
         ]
     }
+    
+    imagens_usadas = set()
 
     for secao in ORDEM_CADERNOS_FINANCE:
         feeds = FEEDS_FINANCE.get(secao, [])
@@ -182,8 +192,19 @@ def coletar_noticias_finance(max_por_caderno=4):
                         continue
 
                     imagem = extrair_imagem_rss(entry)
-                    if not imagem:
-                        imagem = random.choice(IMAGENS_GENERICAS.get(secao, IMAGENS_GENERICAS["Mercado & Bolsa"]))
+                    if not imagem or imagem in imagens_usadas:
+                        # Fallback se a imagem não existir ou já tiver sido usada
+                        opcoes_genericas = [img for img in IMAGENS_GENERICAS.get(secao, IMAGENS_GENERICAS["Mercado & Bolsa"]) if img not in imagens_usadas]
+                        if not opcoes_genericas:
+                            # Se esgotou as exclusivas, recomeça (evita crash)
+                            opcoes_genericas = IMAGENS_GENERICAS.get(secao, IMAGENS_GENERICAS["Mercado & Bolsa"])
+                        
+                        fallback_base = random.choice(opcoes_genericas)
+                        # Marca a base como usada para que a MESMA FOTO VISUAL não se repita
+                        imagens_usadas.add(fallback_base)
+                        imagem = f"{fallback_base}&sig={coletadas}_{random.randint(100, 999)}"
+                    else:
+                        imagens_usadas.add(imagem)
 
                     edicao[secao].append({
                         "titulo": titulo,

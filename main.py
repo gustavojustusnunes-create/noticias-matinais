@@ -104,6 +104,13 @@ def main():
         else:
             print(f"      ⚠️ {tema}: nenhuma notícia disponível hoje.")
 
+    # ── [NOVO] Agente Supervisor de Qualidade da IA ──
+    try:
+        from ai_supervisor import revisar_edicao_diaria
+        CACHE_GLOBAL = revisar_edicao_diaria(CACHE_GLOBAL)
+    except Exception as e:
+        print(f"   ⚠️ Falha ao rodar o Supervisor de IA (ignorando e seguindo): {e}")
+
     if novas:
         salvar_no_historico(sheet_historico, novas)
         print(f"   💾 {len(novas)} notícias salvas no histórico.")

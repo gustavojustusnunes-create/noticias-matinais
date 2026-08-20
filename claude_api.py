@@ -236,3 +236,55 @@ def gerar_keyword_imagem(texto: str) -> str:
         if len(keyword) > 2:
             return keyword
     return "news"
+
+def chamar_supervisor_api(prompt, max_tokens=4096):
+    """
+    Chama a API do Google Gemini forçando a saída em JSON estruturado.
+    Utilizado pelo Agente Supervisor para auditar e corrigir textos.
+    """
+    if not GEMINI_API_KEY:
+        print("      ❌ GEMINI_API_KEY não definida.")
+        return None
+
+    import google.generativeai as genai
+    genai.configure(api_key=GEMINI_API_KEY)
+    
+    available_models = []
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                if 'flash' in m.name or 'pro' in m.name:
+                    available_models.append(m.name)
+    except Exception as e:
+        available_models = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']
+
+    available_models.sort(key=lambda x: (not 'flash' in x, x))
+    
+    if not available_models:
+        return None
+        
+    for model_name in available_models:
+        clean_name = model_name.replace('models/', '')
+        model = genai.GenerativeModel(clean_name)
+        try:
+            response = model.generate_content(
+                prompt,
+                generation_config=genai.types.GenerationConfig(
+                    max_output_tokens=max_tokens,
+                    temperature=0.1,
+                    response_mime_type="application/json"
+                )
+            )
+            return response.text.strip()
+        except Exception as e:
+            msg = str(e).lower()
+            if "429" in msg or "quota" in msg:
+                time.sleep(3)
+                continue
+            elif "404" in msg or "not found" in msg or "supported" in msg:
+                continue
+            else:
+                continue
+
+    return None
+

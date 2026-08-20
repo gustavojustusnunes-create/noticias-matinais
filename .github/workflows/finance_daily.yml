@@ -62,6 +62,7 @@ jobs:
           git config user.email "actions@github.com"
           git add edicoes_finance/
           git diff --staged --quiet || git commit -m "All News Finance — Edição $(date +%F)"
+          git pull --rebase origin main
           git push
 
       - name: Notificar falha por email
