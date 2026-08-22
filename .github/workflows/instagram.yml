@@ -10,6 +10,8 @@ jobs:
   post_instagram:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
     # Só roda quando a Variable INSTAGRAM_ENABLED estiver em "true" (Settings → Variables → Actions).
     # Para pausar posts sem mexer no código, mude a Variable para "false".
     if: ${{ vars.INSTAGRAM_ENABLED == 'true' }}
