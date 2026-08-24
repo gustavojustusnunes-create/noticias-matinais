@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-08-24",
+  "data_extenso": "Segunda-feira, 24 de Agosto de 2026",
+  "manchete": "ESPECIAL ELEIÇÕES: o que esperar das nossas relações com o mundo? - O Assunto #1789",
+  "arquivo_html": "2026-08-24.html"
+ },
+ {
   "data": "2026-08-23",
   "data_extenso": "Domingo, 23 de Agosto de 2026",
   "manchete": "Chefe de segurança do Irã ameaça retaliar vizinhos que apoiarem Trump: 'nem uma gota de petróleo sairá pelo Estreito de ",
@@ -352,11 +358,5 @@
   "data_extenso": "Domingo, 14 de Junho de 2026",
   "manchete": "Vetados na Copa: torcedores de duas seleções estão proibidos de entrar nos EUA",
   "arquivo_html": "2026-06-14.html"
- },
- {
-  "data": "2026-06-13",
-  "data_extenso": "Sábado, 13 de Junho de 2026",
-  "manchete": "Alerta na Copa: ICE usa futebol como 'isca' para caçar imigrantes nos EUA, diz relatório",
-  "arquivo_html": "2026-06-13.html"
  }
 ]
