@@ -385,23 +385,61 @@ def gerar_slide_cta(data_str):
 # =============================================================================
 def obter_top5_noticias():
     ed_dir = Path(EDICOES_DIR)
-    antigos = sorted(ed_dir.glob("????-??-??.json"), reverse=True)
+    antigos = sorted(ed_dir.glob('????-??-??.json'), reverse=True)
     if not antigos: return []
     
+    dia_atual = antigos[0].stem
     try:
-        edicao = json.loads(antigos[0].read_text(encoding="utf-8"))
-        cadernos = edicao.get("cadernos", {})
+        edicao = json.loads(antigos[0].read_text(encoding='utf-8'))
+        cadernos = edicao.get('cadernos', {})
     except:
         return []
 
+    # Tenta ler a fila do Google Sheets
     noticias = []
+    selecoes = None
+    try:
+        if os.environ.get('GCP_JSON') and os.environ.get('GOOGLE_SHEETS_ID'):
+            import gspread
+            from google.oauth2.service_account import Credentials
+            creds_dict = json.loads(os.environ['GCP_JSON'])
+            scopes = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+            creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
+            client = gspread.authorize(creds)
+            sheet_id = os.environ['GOOGLE_SHEETS_ID']
+            planilha = client.open_by_key(sheet_id)
+            ws = planilha.worksheet('Instagram_Queue')
+            
+            records = ws.get_all_records()
+            for row in records:
+                if str(row.get('Data')) == dia_atual:
+                    selecoes = json.loads(str(row.get('Selecao_JSON')))
+                    break
+    except Exception as e:
+        print(f'⚠️ Erro ao ler planilha do Instagram: {e}')
+        selecoes = None
+
+    if selecoes:
+        print(f'✅ Usando curadoria manual: {selecoes}')
+        for tema, idx in selecoes.items():
+            if tema in cadernos and cadernos[tema] and idx < len(cadernos[tema]):
+                noticia = cadernos[tema][idx]
+                noticias.append({
+                    'tema': tema,
+                    'titulo': noticia.get('titulo', ''),
+                    'resumo': noticia.get('resumo', ''),
+                    'imagem': noticia.get('imagem', ''),
+                })
+        return noticias
+        
+    print('⚠️ Sem curadoria manual. Usando lógica padrão (Top 1).')
     for tema in ORDEM_CADERNOS:
         if tema in cadernos and cadernos[tema]:
             noticias.append({
-                "tema": tema,
-                "titulo": cadernos[tema][0].get("titulo", ""),
-                "resumo": cadernos[tema][0].get("resumo", ""),
-                "imagem": cadernos[tema][0].get("imagem", ""),
+                'tema': tema,
+                'titulo': cadernos[tema][0].get('titulo', ''),
+                'resumo': cadernos[tema][0].get('resumo', ''),
+                'imagem': cadernos[tema][0].get('imagem', ''),
             })
             if len(noticias) == MAX_POSTS:
                 break

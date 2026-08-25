@@ -855,7 +855,7 @@ def gerar_podcast_audio_direto():
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎙️ Ouvir no Site"])
+aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_admin = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "⚙️ Admin Instagram"])
 with aba_inicio:
     st.markdown("""
     <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -1198,3 +1198,75 @@ with aba_edicao:
                     _components.html(_html_content, height=2400, scrolling=True)
     except Exception:
         pass  # sem edicoes/, a seção simplesmente não aparece
+
+
+with aba_admin:
+    st.markdown('### ⚙️ Curadoria do Instagram')
+    senha = st.text_input('Senha de acesso', type='password')
+    
+    if senha == '3344':
+        try:
+            import os
+            _idx_path = os.path.join('edicoes', 'index.json')
+            if os.path.exists(_idx_path):
+                with open(_idx_path, encoding='utf-8') as _f:
+                    _indice = json.load(_f)
+                
+                if _indice:
+                    dia_atual = _indice[0]['data']
+                    json_path = os.path.join('edicoes', f'{dia_atual}.json')
+                    
+                    st.write(f'**Edição Atual:** {dia_atual}')
+                    
+                    if os.path.exists(json_path):
+                        with open(json_path, encoding='utf-8') as _f2:
+                            noticias_json = json.load(_f2)
+                        
+                        selecoes = {}
+                        for tema, lista in noticias_json.items():
+                            if lista:
+                                st.markdown(f'#### {tema}')
+                                for i, noti in enumerate(lista):
+                                    titulo = noti.get('titulo', '')
+                                    key = f'chk_{tema}_{i}'
+                                    val = st.checkbox(titulo, value=(i==0), key=key)
+                                    if val:
+                                        if tema not in selecoes:
+                                            selecoes[tema] = i
+                        
+                        if st.button('Salvar para o Instagram', type='primary'):
+                            with st.spinner('Salvando na planilha...'):
+                                try:
+                                    client = conectar_planilha()
+                                    if client:
+                                        planilha = client.spreadsheet
+                                        try:
+                                            ws = planilha.worksheet('Instagram_Queue')
+                                        except:
+                                            ws = planilha.add_worksheet(title='Instagram_Queue', rows='100', cols='5')
+                                            ws.append_row(['Data', 'Selecao_JSON'])
+                                        
+                                        records = ws.get_all_records()
+                                        row_idx = None
+                                        for r_idx, row in enumerate(records, start=2):
+                                            if str(row.get('Data')) == dia_atual:
+                                                row_idx = r_idx
+                                                break
+                                        
+                                        json_str = json.dumps(selecoes)
+                                        if row_idx:
+                                            ws.update_cell(row_idx, 2, json_str)
+                                        else:
+                                            ws.append_row([dia_atual, json_str])
+                                        st.success('Salvo com sucesso! O robô usará essas notícias hoje.')
+                                    else:
+                                        st.error('Erro: Credenciais do Google Sheets não encontradas.')
+                                except Exception as e:
+                                    st.error(f'Erro ao salvar: {e}')
+                    else:
+                        st.warning('JSON do dia não encontrado.')
+        except Exception as e:
+            st.error(f'Erro: {e}')
+    elif senha:
+        st.error('Senha incorreta.')
+
