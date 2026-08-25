@@ -1223,7 +1223,7 @@ with aba_admin:
                             noticias_json = json.load(_f2)
                         
                         selecoes = {}
-                        for tema, lista in noticias_json.items():
+                        for tema, lista in noticias_json.get('cadernos', {}).items():
                             if lista:
                                 st.markdown(f'#### {tema}')
                                 for i, noti in enumerate(lista):
