@@ -433,9 +433,10 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             f"7. EMOJIS: O texto deve ser 100% formal. É ABSOLUTAMENTE PROIBIDO o uso de qualquer emoji.\n"
             f"8. TÍTULO: NÃO REPITA o título no corpo do resumo. Vá direto ao assunto.\n"
             f"9. NEWSLETTERS: NUNCA cite a existência de newsletters do site fonte (ex: 'Você receberá nossa newsletter em breve.').\n"
-            f"10. PROIBIDO: 'o artigo fala', 'segundo a publicação', numeração, markdown.\n"
+            f"10. PROIBIDO: 'o artigo fala', 'segundo a publicação', numeração, asteriscos ou formatação markdown (use APENAS a regra 13).\n"
             f"11. CLICKBAIT: Se o título prometer uma lista (ex: '5 motivos', '3 coisas') ou fizer mistério, mas o texto não tiver o conteúdo real, retorne EXATAMENTE: SKIP\n"
-            f"12. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n\n"
+            f"12. SKIP: Se a notícia NÃO pertence ao caderno {tema} ou é muito fraca, retorne EXATAMENTE: SKIP\n"
+            f"13. NEGRITO VISUAL: Envolva as 2 a 4 palavras ou expressões MAIS IMPACTANTES do resumo na tag HTML <b>palavra</b> para destacar visualmente (ex: um aumento de <b>40% na produtividade</b> na última década).\n\n"
             f"Retorne APENAS o resumo (ou SKIP). Nada mais.\n"
         )
 

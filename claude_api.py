@@ -81,7 +81,7 @@ def chamar_claude_haiku(prompt, max_tokens=300):
 
 def limpar_texto_rss(texto):
     """Remove HTML, entidades, CTAs de engajamento e lixo de feeds RSS."""
-    texto = re.sub(r"<[^>]+>", "", texto)
+    texto = re.sub(r"<(?!/?b>)[^>]+>", "", texto)
 
     entidades = {
         "&#8220;": '"', "&#8221;": '"', "&#8216;": "'", "&#8217;": "'",

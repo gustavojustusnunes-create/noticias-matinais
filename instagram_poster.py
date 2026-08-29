@@ -227,16 +227,43 @@ def gerar_slide_1(tema, titulo, data_str, foto):
     px = 70
     desenhar_identidade(draw, W, H, px, tema, data_str)
 
-    linhas = textwrap.wrap(titulo, width=15)
-    if len(linhas) <= 3: f_titulo, lh = _playfair(82), 92
-    elif len(linhas) == 4: f_titulo, lh = _playfair(68), 78
-    elif len(linhas) == 5:
-        f_titulo, lh = _playfair(58), 68
-        linhas = textwrap.wrap(titulo, width=20)
-    else:
-        f_titulo, lh = _playfair(48), 58
-        linhas = textwrap.wrap(titulo, width=22)[:7]
+    # Novo design: Manchete Gigante
+    f_titulo = _playfair(130, 700)
+    lh = 145
+    
+    draw_mock = ImageDraw.Draw(Image.new("RGB", (1,1)))
+    palavras = titulo.split()
+    linhas = []
+    linha = ""
+    for p in palavras:
+        teste = linha + " " + p if linha else p
+        if draw_mock.textlength(teste, font=f_titulo) <= W - px*2:
+            linha = teste
+        else:
+            linhas.append(linha)
+            linha = p
+    if linha:
+        linhas.append(linha)
         
+    # Diminui um pouco se ficar muito grande
+    if len(linhas) > 5:
+        f_titulo = _playfair(105, 700)
+        lh = 120
+        linhas = []
+        linha = ""
+        for p in palavras:
+            teste = linha + " " + p if linha else p
+            if draw_mock.textlength(teste, font=f_titulo) <= W - px*2:
+                linha = teste
+            else:
+                linhas.append(linha)
+                linha = p
+        if linha:
+            linhas.append(linha)
+            
+    if len(linhas) > 6:
+        linhas = linhas[:6]
+
     altura_manchete = lh * len(linhas)
     y_rodape = H - 88
     y_titulo = (y_rodape - 80) - altura_manchete
@@ -252,80 +279,104 @@ def gerar_slide_1(tema, titulo, data_str, foto):
         
     m = 34
     draw.rectangle([m, m, W - m, H - m], outline=OURO, width=2)
-    draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=OURO_CLARO, width=1)
-
     return canvas
 
 # =============================================================================
 # --- SLIDES INTERMEDIÁRIOS (NOTÍCIA PAGINADA) ---
 # =============================================================================
+def tokenize_rich_text(texto):
+    import re
+    partes = re.split(r'(<b>.*?</b>)', texto)
+    tokens = []
+    for parte in partes:
+        if not parte: continue
+        is_bold = parte.startswith('<b>') and parte.endswith('</b>')
+        texto_limpo = parte.replace('<b>','').replace('</b>','')
+        
+        palavras = texto_limpo.split(' ')
+        for i, p in enumerate(palavras):
+            has_space = (i > 0)
+            if p or has_space:
+                tokens.append((p, is_bold, has_space))
+    return tokens
+
 def gerar_slides_noticia(tema, resumo, data_str):
     W, H = FORMATO
     px = 70
     m = 34
     y_rodape = H - 88
     max_w = W - (px * 2)
-    max_h = y_rodape - 220
-    y_inicio = 160
     
-    tamanho = 50
-    font = _lora(tamanho, 400)
-    lh = int(tamanho * 1.6)
-    max_linhas_por_slide = max_h // lh
-
-    # Divide o texto em linhas
+    f_reg = _lora(65, 400)
+    f_bold = _lora(65, 700)
+    lh = f_reg.size + 15
+    y_inicio = 160
+    max_h = y_rodape - 80 - y_inicio
+    
     draw_mock = ImageDraw.Draw(Image.new("RGB", (1,1)))
-    palavras = resumo.split()
+    tokens = tokenize_rich_text(resumo)
+    
     linhas = []
-    linha_atual = ""
-    for p in palavras:
-        teste = linha_atual + " " + p if linha_atual else p
-        if draw_mock.textlength(teste, font=font) <= max_w:
-            linha_atual = teste
-        else:
+    linha_atual = []
+    x_atual = 0
+    
+    for p, is_bold, has_space in tokens:
+        f = f_bold if is_bold else f_reg
+        espaco = " " if has_space and x_atual > 0 else ""
+        w_espaco = draw_mock.textlength(espaco, font=f) if espaco else 0
+        w_p = draw_mock.textlength(p, font=f)
+        
+        if x_atual + w_espaco + w_p > max_w:
             linhas.append(linha_atual)
-            linha_atual = p
+            linha_atual = [(p, is_bold, False)]
+            x_atual = w_p
+        else:
+            linha_atual.append((p, is_bold, has_space and x_atual > 0))
+            x_atual += w_espaco + w_p
+            
     if linha_atual:
         linhas.append(linha_atual)
-
-    # Agrupa as linhas em páginas
+        
+    max_linhas_por_slide = max_h // lh
     paginas = []
     for i in range(0, len(linhas), max_linhas_por_slide):
         paginas.append(linhas[i:i + max_linhas_por_slide])
-
+        
     slides = []
     total_paginas = len(paginas)
+    cores_fundo = [CREME, (233, 238, 236)]
     
     for i, pagina in enumerate(paginas):
-        canvas = Image.new("RGB", (W, H), CREME)
+        cor = cores_fundo[i % 2]
+        canvas = Image.new("RGB", (W, H), cor)
         draw = ImageDraw.Draw(canvas)
         
         draw.rectangle([m, m, W - m, H - m], outline=TURQUESA_DARK, width=2)
         draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=TURQUESA, width=1)
         
-        _texto_espacado(draw, (px, 64), "ALL NEWS JOURNAL", _lora(25, 600), TURQUESA_DARK, tracking=6)
-        draw.line([(px, 104), (px + 168, 104)], fill=OURO, width=2)
-        
-        draw.line([(px, y_rodape - 18), (W - px, y_rodape - 18)], fill=OURO, width=1)
-        _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), TURQUESA, tracking=3)
-
-        # Numeração e Seta indicativa
         num_str = f"Parte {i+1} de {total_paginas}"
         f_r = _lora(20, 500)
         larg_num = sum(draw.textlength(c, font=f_r) for c in num_str) + 3 * (len(num_str) - 1)
         _texto_espacado(draw, (W - px - larg_num, y_rodape + 1), num_str, f_r, TURQUESA_DARK, tracking=3)
         
-        # Seta maior no canto superior direito para guiar a leitura
-        seta = "CONTINUA 👉"
+        seta = "CONTINUA dY`%"
         larg_seta = sum(draw.textlength(c, font=f_r) for c in seta) + 3 * (len(seta) - 1)
         _texto_espacado(draw, (W - px - larg_seta, 66), seta, f_r, TURQUESA, tracking=3)
 
-        # Centraliza verticalmente o texto no slide
         altura_total = len(pagina) * lh
         folga_y = max(0, (max_h - altura_total) // 2)
         y = y_inicio + folga_y
+        
         for ln in pagina:
-            draw.text((px, y), ln, font=font, fill=TURQUESA_DARK)
+            x = px
+            for p, is_bold, has_space in ln:
+                f = f_bold if is_bold else f_reg
+                espaco = " " if has_space else ""
+                w_espaco = draw.textlength(espaco, font=f) if espaco else 0
+                w_p = draw.textlength(p, font=f)
+                
+                draw.text((x + w_espaco, y), p, font=f, fill=TURQUESA_DARK)
+                x += w_espaco + w_p
             y += lh
             
         slides.append(canvas)
