@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-08-30",
+  "data_extenso": "Domingo, 30 de Agosto de 2026",
+  "manchete": "Por que Trump quer limitar o voto pelo correio se ele próprio usa o recurso? Entenda o que está em jogo",
+  "arquivo_html": "2026-08-30.html"
+ },
+ {
   "data": "2026-08-29",
   "data_extenso": "Sábado, 29 de Agosto de 2026",
   "manchete": "Por que as imagens das inundações no Nepal e no Tibete não são mostradas na China e se sabe pouco sobre as vítimas no pa",
@@ -352,11 +358,5 @@
   "data_extenso": "Sábado, 20 de Junho de 2026",
   "manchete": "Mais de 30 morrem em campo de deslocados no Congo; casos de ebola levantam temor de avanço do surto",
   "arquivo_html": "2026-06-20.html"
- },
- {
-  "data": "2026-06-19",
-  "data_extenso": "Sexta-feira, 19 de Junho de 2026",
-  "manchete": "Capitão do Marrocos na Copa, Achraf Hakimi será julgado por acusação de estupro na França",
-  "arquivo_html": "2026-06-19.html"
  }
 ]
