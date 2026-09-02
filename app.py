@@ -1254,18 +1254,7 @@ with aba_ia:
         end
     '''
     
-    html_code = f"""
-    <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({{ startOnLoad: true }});
-    </script>
-    <div class="mermaid">
-      {mermaid_code}
-    </div>
-    """
-    import streamlit.components.v1 as _components
-    _components.html(html_code, height=900, scrolling=True)
-
+    st.markdown(f"```mermaid\n{mermaid_code}\n```")
 
 with aba_admin:
     st.markdown('### ⚙️ Curadoria do Instagram')
