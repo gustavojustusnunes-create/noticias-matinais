@@ -67,6 +67,7 @@ TURQUESA_DARK = (8, 60, 58)
 CREME         = (253, 251, 247)  
 OURO          = (201, 168, 76)   
 OURO_CLARO    = (214, 184, 102)
+PRETO         = (15, 15, 18)
 
 NOME_EXIBICAO = {
     "Politica": "POLÍTICA",
@@ -188,247 +189,178 @@ def _cover_sem_corte(img, w, h):
     fundo.paste(img_fit, (offset_x, offset_y))
     return fundo
 
-def desenhar_identidade(draw, W, H, px, tema, data_str):
-    _texto_espacado(draw, (px, 64), "ALL NEWS JOURNAL", _lora(25, 600), CREME, tracking=6)
-    draw.line([(px, 104), (px + 168, 104)], fill=OURO, width=2)
-    f_data = _lora(21, 500)
-    dw = draw.textlength(data_str, font=f_data)
-    draw.text((W - px - dw, 66), data_str, font=f_data, fill=CREME)
+def _montserrat(tamanho):
+    return _font("Montserrat-Black.ttf", tamanho)
 
-    y_rodape = H - 88
-    draw.line([(px, y_rodape - 18), (W - px, y_rodape - 18)], fill=OURO, width=1)
-    _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), OURO_CLARO, tracking=3)
-    direita = "ARRASTE PARA LER"
-    f_r = _lora(20, 500)
-    larg = sum(draw.textlength(c, font=f_r) for c in direita) + 3 * (len(direita) - 1)
-    _texto_espacado(draw, (W - px - larg, y_rodape + 1), direita, f_r, CREME, tracking=3)
+def extrair_sintese(resumo):
+    import re
+    frases = [f.strip() for f in re.split(r'[.!?]', resumo) if len(f.strip()) > 10]
+    if not frases:
+        return resumo[:80] + "..."
+    primeira = frases[0]
+    palavras = primeira.split()
+    if len(palavras) > 12:
+        return " ".join(palavras[:12]) + "..."
+    return primeira
 
-# =============================================================================
-# --- SLIDE 1 (MANCHETE) ---
-# =============================================================================
-def gerar_slide_1(tema, titulo, data_str, foto):
+def extrair_keywords(titulo):
+    import re
+    palavras = re.findall(r'\b\w+\b', titulo.upper())
+    validas = [p for p in palavras if len(p) > 3 and not p.isnumeric()]
+    if len(validas) < 3:
+        validas = palavras
+    return sorted(validas, key=len, reverse=True)[:3]
+
+def desenhar_identidade_minimalista(draw, W, H, px, tema, data_str):
+    _texto_espacado(draw, (px, 60), f"ALL NEWS JOURNAL — {tema.upper()}", _lora(22, 600), CREME, tracking=4)
+    w_data = draw.textlength(data_str, font=_lora(22, 500))
+    draw.text((W - px - w_data, 60), data_str, font=_lora(22, 500), fill=CREME)
+
+def gerar_slide_1_hook(tema, titulo, data_str, foto):
     W, H = FORMATO
-    canvas = (_cover_sem_corte(foto, W, H) if foto else Image.new("RGB", (W, H), TURQUESA_DARK)).convert("RGB")
+    canvas = Image.new("RGB", (W, H), TURQUESA_DARK)
+    if foto:
+        img_bg = _cover_sem_corte(foto, W, H)
+        mask = Image.new("RGBA", (W, H), (10, 37, 64, 180))
+        img_bg = img_bg.convert("RGBA")
+        img_bg.alpha_composite(mask)
+        canvas.paste(img_bg.convert("RGB"), (0, 0))
     
-    grad = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-    gd = ImageDraw.Draw(grad)
-    base_rgb = tuple(int(c * 0.45) for c in TURQUESA_DARK)
-    for y in range(H):
-        t = y / H
-        alpha = int(255 * (0.30 + 0.70 * (t ** 1.6)))
-        gd.line([(0, y), (W, y)], fill=(*base_rgb, alpha))
-    topo = int(H * 0.20)
-    for y in range(topo):
-        a = int(180 * (1 - y / topo))
-        gd.line([(0, y), (W, y)], fill=(*TURQUESA_DARK, a))
-    canvas = Image.alpha_composite(canvas.convert("RGBA"), grad).convert("RGB")
     draw = ImageDraw.Draw(canvas)
-
-    px = 70
-    desenhar_identidade(draw, W, H, px, tema, data_str)
-
-    # Novo design: Manchete Gigante
-    f_titulo = _playfair(130, 700)
-    lh = 145
+    desenhar_identidade_minimalista(draw, W, H, 60, tema, data_str)
     
-    draw_mock = ImageDraw.Draw(Image.new("RGB", (1,1)))
-    palavras = titulo.split()
-    linhas = []
-    linha = ""
+    f_titulo = _montserrat(90)
+    palavras = titulo.upper().split()
+    linhas, linha_atual = [], []
     for p in palavras:
-        teste = linha + " " + p if linha else p
-        if draw_mock.textlength(teste, font=f_titulo) <= W - px*2:
-            linha = teste
-        else:
-            linhas.append(linha)
-            linha = p
-    if linha:
-        linhas.append(linha)
+        linha_atual.append(p)
+        if draw.textlength(" ".join(linha_atual), font=f_titulo) > (W - 120):
+            linha_atual.pop()
+            linhas.append(" ".join(linha_atual))
+            linha_atual = [p]
+    if linha_atual: linhas.append(" ".join(linha_atual))
         
-    # Diminui um pouco se ficar muito grande
-    if len(linhas) > 5:
-        f_titulo = _playfair(105, 700)
-        lh = 120
-        linhas = []
-        linha = ""
-        for p in palavras:
-            teste = linha + " " + p if linha else p
-            if draw_mock.textlength(teste, font=f_titulo) <= W - px*2:
-                linha = teste
-            else:
-                linhas.append(linha)
-                linha = p
-        if linha:
-            linhas.append(linha)
-            
-    if len(linhas) > 6:
-        linhas = linhas[:6]
-
-    altura_manchete = lh * len(linhas)
-    y_rodape = H - 88
-    y_titulo = (y_rodape - 80) - altura_manchete
-
-    selo = NOME_EXIBICAO.get(tema, tema.upper())
-    draw.line([(px, y_titulo - 40), (px + 54, y_titulo - 40)], fill=OURO, width=3)
-    _texto_espacado(draw, (px, y_titulo - 30), selo, _lora(24, 700), OURO_CLARO, tracking=4)
-
-    y = y_titulo
-    for ln in linhas:
-        draw.text((px, y), ln, font=f_titulo, fill=CREME)
-        y += lh
-        
-    m = 34
-    draw.rectangle([m, m, W - m, H - m], outline=OURO, width=2)
+    y_text = (H - (len(linhas) * 100)) // 2
+    for linha in linhas:
+        draw.text((60, y_text), linha, font=f_titulo, fill=CREME)
+        y_text += 100
     return canvas
 
-# =============================================================================
-# --- SLIDES INTERMEDIÁRIOS (NOTÍCIA PAGINADA) ---
-# =============================================================================
-def tokenize_rich_text(texto):
-    import re
-    partes = re.split(r'(<b>.*?</b>)', texto)
-    tokens = []
-    for parte in partes:
-        if not parte: continue
-        is_bold = parte.startswith('<b>') and parte.endswith('</b>')
-        texto_limpo = parte.replace('<b>','').replace('</b>','')
-        
-        palavras = texto_limpo.split(' ')
-        for i, p in enumerate(palavras):
-            has_space = (i > 0)
-            if p or has_space:
-                tokens.append((p, is_bold, has_space))
-    return tokens
-
-def gerar_slides_noticia(tema, resumo, data_str):
+def gerar_slide_2_sintese(tema, resumo, data_str):
     W, H = FORMATO
-    px = 70
-    m = 34
-    y_rodape = H - 88
-    max_w = W - (px * 2)
+    canvas = Image.new("RGB", (W, H), PRETO)
+    draw = ImageDraw.Draw(canvas)
+    desenhar_identidade_minimalista(draw, W, H, 60, tema, data_str)
     
-    f_reg = _lora(65, 400)
-    f_bold = _lora(65, 700)
-    lh = f_reg.size + 15
-    y_inicio = 160
-    max_h = y_rodape - 80 - y_inicio
-    
-    draw_mock = ImageDraw.Draw(Image.new("RGB", (1,1)))
-    tokens = tokenize_rich_text(resumo)
-    
-    linhas = []
-    linha_atual = []
-    x_atual = 0
-    
-    for p, is_bold, has_space in tokens:
-        f = f_bold if is_bold else f_reg
-        espaco = " " if has_space and x_atual > 0 else ""
-        w_espaco = draw_mock.textlength(espaco, font=f) if espaco else 0
-        w_p = draw_mock.textlength(p, font=f)
+    sintese = extrair_sintese(resumo).upper()
+    f_sintese = _montserrat(80)
+    palavras = sintese.split()
+    linhas, linha_atual = [], []
+    for p in palavras:
+        linha_atual.append(p)
+        if draw.textlength(" ".join(linha_atual), font=f_sintese) > (W - 160):
+            linha_atual.pop()
+            linhas.append(" ".join(linha_atual))
+            linha_atual = [p]
+    if linha_atual: linhas.append(" ".join(linha_atual))
         
-        if x_atual + w_espaco + w_p > max_w:
-            linhas.append(linha_atual)
-            linha_atual = [(p, is_bold, False)]
-            x_atual = w_p
-        else:
-            linha_atual.append((p, is_bold, has_space and x_atual > 0))
-            x_atual += w_espaco + w_p
-            
-    if linha_atual:
-        linhas.append(linha_atual)
-        
-    max_linhas_por_slide = max_h // lh
-    paginas = []
-    for i in range(0, len(linhas), max_linhas_por_slide):
-        paginas.append(linhas[i:i + max_linhas_por_slide])
-        
-    slides = []
-    total_paginas = len(paginas)
-    cores_fundo = [CREME, (233, 238, 236)]
-    
-    for i, pagina in enumerate(paginas):
-        cor = cores_fundo[i % 2]
-        canvas = Image.new("RGB", (W, H), cor)
-        draw = ImageDraw.Draw(canvas)
-        
-        draw.rectangle([m, m, W - m, H - m], outline=TURQUESA_DARK, width=2)
-        draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=TURQUESA, width=1)
-        
-        num_str = f"Parte {i+1} de {total_paginas}"
-        f_r = _lora(20, 500)
-        larg_num = sum(draw.textlength(c, font=f_r) for c in num_str) + 3 * (len(num_str) - 1)
-        _texto_espacado(draw, (W - px - larg_num, y_rodape + 1), num_str, f_r, TURQUESA_DARK, tracking=3)
-        
-        seta = "CONTINUA dY`%"
-        larg_seta = sum(draw.textlength(c, font=f_r) for c in seta) + 3 * (len(seta) - 1)
-        _texto_espacado(draw, (W - px - larg_seta, 66), seta, f_r, TURQUESA, tracking=3)
+    y_text = (H - (len(linhas) * 90)) // 2
+    for i, linha in enumerate(linhas):
+        cor = OURO if i % 2 != 0 else CREME
+        draw.text((80, y_text), linha, font=f_sintese, fill=cor)
+        y_text += 90
+    return canvas
 
-        altura_total = len(pagina) * lh
-        folga_y = max(0, (max_h - altura_total) // 2)
-        y = y_inicio + folga_y
+def gerar_slide_mascara(resumo, titulo, foto, parte_idx):
+    W, H = FORMATO
+    canvas = Image.new("RGB", (W, H), PRETO)
+    mask_im = Image.new("L", (W, H), 0)
+    draw_mask = ImageDraw.Draw(mask_im)
+    
+    keywords = extrair_keywords(titulo)
+    kw = keywords[parte_idx-1] if (parte_idx-1) < len(keywords) else "ALL NEWS"
+    
+    f_mask = _montserrat(160)
+    y_mask = H // 2 - 300
+    for _ in range(4):
+        w_kw = draw_mask.textlength(kw, font=f_mask)
+        draw_mask.text(((W - w_kw)//2, y_mask), kw, font=f_mask, fill=255)
+        y_mask += 160
         
-        for ln in pagina:
-            x = px
-            for p, is_bold, has_space in ln:
-                f = f_bold if is_bold else f_reg
-                espaco = " " if has_space else ""
-                w_espaco = draw.textlength(espaco, font=f) if espaco else 0
-                w_p = draw.textlength(p, font=f)
-                
-                draw.text((x + w_espaco, y), p, font=f, fill=TURQUESA_DARK)
-                x += w_espaco + w_p
-            y += lh
-            
-        slides.append(canvas)
+    if foto:
+        img_bg = _cover_sem_corte(foto, W, H).convert("RGB")
+        canvas.paste(img_bg, (0, 0), mask=mask_im)
+    
+    draw = ImageDraw.Draw(canvas)
+    f_texto = _lora(45, 500)
+    meio = len(resumo) // 2
+    texto_parte = resumo[:meio] + "..." if parte_idx == 1 else "..." + resumo[meio:]
+    
+    palavras = texto_parte.split()
+    linhas, linha_atual = [], []
+    for p in palavras:
+        linha_atual.append(p)
+        if draw.textlength(" ".join(linha_atual), font=f_texto) > (W - 160):
+            linha_atual.pop()
+            linhas.append(" ".join(linha_atual))
+            linha_atual = [p]
+    if linha_atual: linhas.append(" ".join(linha_atual))
         
-    return slides
+    y_texto_detalhe = H - 80 - (len(linhas) * 60)
+    draw.rectangle([0, y_texto_detalhe - 40, W, H], fill=PRETO)
+    for linha in linhas:
+        draw.text((80, y_texto_detalhe), linha, font=f_texto, fill=CREME)
+        y_texto_detalhe += 60
+    return canvas
 
-# =============================================================================
-# --- SLIDE FINAL (CTA) ---
-# =============================================================================
-def gerar_slide_cta(data_str):
+def gerar_slide_5_veredito(resumo):
     W, H = FORMATO
     canvas = Image.new("RGB", (W, H), TURQUESA_DARK)
     draw = ImageDraw.Draw(canvas)
     
-    px = 70
-    m = 34
-    draw.rectangle([m, m, W - m, H - m], outline=OURO, width=2)
-    draw.rectangle([m + 8, m + 8, W - m - 8, H - m - 8], outline=OURO_CLARO, width=1)
+    f_conclusao = _montserrat(110)
+    draw.text((80, 200), "EM", font=f_conclusao, fill=OURO_CLARO)
+    draw.text((80, 310), "RESUMO:", font=f_conclusao, fill=OURO)
     
-    _texto_espacado(draw, (px, 64), "ALL NEWS JOURNAL", _lora(25, 600), CREME, tracking=6)
-    draw.line([(px, 104), (px + 168, 104)], fill=OURO, width=2)
+    import re
+    frases = [f.strip() for f in re.split(r'[.!?]', resumo) if len(f.strip()) > 10]
+    final_text = frases[-1] if frases else resumo[-100:]
     
-    y_rodape = H - 88
-    draw.line([(px, y_rodape - 18), (W - px, y_rodape - 18)], fill=OURO, width=1)
-    _texto_espacado(draw, (px, y_rodape), "@ALL.NEWS.JOURNAL", _lora(22, 500), OURO_CLARO, tracking=3)
-
-    # Texto central de Inscrição
-    f_titulo = _playfair(62, 800)
-    f_sub = _lora(36, 400)
-    
-    msg1 = "Gostou da leitura?"
-    msg2 = "A edição completa"
-    msg3 = "chega todas as manhãs."
-    
-    y_centro = (H // 2) - 160
-    
-    for text in [msg1, msg2, msg3]:
-        w_txt = draw.textlength(text, font=f_titulo)
-        draw.text(((W - w_txt)//2, y_centro), text, font=f_titulo, fill=CREME)
-        y_centro += 80
+    f_texto = _lora(55, 400)
+    palavras = final_text.split()
+    linhas, linha_atual = [], []
+    for p in palavras:
+        linha_atual.append(p)
+        if draw.textlength(" ".join(linha_atual), font=f_texto) > (W - 160):
+            linha_atual.pop()
+            linhas.append(" ".join(linha_atual))
+            linha_atual = [p]
+    if linha_atual: linhas.append(" ".join(linha_atual))
         
-    y_centro += 40
-    # Botão visual
-    w_btn = 500
-    h_btn = 90
-    x_btn = (W - w_btn) // 2
-    draw.rounded_rectangle([x_btn, y_centro, x_btn + w_btn, y_centro + h_btn], radius=45, fill=OURO)
+    y_text = 600
+    for linha in linhas:
+        draw.text((80, y_text), linha, font=f_texto, fill=CREME)
+        y_text += 70
+    return canvas
+
+def gerar_slide_cta(data_str):
+    W, H = FORMATO
+    canvas = Image.new("RGB", (W, H), OURO)
+    draw = ImageDraw.Draw(canvas)
     
-    txt_btn = "Assine no link da Bio"
-    w_btn_txt = draw.textlength(txt_btn, font=f_sub)
-    draw.text((x_btn + (w_btn - w_btn_txt)//2, y_centro + 20), txt_btn, font=f_sub, fill=TURQUESA_DARK)
+    f_cta = _montserrat(90)
+    text_cta = ["RECEBA ESTA", "E OUTRAS", "ANÁLISES", "EXCLUSIVAS", "ÀS 6H."]
+    y_cta = 250
+    for linha in text_cta:
+        draw.text((80, y_cta), linha, font=f_cta, fill=TURQUESA_DARK)
+        y_cta += 100
+        
+    y_btn = y_cta + 100
+    draw.rounded_rectangle([80, y_btn, W - 80, y_btn + 120], radius=60, fill=PRETO)
     
+    f_btn = _lora(45, 600)
+    w_btn_txt = draw.textlength("Link na Bio para Assinar", font=f_btn)
+    draw.text((80 + ((W - 160) - w_btn_txt)//2, y_btn + 30), "Link na Bio para Assinar", font=f_btn, fill=CREME)
     return canvas
 
 # =============================================================================
@@ -539,12 +471,15 @@ def main():
 
         foto = _baixar_imagem(imagem)
         
-        slide_capa = gerar_slide_1(tema, titulo, data_str, foto)
-        slides_meio = gerar_slides_noticia(tema, resumo, data_str)
+        slide_capa = gerar_slide_1_hook(tema, titulo, data_str, foto)
+        slide_sintese = gerar_slide_2_sintese(tema, resumo, data_str)
+        slide_mask1 = gerar_slide_mascara(resumo, titulo, foto, 1)
+        slide_mask2 = gerar_slide_mascara(resumo, titulo, foto, 2)
+        slide_ver = gerar_slide_5_veredito(resumo)
         slide_cta = gerar_slide_cta(data_str)
         
         # Junta tudo no álbum
-        album_imagens = [slide_capa] + slides_meio + [slide_cta]
+        album_imagens = [slide_capa, slide_sintese, slide_mask1, slide_mask2, slide_ver, slide_cta]
         
         paths = []
         for j, img_canvas in enumerate(album_imagens, 1):
