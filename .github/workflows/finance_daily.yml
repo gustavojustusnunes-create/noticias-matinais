@@ -60,8 +60,8 @@ jobs:
           [ -d edicoes_finance ] || { echo "ℹ️ Sem pasta edicoes_finance/ — nada a commitar."; exit 0; }
           git config user.name  "ANJ Bot"
           git config user.email "actions@github.com"
-          git add edicoes_finance/
-          git diff --staged --quiet || git commit -m "All News Finance — Edição $(date +%F)"
+          git add edicoes_finance/ logs/
+          git diff --staged --quiet || git commit -m "All News Finance — Edição $(date +%F) e memória da IA"
           git pull --rebase origin main
           git push
 
