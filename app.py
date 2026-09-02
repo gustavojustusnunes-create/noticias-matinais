@@ -855,7 +855,7 @@ def gerar_podcast_audio_direto():
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_admin = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "⚙️ Admin Instagram"])
+aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "🧠 Arquitetura IA", "⚙️ Admin Instagram"])
 with aba_inicio:
     st.markdown("""
     <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -1198,6 +1198,73 @@ with aba_edicao:
                     _components.html(_html_content, height=2400, scrolling=True)
     except Exception:
         pass  # sem edicoes/, a seção simplesmente não aparece
+
+
+with aba_ia:
+    st.markdown("### 🧠 Grafo de Arquitetura da IA (Live)")
+    st.markdown("Acompanhe o fluxo de dados e comunicação entre os agentes, orquestradores e banco de dados.")
+    
+    mermaid_code = '''
+    graph TD
+        %% Estilos visuais
+        classDef orchestrator fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#fff
+        classDef ai_agent fill:#4f46e5,stroke:#818cf8,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+        classDef memory fill:#047857,stroke:#34d399,stroke-width:2px,color:#fff
+        classDef collector fill:#b45309,stroke:#fbbf24,stroke-width:2px,color:#fff
+        classDef output fill:#be185d,stroke:#f472b6,stroke-width:2px,color:#fff
+
+        subgraph GitHub Actions [Servidor Nuvem - Cron Diário]
+            M[main.py<br/>All News Journal]:::orchestrator
+            FM[finance_main.py<br/>All News Finance]:::orchestrator
+            IG[instagram_poster.py<br/>Instagram Feed]:::orchestrator
+        end
+
+        subgraph Motores de Coleta e IA Básica
+            F[feeds.py]:::collector
+            FF[finance_feeds.py]:::collector
+            
+            F -- 1. Busca RSS e Gemini Resumo --> M
+            FF -- 1. Busca RSS e Gemini Resumo --> FM
+        end
+
+        subgraph Auditoria Cognitiva
+            AS[ai_supervisor.py<br/>Agente Supervisor IA]:::ai_agent
+            SM[(logs/supervisor_memory.json<br/>Memória de Erros e Fotos)]:::memory
+            
+            M -- 2. Envia para Inspeção --> AS
+            FM -- 2. Envia para Inspeção --> AS
+            
+            AS -- Audita e Reescreve --> M
+            AS -- Audita e Reescreve --> FM
+            
+            AS <-->|Lê Erros / Grava Lições| SM
+            IG <-->|Verifica Fotos / Bloqueia Repetição| SM
+        end
+
+        subgraph Entrega e Assinantes
+            DB[(Google Sheets<br/>Banco de Assinantes)]:::memory
+            EB[email_builder.py]:::output
+            FEB[finance_email_builder.py]:::output
+            
+            M -- 3. Busca Lista --> DB
+            FM -- 3. Busca Lista --> DB
+            
+            M -- 4. Dispara --> EB
+            FM -- 4. Dispara --> FEB
+        end
+    '''
+    
+    html_code = f"""
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({{ startOnLoad: true }});
+    </script>
+    <div class="mermaid">
+      {mermaid_code}
+    </div>
+    """
+    import streamlit.components.v1 as _components
+    _components.html(html_code, height=900, scrolling=True)
 
 
 with aba_admin:
