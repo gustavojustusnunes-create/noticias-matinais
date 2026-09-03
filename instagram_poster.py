@@ -135,6 +135,8 @@ def carregar_memoria():
             return {"erros": data, "imagens_recentes": []}
         if "imagens_recentes" not in data:
             data["imagens_recentes"] = []
+        if "erros" not in data:
+            data["erros"] = []
         return data
     except:
         return {"erros": [], "imagens_recentes": []}

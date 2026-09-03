@@ -54,6 +54,27 @@ def revisar_edicao_diaria(cache_global):
     
     print("\n🕵️  Iniciando Supervisão e Auditoria de Qualidade da IA...")
     
+    # --- Passo Zero: Deduplicação Semântica de Notícias de Grande Impacto ---
+    print("   🔍 Removendo notícias repetidas sobre o mesmo assunto...")
+    for tema, noticias in cache_global.items():
+        unicas = []
+        for noti in noticias:
+            duplicada = False
+            # Conjunto de palavras significativas do título (ignorando preposições curtas)
+            palavras_noti = set(w.lower() for w in noti.get("titulo", "").split() if len(w) > 3)
+            for u in unicas:
+                palavras_u = set(w.lower() for w in u.get("titulo", "").split() if len(w) > 3)
+                if palavras_noti and palavras_u:
+                    intersecao = palavras_noti.intersection(palavras_u)
+                    menor_conjunto = min(len(palavras_noti), len(palavras_u))
+                    # Se mais de 55% das palavras da menor frase forem iguais, é a mesma notícia
+                    if menor_conjunto > 0 and len(intersecao) / menor_conjunto > 0.55:
+                        duplicada = True
+                        break
+            if not duplicada:
+                unicas.append(noti)
+        cache_global[tema] = unicas
+
     for tema, noticias in cache_global.items():
         if not noticias:
             continue
