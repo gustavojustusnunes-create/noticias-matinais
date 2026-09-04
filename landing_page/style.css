@@ -1,0 +1,59 @@
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* 
+ * The scroll-track forces the page to be tall enough to scroll.
+ * We'll use 400vh to give enough time for the 3 Acts to play out.
+ */
+.scroll-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 400vh;
+    z-index: -1;
+}
+
+/* 
+ * The sticky-container stays fixed in the viewport while the user scrolls down the scroll-track.
+ */
+.sticky-container {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* Optional: subtle background texture for the dark void */
+    background: radial-gradient(circle at center, #111, #000);
+}
+
+/* 
+ * Newspaper specific styling
+ */
+#newspaper {
+    /* Base texture - CSS generated noise/paper effect */
+    background-color: #f3ece0;
+    background-image: 
+        linear-gradient(90deg, transparent 50%, rgba(255,255,255,.5) 50%),
+        linear-gradient(transparent 50%, rgba(255,255,255,.5) 50%);
+    background-size: 4px 4px;
+    
+    transform-origin: center center;
+    will-change: transform, opacity;
+}
+
+/* 
+ * Form interactivity fixes. Since pointer-events are none to allow scrolling 
+ * initially, we need to toggle pointer-events-auto when the form is fully visible.
+ */
+#content-overlay.active {
+    pointer-events: auto;
+}
