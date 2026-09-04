@@ -7,7 +7,6 @@ const world = Globe()(globeViz)
     .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
     .showGraticules(true)
     .globeMaterial(new THREE.MeshPhongMaterial({ color: '#0a5c5a', transparent: true, opacity: 0.9 }))
-    
     .backgroundColor('rgba(0,0,0,0)')
     .showAtmosphere(true)
     .atmosphereColor('#0a5c5a')
@@ -24,7 +23,6 @@ window.addEventListener('resize', () => {
     world.height(globeViz.clientHeight);
 });
 
-// Move the camera back a bit to see the globe better initially
 world.camera().position.z = 300;
 
 
@@ -36,9 +34,10 @@ gsap.registerPlugin(ScrollTrigger);
 // Main timeline pinned to the scroll track
 const tl = gsap.timeline({
     scrollTrigger: {
-        trigger: ".scroll-track",
+        trigger: "#pin-container",
+        pin: true,
         start: "top top",
-        end: "bottom bottom",
+        end: "+=400%", // 400% of viewport height creates the scroll duration
         scrub: 1, // Smooth scrubbing
     }
 });
@@ -47,7 +46,7 @@ const tl = gsap.timeline({
 tl.to("#newspaper", {
     scale: 30, // massive scale to dive into the page
     opacity: 0,
-    duration: 3, // relative duration mapped to scroll percentage
+    duration: 3, 
     ease: "power2.in"
 })
 
@@ -71,7 +70,6 @@ tl.to("#newspaper", {
 })
 .to("#content-overlay", {
     opacity: 1,
-    x: 0, // In CSS it's shifted via translate, we can animate it via GSAP too
     duration: 2,
     ease: "power2.out",
     onStart: () => {
@@ -83,15 +81,8 @@ tl.to("#newspaper", {
 }, "-=2.5");
 
 // Animate the subscription box sliding in
-gsap.fromTo("#subscribe-box", 
+tl.fromTo("#subscribe-box", 
     { x: 100 }, 
-    { 
-        x: 0, 
-        scrollTrigger: {
-            trigger: ".scroll-track",
-            start: "60% top",
-            end: "80% bottom",
-            scrub: 1
-        }
-    }
+    { x: 0, duration: 2, ease: "power2.out" },
+    "-=2.5"
 );

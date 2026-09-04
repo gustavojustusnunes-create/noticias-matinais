@@ -5,27 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All News Journal</title>
     
-    <!-- Fonts: Playfair Display (Serif) for mature newspaper look and Lora -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-[#050505] text-white overflow-x-hidden font-['Inter']">
+<body class="bg-[#050505] text-white font-['Inter'] m-0 p-0 overflow-x-hidden">
 
-    <!-- Scroll Track (Creates the height needed for scrolling) -->
-    <div class="scroll-track"></div>
-
-    <!-- Sticky Canvas (Holds all the animating elements fixed on screen) -->
-    <div class="sticky-container">
+    <!-- Pinned Container managed by GSAP -->
+    <div id="pin-container" class="relative w-screen h-screen overflow-hidden">
         
         <!-- ACT 1: The Newspaper -->
         <div id="newspaper" class="absolute inset-0 flex flex-col items-center justify-center bg-[#f3ece0] text-[#111]">
             <div class="newspaper-header border-b-4 border-double border-gray-900 w-3/4 pb-4 mb-4 text-center">
-                <p class="text-sm tracking-[0.2em] uppercase font-bold text-gray-600 mb-2">A Edi√ß√£o Global Di√°ria</p>
+                <p class="text-sm tracking-[0.2em] uppercase font-bold text-gray-600 mb-2">A EdiÁ„o Global Di·ria</p>
                 <h1 class="font-['Playfair_Display'] font-black text-6xl md:text-8xl tracking-tight leading-none text-[#0a5c5a]" id="main-title">
                     ALL NEWS JOURNAL
                 </h1>
@@ -51,7 +44,7 @@
                     <div class="w-full h-3 bg-gray-400 mb-2"></div>
                 </div>
             </div>
-            <p class="mt-8 text-sm italic font-['Playfair_Display'] text-gray-500">Role para explorar</p>
+            <p class="mt-8 text-sm italic font-['Playfair_Display'] text-gray-500">Role para explorar &darr;</p>
         </div>
 
         <!-- ACT 2: The Globe (Three.js Container) -->
@@ -63,19 +56,18 @@
         <div id="content-overlay" class="absolute inset-0 opacity-0 pointer-events-none flex items-center">
             <div class="container mx-auto px-6 md:px-12 flex justify-end">
                 <div class="w-full max-w-lg bg-black/60 backdrop-blur-xl p-10 rounded-2xl border border-white/10 shadow-2xl transform translate-x-12" id="subscribe-box">
-                    <h2 class="font-['Playfair_Display'] text-4xl font-bold mb-4 leading-tight">O mundo muda r√°pido.<br>N√≥s filtramos o ru√≠do.</h2>
-                    <p class="text-gray-300 mb-8 font-light text-lg">Curadoria premium das not√≠cias que importam, entregues diretamente no seu e-mail todas as manh√£s. Sem distra√ß√µes.</p>
+                    <h2 class="font-['Playfair_Display'] text-4xl font-bold mb-4 leading-tight">O mundo muda r·pido.<br>NÛs filtramos o ruÌdo.</h2>
+                    <p class="text-gray-300 mb-8 font-light text-lg">Curadoria premium das notÌcias que importam, entregues diretamente no seu e-mail todas as manh„s. Sem distraÁıes.</p>
                     
                     <form class="flex flex-col gap-4">
                         <input type="email" placeholder="Seu melhor e-mail" class="bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-white transition-colors">
-                        <button type="button" class="bg-white text-black font-semibold rounded-lg px-4 py-3 hover:bg-gray-200 transition-colors">
-                            Receber Edi√ß√£o Gratuita
+                        <button type="button" class="bg-[#0a5c5a] text-white font-semibold rounded-lg px-4 py-3 hover:bg-[#074745] transition-colors">
+                            Receber EdiÁ„o Gratuita
                         </button>
                     </form>
                     
-                    <div class="mt-8 pt-6 border-t border-white/10 text-center">
-                        <!-- Redireciona para o streamlit no dominio atual -->
-                        <a href="http://localhost:8501" class="text-sm text-gray-400 hover:text-white transition-colors">J√° sou leitor -> Acessar a Edi√ß√£o de Hoje</a>
+                    <div class="mt-8 pt-6 border-t border-white/10 text-center pointer-events-auto">
+                        <a href="https://app.allnewsjournal.com" class="text-sm text-gray-400 hover:text-white transition-colors">J· sou leitor -> Acessar a EdiÁ„o de Hoje</a>
                     </div>
                 </div>
             </div>
@@ -84,15 +76,10 @@
     </div>
 
     <!-- Scripts -->
-    <!-- GSAP for scroll animations -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <!-- Three.js and Globe.gl for the 3D earth -->
     <script src="https://unpkg.com/three"></script>
     <script src="https://unpkg.com/globe.gl"></script>
-    
-    <!-- Custom JS -->
     <script src="script.js"></script>
 </body>
 </html>
