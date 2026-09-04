@@ -3,9 +3,11 @@
 // ----------------------------------------------------
 const globeViz = document.getElementById('globe-viz');
 const world = Globe()(globeViz)
-    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+    .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-water.png')
     .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-    .backgroundImageUrl('https://unpkg.com/three-globe/example/img/night-sky.png')
+    .showGraticules(true)
+    .globeMaterial(new THREE.MeshPhongMaterial({ color: '#0a5c5a', transparent: true, opacity: 0.9 }))
+    
     .backgroundColor('rgba(0,0,0,0)')
     .showAtmosphere(true)
     .atmosphereColor('#0a5c5a')
