@@ -23,7 +23,7 @@ from config import (
 # =============================================================================
 st.set_page_config(
     page_title="All News Journal",
-    page_icon="📰",
+    page_icon="",
     layout="wide",
     initial_sidebar_state="collapsed",  # Garante que a sidebar nasça morta
     menu_items={
@@ -213,8 +213,8 @@ RSS_FEEDS       = RSS_FEEDS_MAIN
 FILTROS_TEMA    = FILTROS_TEMA_MAIN
 FALLBACK_IMAGES = FALLBACK_IMAGES_MAIN
 ICONES = {
-    "Mundo":    "🌎", "Economia": "📈", "Politica": "🏛️", "IA":       "🤖",
-    "Wellness": "🏃", "Ciencia":  "🔬", "Cinema":   "🎬", "Fofoca":   "⭐",
+    "Mundo":    "", "Economia": "", "Politica": "", "IA":       "",
+    "Wellness": "", "Ciencia":  "", "Cinema":   "", "Fofoca":   "",
 }
 
 # =============================================================================
@@ -422,7 +422,7 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
             return
 
         temas_html = "".join(
-            f"<li style='padding:4px 0; color:#2c2c2c;'>✅ {t}</li>"
+            f"<li style='padding:4px 0; color:#2c2c2c;'> {t}</li>"
             for t in temas_escolhidos
         )
 
@@ -435,7 +435,7 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
               <p style="margin:8px 0 0; font-size:12px; color:#777; font-style:italic;">Inscrição confirmada com sucesso</p>
             </div>
             <div style="padding:30px 25px;">
-              <p style="font-size:17px; color:#2c2c2c;">Olá, <b>{nome}</b>! 👋</p>
+              <p style="font-size:17px; color:#2c2c2c;">Olá, <b>{nome}</b>! </p>
               <p style="font-size:15px; color:#444; line-height:1.7;">
                 A sua inscrição no <b>All News Journal</b> foi confirmada com sucesso.<br>
                 A partir de amanhã cedo, receberá a sua edição personalizada com os seguintes cadernos:
@@ -446,14 +446,14 @@ def enviar_boas_vindas(nome, email_dest, temas_escolhidos):
             </div>
             <div style="text-align:center; padding:20px; background-color:#084c4a; color:#fdfbf7; font-size:12px;">
               <p style="margin:0; font-weight:bold; font-size:13px; letter-spacing:1px;">ALL NEWS JOURNAL</p>
-              <p style="margin:8px 0 0; font-size:10px; opacity:0.7;">© {datetime.now().year} All News Journal Group. Conteúdo Premium.</p>
+              <p style="margin:8px 0 0; font-size:10px; opacity:0.7;"> {datetime.now().year} All News Journal Group. Conteúdo Premium.</p>
             </div>
           </div>
         </body></html>
         """
 
         msg = MIMEMultipart()
-        msg['Subject'] = "📰 Bem-vindo ao All News Journal!"
+        msg['Subject'] = " Bem-vindo ao All News Journal!"
         msg['From']    = f"All News Journal <{email_sender}>"
         msg['To']      = email_dest
         msg.attach(MIMEText(html, 'html'))
@@ -652,7 +652,7 @@ def obter_indicadores_app():
 # =============================================================================
 # --- 11. MODAIS (Inscrição, Cancelamento, Privacidade) ---
 # =============================================================================
-@st.dialog("✉️ Assine o All News Journal", width="large")
+@st.dialog(" Assine o All News Journal", width="large")
 def modal_inscricao():
     st.markdown(
         "<p style='font-size:0.95rem; color:#555;'>"
@@ -665,11 +665,11 @@ def modal_inscricao():
 
     # st.multiselect preserva a ordem dos cliques — é assim que capturamos a
     # preferência de ordenação dos cadernos sem precisar de up/down arrows.
-    opcoes_formatadas = [f"{ICONES.get(t, '📰')} {t}" for t in RSS_FEEDS.keys()]
+    opcoes_formatadas = [f"{ICONES.get(t, '')} {t}" for t in RSS_FEEDS.keys()]
 
     st.markdown(
         "<p style='font-size:0.9rem; font-weight:bold; margin-top:14px; margin-bottom:0;'>"
-        "📋 Escolha seus cadernos (a ordem importa!):</p>",
+        " Escolha seus cadernos (a ordem importa!):</p>",
         unsafe_allow_html=True
     )
     st.markdown(
@@ -688,7 +688,7 @@ def modal_inscricao():
     temas_sel_dlg = [s.split(" ", 1)[1] for s in selecionados_formatados]
 
     st.write("")
-    if st.button("ASSINAR AGORA — É GRATUITO 🗞️", type="primary", use_container_width=True):
+    if st.button("ASSINAR AGORA — É GRATUITO ", type="primary", use_container_width=True):
         erros_dlg = []
         if not validar_nome(nome_dlg):
             erros_dlg.append("Informe um nome válido.")
@@ -703,7 +703,7 @@ def modal_inscricao():
         else:
             with st.spinner("Processando sua inscrição..."):
                 if email_ja_cadastrado(email_dlg):
-                    st.info("📬 Este e-mail já está inscrito!")
+                    st.info(" Este e-mail já está inscrito!")
                 else:
                     ordem_banco = {}
                     pos = 1
@@ -717,10 +717,10 @@ def modal_inscricao():
                     ok_dlg, msg_dlg = salvar_assinante(nome_dlg, email_dlg, ordem_banco)
                     if ok_dlg:
                         enviar_boas_vindas(nome_dlg, email_dlg, temas_sel_dlg)
-                        st.success("✅ Inscrição confirmada! Verifique seu e-mail.")
+                        st.success(" Inscrição confirmada! Verifique seu e-mail.")
                         st.balloons()
                     else:
-                        st.error(f"❌ {msg_dlg}")
+                        st.error(f" {msg_dlg}")
 
 
 @st.dialog("Cancelar assinatura")
@@ -747,12 +747,12 @@ def modal_cancelamento():
             with st.spinner("Processando..."):
                 ok, msg = cancelar_assinatura(email_cancel)
                 if ok:
-                    st.success(f"✅ {msg}")
+                    st.success(f" {msg}")
                 else:
-                    st.error(f"❌ {msg}")
+                    st.error(f" {msg}")
 
 
-@st.dialog("🔒 Política de Privacidade", width="large")
+@st.dialog(" Política de Privacidade", width="large")
 def modal_privacidade():
     st.markdown("""
 **All News Journal — Política de Privacidade**
@@ -855,7 +855,7 @@ def gerar_podcast_audio_direto():
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "🧠 Arquitetura IA", "⚙️ Admin Instagram"])
+aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs([" Página Inicial", " Ler Edição de Hoje", " All News Finance", " Ouvir no Site", " Arquitetura IA", " Admin Instagram"])
 with aba_inicio:
     st.markdown("""
     <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -869,7 +869,7 @@ with aba_inicio:
     # Botão CTA centralizado que abre o modal
     col_cta_l, col_cta_c, col_cta_r = st.columns([1, 2, 1])
     with col_cta_c:
-        if st.button("✉️ ASSINE GRATUITAMENTE — É RÁPIDO ✨", type="primary", use_container_width=True, key="btn_open_signup"):
+        if st.button(" ASSINE GRATUITAMENTE — É RÁPIDO ", type="primary", use_container_width=True, key="btn_open_signup"):
             modal_inscricao()
 
     # Data + Edição
@@ -880,11 +880,11 @@ with aba_inicio:
 
     col_date, col_loc = st.columns(2)
     col_date.markdown(
-        f"<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>📅 {data_ptbr}</div>",
+        f"<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'> {data_ptbr}</div>",
         unsafe_allow_html=True
     )
     col_loc.markdown(
-        "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'>🌎 Edição Global · Digital</div>",
+        "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'> Edição Global · Digital</div>",
         unsafe_allow_html=True
     )
 
@@ -907,7 +907,7 @@ with aba_inicio:
     if total_assinantes > 0:
         st.markdown(
             f"<div style='text-align:center;padding:8px;color:#0a5c5a;font-size:0.88rem;'>"
-            f"📊 <b>{total_assinantes}</b> leitores já recebem nossa curadoria</div>",
+            f" <b>{total_assinantes}</b> leitores já recebem nossa curadoria</div>",
             unsafe_allow_html=True
         )
 
@@ -915,7 +915,7 @@ with aba_inicio:
 
     # Seção "Sobre"
     st.markdown("<br>", unsafe_allow_html=True)
-    with st.expander("📖 Sobre o All News Journal"):
+    with st.expander(" Sobre o All News Journal"):
         st.markdown("""
     **Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, resumidas e entregues diretamente no seu e-mail todas as manhãs.
 
@@ -925,14 +925,14 @@ with aba_inicio:
 
     | Caderno | Foco |
     |---|---|
-    | 🌎 Mundo | Geopolítica e eventos internacionais |
-    | 📈 Economia | Mercado, investimentos e finanças |
-    | 🏛️ Política | Brasil: Congresso, governo e Judiciário |
-    | 🤖 IA | Inteligência artificial, modelos e laboratórios |
-    | 🏃 Wellness | Performance, treino, corrida, ciclismo, nutrição |
-    | 🔬 Ciência | Descobertas científicas e saúde |
-    | 🎬 Cinema | Filmes, séries e streaming |
-    | ⭐ Fofoca | Celebridades internacionais e cultura pop global |
+    |  Mundo | Geopolítica e eventos internacionais |
+    |  Economia | Mercado, investimentos e finanças |
+    |  Política | Brasil: Congresso, governo e Judiciário |
+    |  IA | Inteligência artificial, modelos e laboratórios |
+    |  Wellness | Performance, treino, corrida, ciclismo, nutrição |
+    |  Ciência | Descobertas científicas e saúde |
+    |  Cinema | Filmes, séries e streaming |
+    |  Fofoca | Celebridades internacionais e cultura pop global |
 
     **100% automatizado com inteligência artificial** — Google Gemini 1.5 Flash gera resumos jornalísticos de 85 a 105 palavras por notícia, em Português Brasileiro.
         """)
@@ -952,7 +952,7 @@ with aba_inicio:
         '>
             <p style='font-size:1.1rem; font-weight:bold; letter-spacing:2px; margin:0;'>ALL NEWS JOURNAL</p>
             <p style='font-size:0.75rem; color:#888; margin:8px 0 0;'>
-                © """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
+                 """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
             </p>
             <p style='font-size:0.72rem; color:#aaa; margin:6px 0 0;'>
                 <a href='mailto:gustavojustusnunes@gmail.com?subject=Contato%20All%20News%20Journal'
@@ -972,7 +972,7 @@ with aba_inicio:
             modal_privacidade()
 
 with aba_podcast:
-    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'>🎧 Ouça a edição em áudio</h2><br>", unsafe_allow_html=True)
+    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'> Ouça a edição em áudio</h2><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: center; color: #555; max-width: 620px; margin: 0 auto 25px; line-height: 1.6;'>O nosso podcast diário é apresentado por <b>Leo e Ana</b> com os destaques da manhã. Ouça diretamente do seu navegador sem precisar de Spotify ou outros aplicativos!</p>", unsafe_allow_html=True)
     
     # ── Player Nativo (Fallback/Direto ao Vivo) ──
@@ -996,7 +996,7 @@ with aba_podcast:
         # Garante 100% funcionando no site usando gTTS (sintetizador ao vivo cacheado)
         _audio_bytes = gerar_podcast_audio_direto()
         if _audio_bytes:
-            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #0a5c5a; font-weight: bold;'>🎧 Edição em Áudio de Hoje (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #0a5c5a; font-weight: bold;'> Edição em Áudio de Hoje (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
             st.audio(_audio_bytes, format="audio/mpeg")
         else:
             _mp3s = sorted(_glob.glob(_os.path.join("edicoes", "podcasts", "podcast_*.mp3")), reverse=True)
@@ -1061,7 +1061,7 @@ with aba_finance:
       }
     </style>
     <div class="finance-header">
-      <h2>📈 ALL NEWS FINANCE</h2>
+      <h2> ALL NEWS FINANCE</h2>
       <div class="sub">Economia &bull; Mercados &bull; Negócios</div>
     </div>
     """, unsafe_allow_html=True)
@@ -1076,14 +1076,14 @@ with aba_finance:
             with open(_fin_idx_path, encoding="utf-8") as _ff:
                 _fin_indice = json.load(_ff)
             if _fin_indice:
-                st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom: 15px;'>📰 Edição do Dia — All News Finance</h3>", unsafe_allow_html=True)
+                st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom: 15px;'> Edição do Dia — All News Finance</h3>", unsafe_allow_html=True)
                 _fin_datas = [e["data"] for e in _fin_indice]
                 _fin_rotulos = {
                     e["data"]: f"{e['data']} — {e.get('titulo', 'Edição Finance').replace('All News Finance — ', '')} ({e.get('noticias_count', '?')} notícias)"
                     for e in _fin_indice
                 }
                 _fin_sel = st.selectbox(
-                    "🗞️ Escolha uma edição de finanças para ler:",
+                    " Escolha uma edição de finanças para ler:",
                     options=_fin_datas,
                     format_func=lambda x: _fin_rotulos.get(x, x),
                     key="select_fin_edicao"
@@ -1104,7 +1104,7 @@ with aba_finance:
 
     # ── 2. SEÇÃO DE ASSINATURA E EXPLICAÇÃO DOS CADERNOS ──
     st.markdown("<hr style='margin: 40px 0 30px; border: none; border-top: 2px solid #e2e8f0;'>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom:10px;'>✉️ Assine Grátis o All News Finance</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom:10px;'> Assine Grátis o All News Finance</h3>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; color:#64748b; font-size:0.95rem; margin-bottom:20px;'>Receba de Segunda a Sexta-feira, antes da abertura do pregão, na sua caixa de entrada.</p>", unsafe_allow_html=True)
 
     col_fin1, col_fin2 = st.columns([1, 1])
@@ -1113,7 +1113,7 @@ with aba_finance:
     with col_fin2:
         email_fin = st.text_input("Seu E-mail", key="fin_email", placeholder="Ex.: ana@empresa.com.br")
 
-    if st.button("INSCREVER-SE NO ALL NEWS FINANCE 📈", key="btn_fin_subscribe", type="primary", use_container_width=True):
+    if st.button("INSCREVER-SE NO ALL NEWS FINANCE ", key="btn_fin_subscribe", type="primary", use_container_width=True):
         if not nome_fin or len(nome_fin.strip()) < 2:
             st.warning("Por favor, informe seu nome.")
         elif not email_fin or "@" not in email_fin or "." not in email_fin:
@@ -1122,10 +1122,10 @@ with aba_finance:
             with st.spinner("Conectando à aba 'all news finance'..."):
                 ok_fin, msg_fin = salvar_assinante_finance(nome_fin, email_fin)
                 if ok_fin:
-                    st.success(f"✅ {msg_fin}")
+                    st.success(f" {msg_fin}")
                     st.balloons()
                 else:
-                    st.error(f"❌ {msg_fin}")
+                    st.error(f" {msg_fin}")
 
     st.markdown("""
     <div style="max-width: 700px; margin: 30px auto 25px; text-align: center; color: #334155; line-height: 1.6; font-size: 1.05rem;">
@@ -1133,19 +1133,19 @@ with aba_finance:
     </div>
     <div class="finance-grid">
       <div class="finance-card">
-        <h4>📊 Mercado &amp; Bolsa</h4>
+        <h4> Mercado &amp; Bolsa</h4>
         <p>Bovespa, Wall Street, Câmbio e tendências de renda variável direto ao ponto.</p>
       </div>
       <div class="finance-card">
-        <h4>🏢 Empresas &amp; Negócios</h4>
+        <h4> Empresas &amp; Negócios</h4>
         <p>Resultados trimestrais, fusões, aquisições e destaques do setor corporativo.</p>
       </div>
       <div class="finance-card">
-        <h4>🌎 Macroeconomia</h4>
+        <h4> Macroeconomia</h4>
         <p>Selic, Fed, inflação, política monetária e impacto fiscal no Brasil e no exterior.</p>
       </div>
       <div class="finance-card">
-        <h4>🚀 Cripto &amp; FinTechs</h4>
+        <h4> Cripto &amp; FinTechs</h4>
         <p>Bitcoin, ativos digitais, inovação e transformações no setor financeiro.</p>
       </div>
     </div>
@@ -1167,7 +1167,7 @@ with aba_edicao:
             if _indice:
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown(
-                    "<h3 style='text-align:center; letter-spacing:1px;'>📰 Edição de hoje</h3>",
+                    "<h3 style='text-align:center; letter-spacing:1px;'> Edição de hoje</h3>",
                     unsafe_allow_html=True,
                 )
                 _datas   = [e["data"] for e in _indice]
@@ -1178,7 +1178,7 @@ with aba_edicao:
                 _param  = st.query_params.get("edicao", "")
                 _padrao = _param if _param in _datas else _datas[0]
                 _sel = st.selectbox(
-                    "🗞️ Edições anteriores:",
+                    " Edições anteriores:",
                     _datas,
                     index=_datas.index(_padrao),
                     format_func=lambda d: _rotulos.get(d, d),
@@ -1188,7 +1188,7 @@ with aba_edicao:
                     # Tenta carregar o podcast do dia, se existir
                     _podcast_path = _os.path.join("edicoes", "podcasts", f"podcast_{_sel}.mp3")
                     if _os.path.exists(_podcast_path):
-                        st.markdown("<div style='text-align: center; margin-bottom: 10px; color: #0a5c5a; font-weight: bold;'>🎧 Ouça o Podcast Diário (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+                        st.markdown("<div style='text-align: center; margin-bottom: 10px; color: #0a5c5a; font-weight: bold;'> Ouça o Podcast Diário (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
                         st.audio(_podcast_path, format="audio/mpeg")
                         
                     with open(_arq, encoding="utf-8") as _f:
@@ -1201,7 +1201,7 @@ with aba_edicao:
 
 
 with aba_ia:
-    st.markdown("### 🧠 Grafo de Arquitetura da IA (Live)")
+    st.markdown("###  Grafo de Arquitetura da IA (Live)")
     st.markdown("Acompanhe o fluxo de dados e comunicação entre os agentes, orquestradores e banco de dados.")
     
     mermaid_code = '''
@@ -1257,7 +1257,7 @@ with aba_ia:
     st.markdown(f"```mermaid\n{mermaid_code}\n```")
 
 with aba_admin:
-    st.markdown('### ⚙️ Curadoria do Instagram')
+    st.markdown('###  Curadoria do Instagram')
     senha = st.text_input('Senha de acesso', type='password')
     
     if senha == '3344':
