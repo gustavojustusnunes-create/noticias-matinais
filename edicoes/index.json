@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-09-05",
+  "data_extenso": "Sábado, 5 de Setembro de 2026",
+  "manchete": "Rússia ataca aeroportos de Kiev antes de visita de enviados dos EUA, diz Zelensky",
+  "arquivo_html": "2026-09-05.html"
+ },
+ {
   "data": "2026-09-04",
   "data_extenso": "Sexta-feira, 4 de Setembro de 2026",
   "manchete": "Governo critica início do veto à venda de carne brasileira para União Europeia e cita possibilidade de 'medidas de recip",
@@ -352,11 +358,5 @@
   "data_extenso": "Quarta-feira, 24 de Junho de 2026",
   "manchete": "'Israel não se retirará do sul do Líbano, mesmo que EUA exijam', diz ministro",
   "arquivo_html": "2026-06-24.html"
- },
- {
-  "data": "2026-06-23",
-  "data_extenso": "Terça-feira, 23 de Junho de 2026",
-  "manchete": "As dúvidas que pairam sobre o mais cotado para substituir Keir Starmer como primeiro-ministro do Reino Unido",
-  "arquivo_html": "2026-06-23.html"
  }
 ]
