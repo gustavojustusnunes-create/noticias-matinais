@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-09-06",
+  "data_extenso": "Domingo, 6 de Setembro de 2026",
+  "manchete": "Vulcão 'filhote do Krakatoa' entra em erupção na Indonésia, afeta voos na Ásia e deixa 150 mil passageiros retidos",
+  "arquivo_html": "2026-09-06.html"
+ },
+ {
   "data": "2026-09-05",
   "data_extenso": "Sábado, 5 de Setembro de 2026",
   "manchete": "Rússia ataca aeroportos de Kiev antes de visita de enviados dos EUA, diz Zelensky",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 25 de Junho de 2026",
   "manchete": "Irã ameaça e dá ultimato após Israel dizer que não deixará o Líbano",
   "arquivo_html": "2026-06-25.html"
- },
- {
-  "data": "2026-06-24",
-  "data_extenso": "Quarta-feira, 24 de Junho de 2026",
-  "manchete": "'Israel não se retirará do sul do Líbano, mesmo que EUA exijam', diz ministro",
-  "arquivo_html": "2026-06-24.html"
  }
 ]
