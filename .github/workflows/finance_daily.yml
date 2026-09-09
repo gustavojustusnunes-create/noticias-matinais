@@ -14,9 +14,9 @@ on:
 
 jobs:
   publicar-finance:
-    name: Publicar All News Finance
+    name: Publicar Edição Finance
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 90
     permissions:
       contents: write
 

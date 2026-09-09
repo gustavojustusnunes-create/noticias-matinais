@@ -40,32 +40,37 @@ def chamar_claude_api(prompt, max_tokens=4096):
         print("      ❌ Nenhum modelo Gemini suporta generateContent com esta chave.")
         return None
         
+    import time
     for model_name in available_models:
         # Se o model_name ja tiver models/ o SDK cuida disso, mas melhor limpar
         clean_name = model_name.replace('models/', '')
         model = genai.GenerativeModel(clean_name)
-        try:
-            response = model.generate_content(
-                prompt,
-                generation_config=genai.types.GenerationConfig(
-                    max_output_tokens=max_tokens,
-                    temperature=0.3
+        
+        retries = 3
+        while retries > 0:
+            try:
+                response = model.generate_content(
+                    prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        max_output_tokens=max_tokens,
+                        temperature=0.3
+                    )
                 )
-            )
-            print(f"      ✅ OK (Gemini SDK - {clean_name})")
-            return response.text.strip()
-        except Exception as e:
-            msg = str(e).lower()
-            if "429" in msg or "quota" in msg:
-                print(f"      ⏳ Rate-limit ({clean_name}). Tentando próximo ou aguardando...")
-                time.sleep(3)
-                continue
-            elif "404" in msg or "not found" in msg or "supported" in msg:
-                print(f"      ⚠️ Modelo {clean_name} indisponível (404). Tentando próximo...")
-                continue
-            else:
-                print(f"      ⚠️ Exceção no SDK ({clean_name}): {e}")
-                continue
+                print(f"      🔹 OK (Gemini SDK - {clean_name})")
+                return response.text.strip()
+            except Exception as e:
+                msg = str(e).lower()
+                if "429" in msg or "quota" in msg:
+                    print(f"      ⏳ Rate-limit (Quota). Aguardando 15s... (Restam {retries-1} tentativas)")
+                    time.sleep(15)
+                    retries -= 1
+                    continue
+                elif "404" in msg or "not found" in msg or "supported" in msg:
+                    print(f"      ⚠️ Modelo {clean_name} indisponível (404). Tentando próximo...")
+                    break
+                else:
+                    print(f"      ⚠️ Exceção no SDK ({clean_name}): {e}")
+                    break
 
     print("      ❌ Todos os modelos Gemini falharam via SDK.")
     return None
@@ -263,28 +268,33 @@ def chamar_supervisor_api(prompt, max_tokens=4096):
     if not available_models:
         return None
         
+    import time
     for model_name in available_models:
         clean_name = model_name.replace('models/', '')
         model = genai.GenerativeModel(clean_name)
-        try:
-            response = model.generate_content(
-                prompt,
-                generation_config=genai.types.GenerationConfig(
-                    max_output_tokens=max_tokens,
-                    temperature=0.1,
-                    response_mime_type="application/json"
+        
+        retries = 3
+        while retries > 0:
+            try:
+                response = model.generate_content(
+                    prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        max_output_tokens=max_tokens,
+                        temperature=0.1,
+                        response_mime_type="application/json"
+                    )
                 )
-            )
-            return response.text.strip()
-        except Exception as e:
-            msg = str(e).lower()
-            if "429" in msg or "quota" in msg:
-                time.sleep(3)
-                continue
-            elif "404" in msg or "not found" in msg or "supported" in msg:
-                continue
-            else:
-                continue
+                return response.text.strip()
+            except Exception as e:
+                msg = str(e).lower()
+                if "429" in msg or "quota" in msg:
+                    time.sleep(15)
+                    retries -= 1
+                    continue
+                elif "404" in msg or "not found" in msg or "supported" in msg:
+                    break
+                else:
+                    break
 
     return None
 
