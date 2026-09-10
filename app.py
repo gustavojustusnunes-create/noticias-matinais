@@ -857,129 +857,292 @@ st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
 aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs([" Página Inicial", " Ler Edição de Hoje", " All News Finance", " Ouvir no Site", " Arquitetura IA", " Admin Instagram"])
 with aba_inicio:
-    # ── HERO INTERATIVO 3D (Globo Digital & Design Editorial) ──
-    _hero_html = """
+    # ── EXTRAÇÃO DAS MANCHETES PARA O TICKER 3D ──
+    _ticker_noticias = []
+    try:
+        import os
+        import json
+        _idx_path = os.path.join("edicoes", "index.json")
+        if os.path.exists(_idx_path):
+            with open(_idx_path, "r", encoding="utf-8") as _f_idx:
+                _idx_list = json.load(_f_idx)
+            if _idx_list:
+                _latest_date = _idx_list[0].get("data")
+                _ed_path = os.path.join("edicoes", f"{_latest_date}.json")
+                if os.path.exists(_ed_path):
+                    with open(_ed_path, "r", encoding="utf-8") as _f_ed:
+                        _ed_data = json.load(_f_ed)
+                    for _cad_nome, _items in _ed_data.get("cadernos", {}).items():
+                        if _items and isinstance(_items, list):
+                            _tit = _items[0].get("titulo", "").strip()
+                            if _tit:
+                                _ticker_noticias.append({"caderno": _cad_nome.upper(), "titulo": _tit})
+    except Exception:
+        pass
+
+    if not _ticker_noticias:
+        _ticker_noticias = [
+            {"caderno": "MUNDO", "titulo": "Tensões geopolíticas e novas diretrizes comerciais redefinem as relações globais."},
+            {"caderno": "ECONOMIA", "titulo": "Mercados globais reagem a novos indicadores de inflação e taxa de juros."},
+            {"caderno": "POLÍTICA", "titulo": "Congresso acelera votação de reformas estruturantes para o próximo trimestre."},
+            {"caderno": "INTELIGÊNCIA ARTIFICIAL", "titulo": "Nova geração de modelos autônomos impulsiona eficiência no setor produtivo."},
+        ]
+
+    _ticker_json = json.dumps(_ticker_noticias, ensure_ascii=False)
+
+    # ── HERO EDITORIAL (TEMA CLARO & TICKER 5s COM GLOBO 3D) ──
+    _hero_html = f"""
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
       <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
-        .hero-card {
-          background: linear-gradient(135deg, #091a18 0%, #030a09 100%);
-          border: 1px solid #14403d;
-          border-radius: 14px;
-          padding: 24px 28px;
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+          background: transparent;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          overflow: hidden;
+        }}
+        .hero-card {{
+          background: #ffffff;
+          border: 1px solid #e2ddd3;
+          border-left: 5px solid #0a5c5a;
+          border-radius: 12px;
+          padding: 20px 24px;
           display: flex;
           flex-direction: row;
           align-items: center;
           justify-content: space-between;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+          box-shadow: 0 4px 20px rgba(10, 92, 90, 0.06);
           position: relative;
-        }
-        @media (max-width: 640px) {
-          .hero-card { flex-direction: column; text-align: center; padding: 18px; }
-          .hero-text { margin-bottom: 15px; }
-        }
-        .tag {
-          display: inline-block;
-          background: rgba(10, 92, 90, 0.45);
-          color: #34d399;
-          font-size: 0.72rem;
+        }}
+        @media (max-width: 680px) {{
+          .hero-card {{ flex-direction: column-reverse; padding: 16px; text-align: center; }}
+          .header-line {{ justify-content: center; }}
+          .hero-left {{ padding-right: 0; margin-top: 10px; }}
+        }}
+        .hero-left {{
+          flex: 1;
+          padding-right: 20px;
+        }}
+        .header-line {{
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 10px;
+        }}
+        .live-pill {{
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #f0fdf4;
+          color: #166534;
+          border: 1px solid #bbf7d0;
+          font-size: 0.68rem;
           font-weight: 700;
-          letter-spacing: 1.5px;
-          text-transform: uppercase;
-          padding: 4px 10px;
+          letter-spacing: 0.8px;
+          padding: 3px 8px;
           border-radius: 12px;
-          border: 1px solid rgba(52, 211, 153, 0.3);
-          margin-bottom: 10px;
-        }
-        .title {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 1.85rem;
+          text-transform: uppercase;
+        }}
+        .pulse-dot {{
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #16a34a;
+          box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+          animation: pulse 1.8s infinite;
+        }}
+        @keyframes pulse {{
+          0% {{ box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }}
+          70% {{ box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }}
+          100% {{ box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }}
+        }}
+        .caderno-tag {{
+          background: #0a5c5a;
+          color: #ffffff;
+          font-size: 0.68rem;
           font-weight: 700;
-          color: #fdfbf7;
-          line-height: 1.25;
-          margin-bottom: 10px;
-        }
-        .subtitle {
+          letter-spacing: 1px;
+          padding: 3px 8px;
+          border-radius: 4px;
+          transition: all 0.3s ease;
+        }}
+        .counter-tag {{
           color: #94a3b8;
-          font-size: 0.92rem;
-          line-height: 1.5;
-          max-width: 460px;
-        }
-        #globe-viz {
-          width: 220px;
-          height: 220px;
+          font-size: 0.75rem;
+          font-weight: 600;
+          margin-left: auto;
+        }}
+        .headline-container {{
+          min-height: 64px;
+          display: flex;
+          align-items: center;
+        }}
+        .headline-text {{
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: 1.28rem;
+          font-weight: 700;
+          color: #111827;
+          line-height: 1.35;
+          opacity: 1;
+          transform: translateY(0);
+          transition: opacity 0.35s ease, transform 0.35s ease;
+        }}
+        .headline-text.fade-out {{
+          opacity: 0;
+          transform: translateY(-4px);
+        }}
+        .progress-track {{
+          width: 100%;
+          height: 3px;
+          background: #f1f5f9;
+          border-radius: 3px;
+          margin: 12px 0 8px;
+          overflow: hidden;
+        }}
+        .progress-fill {{
+          height: 100%;
+          width: 0%;
+          background: #0a5c5a;
+          border-radius: 3px;
+          transition: width 0.1s linear;
+        }}
+        .footer-note {{
+          font-size: 0.74rem;
+          color: #64748b;
+          letter-spacing: 0.2px;
+        }}
+        #globe-viz {{
+          width: 200px;
+          height: 200px;
           flex-shrink: 0;
-        }
+        }}
       </style>
     </head>
     <body>
       <div class="hero-card">
-        <div class="hero-text">
-          <span class="tag">Edição Global · Inteligência Editorial</span>
-          <div class="title">O mundo em movimento.<br><span style="color: #34d399;">Sem ruído, todas as manhãs.</span></div>
-          <div class="subtitle">Curadoria profunda dos fatos que realmente importam, auditados por inteligência artificial para eliminar clickbaits, sensacionalismo e perda de tempo.</div>
+        <div class="hero-left">
+          <div class="header-line">
+            <span class="live-pill"><span class="pulse-dot"></span> DESTAQUES DA EDIÇÃO</span>
+            <span id="ticker-caderno" class="caderno-tag">GERAL</span>
+            <span id="ticker-counter" class="counter-tag">1 / 1</span>
+          </div>
+          
+          <div class="headline-container">
+            <h2 id="ticker-headline" class="headline-text">Carregando manchetes...</h2>
+          </div>
+
+          <div class="progress-track">
+            <div id="progress-bar" class="progress-fill"></div>
+          </div>
+
+          <div class="footer-note">
+            <span>Giro automático a cada 5 segundos · Curadoria e auditoria em tempo real por IA</span>
+          </div>
         </div>
-        <div id="globe-viz"></div>
+
+        <div class="hero-right">
+          <div id="globe-viz"></div>
+        </div>
       </div>
 
       <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
       <script>
+        // ── 1. DADOS DO TICKER DE NOTÍCIAS ──
+        const newsItems = {_ticker_json};
+        let currentIndex = 0;
+        const intervalMs = 5000;
+        let progressStart = Date.now();
+
+        const elCaderno = document.getElementById('ticker-caderno');
+        const elHeadline = document.getElementById('ticker-headline');
+        const elCounter = document.getElementById('ticker-counter');
+        const elProgress = document.getElementById('progress-bar');
+
+        function updateNews(idx) {{
+          if (!newsItems || newsItems.length === 0) return;
+          const item = newsItems[idx];
+          
+          elHeadline.classList.add('fade-out');
+          setTimeout(() => {{
+            elCaderno.textContent = item.caderno;
+            elHeadline.textContent = item.titulo;
+            elCounter.textContent = (idx + 1) + ' / ' + newsItems.length;
+            elHeadline.classList.remove('fade-out');
+          }}, 300);
+        }}
+
+        // Inicializa primeira notícia
+        updateNews(0);
+
+        // Barra de progresso contínua e troca a cada 5s
+        setInterval(() => {{
+          const elapsed = Date.now() - progressStart;
+          const pct = Math.min(100, (elapsed / intervalMs) * 100);
+          elProgress.style.width = pct + '%';
+
+          if (elapsed >= intervalMs) {{
+            progressStart = Date.now();
+            currentIndex = (currentIndex + 1) % newsItems.length;
+            updateNews(currentIndex);
+          }}
+        }}, 60);
+
+        // ── 2. GLOBO 3D EM THREE.JS (TEMA CLARO & TELEJORNAL) ──
         const container = document.getElementById('globe-viz');
-        const width = container.clientWidth || 220;
-        const height = container.clientHeight || 220;
+        const width = 200;
+        const height = 200;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({{ antialias: true, alpha: true }});
         renderer.setSize(width, height);
         renderer.setPixelRatio(window.devicePixelRatio || 1);
         container.appendChild(renderer.domElement);
 
-        // Globo Wireframe (Estilo Telejornal Digital)
+        // Globo Wireframe Esmeralda
         const globeGeo = new THREE.SphereGeometry(2, 22, 22);
-        const globeMat = new THREE.MeshBasicMaterial({
+        const globeMat = new THREE.MeshBasicMaterial({{
           color: 0x0a5c5a,
           wireframe: true,
           transparent: true,
-          opacity: 0.35
-        });
+          opacity: 0.32
+        }});
         const globe = new THREE.Mesh(globeGeo, globeMat);
         scene.add(globe);
 
-        // Pontos de dados luminosos
+        // Nódulos de dados luminosos
         const pointsGeo = new THREE.SphereGeometry(2.01, 28, 28);
-        const pointsMat = new THREE.PointsMaterial({
-          color: 0x34d399,
+        const pointsMat = new THREE.PointsMaterial({{
+          color: 0x0d9488,
           size: 0.045,
           transparent: true,
-          opacity: 0.9
-        });
+          opacity: 0.85
+        }});
         const points = new THREE.Points(pointsGeo, pointsMat);
         scene.add(points);
 
         // Anéis orbitais de telejornal
         const ringGeo = new THREE.RingGeometry(2.45, 2.48, 64);
-        const ringMat = new THREE.MeshBasicMaterial({
-          color: 0x34d399,
+        const ringMat = new THREE.MeshBasicMaterial({{
+          color: 0x0a5c5a,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.55
-        });
+          opacity: 0.45
+        }});
         const ring = new THREE.Mesh(ringGeo, ringMat);
         ring.rotation.x = Math.PI / 2.3;
         scene.add(ring);
 
         const ringGeo2 = new THREE.RingGeometry(2.8, 2.82, 64);
-        const ringMat2 = new THREE.MeshBasicMaterial({
-          color: 0x0a5c5a,
+        const ringMat2 = new THREE.MeshBasicMaterial({{
+          color: 0x14b8a6,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.3
-        });
+          opacity: 0.4
+        }});
         const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
         ring2.rotation.x = Math.PI / 3;
         ring2.rotation.y = Math.PI / 5;
@@ -987,22 +1150,21 @@ with aba_inicio:
 
         camera.position.z = 6.2;
 
-        // Animação suave e contínua
-        function animate() {
+        function animate() {{
           requestAnimationFrame(animate);
-          globe.rotation.y += 0.004;
-          points.rotation.y += 0.004;
-          ring.rotation.z += 0.0025;
-          ring2.rotation.z -= 0.0018;
+          globe.rotation.y += 0.0035;
+          points.rotation.y += 0.0035;
+          ring.rotation.z += 0.0022;
+          ring2.rotation.z -= 0.0016;
           renderer.render(scene, camera);
-        }
+        }}
         animate();
       </script>
     </body>
     </html>
     """
     import streamlit.components.v1 as _components
-    _components.html(_hero_html, height=270)
+    _components.html(_hero_html, height=230)
 
     st.markdown("""
     <div style='max-width: 720px; margin: 15px auto 25px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>

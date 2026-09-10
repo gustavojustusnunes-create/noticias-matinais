@@ -392,7 +392,7 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
         if any(titulos_similares(t, ts) for ts in titulos_selecionados):
             continue
         noticias_filtradas.append(entry)
-        if len(noticias_filtradas) >= 4:
+        if len(noticias_filtradas) >= 2:
             break
 
     if not noticias_filtradas:

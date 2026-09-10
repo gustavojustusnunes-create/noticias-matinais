@@ -1,12 +1,10 @@
 name: All News Journal — Edição Diária
 
 on:
-  # 08:40 UTC = 05:40 BRT. Agendado mais cedo e FORA da hora cheia (minuto 40)
-  # porque o cron do GitHub Actions atrasa bastante no minuto 0 (horário mais
-  # congestionado). Assim a edição tende a chegar de manhã, mais cedo.
-  # Obs.: o GitHub não garante horário exato em agendamentos gratuitos.
+  # 08:20 UTC = 05:20 BRT. Agendado para as 05:20 da manhã (fora de hora cheia)
+  # para garantir que os leitores recebam a edição pontualmente entre 05:30 e 06:00.
   schedule:
-    - cron: '40 8 * * *'
+    - cron: '20 8 * * *'
   # Botão manual para testar
   workflow_dispatch:
 

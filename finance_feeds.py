@@ -117,7 +117,7 @@ REGRAS ESTREITAS DE JORNALISMO FINANCEIRO:
     return resumo.strip()
 
 
-def coletar_noticias_finance(max_por_caderno=4):
+def coletar_noticias_finance(max_por_caderno=2):
     """
     Percorre os feeds financeiros, coleta e resume as notícias das 4 seções fixas.
     Retorna dicionário {secao: [lista_de_noticias]}.
