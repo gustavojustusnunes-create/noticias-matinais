@@ -9,6 +9,32 @@ import requests
 from config import GEMINI_API_KEY
 
 
+_CACHED_MODELS = None
+
+def obter_modelos_gemini(genai):
+    global _CACHED_MODELS
+    if _CACHED_MODELS is not None:
+        return _CACHED_MODELS
+    
+    cand = []
+    try:
+        for m in genai.list_models():
+            if 'generateContent' in m.supported_generation_methods:
+                if 'flash' in m.name:
+                    cand.append(m.name.replace('models/', ''))
+        # Ordena dando preferência a 1.5-flash e 2.0-flash
+        cand.sort(key=lambda x: (not ('1.5-flash' in x or '2.0-flash' in x), x))
+    except Exception as e:
+        print(f"      ⚠️ Erro ao listar modelos: {e}")
+    
+    if not cand:
+        cand = ['gemini-1.5-flash', 'gemini-2.0-flash']
+    
+    # Mantém apenas os 2 modelos mais promissores para evitar loops infinitos
+    _CACHED_MODELS = cand[:2]
+    return _CACHED_MODELS
+
+
 def chamar_claude_api(prompt, max_tokens=4096):
     """
     Chama a API do Google Gemini usando o SDK oficial para evitar erros de versão de modelo.
@@ -21,33 +47,13 @@ def chamar_claude_api(prompt, max_tokens=4096):
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
     
-    print(f"      🤖 Consultando SDK Gemini e buscando modelos disponíveis...")
-    available_models = []
-    try:
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                # Preferencia por flash ou pro (1.5 ou mais recente)
-                if 'flash' in m.name or 'pro' in m.name:
-                    available_models.append(m.name)
-    except Exception as e:
-        print(f"      ⚠️ Erro ao listar modelos: {e}")
-        available_models = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']
-
-    # Ordena para preferir 'flash' sobre 'pro', mas aceitar o que vier
-    available_models.sort(key=lambda x: (not 'flash' in x, x))
+    models_to_try = obter_modelos_gemini(genai)
     
-    if not available_models:
-        print("      ❌ Nenhum modelo Gemini suporta generateContent com esta chave.")
-        return None
-        
-    import time
-    for model_name in available_models:
-        # Se o model_name ja tiver models/ o SDK cuida disso, mas melhor limpar
-        clean_name = model_name.replace('models/', '')
+    for clean_name in models_to_try:
         model = genai.GenerativeModel(clean_name)
         
-        retries = 3
-        while retries > 0:
+        retries = 2
+        while retries >= 0:
             try:
                 response = model.generate_content(
                     prompt,
@@ -61,10 +67,13 @@ def chamar_claude_api(prompt, max_tokens=4096):
             except Exception as e:
                 msg = str(e).lower()
                 if "429" in msg or "quota" in msg:
-                    print(f"      ⏳ Rate-limit (Quota). Aguardando 15s... (Restam {retries-1} tentativas)")
-                    time.sleep(15)
-                    retries -= 1
-                    continue
+                    if retries > 0:
+                        print(f"      ⏳ Rate-limit (Quota). Aguardando 10s... (Restam {retries} tentativas)")
+                        time.sleep(10)
+                        retries -= 1
+                        continue
+                    else:
+                        break
                 elif "404" in msg or "not found" in msg or "supported" in msg:
                     print(f"      ⚠️ Modelo {clean_name} indisponível (404). Tentando próximo...")
                     break
@@ -72,7 +81,7 @@ def chamar_claude_api(prompt, max_tokens=4096):
                     print(f"      ⚠️ Exceção no SDK ({clean_name}): {e}")
                     break
 
-    print("      ❌ Todos os modelos Gemini falharam via SDK.")
+    print("      ❌ Modelos Gemini falharam via SDK.")
     return None
 
 
@@ -254,27 +263,13 @@ def chamar_supervisor_api(prompt, max_tokens=4096):
     import google.generativeai as genai
     genai.configure(api_key=GEMINI_API_KEY)
     
-    available_models = []
-    try:
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                if 'flash' in m.name or 'pro' in m.name:
-                    available_models.append(m.name)
-    except Exception as e:
-        available_models = ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']
-
-    available_models.sort(key=lambda x: (not 'flash' in x, x))
+    models_to_try = obter_modelos_gemini(genai)
     
-    if not available_models:
-        return None
-        
-    import time
-    for model_name in available_models:
-        clean_name = model_name.replace('models/', '')
+    for clean_name in models_to_try:
         model = genai.GenerativeModel(clean_name)
         
-        retries = 3
-        while retries > 0:
+        retries = 2
+        while retries >= 0:
             try:
                 response = model.generate_content(
                     prompt,
@@ -288,9 +283,12 @@ def chamar_supervisor_api(prompt, max_tokens=4096):
             except Exception as e:
                 msg = str(e).lower()
                 if "429" in msg or "quota" in msg:
-                    time.sleep(15)
-                    retries -= 1
-                    continue
+                    if retries > 0:
+                        time.sleep(10)
+                        retries -= 1
+                        continue
+                    else:
+                        break
                 elif "404" in msg or "not found" in msg or "supported" in msg:
                     break
                 else:

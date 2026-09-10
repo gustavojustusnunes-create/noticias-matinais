@@ -460,7 +460,7 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
 
         # Pequena pausa para evitar rate-limit entre notícias
         if i < len(noticias_filtradas) - 1:
-            time.sleep(1)
+            time.sleep(3)
 
         # SKIP semântico
         if resumo_limpo.strip().upper() == "SKIP":

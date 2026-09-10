@@ -857,12 +857,159 @@ st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
 aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs([" Página Inicial", " Ler Edição de Hoje", " All News Finance", " Ouvir no Site", " Arquitetura IA", " Admin Instagram"])
 with aba_inicio:
+    # ── HERO INTERATIVO 3D (Globo Digital & Design Editorial) ──
+    _hero_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: transparent; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+        .hero-card {
+          background: linear-gradient(135deg, #091a18 0%, #030a09 100%);
+          border: 1px solid #14403d;
+          border-radius: 14px;
+          padding: 24px 28px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+          position: relative;
+        }
+        @media (max-width: 640px) {
+          .hero-card { flex-direction: column; text-align: center; padding: 18px; }
+          .hero-text { margin-bottom: 15px; }
+        }
+        .tag {
+          display: inline-block;
+          background: rgba(10, 92, 90, 0.45);
+          color: #34d399;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          padding: 4px 10px;
+          border-radius: 12px;
+          border: 1px solid rgba(52, 211, 153, 0.3);
+          margin-bottom: 10px;
+        }
+        .title {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: 1.85rem;
+          font-weight: 700;
+          color: #fdfbf7;
+          line-height: 1.25;
+          margin-bottom: 10px;
+        }
+        .subtitle {
+          color: #94a3b8;
+          font-size: 0.92rem;
+          line-height: 1.5;
+          max-width: 460px;
+        }
+        #globe-viz {
+          width: 220px;
+          height: 220px;
+          flex-shrink: 0;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="hero-card">
+        <div class="hero-text">
+          <span class="tag">Edição Global · Inteligência Editorial</span>
+          <div class="title">O mundo em movimento.<br><span style="color: #34d399;">Sem ruído, todas as manhãs.</span></div>
+          <div class="subtitle">Curadoria profunda dos fatos que realmente importam, auditados por inteligência artificial para eliminar clickbaits, sensacionalismo e perda de tempo.</div>
+        </div>
+        <div id="globe-viz"></div>
+      </div>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+      <script>
+        const container = document.getElementById('globe-viz');
+        const width = container.clientWidth || 220;
+        const height = container.clientHeight || 220;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(window.devicePixelRatio || 1);
+        container.appendChild(renderer.domElement);
+
+        // Globo Wireframe (Estilo Telejornal Digital)
+        const globeGeo = new THREE.SphereGeometry(2, 22, 22);
+        const globeMat = new THREE.MeshBasicMaterial({
+          color: 0x0a5c5a,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.35
+        });
+        const globe = new THREE.Mesh(globeGeo, globeMat);
+        scene.add(globe);
+
+        // Pontos de dados luminosos
+        const pointsGeo = new THREE.SphereGeometry(2.01, 28, 28);
+        const pointsMat = new THREE.PointsMaterial({
+          color: 0x34d399,
+          size: 0.045,
+          transparent: true,
+          opacity: 0.9
+        });
+        const points = new THREE.Points(pointsGeo, pointsMat);
+        scene.add(points);
+
+        // Anéis orbitais de telejornal
+        const ringGeo = new THREE.RingGeometry(2.45, 2.48, 64);
+        const ringMat = new THREE.MeshBasicMaterial({
+          color: 0x34d399,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.55
+        });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2.3;
+        scene.add(ring);
+
+        const ringGeo2 = new THREE.RingGeometry(2.8, 2.82, 64);
+        const ringMat2 = new THREE.MeshBasicMaterial({
+          color: 0x0a5c5a,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.3
+        });
+        const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
+        ring2.rotation.x = Math.PI / 3;
+        ring2.rotation.y = Math.PI / 5;
+        scene.add(ring2);
+
+        camera.position.z = 6.2;
+
+        // Animação suave e contínua
+        function animate() {
+          requestAnimationFrame(animate);
+          globe.rotation.y += 0.004;
+          points.rotation.y += 0.004;
+          ring.rotation.z += 0.0025;
+          ring2.rotation.z -= 0.0018;
+          renderer.render(scene, camera);
+        }
+        animate();
+      </script>
+    </body>
+    </html>
+    """
+    import streamlit.components.v1 as _components
+    _components.html(_hero_html, height=270)
+
     st.markdown("""
-    <div style='max-width: 720px; margin: 25px auto 35px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
-      <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 18px;'>Notícias relevantes, sem ruído, todas as manhãs.</p>
+    <div style='max-width: 720px; margin: 15px auto 25px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
+      <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 14px;'>Notícias relevantes, sem ruído, todas as manhãs.</p>
       <p>O <b>All News Journal</b> é um jornal digital independente que entrega na sua caixa de e-mail, <b>todas as manhãs</b>, uma edição <b>personalizada</b> com os cadernos que você escolheu.</p>
       <p>Cada manchete é resumida por nossa redação editorial. Você lê em cinco minutos o que importou no mundo e começa o dia informado, sem rolar timeline, sem clicar em link nenhum.</p>
-      <p style='margin-top: 22px; font-size: 0.95rem; color: #555;'>Use o botão abaixo para assinar. É gratuito.</p>
+      <p style='margin-top: 18px; font-size: 0.95rem; color: #555;'>Use o botão abaixo para assinar. É gratuito.</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -1201,8 +1348,88 @@ with aba_edicao:
 
 
 with aba_ia:
-    st.markdown("###  Grafo de Arquitetura da IA (Live)")
-    st.markdown("Acompanhe o fluxo de dados e comunicação entre os agentes, orquestradores e banco de dados.")
+    st.markdown("<h2 style='color:#0a5c5a; font-family: Playfair Display, serif;'>Centro de Inteligência & Aprendizado dos Agentes</h2>", unsafe_allow_html=True)
+    st.markdown("Painel em tempo real de auto-aperfeiçoamento, métricas de auditoria editorial e memória cumulativa da IA.")
+
+    # Carregar memória do Supervisor
+    import os
+    import json
+    
+    _memoria_path = os.path.join("logs", "supervisor_memory.json")
+    _memoria = {"erros": [], "imagens_recentes": []}
+    if os.path.exists(_memoria_path):
+        try:
+            with open(_memoria_path, "r", encoding="utf-8") as _mf:
+                _memoria = json.load(_mf)
+        except Exception:
+            pass
+
+    _erros = _memoria.get("erros", [])
+    _imgs = _memoria.get("imagens_recentes", [])
+
+    # ── CARDS DE MÉTRICAS ──
+    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+    with m_col1:
+        st.metric(label="Lições Aprendidas", value=len(_erros), delta=f"+{len(_erros)} no histórico")
+    with m_col2:
+        st.metric(label="Fotos no Histórico Anti-Repetição", value=len(_imgs))
+    with m_col3:
+        temas_erros = set(e.get("tema", "") for e in _erros if e.get("tema"))
+        st.metric(label="Cadernos Auditados", value=len(temas_erros) if temas_erros else 8)
+    with m_col4:
+        st.metric(label="Status do Supervisor", value="Ativo & Aprendendo")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ── DISTRIBUIÇÃO E HISTÓRICO DE LIÇÕES ──
+    if _erros:
+        temas_count = {}
+        for e in _erros:
+            t = e.get("tema", "Geral")
+            temas_count[t] = temas_count.get(t, 0) + 1
+        
+        st.markdown("#### Distribuição de Intervenções por Caderno")
+        for tema_nome, qtd in sorted(temas_count.items(), key=lambda x: x[1], reverse=True):
+            pct = min(100, int((qtd / len(_erros)) * 100 * 2.2))
+            st.markdown(f"""
+            <div style='margin-bottom: 9px;'>
+                <div style='display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 3px;'>
+                    <span style='font-weight: 600; color: #1e293b;'>{tema_nome}</span>
+                    <span style='color: #0a5c5a; font-weight: bold;'>{qtd} intervenções</span>
+                </div>
+                <div style='background: #e2e8f0; border-radius: 6px; height: 8px; width: 100%; overflow: hidden;'>
+                    <div style='background: linear-gradient(90deg, #0a5c5a, #10b981); height: 100%; width: {pct}%; border-radius: 6px;'></div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("#### Histórico Cronológico de Lições do Supervisor")
+        st.markdown("<p style='font-size: 0.9rem; color: #64748b;'>Todas as falhas identificadas pelo Supervisor são catalogadas aqui para que os redatores de IA nunca mais repitam os mesmos padrões:</p>", unsafe_allow_html=True)
+
+        filtro_tema = st.selectbox("Filtrar por caderno:", ["Todos"] + sorted(list(temas_count.keys())))
+        erros_filtrados = [e for e in reversed(_erros) if filtro_tema == "Todos" or e.get("tema") == filtro_tema]
+
+        for item in erros_filtrados[:30]:
+            data_raw = item.get("data", "")[:19].replace("T", " ")
+            motivo = item.get("motivo_falha", "Ajuste editorial")
+            correcao = item.get("correcao_aplicada", "")
+            tema_item = item.get("tema", "Geral")
+
+            with st.expander(f"[{tema_item}] {data_raw} — {motivo[:75]}..."):
+                st.markdown(f"**Caderno:** `{tema_item}` &nbsp;|&nbsp; **Data:** `{data_raw}`")
+                st.markdown(f"**Diagnóstico do Agente Supervisor:**\n> *\"{motivo}\"*")
+                if correcao:
+                    st.markdown(f"**Trecho da Correção Aplicada:**\n> `{correcao}`")
+                if item.get("texto_original"):
+                    with st.expander("Ver texto original antes da auditoria"):
+                        st.caption(item.get("texto_original"))
+    else:
+        st.info("Nenhum erro registrado até o momento. A memória do supervisor está limpa.")
+
+    st.markdown("<hr style='margin: 35px 0 25px;'>", unsafe_allow_html=True)
+    st.markdown("### Grafo de Arquitetura dos Agentes (Live)")
+    st.markdown("Acompanhe o fluxo de dados e comunicação em tempo real entre os agentes, orquestradores e banco de dados.")
     
     mermaid_code = '''
     graph TD

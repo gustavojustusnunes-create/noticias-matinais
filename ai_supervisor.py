@@ -1,5 +1,6 @@
 import os
 import json
+import time
 from datetime import datetime
 from claude_api import chamar_supervisor_api
 
@@ -110,6 +111,7 @@ def revisar_edicao_diaria(cache_global):
             )
             
             resposta_json_str = chamar_supervisor_api(prompt, max_tokens=1000)
+            time.sleep(2.5)  # Pausa essencial para respeitar a cota RPM da API e evitar 429
             
             if not resposta_json_str:
                 continue
