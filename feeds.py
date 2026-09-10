@@ -409,7 +409,7 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
         titulo_entry = entry.get("title", "")
 
         # ── Contexto base ─────────────────────────────────────────────────────
-        contexto = extrair_contexto_base(entry, max_chars=800)
+        contexto = extrair_contexto_base(entry, max_chars=3500)
 
         if contexto and contexto.lower() != titulo_entry.lower():
             input_individual = (
@@ -424,8 +424,8 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             f"═══════════════════════════════════════\n"
             f"REGRAS ABSOLUTAS DE FORMATO\n"
             f"═══════════════════════════════════════\n"
-            f"1. TAMANHO: 150 a 250 palavras. Seja profundo e explicativo. Construa uma notícia completa com contexto, antecedentes e análise dos impactos, sem encheção de linguiça.\n"
-            f"2. PROFUNDIDADE: Se a notícia não tiver profundidade jornalística (ex: apenas listar elenco de filme, ou repetir o título duas vezes), retorne EXATAMENTE: SKIP\n"
+            f"1. TAMANHO E ESTRUTURA: 250 a 400 palavras divididas em 2 a 3 parágrafos substanciais (separados por linha em branco). Seja profundo, investigativo e contextualizado. PROIBIDO resumos telegráficos, superficiais ou com menos de 2 parágrafos. O leitor precisa entender o histórico, o fato presente e as consequências futuras.\n"
+            f"2. PROFUNDIDADE: Se a notícia for apenas fútil, não tiver substância jornalística ou repetir o título sem fatos novos, retorne EXATAMENTE: SKIP\n"
             f"3. CORTES BRUSCOS: O texto DEVE ser uma notícia completa com raciocínio finalizado. NUNCA termine de forma abrupta. Última frase fechada com ponto final.\n"
             f"4. IDIOMA E TOM: Sempre em Português Brasileiro fluente. Direto, ativo, jornalístico. Sem jargões.\n"
             f"5. CRÉDITOS: REMOVA qualquer crédito de fotógrafo, agência ou jornal (ex: ESTADÃO CONTEÚDO).\n"
@@ -469,30 +469,29 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
 
         # ── Fallback 1: Claude reescreve contexto base ────────────────────────
         if not resumo_limpo:
-            contexto_base = extrair_contexto_base(entry, max_chars=800)
+            contexto_base = extrair_contexto_base(entry, max_chars=3500)
             if contexto_base and len(contexto_base.split()) >= 20:
                 prompt_rewrite = (
-                    f"Você é um jornalista sênior. Reescreva o texto abaixo como uma "
-                    f"notícia completa em Português Brasileiro.\n\n"
+                    f"Você é um repórter investigativo sênior. Reescreva o texto abaixo em uma reportagem aprofundada (250 a 400 palavras em 2 a 3 parágrafos) em Português Brasileiro.\n\n"
                     f"{regras_absolutas}\n"
                     f"Título: {titulo_entry}\n\nTexto base:\n{contexto_base}"
                 )
-                reescrito = chamar_claude_api(prompt_rewrite, max_tokens=512)
+                reescrito = chamar_claude_api(prompt_rewrite, max_tokens=1024)
                 if reescrito and len(reescrito.split()) >= 20:
                     resumo_limpo = limpar_resumo(reescrito)
 
         # ── Fallback 2: Claude gera a partir do título apenas ─────────────────
         if not resumo_limpo:
             prompt_mini = (
-                f"Você é um jornalista sênior. Com base APENAS no título abaixo, "
-                f"escreva um parágrafo jornalístico de 3 frases (80 a 95 palavras) "
-                f"em Português Brasileiro. Escreva como fato estabelecido — sem "
-                f"'provavelmente', 'deve' ou linguagem especulativa. "
+                f"Você é um jornalista sênior. Com base no acontecimento refletido pelo título abaixo, "
+                f"desenvolva uma notícia analítica e substancial em 2 parágrafos completos (180 a 280 palavras) "
+                f"em Português Brasileiro, trazendo o contexto essencial e desdobramentos lógicos do fato. "
+                f"Escreva como fato estabelecido — sem 'provavelmente', 'deve' ou linguagem especulativa. "
                 f"NUNCA termine com '...' ou '…'. Ponto final obrigatório na última frase.\n"
-                f"Retorne APENAS o parágrafo.\n\n"
+                f"Retorne APENAS os parágrafos.\n\n"
                 f"Título: {titulo_entry}"
             )
-            mini = chamar_claude_api(prompt_mini, max_tokens=512)
+            mini = chamar_claude_api(prompt_mini, max_tokens=800)
             if mini and len(mini.split()) >= 20:
                 resumo_limpo = limpar_resumo(mini)
 

@@ -53,7 +53,7 @@ def construir_html_finance(edicao, nome_destinatario="Leitor(a)"):
   .news-item {{ margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #f1f5f9; }}
   .news-item:last-child {{ border-bottom: none; }}
   .news-title {{ font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 8px; line-height: 1.4; }}
-  .news-summary {{ font-size: 15px; color: #475569; line-height: 1.65; margin-bottom: 12px; }}
+  .news-summary {{ font-size: 15px; color: #475569; line-height: 1.65; margin-bottom: 12px; white-space: pre-line; }}
   .news-meta {{ font-size: 12px; color: #64748b; }}
   .news-link {{ color: #0a2540; font-weight: 600; text-decoration: none; border-bottom: 1px dotted #c9a84c; }}
   .footer {{ background-color: #0f172a; color: #94a3b8; font-size: 12px; text-align: center; padding: 30px 25px; line-height: 1.6; }}

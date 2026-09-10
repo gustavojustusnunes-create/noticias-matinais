@@ -189,7 +189,7 @@ def remover_titulo_duplicado(titulo: str, corpo: str) -> str:
     return corpo
 
 
-def extrair_contexto_base(entry, max_chars: int = 800) -> str:
+def extrair_contexto_base(entry, max_chars: int = 3500) -> str:
     """
     Extrai o melhor texto disponível da entrada RSS.
     Hierarquia: content > summary > description.

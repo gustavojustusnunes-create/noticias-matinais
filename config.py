@@ -237,59 +237,41 @@ FILTROS_TEMA = {
 # =============================================================================
 INSTRUCAO_TEMA = {
     "Mundo": (
-        "Inclua o contexto geopolítico completo: países envolvidos, atores principais, "
-        "linha do tempo do evento e as possíveis consequências regionais e globais."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Esta cobertura deve ser aprofundada, rica em detalhes e desenvolvida em 2 a 3 parágrafos substanciais.\n"
+        "1. Descreva o acontecimento principal com precisão de fatos, datas, locais e declarações diretas das partes.\n"
+        "2. Forneça os antecedentes históricos e geopolíticos: a origem das tensões, acordos prévios, interesses estratégicos dos países envolvidos e o contexto de bastidores.\n"
+        "3. Analise as consequências diretas e futuras: impacto no equilíbrio de poder, segurança regional/global, acordos diplomáticos e economia internacional.\n"
+        "PROIBIDO texto superficial ou resumo curto: construa uma reportagem detalhada e autossuficiente."
     ),
     "Economia": (
-        "Inclua obrigatoriamente: números (percentuais, valores em R$ ou US$, variações "
-        "de índices), o impacto direto para o investidor ou consumidor brasileiro e o "
-        "contexto macroeconômico que explica o movimento.\n"
-        "REGRA CRÍTICA DE FILTRAGEM: Se a manchete for sobre política, partidos, "
-        "eleições, decisões judiciais ou segurança pública SEM impacto econômico direto "
-        "e mensurável, retorne EXATAMENTE a palavra SKIP e nada mais."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva a notícia em 2 a 3 parágrafos analíticos densos.\n"
+        "Inclua obrigatoriamente: números concretos (percentuais, valores em R$ ou US$, variações de índices), o impacto direto para o investidor e consumidor brasileiro, as razões macroeconômicas (juros, inflação, decisões de bancos centrais ou balanços corporativos) e o contexto de mercado que explica o movimento.\n"
+        "REGRA CRÍTICA DE FILTRAGEM: Se a manchete for sobre política, partidos, eleições, decisões judiciais ou segurança pública SEM impacto econômico direto e mensurável, retorne EXATAMENTE a palavra SKIP e nada mais."
     ),
     "Politica": (
-        "Inclua o contexto institucional, as partes envolvidas (partidos, tribunais, "
-        "parlamentares), o que está sendo decidido e os possíveis desdobramentos "
-        "políticos ou jurídicos para o cidadão."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos substanciais.\n"
+        "Inclua o contexto institucional profundo, as partes envolvidas (partidos, tribunais, parlamentares, lideranças), as motivações políticas de bastidores, o que exatamente está sendo votado/decidido e os possíveis desdobramentos políticos, institucionais e eleitorais para o país."
     ),
     "IA": (
-        "Inclua: empresa/laboratório envolvido (OpenAI, Anthropic, Google DeepMind, "
-        "Meta AI, xAI, Mistral, etc.), o nome exato do modelo ou produto quando "
-        "mencionado, dados técnicos relevantes (parâmetros, benchmarks, contexto, "
-        "modalidades) e o impacto prático para usuários ou para o mercado de IA. "
-        "Se a notícia for sobre regulação ou ética, explique a tensão central em "
-        "linguagem clara, sem jargão jurídico. Evite hype — escreva como repórter "
-        "de tecnologia experiente, não como entusiasta."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos ricos em conteúdo técnico e mercadológico.\n"
+        "Inclua: empresa/laboratório envolvido (OpenAI, Anthropic, Google DeepMind, Meta AI, xAI, Mistral, etc.), o nome exato do modelo ou produto, dados técnicos detalhados (parâmetros, benchmarks, contexto de treino, modalidades, custos computacionais) e o impacto prático para usuários, empresas e a corrida de IA. Se for sobre regulação ou ética, detalhe a disputa central e implicações legais. Evite hype — escreva como repórter de tecnologia experiente."
     ),
     "Wellness": (
-        "FOCO: cultura de saúde, performance e longevidade. Cobre corrida, "
-        "ciclismo, triatlo, musculação, mobilidade, nutrição esportiva, sono, "
-        "recuperação e mindset atlético. Inclua dados práticos "
-        "(séries, pace por km, zonas de FC, macros, VO2) sempre que o "
-        "texto base os fornecer. Evite tom de consultório médico, evite linguagem "
-        "de revista de dieta, evite sensacionalismo de saúde."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos fundamentados.\n"
+        "FOCO: cultura de saúde, performance e longevidade. Cobre corrida, ciclismo, musculação, mobilidade, nutrição esportiva, sono, recuperação e mindset atlético. Detalhe os mecanismos fisiológicos, estudos científicos citados e recomendações práticas com dados (séries, pace, zonas de FC, macros, VO2) quando disponíveis no texto. Evite sensacionalismo ou linguagem de revista de dieta."
     ),
     "Ciencia": (
-        "Inclua: instituição/pesquisadores envolvidos, metodologia resumida, "
-        "principais números e descobertas e o que muda no entendimento científico "
-        "ou na prática clínica com esse resultado."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos explicativos e científicos.\n"
+        "Inclua: instituição/pesquisadores envolvidos, a metodologia do experimento/estudo, dados e números encontrados, por que essa descoberta é um avanço em relação ao conhecimento anterior e quais são as aplicações práticas futuras para a medicina ou conhecimento humano."
     ),
     "Cinema": (
-        "Inclua: gênero, elenco principal, diretor, sinopse objetiva (sem spoilers), "
-        "avaliações de crítica (Rotten Tomatoes, IMDb) quando disponíveis, streaming "
-        "ou estreia nos cinemas, e por que o filme ou série vale atenção do leitor."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos bem estruturados.\n"
+        "Inclua: gênero, direção, elenco principal, sinopse detalhada e contextualizada (sem spoilers rasos), recepção crítica (Rotten Tomatoes, IMDb), números de bilheteria e relevância para a indústria cinematográfica ou franquia."
     ),
     "Fofoca": (
-        "O caderno Fofoca tem foco em cultura pop INTERNACIONAL: atores e atrizes de "
-        "Hollywood, músicos globais (BTS, Taylor Swift, Beyoncé, etc.), realeza europeia "
-        "e celebridades de alcance mundial.\n"
-        "REGRA CRÍTICA DE FILTRAGEM: Se a notícia for sobre subcelebridade brasileira, "
-        "ex-participante de BBB, cantor sertanejo, funkeiro, influenciador digital sem "
-        "relevância global ou qualquer figura desconhecida fora do Brasil, retorne "
-        "EXATAMENTE a palavra SKIP e nada mais.\n"
-        "Para notícias aprovadas: inclua contexto da celebridade, o que aconteceu, "
-        "reações do público e por que o assunto é relevante globalmente."
+        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: O caderno Fofoca tem foco em cultura pop INTERNACIONAL: atores de Hollywood, músicos globais e personalidades de alcance mundial.\n"
+        "Desenvolva em 2 a 3 parágrafos completos o histórico do acontecimento, declarações públicas das partes, impacto na indústria do entretenimento e a repercussão na mídia global.\n"
+        "REGRA CRÍTICA DE FILTRAGEM: Se a notícia for sobre subcelebridade brasileira, ex-participante de reality, influenciador sem relevância global ou qualquer figura desconhecida fora do Brasil, retorne EXATAMENTE a palavra SKIP e nada mais."
     ),
 }
 

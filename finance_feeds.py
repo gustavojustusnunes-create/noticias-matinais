@@ -59,7 +59,7 @@ def extrair_texto_rss(entry):
     else:
         return ""
     texto = re.sub(r"<[^>]+>", " ", raw)
-    return " ".join(texto.split())[:1200]
+    return " ".join(texto.split())[:3000]
 
 
 def extrair_imagem_rss(entry):
@@ -84,23 +84,23 @@ def extrair_imagem_rss(entry):
 
 
 def resumir_noticia_finance(titulo, texto_bruto):
-    """Chama a API do Gemini para produzir resumo financeiro elegante de 65-105 palavras."""
+    """Chama a API do Gemini para produzir análise financeira aprofundada de 180-280 palavras."""
     prompt = f"""Você é editor-chefe do All News Finance, um jornal diário de economia e mercado financeiro para investidores e executivos.
 
-TAREFA: Escreva um resumo analítico e direto da notícia abaixo.
+TAREFA: Escreva um resumo analítico, aprofundado e direto da notícia abaixo.
 
 TÍTULO: {titulo}
 TEXTO ORIGINAL: {texto_bruto}
 
 REGRAS ESTREITAS DE JORNALISMO FINANCEIRO:
-1. COMPRIMENTO: Desenvolva o texto de forma aprofundada (entre 1 e 3 parágrafos), extraindo o máximo de informações e contexto do texto original, mesmo se o original for curto.
+1. COMPRIMENTO: 180 a 280 palavras desenvolvidas em 2 a 3 parágrafos claros e substanciais. Proibido texto excessivamente resumido ou vago.
 2. CONTEÚDO: Vá direto ao ponto com fatos, números, porcentagens, tickers ou impactos financeiros. NUNCA faça mistério ("veja 5 motivos...", "descubra por que..."). Forneça contexto, os antecedentes e uma breve análise do impacto no cenário atual.
 3. Se a notícia for apenas caça-clique/clickbait ou não trouxer informação real, responda APENAS a palavra: SKIP
 4. TOM: Português brasileiro formal, culto, objetivo e analítico.
 5. PROIBIDO: Emojis, bullet points, asteriscos ou formatação markdown. Escreva em parágrafos corridos de texto puro.
 6. NUNCA use as palavras "promessa", "revolucionário" ou exageros de marketing sem dados."""
 
-    resumo = chamar_claude_api(prompt, max_tokens=600)
+    resumo = chamar_claude_api(prompt, max_tokens=1200)
     if not resumo:
         print("         ⏭️ Pulado: Resumo nulo")
         return None

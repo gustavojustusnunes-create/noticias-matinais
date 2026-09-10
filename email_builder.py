@@ -273,6 +273,12 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
                 f"PHRleHQgeT0iLjllbSIgZm9udC1zaXplPSI1MCI+e2ljb25lX2I2NH08L3RleHQ+PC9zdmc+"
                 f"';"
             )
+            paragrafos = [p.strip() for p in n.get('resumo', '').split('\n') if p.strip()]
+            resumo_html = "".join(
+                f'<p style="margin:0 0 14px;font-size:15px;color:#3a3a3a;line-height:1.75;font-family:\'Lora\',\'Times New Roman\',serif;">{p}</p>'
+                for p in paragrafos
+            ) if paragrafos else f'<p style="margin:0 0 14px;font-size:15px;color:#3a3a3a;line-height:1.75;font-family:\'Lora\',\'Times New Roman\',serif;">{n.get("resumo", "")}</p>'
+
             html += f"""
     <div style="margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid #ede9e3;">
       <a href="{n['link']}" target="_blank" style="display:block;text-decoration:none;">
@@ -290,10 +296,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
             {n['titulo']}
           </h3>
         </a>
-        <p style="margin:0 0 16px;font-size:15px;color:#3a3a3a;line-height:1.75;
-                  font-family:'Lora','Times New Roman',serif;">
-          {n['resumo']}
-        </p>
+        {resumo_html}
         <a href="{n['link']}" target="_blank"
            style="font-size:12px;color:#{cor};font-weight:bold;text-decoration:none;
                   text-transform:uppercase;letter-spacing:1px;
