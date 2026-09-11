@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-09-11",
+  "data_extenso": "Sexta-feira, 11 de Setembro de 2026",
+  "manchete": "Grupo no Iêmen usou Claude, IA da Anthropic, para desenvolver armas teleguiadas",
+  "arquivo_html": "2026-09-11.html"
+ },
+ {
   "data": "2026-09-10",
   "data_extenso": "Quinta-feira, 10 de Setembro de 2026",
   "manchete": "Israel explode estrutura do Hezbollah e causa terremoto de 4,1 no Líbano",
@@ -352,11 +358,5 @@
   "data_extenso": "Domingo, 28 de Junho de 2026",
   "manchete": "Como as megaprisões de Bukele se transformaram em modelo para a direita radical",
   "arquivo_html": "2026-06-28.html"
- },
- {
-  "data": "2026-06-27",
-  "data_extenso": "Sábado, 27 de Junho de 2026",
-  "manchete": "EUA e Irã trocam ataques e se acusam de violar cessar-fogo",
-  "arquivo_html": "2026-06-27.html"
  }
 ]
