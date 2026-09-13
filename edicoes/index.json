@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-09-13",
+  "data_extenso": "Domingo, 13 de Setembro de 2026",
+  "manchete": "Crise diplomática entre EUA e Brasil trava cooperação contra o crime organizado, diz 'The New York Times'",
+  "arquivo_html": "2026-09-13.html"
+ },
+ {
   "data": "2026-09-12",
   "data_extenso": "Sábado, 12 de Setembro de 2026",
   "manchete": "Inflação cai, fábricas fecham: crise na indústria argentina elimina empregos e aumenta pressão sobre Milei",
@@ -352,11 +358,5 @@
   "data_extenso": "Quarta-feira, 1 de Julho de 2026",
   "manchete": "Trump adicionou mais de US$ 2 bilhões a seu patrimônio após voltar à Casa Branca",
   "arquivo_html": "2026-07-01.html"
- },
- {
-  "data": "2026-06-30",
-  "data_extenso": "Terça-feira, 30 de Junho de 2026",
-  "manchete": "Terremoto na Venezuela: número de mortos sobe para 1.943",
-  "arquivo_html": "2026-06-30.html"
  }
 ]
