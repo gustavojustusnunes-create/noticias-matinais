@@ -5,6 +5,7 @@ Para detalhes de cada etapa, veja os módulos especializados.
 """
 import re
 import random # Adicionado para rotacionar as aberturas
+from datetime import datetime
 
 # Importações limpas: CLAUDE_KEY e claude_api removidos
 from config import RSS_FEEDS, EMAIL_SENDER, EMAIL_PASSWORD, GCP_JSON, MAPEAMENTO_LEGADO

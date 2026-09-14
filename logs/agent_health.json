@@ -1,0 +1,50 @@
+{
+    "timestamp_scan": "2026-09-14T18:36:00.617963-03:00",
+    "data_hoje": "2026-09-14",
+    "sistema_geral": "WARNING",
+    "incidentes": [
+        "All News Journal não gerou a edição matinal de 2026-09-14.",
+        "All News Finance não concluiu a edição de 2026-09-14."
+    ],
+    "auto_recuperacoes": [
+        "daily.yml disparado para auto-recuperação.",
+        "finance_daily.yml disparado para auto-recuperação."
+    ],
+    "agentes": {
+        "journal": {
+            "nome": "All News Journal (Edição Diária)",
+            "status": "RECOVERING",
+            "detalhe": "Edição de hoje (2026-09-14) não foi gerada até às 18:36 BRT.",
+            "ultima_edicao": "Pendente",
+            "horario_previsto": "05:20 BRT"
+        },
+        "finance": {
+            "nome": "All News Finance",
+            "status": "RECOVERING",
+            "detalhe": "Edição financeira de hoje ausente após as 06:20.",
+            "ultima_edicao": "Pendente",
+            "horario_previsto": "05:25 BRT"
+        },
+        "instagram": {
+            "nome": "Instagram Daily Posts",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-09-14).",
+            "ultima_edicao": "N/A",
+            "horario_previsto": "09:15 BRT"
+        },
+        "supervisor": {
+            "nome": "AI Quality Supervisor",
+            "status": "ONLINE",
+            "detalhe": "Auditoria cognitiva ativa. 59 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 59,
+            "fotos_rastreadas": 50
+        },
+        "watchdog": {
+            "nome": "Watchdog Sentinela",
+            "status": "ACTIVE",
+            "detalhe": "Monitoramento em tempo real operando com sucesso.",
+            "ultimo_scan": "2026-09-14 18:36 BRT",
+            "incidentes_abertos": 2
+        }
+    }
+}

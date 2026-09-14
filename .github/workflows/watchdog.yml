@@ -1,0 +1,51 @@
+name: Sentinel Watchdog — Monitoramento de Agentes
+
+on:
+  schedule:
+    # 09:30 UTC = 06:30 BRT (vigia pós-jornal matinal)
+    # 13:00 UTC = 10:00 BRT (vigia pós-instagram)
+    # 18:00 UTC = 15:00 BRT (vigia vespertino de integridade)
+    - cron: '30 9,13,18 * * *'
+  workflow_dispatch:
+
+jobs:
+  vigiar-agentes:
+    name: Inspecionar Saúde dos Agentes
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      actions: write
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar dependências mínimas
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Executar Agente Sentinela
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RESEND_FROM: ${{ secrets.RESEND_FROM }}
+          ALERT_EMAIL: "allnewsjournal@gmail.com"
+        run: python agent_watchdog.py
+
+      - name: Salvar Relatório de Saúde no Repositório
+        run: |
+          git config user.name "ANJ Sentinel Bot"
+          git config user.email "actions@github.com"
+          git add logs/agent_health.json || true
+          git diff --staged --quiet || git commit -m "chore: atualizar status de saude dos agentes [skip ci]"
+          git pull --rebase origin main || true
+          git push || true

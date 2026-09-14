@@ -16,22 +16,8 @@ def obter_modelos_gemini(genai):
     if _CACHED_MODELS is not None:
         return _CACHED_MODELS
     
-    cand = []
-    try:
-        for m in genai.list_models():
-            if 'generateContent' in m.supported_generation_methods:
-                if 'flash' in m.name:
-                    cand.append(m.name.replace('models/', ''))
-        # Ordena dando preferência a 1.5-flash e 2.0-flash
-        cand.sort(key=lambda x: (not ('1.5-flash' in x or '2.0-flash' in x), x))
-    except Exception as e:
-        print(f"      ⚠️ Erro ao listar modelos: {e}")
-    
-    if not cand:
-        cand = ['gemini-1.5-flash', 'gemini-2.0-flash']
-    
-    # Mantém apenas os 2 modelos mais promissores para evitar loops infinitos
-    _CACHED_MODELS = cand[:2]
+    # Modelos flash preferenciais do Gemini por ordem de prioridade
+    _CACHED_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
     return _CACHED_MODELS
 
 
@@ -60,7 +46,8 @@ def chamar_claude_api(prompt, max_tokens=4096):
                     generation_config=genai.types.GenerationConfig(
                         max_output_tokens=max_tokens,
                         temperature=0.3
-                    )
+                    ),
+                    request_options={"timeout": 60}
                 )
                 print(f"      🔹 OK (Gemini SDK - {clean_name})")
                 return response.text.strip()
@@ -277,7 +264,8 @@ def chamar_supervisor_api(prompt, max_tokens=4096):
                         max_output_tokens=max_tokens,
                         temperature=0.1,
                         response_mime_type="application/json"
-                    )
+                    ),
+                    request_options={"timeout": 60}
                 )
                 return response.text.strip()
             except Exception as e:

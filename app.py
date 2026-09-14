@@ -875,22 +875,29 @@ with aba_inicio:
                     for _cad_nome, _items in _ed_data.get("cadernos", {}).items():
                         if _items and isinstance(_items, list):
                             _tit = _items[0].get("titulo", "").strip()
+                            _lnk = _items[0].get("link", "").strip()
+                            _res = _items[0].get("resumo", "").strip()
                             if _tit:
-                                _ticker_noticias.append({"caderno": _cad_nome.upper(), "titulo": _tit})
+                                _ticker_noticias.append({
+                                    "caderno": _cad_nome.upper(),
+                                    "titulo": _tit,
+                                    "link": _lnk or "#",
+                                    "resumo": _res[:220]
+                                })
     except Exception:
         pass
 
     if not _ticker_noticias:
         _ticker_noticias = [
-            {"caderno": "MUNDO", "titulo": "Tensões geopolíticas e novas diretrizes comerciais redefinem as relações globais."},
-            {"caderno": "ECONOMIA", "titulo": "Mercados globais reagem a novos indicadores de inflação e taxa de juros."},
-            {"caderno": "POLÍTICA", "titulo": "Congresso acelera votação de reformas estruturantes para o próximo trimestre."},
-            {"caderno": "INTELIGÊNCIA ARTIFICIAL", "titulo": "Nova geração de modelos autônomos impulsiona eficiência no setor produtivo."},
+            {"caderno": "MUNDO", "titulo": "Tensões geopolíticas e novas diretrizes comerciais redefinem as relações globais.", "link": "#", "resumo": ""},
+            {"caderno": "ECONOMIA", "titulo": "Mercados globais reagem a novos indicadores de inflação e taxa de juros.", "link": "#", "resumo": ""},
+            {"caderno": "POLÍTICA", "titulo": "Congresso acelera votação de reformas estruturantes para o próximo trimestre.", "link": "#", "resumo": ""},
+            {"caderno": "INTELIGÊNCIA ARTIFICIAL", "titulo": "Nova geração de modelos autônomos impulsiona eficiência no setor produtivo.", "link": "#", "resumo": ""},
         ]
 
     _ticker_json = json.dumps(_ticker_noticias, ensure_ascii=False)
 
-    # ── HERO EDITORIAL (TEMA CLARO & TICKER 5s COM GLOBO 3D) ──
+    # ── HERO EDITORIAL (TEMA CLARO & TICKER 5s COM GLOBO 3D RESPONSIVO) ──
     _hero_html = f"""
     <!DOCTYPE html>
     <html>
@@ -909,7 +916,7 @@ with aba_inicio:
           border: 1px solid #e2ddd3;
           border-left: 5px solid #0a5c5a;
           border-radius: 12px;
-          padding: 20px 24px;
+          padding: 18px 22px;
           display: flex;
           flex-direction: row;
           align-items: center;
@@ -917,20 +924,17 @@ with aba_inicio:
           box-shadow: 0 4px 20px rgba(10, 92, 90, 0.06);
           position: relative;
         }}
-        @media (max-width: 680px) {{
-          .hero-card {{ flex-direction: column-reverse; padding: 16px; text-align: center; }}
-          .header-line {{ justify-content: center; }}
-          .hero-left {{ padding-right: 0; margin-top: 10px; }}
-        }}
         .hero-left {{
           flex: 1;
+          min-width: 0;
           padding-right: 20px;
         }}
         .header-line {{
           display: flex;
           align-items: center;
           gap: 8px;
-          margin-bottom: 10px;
+          margin-bottom: 8px;
+          flex-wrap: wrap;
         }}
         .live-pill {{
           display: inline-flex;
@@ -975,31 +979,51 @@ with aba_inicio:
           font-weight: 600;
           margin-left: auto;
         }}
+        .headline-link {{
+          text-decoration: none;
+          color: inherit;
+          display: block;
+          cursor: pointer;
+        }}
         .headline-container {{
-          min-height: 64px;
+          min-height: 56px;
           display: flex;
-          align-items: center;
+          flex-direction: column;
+          justify-content: center;
         }}
         .headline-text {{
           font-family: 'Playfair Display', Georgia, serif;
-          font-size: 1.28rem;
+          font-size: 1.25rem;
           font-weight: 700;
           color: #111827;
           line-height: 1.35;
           opacity: 1;
           transform: translateY(0);
-          transition: opacity 0.35s ease, transform 0.35s ease;
+          transition: opacity 0.35s ease, transform 0.35s ease, color 0.2s ease;
+        }}
+        .headline-link:hover .headline-text {{
+          color: #0a5c5a;
         }}
         .headline-text.fade-out {{
           opacity: 0;
           transform: translateY(-4px);
+        }}
+        .read-badge {{
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 0.72rem;
+          color: #0a5c5a;
+          font-weight: 600;
+          margin-top: 3px;
+          letter-spacing: 0.2px;
         }}
         .progress-track {{
           width: 100%;
           height: 3px;
           background: #f1f5f9;
           border-radius: 3px;
-          margin: 12px 0 8px;
+          margin: 10px 0 6px;
           overflow: hidden;
         }}
         .progress-fill {{
@@ -1010,14 +1034,43 @@ with aba_inicio:
           transition: width 0.1s linear;
         }}
         .footer-note {{
-          font-size: 0.74rem;
+          font-size: 0.72rem;
           color: #64748b;
           letter-spacing: 0.2px;
         }}
-        #globe-viz {{
-          width: 200px;
-          height: 200px;
+        .hero-right {{
           flex-shrink: 0;
+        }}
+        #globe-viz {{
+          width: 180px;
+          height: 180px;
+        }}
+        @media (max-width: 680px) {{
+          .hero-card {{
+            flex-direction: column;
+            padding: 14px 16px;
+            align-items: stretch;
+          }}
+          .hero-right {{
+            position: absolute;
+            top: 14px;
+            right: 14px;
+          }}
+          #globe-viz {{
+            width: 54px !important;
+            height: 54px !important;
+          }}
+          .hero-left {{
+            padding-right: 56px;
+            width: 100%;
+          }}
+          .headline-text {{
+            font-size: 1.05rem;
+            line-height: 1.35;
+          }}
+          .footer-note {{
+            font-size: 0.68rem;
+          }}
         }}
       </style>
     </head>
@@ -1030,9 +1083,12 @@ with aba_inicio:
             <span id="ticker-counter" class="counter-tag">1 / 1</span>
           </div>
           
-          <div class="headline-container">
-            <h2 id="ticker-headline" class="headline-text">Carregando manchetes...</h2>
-          </div>
+          <a id="ticker-link" href="#" target="_blank" class="headline-link" title="Toque para ler notícia completa">
+            <div class="headline-container">
+              <h2 id="ticker-headline" class="headline-text">Carregando manchetes...</h2>
+              <span class="read-badge">Toque para ler matéria original &rarr;</span>
+            </div>
+          </a>
 
           <div class="progress-track">
             <div id="progress-bar" class="progress-fill"></div>
@@ -1058,6 +1114,7 @@ with aba_inicio:
 
         const elCaderno = document.getElementById('ticker-caderno');
         const elHeadline = document.getElementById('ticker-headline');
+        const elLink = document.getElementById('ticker-link');
         const elCounter = document.getElementById('ticker-counter');
         const elProgress = document.getElementById('progress-bar');
 
@@ -1069,6 +1126,7 @@ with aba_inicio:
           setTimeout(() => {{
             elCaderno.textContent = item.caderno;
             elHeadline.textContent = item.titulo;
+            elLink.href = (item.link && item.link !== '#' && item.link.startsWith('http')) ? item.link : '#';
             elCounter.textContent = (idx + 1) + ' / ' + newsItems.length;
             elHeadline.classList.remove('fade-out');
           }}, 300);
@@ -1092,8 +1150,9 @@ with aba_inicio:
 
         // ── 2. GLOBO 3D EM THREE.JS (TEMA CLARO & TELEJORNAL) ──
         const container = document.getElementById('globe-viz');
-        const width = 200;
-        const height = 200;
+        const isMobile = window.innerWidth <= 680;
+        const width = isMobile ? 54 : 180;
+        const height = isMobile ? 54 : 180;
 
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
@@ -1164,7 +1223,7 @@ with aba_inicio:
     </html>
     """
     import streamlit.components.v1 as _components
-    _components.html(_hero_html, height=230)
+    _components.html(_hero_html, height=240)
 
     st.markdown("""
     <div style='max-width: 720px; margin: 15px auto 25px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -1590,60 +1649,171 @@ with aba_ia:
         st.info("Nenhum erro registrado até o momento. A memória do supervisor está limpa.")
 
     st.markdown("<hr style='margin: 35px 0 25px;'>", unsafe_allow_html=True)
-    st.markdown("### Grafo de Arquitetura dos Agentes (Live)")
-    st.markdown("Acompanhe o fluxo de dados e comunicação em tempo real entre os agentes, orquestradores e banco de dados.")
-    
-    mermaid_code = '''
+    st.markdown("### 🛡️ Monitoramento & Grafo de Arquitetura dos Agentes (Live)")
+    st.markdown("Acompanhe o estado de saúde, telemetria e o fluxo de dados em tempo real entre todos os agentes autônomos do ecossistema.")
+
+    # Carregar dados de telemetria dos agentes gerados pelo Watchdog
+    health_file = os.path.join("logs", "agent_health.json")
+    health_data = {}
+    if os.path.exists(health_file):
+        try:
+            with open(health_file, "r", encoding="utf-8") as hf:
+                health_data = json.load(hf)
+        except Exception:
+            health_data = {}
+
+    agentes_info = health_data.get("agentes", {})
+    j_info = agentes_info.get("journal", {})
+    f_info = agentes_info.get("finance", {})
+    ig_info = agentes_info.get("instagram", {})
+    sup_info = agentes_info.get("supervisor", {})
+    wd_info = agentes_info.get("watchdog", {})
+
+    status_badge = {
+        "ONLINE": "🟢 Online",
+        "ACTIVE": "🟢 Ativo",
+        "PENDING": "🟡 Agendado",
+        "RECOVERING": "🟠 Auto-Recuperação",
+        "WARNING": "⚠️ Alerta",
+        "OFFLINE": "🔴 Offline"
+    }
+
+    # Linha de métricas de telemetria dos agentes
+    c_w1, c_w2, c_w3, c_w4, c_w5 = st.columns(5)
+    with c_w1:
+        st.metric(
+            label="🗞️ All News Journal",
+            value=status_badge.get(j_info.get("status", "ONLINE"), "🟢 Online"),
+            help=j_info.get("detalhe", "Horário previsto: 05:20 BRT")
+        )
+    with c_w2:
+        st.metric(
+            label="📈 All News Finance",
+            value=status_badge.get(f_info.get("status", "ONLINE"), "🟢 Online"),
+            help=f_info.get("detalhe", "Horário previsto: 05:25 BRT")
+        )
+    with c_w3:
+        st.metric(
+            label="📸 Instagram Poster",
+            value=status_badge.get(ig_info.get("status", "PENDING"), "🟡 Agendado"),
+            help=ig_info.get("detalhe", "Horário previsto: 09:15 BRT")
+        )
+    with c_w4:
+        st.metric(
+            label="🧠 AI Supervisor",
+            value=status_badge.get(sup_info.get("status", "ONLINE"), "🟢 Online"),
+            help=f"{sup_info.get('licoes_aprendidas', len(memoria))} lições acumuladas"
+        )
+    with c_w5:
+        st.metric(
+            label="🛡️ Watchdog Sentinela",
+            value=status_badge.get(wd_info.get("status", "ACTIVE"), "🟢 Ativo"),
+            help=wd_info.get("detalhe", "Monitoramento em tempo real operando")
+        )
+
+    # Avisos de incidentes e autocura se houver
+    if health_data.get("auto_recuperacoes"):
+        with st.expander("⚡ Ações Automáticas de Auto-Recuperação Recentes"):
+            for rec in health_data.get("auto_recuperacoes", []):
+                st.info(f"🔄 {rec}")
+            for inc in health_data.get("incidentes", []):
+                st.caption(f"• Detalhe: {inc}")
+
+    # Montagem do Grafo Mermaid Dinâmico
+    status_journal = j_info.get("status", "ONLINE")
+    status_finance = f_info.get("status", "ONLINE")
+    status_insta = ig_info.get("status", "PENDING")
+    status_sup = sup_info.get("status", "ONLINE")
+    status_watchdog = wd_info.get("status", "ACTIVE")
+
+    def get_node_class(st_code):
+        if st_code in ["ONLINE", "ACTIVE"]:
+            return "node_online"
+        elif st_code in ["RECOVERING", "WARNING", "PENDING"]:
+            return "node_warn"
+        return "node_off"
+
+    mermaid_code = f"""
     graph TD
-        %% Estilos visuais
-        classDef orchestrator fill:#1f2937,stroke:#3b82f6,stroke-width:2px,color:#fff
-        classDef ai_agent fill:#4f46e5,stroke:#818cf8,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-        classDef memory fill:#047857,stroke:#34d399,stroke-width:2px,color:#fff
-        classDef collector fill:#b45309,stroke:#fbbf24,stroke-width:2px,color:#fff
-        classDef output fill:#be185d,stroke:#f472b6,stroke-width:2px,color:#fff
+        %% Estilos de nós dinâmicos
+        classDef node_online fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff
+        classDef node_warn fill:#78350f,stroke:#f59e0b,stroke-width:2px,color:#fff
+        classDef node_off fill:#7f1d1d,stroke:#ef4444,stroke-width:2px,color:#fff
+        classDef node_storage fill:#1e293b,stroke:#64748b,stroke-width:2px,color:#fff
+        classDef node_collector fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
+        classDef node_watchdog fill:#083344,stroke:#06b6d4,stroke-width:2px,color:#fff
 
-        subgraph GitHub Actions [Servidor Nuvem - Cron Diário]
-            M[main.py<br/>All News Journal]:::orchestrator
-            FM[finance_main.py<br/>All News Finance]:::orchestrator
-            IG[instagram_poster.py<br/>Instagram Feed]:::orchestrator
+        subgraph Monitoramento_Sentinela [🛡️ Sentinela & Autocura]
+            WD["🛡️ agent_watchdog.py<br/><b>Watchdog Sentinela</b><br/><small>{status_badge.get(status_watchdog, '🟢 Ativo')}</small>"]:::{get_node_class(status_watchdog)}
+            AH[("📋 logs/agent_health.json<br/>Telemetria & Diagnósticos")]:::node_storage
         end
 
-        subgraph Motores de Coleta e IA Básica
-            F[feeds.py]:::collector
-            FF[finance_feeds.py]:::collector
-            
-            F -- 1. Busca RSS e Gemini Resumo --> M
-            FF -- 1. Busca RSS e Gemini Resumo --> FM
+        subgraph GitHub_Actions [☁️ Servidores GitHub Actions - Cron]
+            M["🗞️ main.py<br/><b>All News Journal</b><br/><small>{status_badge.get(status_journal, '🟢 Online')}</small>"]:::{get_node_class(status_journal)}
+            FM["📈 finance_main.py<br/><b>All News Finance</b><br/><small>{status_badge.get(status_finance, '🟢 Online')}</small>"]:::{get_node_class(status_finance)}
+            IG["📸 instagram_poster.py<br/><b>Instagram Bot (Knockout)</b><br/><small>{status_badge.get(status_insta, '🟡 Agendado')}</small>"]:::{get_node_class(status_insta)}
         end
 
-        subgraph Auditoria Cognitiva
-            AS[ai_supervisor.py<br/>Agente Supervisor IA]:::ai_agent
-            SM[(logs/supervisor_memory.json<br/>Memória de Erros e Fotos)]:::memory
-            
-            M -- 2. Envia para Inspeção --> AS
-            FM -- 2. Envia para Inspeção --> AS
-            
-            AS -- Audita e Reescreve --> M
-            AS -- Audita e Reescreve --> FM
-            
-            AS <-->|Lê Erros / Grava Lições| SM
-            IG <-->|Verifica Fotos / Bloqueia Repetição| SM
+        subgraph Motores_Coleta [📡 Motores de Coleta e IA]
+            F["📡 feeds.py<br/>RSS Diário & Gemini"]:::node_collector
+            FF["📊 finance_feeds.py<br/>B3, Câmbio & Yahoo"]:::node_collector
         end
 
-        subgraph Entrega e Assinantes
-            DB[(Google Sheets<br/>Banco de Assinantes)]:::memory
-            EB[email_builder.py]:::output
-            FEB[finance_email_builder.py]:::output
-            
-            M -- 3. Busca Lista --> DB
-            FM -- 3. Busca Lista --> DB
-            
-            M -- 4. Dispara --> EB
-            FM -- 4. Dispara --> FEB
+        subgraph Auditoria_Cognitiva [🧠 Aprendizado & Memória]
+            AS["🧠 ai_supervisor.py<br/><b>Supervisor Cognitivo</b><br/><small>{status_badge.get(status_sup, '🟢 Online')}</small>"]:::{get_node_class(status_sup)}
+            SM[("💾 logs/supervisor_memory.json<br/>Memória Contínua (50+ Lições)")]:::node_storage
         end
+
+        subgraph Distribuicao [✉️ Entrega e Assinantes]
+            DB[("👥 Google Sheets<br/>Base de Assinantes")]:::node_storage
+            EB["✉️ email_builder.py<br/>Disparo Matinal"]:::node_collector
+            FEB["✉️ finance_email_builder.py<br/>Disparo Financeiro"]:::node_collector
+        end
+
+        %% Conexões Operacionais
+        F --> M
+        FF --> FM
+        M <-->|Auditoria & Correção| AS
+        FM <-->|Auditoria & Correção| AS
+        AS <-->|Grava & Consulta Lições| SM
+        IG <-->|Evita Imagens Repetidas| SM
+        M --> DB --> EB
+        FM --> DB --> FEB
+
+        %% Conexões do Watchdog Sentinela
+        WD -.->|Verifica Deadlines & Autocura| M
+        WD -.->|Verifica Deadlines & Autocura| FM
+        WD -.->|Audita Fila de Postagens| IG
+        WD -.->|Avalia Integridade| SM
+        WD -->|Gera Métricas em Tempo Real| AH
+    """
+
+    import streamlit.components.v1 as _components
+    mermaid_html = f'''
+    <div style="background:#0f172a; border-radius:12px; padding:16px; border:1px solid #334155; margin-top:15px; overflow-x:auto; text-align:center;">
+        <div class="mermaid" style="display:flex; justify-content:center;">
+            {mermaid_code}
+        </div>
+    </div>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({{
+            startOnLoad: true,
+            theme: 'dark',
+            securityLevel: 'loose',
+            themeVariables: {{
+                darkMode: true,
+                background: '#0f172a',
+                primaryColor: '#1e293b',
+                lineColor: '#64748b'
+            }}
+        }});
+    </script>
     '''
-    
-    st.markdown(f"```mermaid\n{mermaid_code}\n```")
+    _components.html(mermaid_html, height=560, scrolling=True)
+
+    with st.expander("Ver código do grafo (Mermaid)"):
+        st.code(mermaid_code.strip(), language="mermaid")
 
 with aba_admin:
     st.markdown('###  Curadoria do Instagram')
