@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-09-14",
+  "data_extenso": "Segunda-feira, 14 de Setembro de 2026",
+  "manchete": "EUA dizem ter colocado arma espacial em órbita, diz jornal",
+  "arquivo_html": "2026-09-14.html"
+ },
+ {
   "data": "2026-09-13",
   "data_extenso": "Domingo, 13 de Setembro de 2026",
   "manchete": "Crise diplomática entre EUA e Brasil trava cooperação contra o crime organizado, diz 'The New York Times'",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 2 de Julho de 2026",
   "manchete": "Alemanha acusa Ucrânia de ordenar sabotagem contra gasodutos Nord Stream",
   "arquivo_html": "2026-07-02.html"
- },
- {
-  "data": "2026-07-01",
-  "data_extenso": "Quarta-feira, 1 de Julho de 2026",
-  "manchete": "Trump adicionou mais de US$ 2 bilhões a seu patrimônio após voltar à Casa Branca",
-  "arquivo_html": "2026-07-01.html"
  }
 ]
