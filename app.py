@@ -113,70 +113,165 @@ st.markdown("""
        A remoção de badges/avatares é feita pelo JS nukeStreamlitChrome
        acima, que cata por seletores específicos. */
 
-    /* ── DESIGN PREMIUM ── */
+    /* ── DESIGN PREMIUM & PALETA EDITORIAL ── */
     .stApp {
-        background-color: #fdfbf7;
-        font-family: 'Lora', serif;
-        color: #2c2c2c;
+        background-color: #faf8f5;
+        font-family: 'Lora', Georgia, serif;
+        color: #1e293b;
+        -webkit-font-smoothing: antialiased;
     }
 
     h1 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Playfair Display', Georgia, serif;
         text-transform: uppercase;
         text-align: center;
-        font-size: 3.5rem !important;
-        letter-spacing: 2px;
+        font-size: 3.2rem !important;
+        letter-spacing: 3px;
         color: #0a5c5a !important;
         border-top: 2px solid #0a5c5a;
         border-bottom: 2px solid #0a5c5a;
-        padding: 15px 0;
-        margin-bottom: 20px;
+        padding: 16px 0 14px;
+        margin-top: 10px;
+        margin-bottom: 22px;
     }
-    h2, h3 { font-family: 'Playfair Display', serif; color: #0a5c5a !important; }
+    h2, h3 { font-family: 'Playfair Display', Georgia, serif; color: #0a5c5a !important; }
 
-    /* ── CARDS DE NOTÍCIA ── */
+    /* ── ABAS STREAMLIT CUSTOMIZADAS (EDITORIAL LUXE) ── */
+    [data-testid="stTabs"] {
+        margin-bottom: 25px;
+        border-bottom: 1px solid #e2ddd3;
+    }
+    [data-testid="stTabs"] [data-baseweb="tab-list"] {
+        gap: 6px;
+        background: transparent;
+    }
+    [data-testid="stTabs"] button[role="tab"] {
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        color: #64748b !important;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 8px 8px 0 0 !important;
+        padding: 9px 18px !important;
+        transition: all 0.2s ease !important;
+    }
+    [data-testid="stTabs"] button[role="tab"]:hover {
+        color: #0a5c5a !important;
+        background: rgba(10, 92, 90, 0.05) !important;
+    }
+    [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
+        color: #0a5c5a !important;
+        font-weight: 700 !important;
+        background: #ffffff !important;
+        border: 1px solid #e2ddd3 !important;
+        border-bottom: 2px solid #ffffff !important;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.03) !important;
+        margin-bottom: -1px !important;
+    }
+
+    /* ── CARDS DE NOTÍCIA EDITORIAL ── */
     .news-card {
         background-color: #ffffff;
-        border: 1px solid #e5e3de;
-        border-radius: 8px;
+        border: 1px solid #e7e3da;
+        border-radius: 12px;
         overflow: hidden;
         margin-bottom: 25px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
     }
-    .news-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(10, 92, 90, 0.15); }
-    .news-img { width: 100%; height: 180px; object-fit: cover; border-bottom: 3px solid #0a5c5a; }
-    .news-content { padding: 20px; }
+    .news-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 28px rgba(10, 92, 90, 0.12);
+        border-color: #cbd5e1;
+    }
+    .news-img {
+        width: 100%;
+        height: 195px;
+        object-fit: cover;
+        border-bottom: 2px solid rgba(10, 92, 90, 0.15);
+        transition: transform 0.4s ease;
+    }
+    .news-card:hover .news-img {
+        transform: scale(1.025);
+    }
+    .news-content {
+        padding: 18px 20px 22px;
+    }
     .news-tag {
-        font-size: 0.70rem; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;
-        background-color: #0a5c5a; color: #ffffff !important; padding: 4px 10px;
-        border-radius: 4px; margin-bottom: 12px; display: inline-block;
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 700;
+        background-color: #0a5c5a;
+        color: #ffffff !important;
+        padding: 3px 9px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        display: inline-block;
     }
     .news-title {
-        font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700;
-        margin-bottom: 12px; display: block; color: #111 !important; text-decoration: none; line-height: 1.35;
+        font-family: 'Playfair Display', Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: block;
+        color: #111827 !important;
+        text-decoration: none;
+        line-height: 1.35;
+        transition: color 0.2s ease;
     }
-    .news-title:hover { color: #0a5c5a !important; }
+    .news-title:hover {
+        color: #0a5c5a !important;
+    }
     .news-source {
-        font-size: 0.78rem; color: #0a5c5a; font-weight: bold; text-transform: uppercase;
-        letter-spacing: 0.5px; border-top: 1px solid #eee; padding-top: 10px; text-decoration: none; display: block;
+        font-size: 0.78rem;
+        color: #0a5c5a;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 12px;
+        text-decoration: none;
+        display: block;
     }
-    .news-source:hover { opacity: 0.75; }
+    .news-source:hover {
+        opacity: 0.75;
+    }
+
+    /* ── CARDS DE MÉTRICAS ── */
+    [data-testid="stMetric"] {
+        background: #ffffff;
+        border: 1px solid #e8e4dc;
+        border-radius: 10px;
+        padding: 12px 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    [data-testid="stMetricLabel"] {
+        font-size: 0.85rem !important;
+        color: #64748b !important;
+        font-weight: 600 !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #0a5c5a !important;
+        font-family: 'Playfair Display', Georgia, serif !important;
+        font-weight: 700 !important;
+    }
 
     /* ── SELECTBOX E BOTÃO PRIMÁRIO ── */
     section[data-testid="stMain"] label[data-testid="stWidgetLabel"] p {
-        color: #0a5c5a !important; font-size: 1rem !important; font-weight: bold; font-family: 'Playfair Display', serif;
+        color: #0a5c5a !important; font-size: 1rem !important; font-weight: bold; font-family: 'Playfair Display', Georgia, serif;
     }
     section[data-testid="stMain"] button[kind="primary"] {
         background: linear-gradient(135deg, #0a5c5a 0%, #084c4a 100%) !important;
         color: #fdfbf7 !important; border: 2px solid #fdfbf7 !important; border-radius: 10px !important;
-        padding: 14px 20px !important; font-family: 'Playfair Display', serif !important; font-size: 1.05rem !important;
-        font-weight: bold !important; letter-spacing: 0.5px !important; box-shadow: 0 4px 14px rgba(10, 92, 90, 0.3) !important;
+        padding: 12px 20px !important; font-family: 'Playfair Display', Georgia, serif !important; font-size: 1.02rem !important;
+        font-weight: bold !important; letter-spacing: 0.5px !important; box-shadow: 0 4px 14px rgba(10, 92, 90, 0.25) !important;
         transition: transform 0.15s ease, box-shadow 0.15s ease !important;
     }
     section[data-testid="stMain"] button[kind="primary"]:hover {
         background: linear-gradient(135deg, #084c4a 0%, #063838 100%) !important;
-        transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10, 92, 90, 0.45) !important;
+        transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10, 92, 90, 0.4) !important;
     }
     section[data-testid="stMain"] button[kind="primary"] p { color: #fdfbf7 !important; font-weight: bold !important; }
 
@@ -186,7 +281,7 @@ st.markdown("""
         border: none !important;
         box-shadow: none !important;
         color: #888 !important;
-        font-family: 'Lora', serif !important;
+        font-family: 'Lora', Georgia, serif !important;
         font-size: 0.78rem !important;
         font-weight: normal !important;
         padding: 4px 8px !important;
@@ -855,9 +950,9 @@ def gerar_podcast_audio_direto():
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs([" Página Inicial", " Ler Edição de Hoje", " All News Finance", " Ouvir no Site", " Arquitetura IA", " Admin Instagram"])
+aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "🔒 Arquitetura IA", "🔒 Admin Instagram"])
 with aba_inicio:
-    # ── EXTRAÇÃO DAS MANCHETES PARA O TICKER 3D ──
+    # ── EXTRAÇÃO DAS MANCHETES E FOTOS PARA O HERO ──
     _ticker_noticias = []
     try:
         import os
@@ -877,33 +972,35 @@ with aba_inicio:
                             _tit = _items[0].get("titulo", "").strip()
                             _lnk = _items[0].get("link", "").strip()
                             _res = _items[0].get("resumo", "").strip()
+                            _img = _items[0].get("imagem", "").strip()
                             if _tit:
                                 _ticker_noticias.append({
                                     "caderno": _cad_nome.upper(),
                                     "titulo": _tit,
                                     "link": _lnk or "#",
-                                    "resumo": _res[:220]
+                                    "resumo": _res[:220],
+                                    "imagem": _img
                                 })
     except Exception:
         pass
 
     if not _ticker_noticias:
         _ticker_noticias = [
-            {"caderno": "MUNDO", "titulo": "Tensões geopolíticas e novas diretrizes comerciais redefinem as relações globais.", "link": "#", "resumo": ""},
-            {"caderno": "ECONOMIA", "titulo": "Mercados globais reagem a novos indicadores de inflação e taxa de juros.", "link": "#", "resumo": ""},
-            {"caderno": "POLÍTICA", "titulo": "Congresso acelera votação de reformas estruturantes para o próximo trimestre.", "link": "#", "resumo": ""},
-            {"caderno": "INTELIGÊNCIA ARTIFICIAL", "titulo": "Nova geração de modelos autônomos impulsiona eficiência no setor produtivo.", "link": "#", "resumo": ""},
+            {"caderno": "MUNDO", "titulo": "Tensões geopolíticas e novas diretrizes comerciais redefinem as relações globais.", "link": "#", "resumo": "", "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?q=80&w=1200&auto=format&fit=crop"},
+            {"caderno": "ECONOMIA", "titulo": "Mercados globais reagem a novos indicadores de inflação e taxa de juros.", "link": "#", "resumo": "", "imagem": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?q=80&w=1200&auto=format&fit=crop"},
+            {"caderno": "POLÍTICA", "titulo": "Congresso acelera votação de reformas estruturantes para o próximo trimestre.", "link": "#", "resumo": "", "imagem": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?q=80&w=1200&auto=format&fit=crop"},
+            {"caderno": "INTELIGÊNCIA ARTIFICIAL", "titulo": "Nova geração de modelos autônomos impulsiona eficiência no setor produtivo.", "link": "#", "resumo": "", "imagem": "https://images.unsplash.com/photo-1677442136019-21780efad99a?q=80&w=1200&auto=format&fit=crop"},
         ]
 
     _ticker_json = json.dumps(_ticker_noticias, ensure_ascii=False)
 
-    # ── HERO EDITORIAL (TEMA CLARO & TICKER 5s COM GLOBO 3D RESPONSIVO) ──
+    # ── HERO EDITORIAL COM FOTO REAL DA NOTÍCIA (SUBSTITUIÇÃO DO GLOBO 3D) ──
     _hero_html = f"""
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
       <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
@@ -913,21 +1010,21 @@ with aba_inicio:
         }}
         .hero-card {{
           background: #ffffff;
-          border: 1px solid #e2ddd3;
+          border: 1px solid #e5e0d8;
           border-left: 5px solid #0a5c5a;
-          border-radius: 12px;
-          padding: 18px 22px;
+          border-radius: 14px;
+          padding: 16px 20px;
           display: flex;
           flex-direction: row;
           align-items: center;
           justify-content: space-between;
-          box-shadow: 0 4px 20px rgba(10, 92, 90, 0.06);
+          gap: 20px;
+          box-shadow: 0 4px 20px rgba(10, 92, 90, 0.07);
           position: relative;
         }}
         .hero-left {{
           flex: 1;
           min-width: 0;
-          padding-right: 20px;
         }}
         .header-line {{
           display: flex;
@@ -1015,7 +1112,7 @@ with aba_inicio:
           font-size: 0.72rem;
           color: #0a5c5a;
           font-weight: 600;
-          margin-top: 3px;
+          margin-top: 4px;
           letter-spacing: 0.2px;
         }}
         .progress-track {{
@@ -1038,38 +1135,71 @@ with aba_inicio:
           color: #64748b;
           letter-spacing: 0.2px;
         }}
+
+        /* ── FOTO DA NOTÍCIA (NOVO LAYOUT) ── */
         .hero-right {{
           flex-shrink: 0;
+          width: 250px;
+          height: 155px;
+          position: relative;
+          border-radius: 10px;
+          overflow: hidden;
+          background: #f1f5f9;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+          border: 1px solid #e2e8f0;
         }}
-        #globe-viz {{
-          width: 180px;
-          height: 180px;
+        .hero-img-link {{
+          display: block;
+          width: 100%;
+          height: 100%;
+          position: relative;
+          cursor: pointer;
+          text-decoration: none;
         }}
+        .hero-news-img {{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 1;
+          transform: scale(1);
+          transition: opacity 0.4s ease, transform 0.4s ease;
+        }}
+        .hero-img-link:hover .hero-news-img {{
+          transform: scale(1.04);
+        }}
+        .hero-news-img.img-fade-out {{
+          opacity: 0;
+          transform: scale(0.97);
+        }}
+        .img-badge {{
+          position: absolute;
+          bottom: 8px;
+          right: 8px;
+          background: rgba(15, 23, 42, 0.8);
+          color: #ffffff;
+          font-size: 0.62rem;
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          padding: 3px 7px;
+          border-radius: 4px;
+          backdrop-filter: blur(4px);
+          text-transform: uppercase;
+        }}
+
         @media (max-width: 680px) {{
           .hero-card {{
-            flex-direction: column;
+            flex-direction: column-reverse;
             padding: 14px 16px;
             align-items: stretch;
+            gap: 12px;
           }}
           .hero-right {{
-            position: absolute;
-            top: 14px;
-            right: 14px;
-          }}
-          #globe-viz {{
-            width: 54px !important;
-            height: 54px !important;
-          }}
-          .hero-left {{
-            padding-right: 56px;
             width: 100%;
+            height: 150px;
           }}
           .headline-text {{
             font-size: 1.05rem;
             line-height: 1.35;
-          }}
-          .footer-note {{
-            font-size: 0.68rem;
           }}
         }}
       </style>
@@ -1095,19 +1225,21 @@ with aba_inicio:
           </div>
 
           <div class="footer-note">
-            <span>Giro automático a cada 5 segundos · Curadoria e auditoria em tempo real por IA</span>
+            <span>Giro diário automático a cada 5 segundos · Curadoria All News Journal</span>
           </div>
         </div>
 
         <div class="hero-right">
-          <div id="globe-viz"></div>
+          <a id="ticker-img-link" href="#" target="_blank" class="hero-img-link" title="Ver foto e notícia original">
+            <img id="ticker-image" src="" alt="Foto da notícia" class="hero-news-img" />
+            <span class="img-badge" id="ticker-img-badge">FOTO DA NOTÍCIA</span>
+          </a>
         </div>
       </div>
 
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
       <script>
-        // ── 1. DADOS DO TICKER DE NOTÍCIAS ──
         const newsItems = {_ticker_json};
+        const defaultFallback = "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=1200&auto=format&fit=crop";
         let currentIndex = 0;
         const intervalMs = 5000;
         let progressStart = Date.now();
@@ -1115,6 +1247,8 @@ with aba_inicio:
         const elCaderno = document.getElementById('ticker-caderno');
         const elHeadline = document.getElementById('ticker-headline');
         const elLink = document.getElementById('ticker-link');
+        const elImgLink = document.getElementById('ticker-img-link');
+        const elImage = document.getElementById('ticker-image');
         const elCounter = document.getElementById('ticker-counter');
         const elProgress = document.getElementById('progress-bar');
 
@@ -1123,12 +1257,20 @@ with aba_inicio:
           const item = newsItems[idx];
           
           elHeadline.classList.add('fade-out');
+          elImage.classList.add('img-fade-out');
+
           setTimeout(() => {{
             elCaderno.textContent = item.caderno;
             elHeadline.textContent = item.titulo;
-            elLink.href = (item.link && item.link !== '#' && item.link.startsWith('http')) ? item.link : '#';
+            const validLink = (item.link && item.link !== '#' && item.link.startsWith('http')) ? item.link : '#';
+            elLink.href = validLink;
+            elImgLink.href = validLink;
+            
+            elImage.src = (item.imagem && item.imagem.startsWith('http')) ? item.imagem : defaultFallback;
             elCounter.textContent = (idx + 1) + ' / ' + newsItems.length;
+
             elHeadline.classList.remove('fade-out');
+            elImage.classList.remove('img-fade-out');
           }}, 300);
         }}
 
@@ -1147,83 +1289,12 @@ with aba_inicio:
             updateNews(currentIndex);
           }}
         }}, 60);
-
-        // ── 2. GLOBO 3D EM THREE.JS (TEMA CLARO & TELEJORNAL) ──
-        const container = document.getElementById('globe-viz');
-        const isMobile = window.innerWidth <= 680;
-        const width = isMobile ? 54 : 180;
-        const height = isMobile ? 54 : 180;
-
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({{ antialias: true, alpha: true }});
-        renderer.setSize(width, height);
-        renderer.setPixelRatio(window.devicePixelRatio || 1);
-        container.appendChild(renderer.domElement);
-
-        // Globo Wireframe Esmeralda
-        const globeGeo = new THREE.SphereGeometry(2, 22, 22);
-        const globeMat = new THREE.MeshBasicMaterial({{
-          color: 0x0a5c5a,
-          wireframe: true,
-          transparent: true,
-          opacity: 0.32
-        }});
-        const globe = new THREE.Mesh(globeGeo, globeMat);
-        scene.add(globe);
-
-        // Nódulos de dados luminosos
-        const pointsGeo = new THREE.SphereGeometry(2.01, 28, 28);
-        const pointsMat = new THREE.PointsMaterial({{
-          color: 0x0d9488,
-          size: 0.045,
-          transparent: true,
-          opacity: 0.85
-        }});
-        const points = new THREE.Points(pointsGeo, pointsMat);
-        scene.add(points);
-
-        // Anéis orbitais de telejornal
-        const ringGeo = new THREE.RingGeometry(2.45, 2.48, 64);
-        const ringMat = new THREE.MeshBasicMaterial({{
-          color: 0x0a5c5a,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.45
-        }});
-        const ring = new THREE.Mesh(ringGeo, ringMat);
-        ring.rotation.x = Math.PI / 2.3;
-        scene.add(ring);
-
-        const ringGeo2 = new THREE.RingGeometry(2.8, 2.82, 64);
-        const ringMat2 = new THREE.MeshBasicMaterial({{
-          color: 0x14b8a6,
-          side: THREE.DoubleSide,
-          transparent: true,
-          opacity: 0.4
-        }});
-        const ring2 = new THREE.Mesh(ringGeo2, ringMat2);
-        ring2.rotation.x = Math.PI / 3;
-        ring2.rotation.y = Math.PI / 5;
-        scene.add(ring2);
-
-        camera.position.z = 6.2;
-
-        function animate() {{
-          requestAnimationFrame(animate);
-          globe.rotation.y += 0.0035;
-          points.rotation.y += 0.0035;
-          ring.rotation.z += 0.0022;
-          ring2.rotation.z -= 0.0016;
-          renderer.render(scene, camera);
-        }}
-        animate();
       </script>
     </body>
     </html>
     """
     import streamlit.components.v1 as _components
-    _components.html(_hero_html, height=240)
+    _components.html(_hero_html, height=230)
 
     st.markdown("""
     <div style='max-width: 720px; margin: 15px auto 25px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
@@ -1569,251 +1640,284 @@ with aba_edicao:
 
 
 with aba_ia:
-    st.markdown("<h2 style='color:#0a5c5a; font-family: Playfair Display, serif;'>Centro de Inteligência & Aprendizado dos Agentes</h2>", unsafe_allow_html=True)
-    st.markdown("Painel em tempo real de auto-aperfeiçoamento, métricas de auditoria editorial e memória cumulativa da IA.")
+    st.markdown("<h2 style='color:#0a5c5a; font-family: Playfair Display, serif;'>Centro de Inteligência & Arquitetura</h2>", unsafe_allow_html=True)
 
-    # Carregar memória do Supervisor
-    import os
-    import json
-    
-    _memoria_path = os.path.join("logs", "supervisor_memory.json")
-    _memoria = {"erros": [], "imagens_recentes": []}
-    if os.path.exists(_memoria_path):
-        try:
-            with open(_memoria_path, "r", encoding="utf-8") as _mf:
-                _memoria = json.load(_mf)
-        except Exception:
-            pass
+    if "autenticado_arquitetura" not in st.session_state:
+        st.session_state.autenticado_arquitetura = False
 
-    _erros = _memoria.get("erros", [])
-    _imgs = _memoria.get("imagens_recentes", [])
+    if not st.session_state.autenticado_arquitetura:
+        st.markdown("<p style='color:#64748b; font-size: 1.02rem;'>Esta seção contém a arquitetura dos agentes autônomos, logs de auditoria e telemetria de saúde do sistema. É necessário autenticar-se para acessar.</p>", unsafe_allow_html=True)
 
-    # ── CARDS DE MÉTRICAS ──
-    m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-    with m_col1:
-        st.metric(label="Lições Aprendidas", value=len(_erros), delta=f"+{len(_erros)} no histórico")
-    with m_col2:
-        st.metric(label="Fotos no Histórico Anti-Repetição", value=len(_imgs))
-    with m_col3:
-        temas_erros = set(e.get("tema", "") for e in _erros if e.get("tema"))
-        st.metric(label="Cadernos Auditados", value=len(temas_erros) if temas_erros else 8)
-    with m_col4:
-        st.metric(label="Status do Supervisor", value="Ativo & Aprendendo")
+        c_lock1, c_lock2 = st.columns([1.5, 2.5])
+        with c_lock1:
+            with st.form("form_login_arquitetura"):
+                st.markdown("#### 🔒 Acesso Restrito")
+                pwd_input = st.text_input("Senha de acesso:", type="password", key="senha_arq_input")
+                submit_btn = st.form_submit_button("Desbloquear Painel", type="primary")
+                if submit_btn:
+                    if pwd_input == "3344":
+                        st.session_state.autenticado_arquitetura = True
+                        st.rerun()
+                    else:
+                        st.error("Senha incorreta. Acesso negado.")
+        with c_lock2:
+            st.info("""
+            **Sobre esta área confidencial:**
+            - Monitoramento de saúde e telemetria dos robôs em nuvem.
+            - Memória cognitiva contínua do Agente Supervisor.
+            - Grafo visual dinâmico com rotas de autocura do Watchdog.
+            """)
+    else:
+        c_head, c_btn = st.columns([4, 1])
+        with c_head:
+            st.markdown("<p style='color:#64748b;'>Painel em tempo real de auto-aperfeiçoamento, métricas de auditoria editorial e memória cumulativa da IA.</p>", unsafe_allow_html=True)
+        with c_btn:
+            if st.button("🔒 Bloquear Painel", key="btn_lock_arq"):
+                st.session_state.autenticado_arquitetura = False
+                st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
+        # Carregar memória do Supervisor
+        import os
+        import json
 
-    # ── DISTRIBUIÇÃO E HISTÓRICO DE LIÇÕES ──
-    if _erros:
-        temas_count = {}
-        for e in _erros:
-            t = e.get("tema", "Geral")
-            temas_count[t] = temas_count.get(t, 0) + 1
-        
-        st.markdown("#### Distribuição de Intervenções por Caderno")
-        for tema_nome, qtd in sorted(temas_count.items(), key=lambda x: x[1], reverse=True):
-            pct = min(100, int((qtd / len(_erros)) * 100 * 2.2))
-            st.markdown(f"""
-            <div style='margin-bottom: 9px;'>
-                <div style='display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 3px;'>
-                    <span style='font-weight: 600; color: #1e293b;'>{tema_nome}</span>
-                    <span style='color: #0a5c5a; font-weight: bold;'>{qtd} intervenções</span>
-                </div>
-                <div style='background: #e2e8f0; border-radius: 6px; height: 8px; width: 100%; overflow: hidden;'>
-                    <div style='background: linear-gradient(90deg, #0a5c5a, #10b981); height: 100%; width: {pct}%; border-radius: 6px;'></div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+        _memoria_path = os.path.join("logs", "supervisor_memory.json")
+        _memoria = {"erros": [], "imagens_recentes": []}
+        if os.path.exists(_memoria_path):
+            try:
+                with open(_memoria_path, "r", encoding="utf-8") as _mf:
+                    _memoria = json.load(_mf)
+            except Exception:
+                pass
+
+        _erros = _memoria.get("erros", [])
+        _imgs = _memoria.get("imagens_recentes", [])
+
+        # ── CARDS DE MÉTRICAS ──
+        m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+        with m_col1:
+            st.metric(label="Lições Aprendidas", value=len(_erros), delta=f"+{len(_erros)} no histórico")
+        with m_col2:
+            st.metric(label="Fotos no Histórico Anti-Repetição", value=len(_imgs))
+        with m_col3:
+            temas_erros = set(e.get("tema", "") for e in _erros if e.get("tema"))
+            st.metric(label="Cadernos Auditados", value=len(temas_erros) if temas_erros else 8)
+        with m_col4:
+            st.metric(label="Status do Supervisor", value="Ativo & Aprendendo")
 
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown("#### Histórico Cronológico de Lições do Supervisor")
-        st.markdown("<p style='font-size: 0.9rem; color: #64748b;'>Todas as falhas identificadas pelo Supervisor são catalogadas aqui para que os redatores de IA nunca mais repitam os mesmos padrões:</p>", unsafe_allow_html=True)
 
-        filtro_tema = st.selectbox("Filtrar por caderno:", ["Todos"] + sorted(list(temas_count.keys())))
-        erros_filtrados = [e for e in reversed(_erros) if filtro_tema == "Todos" or e.get("tema") == filtro_tema]
+        # ── DISTRIBUIÇÃO E HISTÓRICO DE LIÇÕES ──
+        if _erros:
+            temas_count = {}
+            for e in _erros:
+                t = e.get("tema", "Geral")
+                temas_count[t] = temas_count.get(t, 0) + 1
 
-        for item in erros_filtrados[:30]:
-            data_raw = item.get("data", "")[:19].replace("T", " ")
-            motivo = item.get("motivo_falha", "Ajuste editorial")
-            correcao = item.get("correcao_aplicada", "")
-            tema_item = item.get("tema", "Geral")
+            st.markdown("#### Distribuição de Intervenções por Caderno")
+            for tema_nome, qtd in sorted(temas_count.items(), key=lambda x: x[1], reverse=True):
+                pct = min(100, int((qtd / len(_erros)) * 100 * 2.2))
+                st.markdown(f"""
+                <div style='margin-bottom: 9px;'>
+                    <div style='display: flex; justify-content: space-between; font-size: 0.88rem; margin-bottom: 3px;'>
+                        <span style='font-weight: 600; color: #1e293b;'>{tema_nome}</span>
+                        <span style='color: #0a5c5a; font-weight: bold;'>{qtd} intervenções</span>
+                    </div>
+                    <div style='background: #e2e8f0; border-radius: 6px; height: 8px; width: 100%; overflow: hidden;'>
+                        <div style='background: linear-gradient(90deg, #0a5c5a, #10b981); height: 100%; width: {pct}%; border-radius: 6px;'></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
-            with st.expander(f"[{tema_item}] {data_raw} — {motivo[:75]}..."):
-                st.markdown(f"**Caderno:** `{tema_item}` &nbsp;|&nbsp; **Data:** `{data_raw}`")
-                st.markdown(f"**Diagnóstico do Agente Supervisor:**\n> *\"{motivo}\"*")
-                if correcao:
-                    st.markdown(f"**Trecho da Correção Aplicada:**\n> `{correcao}`")
-                if item.get("texto_original"):
-                    with st.expander("Ver texto original antes da auditoria"):
-                        st.caption(item.get("texto_original"))
-    else:
-        st.info("Nenhum erro registrado até o momento. A memória do supervisor está limpa.")
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("#### Histórico Cronológico de Lições do Supervisor")
+            st.markdown("<p style='font-size: 0.9rem; color: #64748b;'>Todas as falhas identificadas pelo Supervisor são catalogadas aqui para que os redatores de IA nunca mais repitam os mesmos padrões:</p>", unsafe_allow_html=True)
 
-    st.markdown("<hr style='margin: 35px 0 25px;'>", unsafe_allow_html=True)
-    st.markdown("### 🛡️ Monitoramento & Grafo de Arquitetura dos Agentes (Live)")
-    st.markdown("Acompanhe o estado de saúde, telemetria e o fluxo de dados em tempo real entre todos os agentes autônomos do ecossistema.")
+            filtro_tema = st.selectbox("Filtrar por caderno:", ["Todos"] + sorted(list(temas_count.keys())))
+            erros_filtrados = [e for e in reversed(_erros) if filtro_tema == "Todos" or e.get("tema") == filtro_tema]
 
-    # Carregar dados de telemetria dos agentes gerados pelo Watchdog
-    health_file = os.path.join("logs", "agent_health.json")
-    health_data = {}
-    if os.path.exists(health_file):
-        try:
-            with open(health_file, "r", encoding="utf-8") as hf:
-                health_data = json.load(hf)
-        except Exception:
-            health_data = {}
+            for item in erros_filtrados[:30]:
+                data_raw = item.get("data", "")[:19].replace("T", " ")
+                motivo = item.get("motivo_falha", "Ajuste editorial")
+                correcao = item.get("correcao_aplicada", "")
+                tema_item = item.get("tema", "Geral")
 
-    agentes_info = health_data.get("agentes", {})
-    j_info = agentes_info.get("journal", {})
-    f_info = agentes_info.get("finance", {})
-    ig_info = agentes_info.get("instagram", {})
-    sup_info = agentes_info.get("supervisor", {})
-    wd_info = agentes_info.get("watchdog", {})
+                with st.expander(f"[{tema_item}] {data_raw} — {motivo[:75]}..."):
+                    st.markdown(f"**Caderno:** `{tema_item}` &nbsp;|&nbsp; **Data:** `{data_raw}`")
+                    st.markdown(f"**Diagnóstico do Agente Supervisor:**\n> *\"{motivo}\"*")
+                    if correcao:
+                        st.markdown(f"**Trecho da Correção Aplicada:**\n> `{correcao}`")
+                    if item.get("texto_original"):
+                        with st.expander("Ver texto original antes da auditoria"):
+                            st.caption(item.get("texto_original"))
+        else:
+            st.info("Nenhum erro registrado até o momento. A memória do supervisor está limpa.")
 
-    status_badge = {
-        "ONLINE": "🟢 Online",
-        "ACTIVE": "🟢 Ativo",
-        "PENDING": "🟡 Agendado",
-        "RECOVERING": "🟠 Auto-Recuperação",
-        "WARNING": "⚠️ Alerta",
-        "OFFLINE": "🔴 Offline"
-    }
+        st.markdown("<hr style='margin: 35px 0 25px;'>", unsafe_allow_html=True)
+        st.markdown("### 🛡️ Monitoramento & Grafo de Arquitetura dos Agentes (Live)")
+        st.markdown("Acompanhe o estado de saúde, telemetria e o fluxo de dados em tempo real entre todos os agentes autônomos do ecossistema.")
 
-    # Linha de métricas de telemetria dos agentes
-    c_w1, c_w2, c_w3, c_w4, c_w5 = st.columns(5)
-    with c_w1:
-        st.metric(
-            label="🗞️ All News Journal",
-            value=status_badge.get(j_info.get("status", "ONLINE"), "🟢 Online"),
-            help=j_info.get("detalhe", "Horário previsto: 05:20 BRT")
-        )
-    with c_w2:
-        st.metric(
-            label="📈 All News Finance",
-            value=status_badge.get(f_info.get("status", "ONLINE"), "🟢 Online"),
-            help=f_info.get("detalhe", "Horário previsto: 05:25 BRT")
-        )
-    with c_w3:
-        st.metric(
-            label="📸 Instagram Poster",
-            value=status_badge.get(ig_info.get("status", "PENDING"), "🟡 Agendado"),
-            help=ig_info.get("detalhe", "Horário previsto: 09:15 BRT")
-        )
-    with c_w4:
-        st.metric(
-            label="🧠 AI Supervisor",
-            value=status_badge.get(sup_info.get("status", "ONLINE"), "🟢 Online"),
-            help=f"{sup_info.get('licoes_aprendidas', len(memoria))} lições acumuladas"
-        )
-    with c_w5:
-        st.metric(
-            label="🛡️ Watchdog Sentinela",
-            value=status_badge.get(wd_info.get("status", "ACTIVE"), "🟢 Ativo"),
-            help=wd_info.get("detalhe", "Monitoramento em tempo real operando")
-        )
+        # Carregar dados de telemetria dos agentes gerados pelo Watchdog
+        health_file = os.path.join("logs", "agent_health.json")
+        health_data = {}
+        if os.path.exists(health_file):
+            try:
+                with open(health_file, "r", encoding="utf-8") as hf:
+                    health_data = json.load(hf)
+            except Exception:
+                health_data = {}
 
-    # Avisos de incidentes e autocura se houver
-    if health_data.get("auto_recuperacoes"):
-        with st.expander("⚡ Ações Automáticas de Auto-Recuperação Recentes"):
-            for rec in health_data.get("auto_recuperacoes", []):
-                st.info(f"🔄 {rec}")
-            for inc in health_data.get("incidentes", []):
-                st.caption(f"• Detalhe: {inc}")
+        agentes_info = health_data.get("agentes", {})
+        j_info = agentes_info.get("journal", {})
+        f_info = agentes_info.get("finance", {})
+        ig_info = agentes_info.get("instagram", {})
+        sup_info = agentes_info.get("supervisor", {})
+        wd_info = agentes_info.get("watchdog", {})
 
-    # Montagem do Grafo Mermaid Dinâmico
-    status_journal = j_info.get("status", "ONLINE")
-    status_finance = f_info.get("status", "ONLINE")
-    status_insta = ig_info.get("status", "PENDING")
-    status_sup = sup_info.get("status", "ONLINE")
-    status_watchdog = wd_info.get("status", "ACTIVE")
+        status_badge = {
+            "ONLINE": "🟢 Online",
+            "ACTIVE": "🟢 Ativo",
+            "PENDING": "🟡 Agendado",
+            "RECOVERING": "🟠 Auto-Recuperação",
+            "WARNING": "⚠️ Alerta",
+            "OFFLINE": "🔴 Offline"
+        }
 
-    def get_node_class(st_code):
-        if st_code in ["ONLINE", "ACTIVE"]:
-            return "node_online"
-        elif st_code in ["RECOVERING", "WARNING", "PENDING"]:
-            return "node_warn"
-        return "node_off"
+        # Linha de métricas de telemetria dos agentes
+        c_w1, c_w2, c_w3, c_w4, c_w5 = st.columns(5)
+        with c_w1:
+            st.metric(
+                label="🗞️ All News Journal",
+                value=status_badge.get(j_info.get("status", "ONLINE"), "🟢 Online"),
+                help=j_info.get("detalhe", "Horário previsto: 05:20 BRT")
+            )
+        with c_w2:
+            st.metric(
+                label="📈 All News Finance",
+                value=status_badge.get(f_info.get("status", "ONLINE"), "🟢 Online"),
+                help=f_info.get("detalhe", "Horário previsto: 05:25 BRT")
+            )
+        with c_w3:
+            st.metric(
+                label="📸 Instagram Poster",
+                value=status_badge.get(ig_info.get("status", "PENDING"), "🟡 Agendado"),
+                help=ig_info.get("detalhe", "Horário previsto: 09:15 BRT")
+            )
+        with c_w4:
+            st.metric(
+                label="🧠 AI Supervisor",
+                value=status_badge.get(sup_info.get("status", "ONLINE"), "🟢 Online"),
+                help=f"{sup_info.get('licoes_aprendidas', len(memoria))} lições acumuladas"
+            )
+        with c_w5:
+            st.metric(
+                label="🛡️ Watchdog Sentinela",
+                value=status_badge.get(wd_info.get("status", "ACTIVE"), "🟢 Ativo"),
+                help=wd_info.get("detalhe", "Monitoramento em tempo real operando")
+            )
 
-    mermaid_code = f"""
-    graph TD
-        %% Estilos de nós dinâmicos
-        classDef node_online fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff
-        classDef node_warn fill:#78350f,stroke:#f59e0b,stroke-width:2px,color:#fff
-        classDef node_off fill:#7f1d1d,stroke:#ef4444,stroke-width:2px,color:#fff
-        classDef node_storage fill:#1e293b,stroke:#64748b,stroke-width:2px,color:#fff
-        classDef node_collector fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
-        classDef node_watchdog fill:#083344,stroke:#06b6d4,stroke-width:2px,color:#fff
+        # Avisos de incidentes e autocura se houver
+        if health_data.get("auto_recuperacoes"):
+            with st.expander("⚡ Ações Automáticas de Auto-Recuperação Recentes"):
+                for rec in health_data.get("auto_recuperacoes", []):
+                    st.info(f"🔄 {rec}")
+                for inc in health_data.get("incidentes", []):
+                    st.caption(f"• Detalhe: {inc}")
 
-        subgraph Monitoramento_Sentinela [🛡️ Sentinela & Autocura]
-            WD["🛡️ agent_watchdog.py<br/><b>Watchdog Sentinela</b><br/><small>{status_badge.get(status_watchdog, '🟢 Ativo')}</small>"]:::{get_node_class(status_watchdog)}
-            AH[("📋 logs/agent_health.json<br/>Telemetria & Diagnósticos")]:::node_storage
-        end
+        # Montagem do Grafo Mermaid Dinâmico
+        status_journal = j_info.get("status", "ONLINE")
+        status_finance = f_info.get("status", "ONLINE")
+        status_insta = ig_info.get("status", "PENDING")
+        status_sup = sup_info.get("status", "ONLINE")
+        status_watchdog = wd_info.get("status", "ACTIVE")
 
-        subgraph GitHub_Actions [☁️ Servidores GitHub Actions - Cron]
-            M["🗞️ main.py<br/><b>All News Journal</b><br/><small>{status_badge.get(status_journal, '🟢 Online')}</small>"]:::{get_node_class(status_journal)}
-            FM["📈 finance_main.py<br/><b>All News Finance</b><br/><small>{status_badge.get(status_finance, '🟢 Online')}</small>"]:::{get_node_class(status_finance)}
-            IG["📸 instagram_poster.py<br/><b>Instagram Bot (Knockout)</b><br/><small>{status_badge.get(status_insta, '🟡 Agendado')}</small>"]:::{get_node_class(status_insta)}
-        end
+        def get_node_class(st_code):
+            if st_code in ["ONLINE", "ACTIVE"]:
+                return "node_online"
+            elif st_code in ["RECOVERING", "WARNING", "PENDING"]:
+                return "node_warn"
+            return "node_off"
 
-        subgraph Motores_Coleta [📡 Motores de Coleta e IA]
-            F["📡 feeds.py<br/>RSS Diário & Gemini"]:::node_collector
-            FF["📊 finance_feeds.py<br/>B3, Câmbio & Yahoo"]:::node_collector
-        end
+        mermaid_code = f"""
+        graph TD
+            %% Estilos de nós dinâmicos
+            classDef node_online fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff
+            classDef node_warn fill:#78350f,stroke:#f59e0b,stroke-width:2px,color:#fff
+            classDef node_off fill:#7f1d1d,stroke:#ef4444,stroke-width:2px,color:#fff
+            classDef node_storage fill:#1e293b,stroke:#64748b,stroke-width:2px,color:#fff
+            classDef node_collector fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
+            classDef node_watchdog fill:#083344,stroke:#06b6d4,stroke-width:2px,color:#fff
 
-        subgraph Auditoria_Cognitiva [🧠 Aprendizado & Memória]
-            AS["🧠 ai_supervisor.py<br/><b>Supervisor Cognitivo</b><br/><small>{status_badge.get(status_sup, '🟢 Online')}</small>"]:::{get_node_class(status_sup)}
-            SM[("💾 logs/supervisor_memory.json<br/>Memória Contínua (50+ Lições)")]:::node_storage
-        end
+            subgraph Monitoramento_Sentinela [🛡️ Sentinela & Autocura]
+                WD["🛡️ agent_watchdog.py<br/><b>Watchdog Sentinela</b><br/><small>{status_badge.get(status_watchdog, '🟢 Ativo')}</small>"]:::{get_node_class(status_watchdog)}
+                AH[("📋 logs/agent_health.json<br/>Telemetria & Diagnósticos")]:::node_storage
+            end
 
-        subgraph Distribuicao [✉️ Entrega e Assinantes]
-            DB[("👥 Google Sheets<br/>Base de Assinantes")]:::node_storage
-            EB["✉️ email_builder.py<br/>Disparo Matinal"]:::node_collector
-            FEB["✉️ finance_email_builder.py<br/>Disparo Financeiro"]:::node_collector
-        end
+            subgraph GitHub_Actions [☁️ Servidores GitHub Actions - Cron]
+                M["🗞️ main.py<br/><b>All News Journal</b><br/><small>{status_badge.get(status_journal, '🟢 Online')}</small>"]:::{get_node_class(status_journal)}
+                FM["📈 finance_main.py<br/><b>All News Finance</b><br/><small>{status_badge.get(status_finance, '🟢 Online')}</small>"]:::{get_node_class(status_finance)}
+                IG["📸 instagram_poster.py<br/><b>Instagram Bot (Knockout)</b><br/><small>{status_badge.get(status_insta, '🟡 Agendado')}</small>"]:::{get_node_class(status_insta)}
+            end
 
-        %% Conexões Operacionais
-        F --> M
-        FF --> FM
-        M <-->|Auditoria & Correção| AS
-        FM <-->|Auditoria & Correção| AS
-        AS <-->|Grava & Consulta Lições| SM
-        IG <-->|Evita Imagens Repetidas| SM
-        M --> DB --> EB
-        FM --> DB --> FEB
+            subgraph Motores_Coleta [📡 Motores de Coleta e IA]
+                F["📡 feeds.py<br/>RSS Diário & Gemini"]:::node_collector
+                FF["📊 finance_feeds.py<br/>B3, Câmbio & Yahoo"]:::node_collector
+            end
 
-        %% Conexões do Watchdog Sentinela
-        WD -.->|Verifica Deadlines & Autocura| M
-        WD -.->|Verifica Deadlines & Autocura| FM
-        WD -.->|Audita Fila de Postagens| IG
-        WD -.->|Avalia Integridade| SM
-        WD -->|Gera Métricas em Tempo Real| AH
-    """
+            subgraph Auditoria_Cognitiva [🧠 Aprendizado & Memória]
+                AS["🧠 ai_supervisor.py<br/><b>Supervisor Cognitivo</b><br/><small>{status_badge.get(status_sup, '🟢 Online')}</small>"]:::{get_node_class(status_sup)}
+                SM[("💾 logs/supervisor_memory.json<br/>Memória Contínua (50+ Lições)")]:::node_storage
+            end
 
-    import streamlit.components.v1 as _components
-    mermaid_html = f'''
-    <div style="background:#0f172a; border-radius:12px; padding:16px; border:1px solid #334155; margin-top:15px; overflow-x:auto; text-align:center;">
-        <div class="mermaid" style="display:flex; justify-content:center;">
-            {mermaid_code}
+            subgraph Distribuicao [✉️ Entrega e Assinantes]
+                DB[("👥 Google Sheets<br/>Base de Assinantes")]:::node_storage
+                EB["✉️ email_builder.py<br/>Disparo Matinal"]:::node_collector
+                FEB["✉️ finance_email_builder.py<br/>Disparo Financeiro"]:::node_collector
+            end
+
+            %% Conexões Operacionais
+            F --> M
+            FF --> FM
+            M <-->|Auditoria & Correção| AS
+            FM <-->|Auditoria & Correção| AS
+            AS <-->|Grava & Consulta Lições| SM
+            IG <-->|Evita Imagens Repetidas| SM
+            M --> DB --> EB
+            FM --> DB --> FEB
+
+            %% Conexões do Watchdog Sentinela
+            WD -.->|Verifica Deadlines & Autocura| M
+            WD -.->|Verifica Deadlines & Autocura| FM
+            WD -.->|Audita Fila de Postagens| IG
+            WD -.->|Avalia Integridade| SM
+            WD -->|Gera Métricas em Tempo Real| AH
+        """
+
+        import streamlit.components.v1 as _components
+        mermaid_html = f'''
+        <div style="background:#0f172a; border-radius:12px; padding:16px; border:1px solid #334155; margin-top:15px; overflow-x:auto; text-align:center;">
+            <div class="mermaid" style="display:flex; justify-content:center;">
+                {mermaid_code}
+            </div>
         </div>
-    </div>
-    <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({{
-            startOnLoad: true,
-            theme: 'dark',
-            securityLevel: 'loose',
-            themeVariables: {{
-                darkMode: true,
-                background: '#0f172a',
-                primaryColor: '#1e293b',
-                lineColor: '#64748b'
-            }}
-        }});
-    </script>
-    '''
-    _components.html(mermaid_html, height=560, scrolling=True)
+        <script type="module">
+            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            mermaid.initialize({{
+                startOnLoad: true,
+                theme: 'dark',
+                securityLevel: 'loose',
+                themeVariables: {{
+                    darkMode: true,
+                    background: '#0f172a',
+                    primaryColor: '#1e293b',
+                    lineColor: '#64748b'
+                }}
+            }});
+        </script>
+        '''
+        _components.html(mermaid_html, height=560, scrolling=True)
 
-    with st.expander("Ver código do grafo (Mermaid)"):
-        st.code(mermaid_code.strip(), language="mermaid")
+        with st.expander("Ver código do grafo (Mermaid)"):
+            st.code(mermaid_code.strip(), language="mermaid")
 
 with aba_admin:
     st.markdown('###  Curadoria do Instagram')
