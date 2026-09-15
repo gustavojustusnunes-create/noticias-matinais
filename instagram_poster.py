@@ -18,6 +18,17 @@ from pathlib import Path
 from datetime import datetime
 from io import BytesIO
 
+if sys.stdout and hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+if sys.stderr and hasattr(sys.stderr, "reconfigure"):
+    try:
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+    except Exception:
+        pass
+
 # =============================================================================
 # --- VARIÁVEIS DE AMBIENTE ---
 # =============================================================================
@@ -65,12 +76,17 @@ except ImportError:
 # =============================================================================
 # --- IDENTIDADE VISUAL & TEMAS ---
 # =============================================================================
-FUNDO_ESCURO = (13, 13, 13)
-CREME        = (253, 251, 247)
-TEXTO_CORPO  = (226, 224, 218)
-TEXTO_MUTED  = (160, 160, 160)
-OURO         = (201, 168, 76)
-ESMERALDA    = (10, 92, 90)
+PETROLEO_DEEP  = (12, 27, 26)       # #0C1B1A (Slide 1 vinheta petróleo profundo)
+GRAFITE_ESCURO = (11, 15, 20)       # #0B0F14 (Slide 2..N fundo sólido editorial brutalista)
+BRANCO_PURO    = (255, 255, 255)    # #FFFFFF
+CINZA_CORPO    = (226, 232, 240)    # #E2E8F0 (Slide 2..N bloco de leitura Inter)
+OURO           = (201, 168, 76)     # #C9A84C (Linhas douradas e acentos)
+OURO_SUAVE     = (209, 186, 115)    # #D1BA73 (Moldura hairline, tags e marcas)
+TEXTO_MUTED    = (148, 163, 184)    # #94A3B8 (Topos e indicadores)
+FUNDO_ESCURO   = GRAFITE_ESCURO
+CREME          = (253, 251, 247)
+TEXTO_CORPO    = CINZA_CORPO
+ESMERALDA      = (10, 92, 90)
 
 ICONES_TEMA = {
     "Mundo": "🌎", "Economia": "📈", "Politica": "🏛️", "IA": "🤖",
@@ -158,6 +174,26 @@ def _playfair(tamanho, weight=700):
 
 def _lora(tamanho, weight=400):
     return _font("Lora.ttf", tamanho, weight=weight)
+
+def _newsreader(tamanho, weight=600):
+    return _font("Newsreader.ttf", tamanho, weight=weight)
+
+def _inter(tamanho, weight=400):
+    return _font("Inter.ttf", tamanho, weight=weight)
+
+def _texto_espacado(draw, xy, texto, font, fill, tracking=0):
+    """Renderiza texto com espaçamento de caracteres (tracking) refinado."""
+    x, y = xy
+    for char in texto:
+        draw.text((x, y), char, font=font, fill=fill)
+        x += draw.textlength(char, font=font) + tracking
+
+def _largura_espacado(draw, texto, font, tracking=0):
+    """Calcula a largura total de um texto renderizado com tracking."""
+    if not texto:
+        return 0
+    w = sum(draw.textlength(c, font=font) for c in texto)
+    return w + (len(texto) - 1) * tracking
 
 def _quebrar_texto(draw, texto, font, max_largura):
     """Quebra texto em linhas respeitando a largura máxima disponível."""
@@ -305,90 +341,285 @@ def extrair_keywords(titulo, resumo, tema):
     return candidatas[:4]
 
 # =============================================================================
-# --- MOTOR DO NOVO DESIGN (SLIDE KNOCKOUT) ---
+# --- MOTOR DO NOVO DESIGN DE CARROSSEL (CAPA CLÁSSICA VS BRUTALISTA) ---
 # =============================================================================
-def gerar_slide_knockout(tema, kw, titulo_texto, corpo_texto, foto, slide_idx, total_slides):
+def gerar_slide_capa(tema, manchete, foto, data_str="", total_slides=3):
     """
-    Gera o slide seguindo fielmente a referência visual:
-    1. Palavra-chave repetida 3 vezes no topo.
-    2. A foto recortada e visível ESTRITAMENTE dentro das letras (Knockout Mask).
-    3. Fundo preto nobre (#0d0d0d).
-    4. Título em Playfair Display e descrição em Lora.
-    5. Indicadores de carrossel no rodapé.
+    1. SLIDE 1 (CAPA / HOOK PRINCIPAL):
+    - Estilo: Jornalístico clássico, institucional e minimalista (revista executiva).
+    - Fundo: Imagem de destaque em cover com vinheta em petróleo profundo (#0C1B1A).
+    - Moldura: Linha de contorno fina dourada/bege elegante (~32px de margem).
+    - Header: 'ALL NEWS JOURNAL' à esquerda e data ('DD.MM.AAAA') à direita, divisória abaixo.
+    - Rodapé: '@ALL.NEWS.JOURNAL' à esquerda e 'ARRASTE PARA LER' à direita, divisória acima.
+    - Bloco Inferior: Tag do caderno em dourado suave com traço decorativo, manchete em Playfair Display branca direta (sem resumo explicativo).
     """
     W, H = FORMATO  # 1080 x 1350
-    canvas = Image.new("RGB", (W, H), FUNDO_ESCURO)
-    
-    # ── 1. Máscara das Letras (Knockout Mask) ──
+    if foto:
+        canvas = _cover_sem_corte(foto, W, H)
+    else:
+        canvas = Image.new("RGB", (W, H), PETROLEO_DEEP)
+
+    # Gradiente em petróleo profundo (#0C1B1A) nas bordas superior e inferior
+    grad = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    gd = ImageDraw.Draw(grad)
+
+    # 1. Gradiente superior (y = 0 até 260) para legibilidade do header
+    h_top = 260
+    for y in range(h_top):
+        alpha = int(220 * (1 - (y / h_top) ** 1.3))
+        gd.line([(0, y), (W, y)], fill=(*PETROLEO_DEEP, alpha))
+
+    # 2. Gradiente inferior suave e profundo (y = 560 até 1350)
+    h_bot_start = 560
+    for y in range(h_bot_start, H):
+        t = (y - h_bot_start) / (H - h_bot_start)
+        alpha = int(255 * (0.10 + 0.90 * (t ** 1.4)))
+        gd.line([(0, y), (W, y)], fill=(*PETROLEO_DEEP, alpha))
+
+    canvas = Image.alpha_composite(canvas.convert("RGBA"), grad).convert("RGB")
+    draw = ImageDraw.Draw(canvas)
+
+    # Moldura fina dourada/bege elegante (margem de segurança ~32px)
+    m = 32
+    draw.rectangle([m, m, W - m, H - m], outline=OURO_SUAVE, width=1)
+    draw.rectangle([m + 5, m + 5, W - m - 5, H - m - 5], outline=OURO_SUAVE, width=1)
+
+    px = m + 28  # margem interna ~60px
+
+    # Header Topo: "ALL NEWS JOURNAL" à esquerda, data à direita
+    y_hdr = m + 26
+    f_hdr = _playfair(21, weight=700)
+    _texto_espacado(draw, (px, y_hdr), "ALL NEWS JOURNAL", f_hdr, BRANCO_PURO, tracking=5)
+
+    # Traço fino sob "ALL NEWS"
+    w_brand_first = _largura_espacado(draw, "ALL NEWS", f_hdr, tracking=5)
+    draw.line([(px, y_hdr + 32), (px + w_brand_first, y_hdr + 32)], fill=OURO, width=1)
+
+    # Data à direita ("DD.MM.AAAA")
+    if not data_str:
+        data_str = datetime.now().strftime("%d.%m.%Y")
+    f_data = _playfair(20, weight=600)
+    w_data = _largura_espacado(draw, data_str, f_data, tracking=3)
+    _texto_espacado(draw, (W - px - w_data, y_hdr + 1), data_str, f_data, BRANCO_PURO, tracking=3)
+
+    # Linha divisória horizontal contínua logo abaixo do header
+    draw.line([(m + 1, y_hdr + 46), (W - m - 1, y_hdr + 46)], fill=OURO_SUAVE, width=1)
+
+    # Rodapé: separador horizontal acima do rodapé
+    y_foot = H - m - 46
+    draw.line([(m + 1, y_foot - 14), (W - m - 1, y_foot - 14)], fill=OURO_SUAVE, width=1)
+
+    f_foot = _playfair(19, weight=700)
+    _texto_espacado(draw, (px, y_foot), "@ALL.NEWS.JOURNAL", f_foot, OURO_SUAVE, tracking=3)
+
+    txt_arraste = "ARRASTE PARA LER"
+    f_arraste = _inter(17, weight=600)
+    w_arraste = _largura_espacado(draw, txt_arraste, f_arraste, tracking=3)
+    _texto_espacado(draw, (W - px - w_arraste, y_foot + 2), txt_arraste, f_arraste, BRANCO_PURO, tracking=3)
+
+    # Dots indicadores de carrossel no rodapé da Capa (Slide 1 de N)
+    if total_slides > 1:
+        raio = 4
+        espacamento = 20
+        largura_total = (total_slides - 1) * espacamento
+        x_inicio_dots = (W - largura_total) // 2
+        y_dots = H - m - 14
+        for s in range(total_slides):
+            cx = x_inicio_dots + s * espacamento
+            cor_dot = BRANCO_PURO if s == 0 else (90, 100, 100)
+            draw.ellipse([cx - raio, y_dots - raio, cx + raio, y_dots + raio], fill=cor_dot)
+
+    # Bloco Inferior de Texto
+    max_w = W - 2 * px
+    f_manchete = _playfair(54, weight=700)
+    linhas_manchete = _quebrar_texto(draw, manchete, f_manchete, max_w)
+
+    # Limita a manchete a 4 linhas para elegância absoluta
+    linhas_manchete = linhas_manchete[:4]
+    line_h = 68
+    total_h_manchete = len(linhas_manchete) * line_h
+
+    # Posição vertical calculada a partir do rodapé
+    y_bloco = y_foot - 35 - total_h_manchete - 55
+
+    # Linha dourada decorativa acima da tag
+    draw.line([(px, y_bloco - 12), (px + 65, y_bloco - 12)], fill=OURO, width=2)
+
+    # Tag do caderno em caixa alta com cor mostarda/dourado suave
+    f_tag = _inter(22, weight=700)
+    tag_texto = tema.strip().upper()
+    _texto_espacado(draw, (px, y_bloco), tag_texto, f_tag, OURO_SUAVE, tracking=4)
+
+    # Manchete principal em tipografia serifada encorpada branca (Playfair Display)
+    cur_y = y_bloco + 45
+    for linha in linhas_manchete:
+        draw.text((px, cur_y), linha, font=f_manchete, fill=BRANCO_PURO)
+        cur_y += line_h
+
+    return canvas
+
+def gerar_slide_conteudo(tema, kw, subtitulo, corpo_texto, foto, slide_idx, total_slides):
+    """
+    2. SLIDES SEGUINTES (SLIDES 2 A N - CONTEÚDO / CORPO DA NOTÍCIA):
+    - Editorial brutalista refinado e escuro sobre fundo #0B0F14.
+    - Topo com 'ALL NEWS JOURNAL • [NOME DO CADERNO]' discreto.
+    - Elemento gráfico central com 3 linhas sobrepostas de palavra-chave em Montserrat-Black (Knockout mask da foto).
+    - Subtítulo/gancho analítico em serifa branca refinada (Playfair Display).
+    - Bloco de leitura com 85 a 105 palavras em tipografia sem serifa (Inter), cor #E2E8F0, entrelinha 1.45.
+    - Dots indicadores de carrossel no rodapé.
+    """
+    W, H = FORMATO
+    canvas = Image.new("RGB", (W, H), GRAFITE_ESCURO)
+
+    px = 70
+    max_w = W - 2 * px
+
+    # 1. Topo: Identificador conciso "ALL NEWS JOURNAL • [NOME DO CADERNO]"
+    draw = ImageDraw.Draw(canvas)
+    f_top = _playfair(19, weight=700)
+    top_str = f"ALL NEWS JOURNAL  •  {tema.upper()}"
+    _texto_espacado(draw, (px, 52), top_str, f_top, TEXTO_MUTED, tracking=3)
+
+    # 2. Elemento Gráfico Central: 3 linhas sobrepostas de Knockout Text
     mask_im = Image.new("L", (W, H), 0)
     draw_mask = ImageDraw.Draw(mask_im)
-    
+
     kw_clean = kw.strip().upper()
     font_size = 175
-    # Reduz gradativamente até que a palavra ocupe a largura ideal com margem
-    while font_size > 60 and draw_mask.textlength(kw_clean, font=_montserrat(font_size)) > (W - 120):
+    while font_size > 65 and draw_mask.textlength(kw_clean, font=_montserrat(font_size)) > max_w:
         font_size -= 4
-        
+
     f_mask = _montserrat(font_size)
     w_kw = draw_mask.textlength(kw_clean, font=f_mask)
     x_kw = (W - w_kw) // 2
-    
-    y_mask_start = 85
-    step_y = int(font_size * 0.92)
-    
-    # 3 repetições verticais imponentes
+
+    y_mask_start = 100
+    step_y = int(font_size * 0.90)  # ritmo vertical imponente
+
     for rep in range(3):
         draw_mask.text((x_kw, y_mask_start + rep * step_y), kw_clean, font=f_mask, fill=255)
-        
-    # Aplica a foto na máscara
+
     if foto:
         foto_cover = _cover_sem_corte(foto, W, H)
         canvas.paste(foto_cover, (0, 0), mask=mask_im)
-        
+
     draw = ImageDraw.Draw(canvas)
-    
-    # ── 2. Conteúdo Textual Inferior ──
-    y_texto_start = y_mask_start + (3 * step_y) + 40
-    max_w = W - 140  # 70px de margem lateral
-    
-    # Linha discreta de categoria no topo
-    draw.text((70, 42), f"ALL NEWS JOURNAL  •  {tema.upper()}", font=_lora(20, 600), fill=TEXTO_MUTED)
-    
-    cur_y = y_texto_start
-    
-    # Título (Playfair Display)
-    if titulo_texto:
-        f_tit = _playfair(46, weight=700)
-        linhas_tit = _quebrar_texto(draw, titulo_texto, f_tit, max_w)
-        for linha in linhas_tit[:3]:
-            draw.text((70, cur_y), linha, font=f_tit, fill=CREME)
-            cur_y += 56
+
+    # 3. Subtítulo / Gancho analítico em serifa refinada branca
+    cur_y = y_mask_start + (3 * step_y) + 40
+
+    if subtitulo:
+        f_sub = _playfair(44, weight=700)
+        linhas_sub = _quebrar_texto(draw, subtitulo, f_sub, max_w)
+        for linha in linhas_sub[:2]:  # 2 linhas de gancho
+            draw.text((px, cur_y), linha, font=f_sub, fill=BRANCO_PURO)
+            cur_y += 54
         cur_y += 18
-        
-    # Corpo / Descrição (Lora)
+
+    # 4. Bloco de Leitura: 85 a 105 palavras, tipografia sem serifa Inter, cor #E2E8F0, entrelinha 1.45
     if corpo_texto:
-        f_corpo = _lora(32, weight=400)
+        f_corpo = _inter(31, weight=400)
+        line_height_corpo = int(31 * 1.45)  # ~45px
         linhas_corpo = _quebrar_texto(draw, corpo_texto, f_corpo, max_w)
+
         for linha in linhas_corpo:
-            if cur_y + 44 > 1240:
-                draw.text((70, cur_y), linha[:max(10, len(linha)-3)] + "...", font=f_corpo, fill=TEXTO_CORPO)
+            if cur_y + line_height_corpo > 1240:
+                draw.text((px, cur_y), linha[:max(10, len(linha)-3)] + "...", font=f_corpo, fill=CINZA_CORPO)
                 break
-            draw.text((70, cur_y), linha, font=f_corpo, fill=TEXTO_CORPO)
-            cur_y += 44
-            
-    # ── 3. Indicadores de Carrossel (Dots) ──
+            draw.text((px, cur_y), linha, font=f_corpo, fill=CINZA_CORPO)
+            cur_y += line_height_corpo
+
+    # 5. Indicadores de Carrossel (Dots)
     if total_slides > 1:
         raio = 5
         espacamento = 24
         largura_total = (total_slides - 1) * espacamento
         x_inicio_dots = (W - largura_total) // 2
-        y_dots = 1290
+        y_dots = 1295
         for s in range(total_slides):
             cx = x_inicio_dots + s * espacamento
-            cor_dot = CREME if (s + 1) == slide_idx else (70, 70, 70)
+            cor_dot = BRANCO_PURO if (s + 1) == slide_idx else (60, 65, 75)
             draw.ellipse([cx - raio, y_dots - raio, cx + raio, y_dots + raio], fill=cor_dot)
-            
+
     return canvas
+
+def gerar_slide(slide_idx, total_slides, tema, titulo, corpo, kw, foto, data_str=""):
+    """
+    3. REGRA DE TRANSIÇÃO ESTRITA:
+    IF slide_idx == 1 THEN aplicar template de Capa Clássica;
+    ELSE aplicar template Tipográfico Escuro Brutalista.
+    """
+    if slide_idx == 1:
+        return gerar_slide_capa(
+            tema=tema,
+            manchete=titulo,
+            foto=foto,
+            data_str=data_str,
+            total_slides=total_slides
+        )
+    else:
+        return gerar_slide_conteudo(
+            tema=tema,
+            kw=kw,
+            subtitulo=titulo,
+            corpo_texto=corpo,
+            foto=foto,
+            slide_idx=slide_idx,
+            total_slides=total_slides
+        )
+
+# Alias de compatibilidade com versões anteriores
+gerar_slide_knockout = gerar_slide_conteudo
+
+def segmentar_corpo_leitura(resumo, tema):
+    """
+    Segmenta e normaliza o resumo da notícia para compor blocos de leitura
+    editorial de 85 a 105 palavras por slide de conteúdo.
+    Se o resumo for escasso, enriquece com contextualização temática profissional.
+    """
+    resumo_limpo = re.sub(r'<[^>]+>', ' ', resumo or '')
+    resumo_limpo = ' '.join(resumo_limpo.split())
+
+    palavras = resumo_limpo.split()
+
+    if len(palavras) < 45:
+        contextos_fallback = {
+            "Mundo": "Os desdobramentos diplomáticos e geopolíticos desta medida continuam a movimentar líderes globais e organismos internacionais. Analistas apontam que as próximas decisões estratégicas definirão novos equilíbrios de poder e alianças de segurança multilateral nas próximas semanas.",
+            "Economia": "O movimento dos mercados reflete a cautela de investidores diante das novas sinalizações de juros e indicadores macroeconômicos. Especialistas destacam que a reação dos ativos pode ditar o ritmo de alocação de capital e fluxo cambial ao longo do trimestre.",
+            "Politica": "As negociações institucionais em Brasília ganham novos contornos à medida que lideranças partidárias e parlamentares articulam votos e acordos de bastidores. O desfecho das votações deve impactar diretamente a tramitação das pautas prioritárias.",
+            "IA": "O avanço de novas arquiteturas e modelos generativos acelera a corrida por infraestrutura computacional e governança algorítmica. O setor debate agora os equilíbrios necessários entre inovação de ponta, segurança operacional e regulação sistêmica.",
+            "Wellness": "Pesquisas recentes e especialistas em longevidade reforçam a importância de consistência em hábitos diários para a saúde metabólica e cognitiva. Pequenos ajustes de rotina produzem impactos cumulativos significativos na vitalidade a longo prazo.",
+            "Ciencia": "Os dados coletados abrem novas frentes de investigação acadêmica e colaboração científica internacional. Pesquisadores afirmam que a validação experimental destes achados pode redefinir paradigmas metodológicos da área.",
+            "Cinema": "A recepção de crítica e público evidencia transformações nos padrões de consumo audiovisual e estratégias de lançamento das grandes produtoras e plataformas de streaming.",
+            "Fofoca": "A repercussão nas redes sociais e os bastidores do meio artístico continuam gerando engajamento recorde e discussões sobre a dinâmica contemporânea da cultura pop e da visibilidade pública."
+        }
+        complemento = contextos_fallback.get(tema, contextos_fallback["Mundo"])
+        if resumo_limpo:
+            resumo_limpo = f"{resumo_limpo} {complemento}"
+        else:
+            resumo_limpo = complemento
+        palavras = resumo_limpo.split()
+
+    if len(palavras) <= 125:
+        return [resumo_limpo]
+
+    frases = re.split(r'(?<=[.!?])\s+', resumo_limpo)
+    bloco1, bloco2 = [], []
+    w1 = 0
+    for f in frases:
+        nw = len(f.split())
+        if w1 + nw <= 105 or w1 < 80:
+            bloco1.append(f)
+            w1 += nw
+        else:
+            bloco2.append(f)
+
+    txt1 = ' '.join(bloco1).strip()
+    txt2 = ' '.join(bloco2).strip()
+
+    if txt2 and len(txt2.split()) >= 35:
+        return [txt1, txt2]
+    return [resumo_limpo]
 
 # =============================================================================
 # --- CARREGAMENTO DE NOTÍCIAS & ANTI-DUPLICATA ---
@@ -469,11 +700,16 @@ def main():
         return
 
     data_edicao = noticias[0]["data_edicao"]
+    try:
+        data_formatada = datetime.strptime(data_edicao, "%Y-%m-%d").strftime("%d.%m.%Y")
+    except Exception:
+        data_formatada = datetime.now().strftime("%d.%m.%Y")
+
     memoria = carregar_memoria()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     gerados = []
 
-    print(f"   🔍 Processando {len(noticias)} notícias da edição {data_edicao}...")
+    print(f"   🔍 Processando {len(noticias)} notícias da edição {data_edicao} ({data_formatada})...")
 
     for i, item in enumerate(noticias, 1):
         tema, titulo, resumo, url_imagem = item["tema"], item["titulo"], item["resumo"], item["imagem"]
@@ -484,69 +720,99 @@ def main():
         # Extrai palavras-chave de alto impacto
         keywords = extrair_keywords(titulo, resumo, tema)
         
-        # Divide o resumo em partes para o carrossel narrativo (2 a 3 parágrafos)
-        paragrafos = [p.strip() for p in re.split(r'\n+', resumo) if len(p.strip()) > 15]
-        if not paragrafos:
-            paragrafos = [resumo]
-            
-        p1 = paragrafos[0]
-        p2 = paragrafos[1] if len(paragrafos) > 1 else ""
-        p3 = paragrafos[2] if len(paragrafos) > 2 else ""
+        # Normaliza e segmenta blocos de leitura de 85 a 105 palavras
+        blocos = segmentar_corpo_leitura(resumo, tema)
 
-        # Montagem dos slides do Carrossel (3 slides narrativos + 1 slide CTA)
+        # Montagem dos slides do Carrossel:
+        # Condição lógica estrita:
+        # IF slide_index == 1 THEN aplicar template de Capa Clássica;
+        # ELSE aplicar template Tipográfico Escuro Brutalista.
         slides = []
-        total_slides = 3 if not p3 else 4
-        
-        # Slide 1: Hook principal (Palavra 1 + Título + Lead)
-        s1 = gerar_slide_knockout(
-            tema=tema,
-            kw=keywords[0],
-            titulo_texto=titulo,
-            corpo_texto=p1,
-            foto=foto,
-            slide_idx=1,
-            total_slides=total_slides
-        )
-        slides.append(s1)
-        
-        # Slide 2: Aprofundamento / Contexto (Palavra 2 + Antecedentes)
-        texto_s2 = p2 if p2 else "A análise completa e os impactos desta cobertura chegam todas as manhãs no seu e-mail pelo All News Journal."
-        s2 = gerar_slide_knockout(
-            tema=tema,
-            kw=keywords[1],
-            titulo_texto="O CONTEXTO & OS FATOS",
-            corpo_texto=texto_s2,
-            foto=foto,
-            slide_idx=2,
-            total_slides=total_slides
-        )
-        slides.append(s2)
-        
-        # Slide 3: Desdobramentos ou CTA
-        if p3 and total_slides == 4:
-            s3 = gerar_slide_knockout(
+        if len(blocos) == 1:
+            total_slides = 3
+            # Slide 1: Capa Clássica (sem resumo)
+            s1 = gerar_slide(
+                slide_idx=1,
+                total_slides=total_slides,
                 tema=tema,
-                kw=keywords[2],
-                titulo_texto="DESDOBRAMENTOS",
-                corpo_texto=p3,
+                titulo=titulo,
+                corpo="",
+                kw=keywords[0],
                 foto=foto,
-                slide_idx=3,
-                total_slides=total_slides
+                data_str=data_formatada
             )
-            slides.append(s3)
-            
-        # Slide Final: Fechamento com a marca
-        s_final = gerar_slide_knockout(
-            tema=tema,
-            kw="ALL NEWS",
-            titulo_texto="INFORMAÇÃO DIRETO AO PONTO",
-            corpo_texto="Notícias completas e aprofundadas, entregues diariamente às 6h no seu e-mail. Cadastre-se gratuitamente pelo link na bio.",
-            foto=foto,
-            slide_idx=total_slides,
-            total_slides=total_slides
-        )
-        slides.append(s_final)
-        
+            # Slide 2: Conteúdo Brutalista Knockout
+            s2 = gerar_slide(
+                slide_idx=2,
+                total_slides=total_slides,
+                tema=tema,
+                titulo=titulo,
+                corpo=blocos[0],
+                kw=keywords[0],
+                foto=foto,
+                data_str=data_formatada
+            )
+            # Slide 3: Fechamento institucional / CTA
+            s3 = gerar_slide(
+                slide_idx=3,
+                total_slides=total_slides,
+                tema=tema,
+                titulo="INFORMAÇÃO DIRETO AO PONTO",
+                corpo="Notícias completas e aprofundadas, entregues diariamente às 6h no seu e-mail. Cadastre-se gratuitamente pelo link na nossa bio para não perder nenhuma edição matinal.",
+                kw="ALL NEWS",
+                foto=foto,
+                data_str=data_formatada
+            )
+            slides = [s1, s2, s3]
+        else:
+            total_slides = 4
+            kw2 = keywords[1] if len(keywords) > 1 else keywords[0]
+            # Slide 1: Capa Clássica (sem resumo)
+            s1 = gerar_slide(
+                slide_idx=1,
+                total_slides=total_slides,
+                tema=tema,
+                titulo=titulo,
+                corpo="",
+                kw=keywords[0],
+                foto=foto,
+                data_str=data_formatada
+            )
+            # Slide 2: Conteúdo Brutalista Knockout (Parte 1)
+            s2 = gerar_slide(
+                slide_idx=2,
+                total_slides=total_slides,
+                tema=tema,
+                titulo=titulo,
+                corpo=blocos[0],
+                kw=keywords[0],
+                foto=foto,
+                data_str=data_formatada
+            )
+            # Slide 3: Conteúdo Brutalista Knockout (Parte 2 - Desdobramentos)
+            s3 = gerar_slide(
+                slide_idx=3,
+                total_slides=total_slides,
+                tema=tema,
+                titulo="DESDOBRAMENTOS & IMPACTO",
+                corpo=blocos[1],
+                kw=kw2,
+                foto=foto,
+                data_str=data_formatada
+            )
+            # Slide 4: Fechamento institucional / CTA
+            s4 = gerar_slide(
+                slide_idx=4,
+                total_slides=total_slides,
+                tema=tema,
+                titulo="INFORMAÇÃO DIRETO AO PONTO",
+                corpo="Notícias completas e aprofundadas, entregues diariamente às 6h no seu e-mail. Cadastre-se gratuitamente pelo link na nossa bio para não perder nenhuma edição matinal.",
+                kw="ALL NEWS",
+                foto=foto,
+                data_str=data_formatada
+            )
+            slides = [s1, s2, s3, s4]
+
         # Salva os arquivos de imagem
         paths = []
         for j, slide_img in enumerate(slides, 1):
@@ -556,7 +822,7 @@ def main():
             
         legenda = gerar_legenda(tema, titulo, resumo)
         gerados.append({"tema": tema, "paths": paths, "legenda": legenda})
-        print(f"   🖼️  Carrossel {i} pronto: [{tema}] com {len(paths)} slides estilizados no padrão knockout.")
+        print(f"   🖼️  Carrossel {i} pronto: [{tema}] com {len(paths)} slides (Slide 1 Capa Clássica + {len(paths)-1} Slides Brutalistas).")
 
     # ── ENTREGA / PUBLICAÇÃO ──
     if not INSTAGRAM_ENABLED:

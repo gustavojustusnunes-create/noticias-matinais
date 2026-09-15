@@ -122,6 +122,8 @@ logs/*.log
 # Instagram Poster
 # cards de pré-visualização gerados localmente
 preview_insta/
+preview_carrossel/
+scratch/
 # saída padrão em produção
 /tmp/instagram_posts/
 # backups (ex.: instagram_poster.py.bak)
