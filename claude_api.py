@@ -17,7 +17,7 @@ def obter_modelos_gemini(genai):
         return _CACHED_MODELS
     
     # Modelos flash preferenciais do Gemini por ordem de prioridade
-    _CACHED_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash']
+    _CACHED_MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro']
     return _CACHED_MODELS
 
 
@@ -53,16 +53,16 @@ def chamar_claude_api(prompt, max_tokens=4096):
                 return response.text.strip()
             except Exception as e:
                 msg = str(e).lower()
-                if "429" in msg or "quota" in msg:
+                if "429" in msg or "quota" in msg or "exhausted" in msg:
                     if retries > 0:
-                        print(f"      ⏳ Rate-limit (Quota). Aguardando 10s... (Restam {retries} tentativas)")
-                        time.sleep(10)
+                        print(f"      ⏳ Rate-limit (Quota). Aguardando 15s... (Restam {retries} tentativas)")
+                        time.sleep(15)
                         retries -= 1
                         continue
                     else:
                         break
-                elif "404" in msg or "not found" in msg or "supported" in msg:
-                    print(f"      ⚠️ Modelo {clean_name} indisponível (404). Tentando próximo...")
+                elif "not found" in msg or "not_found" in msg:
+                    print(f"      ⚠️ Modelo {clean_name} não encontrado (404). Tentando próximo...")
                     break
                 else:
                     print(f"      ⚠️ Exceção no SDK ({clean_name}): {e}")

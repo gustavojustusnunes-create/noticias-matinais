@@ -887,10 +887,11 @@ st.markdown("""
 # =============================================================================
 @st.cache_data(ttl=43200, show_spinner=False)
 def gerar_podcast_audio_direto():
-    """Gera áudio MP3 no servidor web apresentando os destaques da manhã com Leo e Ana."""
+    """Gera ou recupera áudio MP3 apresentando os destaques da manhã com Leo e Ana."""
     try:
         import os
         import json
+        import re
         idx_path = os.path.join("edicoes", "index.json")
         if not os.path.exists(idx_path):
             return None
@@ -899,45 +900,72 @@ def gerar_podcast_audio_direto():
         if not indice:
             return None
         data_recente = indice[0]["data"]
+        
+        # Se já existir arquivo compilado em edicoes/podcasts, retorna direto
+        mp3_disco = os.path.join("edicoes", "podcasts", f"podcast_{data_recente}.mp3")
+        if os.path.exists(mp3_disco) and os.path.getsize(mp3_disco) > 1024:
+            with open(mp3_disco, "rb") as f:
+                return f.read()
+
         json_path = os.path.join("edicoes", f"{data_recente}.json")
         if not os.path.exists(json_path):
             return None
         with open(json_path, encoding="utf-8") as f:
             noticias_json = json.load(f)
             
+        cadernos = noticias_json.get("cadernos", noticias_json)
         manchetes = []
-        for cad, lista in noticias_json.items():
-            if isinstance(lista, list):
-                for n in lista[:2]:
-                    t = n.get("titulo", "").strip()
-                    r = n.get("resumo", "").strip()
-                    if t:
-                        manchetes.append(f"{t}. {r}")
+        for cad, lista in cadernos.items():
+            if cad in ["data", "data_extenso", "editorial", "manchete"]:
+                continue
+            if isinstance(lista, list) and lista:
+                t = lista[0].get("titulo", "").strip()
+                r = re.sub(r'<[^>]+>', '', lista[0].get("resumo", "")).strip()
+                r_curto = r.split(". ")[0] if ". " in r else r[:160]
+                if t:
+                    manchetes.append(f"No caderno de {cad}: {t}. {r_curto}.")
         
         texto_fala = (
-            "Olá! Muito bom dia! Bem-vindo ao podcast do All News Journal, com os principais destaques da edição de hoje. "
-            "A seguir, vamos nos aprofundar nas notícias que estão moldando o nosso dia. " +
+            f"Olá! Muito bom dia! Bem-vindo ao podcast do All News Journal com as principais notícias desta edição de {data_recente}. "
+            "Apresentado por Leo e Ana. A seguir, vamos direto aos fatos mais importantes da manhã: " +
             " ".join(manchetes[:5]) +
-            " Para ler todas as matérias na íntegra e sem anúncios, confira a nossa edição completa aqui no site. "
-            "Desejamos a você um excelente dia!"
+            " Para ler todas as reportagens na íntegra e sem anúncios, acesse nossa edição completa no site. "
+            "Desejamos a você um ótimo dia e até a próxima edição!"
         )
         import edge_tts
         import asyncio
         import tempfile
         
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        # Voz hiper-realista do AntonioNeural
-        communicate = edge_tts.Communicate(texto_fala, "pt-BR-AntonioNeural")
+        async def _gravar_ao_vivo(target_path):
+            communicate = edge_tts.Communicate(texto_fala, "pt-BR-AntonioNeural")
+            await communicate.save(target_path)
         
         fd, path = tempfile.mkstemp(suffix=".mp3")
         os.close(fd)
         
-        loop.run_until_complete(communicate.save(path))
+        try:
+            asyncio.run(_gravar_ao_vivo(path))
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            loop.run_until_complete(_gravar_ao_vivo(path))
+            loop.close()
         
         with open(path, "rb") as f:
             audio_data = f.read()
-        os.remove(path)
+            
+        # Salva em disco para acessos subsequentes instantâneos
+        try:
+            os.makedirs(os.path.join("edicoes", "podcasts"), exist_ok=True)
+            with open(mp3_disco, "wb") as f_out:
+                f_out.write(audio_data)
+        except Exception:
+            pass
+
+        try:
+            os.remove(path)
+        except Exception:
+            pass
         
         return audio_data
     except Exception as e:
@@ -1847,28 +1875,28 @@ with aba_ia:
             classDef node_collector fill:#312e81,stroke:#818cf8,stroke-width:2px,color:#fff
             classDef node_watchdog fill:#083344,stroke:#06b6d4,stroke-width:2px,color:#fff
 
-            subgraph Monitoramento_Sentinela [🛡️ Sentinela & Autocura]
+            subgraph Monitoramento_Sentinela ["🛡️ Sentinela & Autocura"]
                 WD["🛡️ agent_watchdog.py<br/><b>Watchdog Sentinela</b><br/><small>{status_badge.get(status_watchdog, '🟢 Ativo')}</small>"]:::{get_node_class(status_watchdog)}
                 AH[("📋 logs/agent_health.json<br/>Telemetria & Diagnósticos")]:::node_storage
             end
 
-            subgraph GitHub_Actions [☁️ Servidores GitHub Actions - Cron]
+            subgraph GitHub_Actions ["☁️ Servidores GitHub Actions - Cron"]
                 M["🗞️ main.py<br/><b>All News Journal</b><br/><small>{status_badge.get(status_journal, '🟢 Online')}</small>"]:::{get_node_class(status_journal)}
                 FM["📈 finance_main.py<br/><b>All News Finance</b><br/><small>{status_badge.get(status_finance, '🟢 Online')}</small>"]:::{get_node_class(status_finance)}
                 IG["📸 instagram_poster.py<br/><b>Instagram Bot (Knockout)</b><br/><small>{status_badge.get(status_insta, '🟡 Agendado')}</small>"]:::{get_node_class(status_insta)}
             end
 
-            subgraph Motores_Coleta [📡 Motores de Coleta e IA]
+            subgraph Motores_Coleta ["📡 Motores de Coleta e IA"]
                 F["📡 feeds.py<br/>RSS Diário & Gemini"]:::node_collector
                 FF["📊 finance_feeds.py<br/>B3, Câmbio & Yahoo"]:::node_collector
             end
 
-            subgraph Auditoria_Cognitiva [🧠 Aprendizado & Memória]
+            subgraph Auditoria_Cognitiva ["🧠 Aprendizado & Memória"]
                 AS["🧠 ai_supervisor.py<br/><b>Supervisor Cognitivo</b><br/><small>{status_badge.get(status_sup, '🟢 Online')}</small>"]:::{get_node_class(status_sup)}
                 SM[("💾 logs/supervisor_memory.json<br/>Memória Contínua (50+ Lições)")]:::node_storage
             end
 
-            subgraph Distribuicao [✉️ Entrega e Assinantes]
+            subgraph Distribuicao ["✉️ Entrega e Assinantes"]
                 DB[("👥 Google Sheets<br/>Base de Assinantes")]:::node_storage
                 EB["✉️ email_builder.py<br/>Disparo Matinal"]:::node_collector
                 FEB["✉️ finance_email_builder.py<br/>Disparo Financeiro"]:::node_collector
@@ -1892,29 +1920,76 @@ with aba_ia:
             WD -->|Gera Métricas em Tempo Real| AH
         """
 
+        import textwrap
+        mermaid_clean = textwrap.dedent(mermaid_code).strip()
+
         import streamlit.components.v1 as _components
         mermaid_html = f'''
-        <div style="background:#0f172a; border-radius:12px; padding:16px; border:1px solid #334155; margin-top:15px; overflow-x:auto; text-align:center;">
-            <div class="mermaid" style="display:flex; justify-content:center;">
-                {mermaid_code}
-            </div>
-        </div>
-        <script type="module">
-            import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-            mermaid.initialize({{
-                startOnLoad: true,
-                theme: 'dark',
-                securityLevel: 'loose',
-                themeVariables: {{
-                    darkMode: true,
-                    background: '#0f172a',
-                    primaryColor: '#1e293b',
-                    lineColor: '#64748b'
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body {{
+              margin: 0;
+              padding: 0;
+              background: #0f172a;
+              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            }}
+            .mermaid-box {{
+              background: #0f172a;
+              border-radius: 12px;
+              padding: 16px;
+              border: 1px solid #334155;
+              overflow-x: auto;
+              text-align: center;
+              display: flex;
+              justify-content: center;
+            }}
+            .mermaid {{
+              display: inline-block;
+            }}
+          </style>
+          <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        </head>
+        <body>
+          <div class="mermaid-box">
+            <pre class="mermaid">
+{mermaid_clean}
+            </pre>
+          </div>
+          <script>
+            function renderGraph() {{
+              try {{
+                if (window.mermaid) {{
+                  mermaid.initialize({{
+                    startOnLoad: false,
+                    theme: 'dark',
+                    securityLevel: 'loose',
+                    themeVariables: {{
+                      darkMode: true,
+                      background: '#0f172a',
+                      primaryColor: '#1e293b',
+                      lineColor: '#64748b'
+                    }}
+                  }});
+                  mermaid.run({{ querySelector: '.mermaid' }});
                 }}
-            }});
-        </script>
+              }} catch(err) {{
+                console.error("Mermaid error:", err);
+              }}
+            }}
+            if (document.readyState === 'loading') {{
+              document.addEventListener('DOMContentLoaded', renderGraph);
+            }} else {{
+              renderGraph();
+            }}
+            setTimeout(renderGraph, 300);
+          </script>
+        </body>
+        </html>
         '''
-        _components.html(mermaid_html, height=560, scrolling=True)
+        _components.html(mermaid_html, height=580, scrolling=True)
 
         with st.expander("Ver código do grafo (Mermaid)"):
             st.code(mermaid_code.strip(), language="mermaid")

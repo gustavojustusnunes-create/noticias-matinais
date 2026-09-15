@@ -1,27 +1,34 @@
 <?xml version="1.0" ?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
+<rss xmlns:ns0="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
   <channel>
     <title>All News Journal - Podcast Diário</title>
     <link>https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app</link>
     <description>Um resumo matinal ágil e descontraído das principais notícias do Brasil e do mundo, direto da curadoria do All News Journal.</description>
     <language>pt-br</language>
-    <itunes:author>All News Journal</itunes:author>
-    <itunes:category text="News"/>
+    <ns0:author>All News Journal</ns0:author>
+    <ns0:category text="News"/>
     <image>
       <url>https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/logo.png</url>
       <title>All News Journal - Podcast Diário</title>
       <link>https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app</link>
     </image>
-    <itunes:owner>
-      <itunes:name>Gustavo Justus</itunes:name>
-      <itunes:email>gustavojustusnunes@gmail.com</itunes:email>
-    </itunes:owner>
+    <ns0:owner>
+      <ns0:name>Gustavo Justus</ns0:name>
+      <ns0:email>gustavojustusnunes@gmail.com</ns0:email>
+    </ns0:owner>
     <item>
       <title>Bem-vindo ao All News Journal - Podcast Diário</title>
       <description>Este é o episódio de introdução ao nosso podcast. A partir de amanhã, você receberá um resumo diário das principais notícias.</description>
       <pubDate>Thu, 25 Jun 2026 12:00:00 +0000</pubDate>
       <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/assets/audio/trilha.mp3" length="102400" type="audio/mpeg"/>
       <guid isPermaLink="false">anj-intro</guid>
+    </item>
+    <item>
+      <title>Edição de 2026-09-14</title>
+      <description>As notícias desta manhã: 2026-09-14. Apresentado por Leo e Ana.</description>
+      <pubDate>Mon, 14 Sep 2026 23:52:26 +0000</pubDate>
+      <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/edicoes/podcasts/podcast_2026-09-14.mp3" length="1183680" type="audio/mpeg"/>
+      <guid isPermaLink="false">anj-2026-09-14</guid>
     </item>
   </channel>
 </rss>
