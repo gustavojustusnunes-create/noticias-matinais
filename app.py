@@ -92,211 +92,346 @@ setInterval(nukeStreamlitChrome, 1500);
 # =============================================================================
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lora:wght@400;500;600&display=swap');
+    /* 1. Oculta menus, header nativo e rodapé do Streamlit */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden !important;}
+    footer {visibility: hidden !important;}
+    .stDeployButton {display: none !important;}
+    div[data-testid="stToolbar"] {visibility: hidden; height: 0%; position: fixed;}
+    div[data-testid="stDecoration"] {visibility: hidden; height: 0%; position: fixed;}
+    div[data-testid="stStatusWidget"] {visibility: hidden;}
+    [data-testid="collapsedControl"] {display: none !important;}
+    section[data-testid="stSidebar"] {display: none !important;}
+    [data-testid="manage-app-button"] {display: none !important;}
+    [data-testid="stToolbarActions"] {display: none !important;}
+    [class*="viewerBadge"] {display: none !important;}
+    [class*="deployButton"] {display: none !important;}
+    [data-testid="stBottom"] {display: none !important;}
+    iframe[title="streamlit_analytics"] {display: none !important;}
 
-    /* ── OCULTAR ABSOLUTAMENTE TUDO DO STREAMLIT ── */
-    #MainMenu, footer, header, .stDeployButton,
-    [data-testid="stToolbar"], [data-testid="stDecoration"],
-    [data-testid="stStatusWidget"], [data-testid="manage-app-button"],
-    [data-testid="stToolbarActions"], [class*="viewerBadge"],
-    [class*="deployButton"], [data-testid="stBottom"],
-    iframe[title="streamlit_analytics"] {
-        display: none !important;
+    /* 2. Importação de Tipografia de Alto Padrão (Substack / Morning Brew style) */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    /* Remove a barra lateral totalmente */
-    [data-testid="collapsedControl"] { display: none !important; }
-    section[data-testid="stSidebar"] { display: none !important; }
-
-    /* NÃO usar :last-child aqui — Streamlit reorganiza o DOM e o último
-       filho pode acabar sendo o conteúdo principal, escondendo tudo.
-       A remoção de badges/avatares é feita pelo JS nukeStreamlitChrome
-       acima, que cata por seletores específicos. */
-
-    /* ── DESIGN PREMIUM & PALETA EDITORIAL ── */
+    /* Fundo Dark Mode Executivo */
     .stApp {
-        background-color: #faf8f5;
-        font-family: 'Lora', Georgia, serif;
-        color: #1e293b;
+        background-color: #0B0F17 !important;
+        color: #F1F5F9 !important;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         -webkit-font-smoothing: antialiased;
     }
 
+    /* Títulos editoriais refinados */
+    h1, h2, h3 {
+        font-family: 'Newsreader', Georgia, serif !important;
+        font-weight: 600 !important;
+        letter-spacing: -0.02em;
+        color: #F8FAFC !important;
+    }
+
     h1 {
-        font-family: 'Playfair Display', Georgia, serif;
         text-transform: uppercase;
         text-align: center;
-        font-size: 3.2rem !important;
-        letter-spacing: 3px;
-        color: #0a5c5a !important;
-        border-top: 2px solid #0a5c5a;
-        border-bottom: 2px solid #0a5c5a;
+        font-size: 2.8rem !important;
+        letter-spacing: 2px !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding: 16px 0 14px;
-        margin-top: 10px;
-        margin-bottom: 22px;
+        margin-top: 5px;
+        margin-bottom: 20px;
     }
-    h2, h3 { font-family: 'Playfair Display', Georgia, serif; color: #0a5c5a !important; }
 
-    /* ── ABAS STREAMLIT CUSTOMIZADAS (EDITORIAL LUXE) ── */
-    [data-testid="stTabs"] {
-        margin-bottom: 25px;
-        border-bottom: 1px solid #e2ddd3;
+    /* 3. Animação de Entrada dos Cards */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(16px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
-    [data-testid="stTabs"] [data-baseweb="tab-list"] {
-        gap: 6px;
-        background: transparent;
+
+    /* 4. Cards de Notícias Executivos (#131B2E) */
+    .news-card {
+        background: #131B2E;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 0;
+        overflow: hidden;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+        transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+        animation: fadeInUp 0.4s ease forwards;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
-    [data-testid="stTabs"] button[role="tab"] {
-        font-family: 'Playfair Display', Georgia, serif !important;
-        font-size: 0.95rem !important;
+
+    .news-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.45);
+        border-color: rgba(37, 99, 235, 0.4);
+    }
+
+    .news-img-box {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+        background: #0B0F17;
+    }
+
+    .news-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+        filter: brightness(0.92);
+    }
+
+    .news-card:hover .news-img {
+        transform: scale(1.04);
+        filter: brightness(1);
+    }
+
+    .news-content {
+        padding: 20px 22px 22px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .news-title {
+        font-family: 'Newsreader', Georgia, serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-bottom: 10px;
+        color: #F8FAFC !important;
+        text-decoration: none;
+        display: block;
+        transition: color 0.2s ease;
+    }
+
+    .news-title:hover {
+        color: #60A5FA !important;
+    }
+
+    .news-desc {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.88rem;
+        color: #94A3B8;
+        line-height: 1.6;
+        margin-bottom: 14px;
+    }
+
+    .news-source {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 12px;
+        color: #38BDF8 !important;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .news-source:hover {
+        color: #60A5FA !important;
+    }
+
+    /* 5. Badges Coloridas Temáticas por Caderno */
+    .caderno-badge {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-bottom: 12px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .badge-ia        { background: rgba(37, 99, 235, 0.18); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.35); }
+    .badge-economia  { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+    .badge-mundo     { background: rgba(239, 68, 68, 0.18);  color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+    .badge-politica  { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-ciencia   { background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.35); }
+    .badge-wellness  { background: rgba(20, 184, 166, 0.18); color: #2dd4bf; border: 1px solid rgba(20, 184, 166, 0.35); }
+    .badge-cinema    { background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.35); }
+    .badge-fofoca    { background: rgba(244, 63, 94, 0.18);  color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.35); }
+
+    /* 6. Indicador Pulsante do Podcast ("No ar hoje") */
+    .podcast-hero-box {
+        background: #131B2E;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-left: 4px solid #10B981;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin: 18px 0 24px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+
+    .podcast-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(16, 185, 129, 0.12);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+
+    .pulse-dot-live {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        animation: pulseLive 1.8s infinite;
+        display: inline-block;
+    }
+
+    @keyframes pulseLive {
+        0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+        70%  { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* 7. Estilização do Botão de Inscrição Primário */
+    div.stButton > button:first-child,
+    section[data-testid="stMain"] button[kind="primary"] {
+        background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 8px !important;
+        padding: 12px 28px !important;
         font-weight: 600 !important;
-        color: #64748b !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        letter-spacing: 0.01em !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25) !important;
+    }
+
+    div.stButton > button:first-child:hover,
+    section[data-testid="stMain"] button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%) !important;
+        transform: scale(1.01) !important;
+        box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4) !important;
+    }
+
+    div.stButton > button:first-child p,
+    section[data-testid="stMain"] button[kind="primary"] p {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+
+    /* 8. Inputs Streamlit Personalizados */
+    div[data-testid="stTextInput"] input {
+        background-color: #131B2E !important;
+        color: #F8FAFC !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        border-radius: 8px !important;
+        padding: 12px 16px !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.95rem !important;
+        transition: all 0.2s ease !important;
+    }
+
+    div[data-testid="stTextInput"] input:focus {
+        border-color: #2563EB !important;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25) !important;
+    }
+
+    div[data-testid="stTextInput"] input::placeholder {
+        color: #64748B !important;
+    }
+
+    /* 9. Abas Streamlit Customizadas */
+    [data-testid="stTabs"] {
+        margin-bottom: 25px !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    [data-testid="stTabs"] [data-baseweb="tab-list"] {
+        gap: 6px !important;
+        background: transparent !important;
+    }
+
+    [data-testid="stTabs"] button[role="tab"] {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-size: 0.92rem !important;
+        font-weight: 500 !important;
+        color: #94A3B8 !important;
         background: transparent !important;
         border: none !important;
         border-radius: 8px 8px 0 0 !important;
         padding: 9px 18px !important;
         transition: all 0.2s ease !important;
     }
+
     [data-testid="stTabs"] button[role="tab"]:hover {
-        color: #0a5c5a !important;
-        background: rgba(10, 92, 90, 0.05) !important;
+        color: #F8FAFC !important;
+        background: rgba(255, 255, 255, 0.04) !important;
     }
+
     [data-testid="stTabs"] button[role="tab"][aria-selected="true"] {
-        color: #0a5c5a !important;
+        color: #38BDF8 !important;
         font-weight: 700 !important;
-        background: #ffffff !important;
-        border: 1px solid #e2ddd3 !important;
-        border-bottom: 2px solid #ffffff !important;
-        box-shadow: 0 -2px 8px rgba(0,0,0,0.03) !important;
+        background: #131B2E !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-bottom: 1px solid #131B2E !important;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.25) !important;
         margin-bottom: -1px !important;
     }
 
-    /* ── CARDS DE NOTÍCIA EDITORIAL ── */
-    .news-card {
-        background-color: #ffffff;
-        border: 1px solid #e7e3da;
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
-        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
-    }
-    .news-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 28px rgba(10, 92, 90, 0.12);
-        border-color: #cbd5e1;
-    }
-    .news-img {
-        width: 100%;
-        height: 195px;
-        object-fit: cover;
-        border-bottom: 2px solid rgba(10, 92, 90, 0.15);
-        transition: transform 0.4s ease;
-    }
-    .news-card:hover .news-img {
-        transform: scale(1.025);
-    }
-    .news-content {
-        padding: 18px 20px 22px;
-    }
-    .news-tag {
-        font-size: 0.68rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 700;
-        background-color: #0a5c5a;
-        color: #ffffff !important;
-        padding: 3px 9px;
-        border-radius: 4px;
-        margin-bottom: 10px;
-        display: inline-block;
-    }
-    .news-title {
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size: 1.15rem;
-        font-weight: 700;
-        margin-bottom: 12px;
-        display: block;
-        color: #111827 !important;
-        text-decoration: none;
-        line-height: 1.35;
-        transition: color 0.2s ease;
-    }
-    .news-title:hover {
-        color: #0a5c5a !important;
-    }
-    .news-source {
-        font-size: 0.78rem;
-        color: #0a5c5a;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-top: 1px solid #f1f5f9;
-        padding-top: 12px;
-        text-decoration: none;
-        display: block;
-    }
-    .news-source:hover {
-        opacity: 0.75;
+    /* 10. Cards de Métricas e Expander */
+    [data-testid="stMetric"] {
+        background: #131B2E !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 10px !important;
+        padding: 12px 16px !important;
     }
 
-    /* ── CARDS DE MÉTRICAS ── */
-    [data-testid="stMetric"] {
-        background: #ffffff;
-        border: 1px solid #e8e4dc;
-        border-radius: 10px;
-        padding: 12px 16px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-    }
     [data-testid="stMetricLabel"] {
-        font-size: 0.85rem !important;
-        color: #64748b !important;
-        font-weight: 600 !important;
+        font-size: 0.82rem !important;
+        color: #94A3B8 !important;
+        font-weight: 500 !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
+
     [data-testid="stMetricValue"] {
-        color: #0a5c5a !important;
-        font-family: 'Playfair Display', Georgia, serif !important;
+        color: #F8FAFC !important;
+        font-family: 'Newsreader', Georgia, serif !important;
         font-weight: 700 !important;
     }
 
-    /* ── SELECTBOX E BOTÃO PRIMÁRIO ── */
-    section[data-testid="stMain"] label[data-testid="stWidgetLabel"] p {
-        color: #0a5c5a !important; font-size: 1rem !important; font-weight: bold; font-family: 'Playfair Display', Georgia, serif;
+    [data-testid="stExpander"] {
+        background: #131B2E !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 10px !important;
     }
-    section[data-testid="stMain"] button[kind="primary"] {
-        background: linear-gradient(135deg, #0a5c5a 0%, #084c4a 100%) !important;
-        color: #fdfbf7 !important; border: 2px solid #fdfbf7 !important; border-radius: 10px !important;
-        padding: 12px 20px !important; font-family: 'Playfair Display', Georgia, serif !important; font-size: 1.02rem !important;
-        font-weight: bold !important; letter-spacing: 0.5px !important; box-shadow: 0 4px 14px rgba(10, 92, 90, 0.25) !important;
-        transition: transform 0.15s ease, box-shadow 0.15s ease !important;
-    }
-    section[data-testid="stMain"] button[kind="primary"]:hover {
-        background: linear-gradient(135deg, #084c4a 0%, #063838 100%) !important;
-        transform: translateY(-2px); box-shadow: 0 6px 20px rgba(10, 92, 90, 0.4) !important;
-    }
-    section[data-testid="stMain"] button[kind="primary"] p { color: #fdfbf7 !important; font-weight: bold !important; }
 
-    /* ── BOTÕES SECUNDÁRIOS DO RODAPÉ (estilo link) ── */
-    section[data-testid="stMain"] [data-testid="stBaseButton-secondary"] {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #888 !important;
-        font-family: 'Lora', Georgia, serif !important;
-        font-size: 0.78rem !important;
-        font-weight: normal !important;
-        padding: 4px 8px !important;
-        letter-spacing: normal !important;
-        text-decoration: underline !important;
-    }
-    section[data-testid="stMain"] [data-testid="stBaseButton-secondary"]:hover {
-        color: #0a5c5a !important;
-        background: transparent !important;
-        transform: none !important;
-        box-shadow: none !important;
-    }
-    section[data-testid="stMain"] [data-testid="stBaseButton-secondary"] p {
-        color: inherit !important;
-        font-weight: normal !important;
+    [data-testid="stExpander"] summary {
+        color: #F8FAFC !important;
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        font-weight: 600 !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -1037,9 +1172,9 @@ with aba_inicio:
           overflow: hidden;
         }}
         .hero-card {{
-          background: #ffffff;
-          border: 1px solid #e5e0d8;
-          border-left: 5px solid #0a5c5a;
+          background: #131B2E;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-left: 4px solid #2563EB;
           border-radius: 14px;
           padding: 16px 20px;
           display: flex;
@@ -1047,7 +1182,7 @@ with aba_inicio:
           align-items: center;
           justify-content: space-between;
           gap: 20px;
-          box-shadow: 0 4px 20px rgba(10, 92, 90, 0.07);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
           position: relative;
         }}
         .hero-left {{
@@ -1065,9 +1200,9 @@ with aba_inicio:
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          background: #f0fdf4;
-          color: #166534;
-          border: 1px solid #bbf7d0;
+          background: rgba(16, 185, 129, 0.12);
+          color: #34d399;
+          border: 1px solid rgba(16, 185, 129, 0.3);
           font-size: 0.68rem;
           font-weight: 700;
           letter-spacing: 0.8px;
@@ -1079,17 +1214,17 @@ with aba_inicio:
           width: 6px;
           height: 6px;
           border-radius: 50%;
-          background: #16a34a;
-          box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7);
+          background: #10b981;
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
           animation: pulse 1.8s infinite;
         }}
         @keyframes pulse {{
-          0% {{ box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.7); }}
-          70% {{ box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }}
-          100% {{ box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }}
+          0% {{ box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }}
+          70% {{ box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }}
+          100% {{ box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }}
         }}
         .caderno-tag {{
-          background: #0a5c5a;
+          background: #2563EB;
           color: #ffffff;
           font-size: 0.68rem;
           font-weight: 700;
@@ -1117,17 +1252,17 @@ with aba_inicio:
           justify-content: center;
         }}
         .headline-text {{
-          font-family: 'Playfair Display', Georgia, serif;
+          font-family: 'Newsreader', Georgia, serif;
           font-size: 1.25rem;
-          font-weight: 700;
-          color: #111827;
+          font-weight: 600;
+          color: #F8FAFC;
           line-height: 1.35;
           opacity: 1;
           transform: translateY(0);
           transition: opacity 0.35s ease, transform 0.35s ease, color 0.2s ease;
         }}
         .headline-link:hover .headline-text {{
-          color: #0a5c5a;
+          color: #60A5FA;
         }}
         .headline-text.fade-out {{
           opacity: 0;
@@ -1138,7 +1273,7 @@ with aba_inicio:
           align-items: center;
           gap: 4px;
           font-size: 0.72rem;
-          color: #0a5c5a;
+          color: #38BDF8;
           font-weight: 600;
           margin-top: 4px;
           letter-spacing: 0.2px;
@@ -1146,7 +1281,7 @@ with aba_inicio:
         .progress-track {{
           width: 100%;
           height: 3px;
-          background: #f1f5f9;
+          background: rgba(255, 255, 255, 0.08);
           border-radius: 3px;
           margin: 10px 0 6px;
           overflow: hidden;
@@ -1154,13 +1289,13 @@ with aba_inicio:
         .progress-fill {{
           height: 100%;
           width: 0%;
-          background: #0a5c5a;
+          background: #2563EB;
           border-radius: 3px;
           transition: width 0.1s linear;
         }}
         .footer-note {{
           font-size: 0.72rem;
-          color: #64748b;
+          color: #94A3B8;
           letter-spacing: 0.2px;
         }}
 
@@ -1172,9 +1307,9 @@ with aba_inicio:
           position: relative;
           border-radius: 10px;
           overflow: hidden;
-          background: #f1f5f9;
-          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-          border: 1px solid #e2e8f0;
+          background: #0B0F17;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }}
         .hero-img-link {{
           display: block;
@@ -1324,22 +1459,178 @@ with aba_inicio:
     import streamlit.components.v1 as _components
     _components.html(_hero_html, height=230)
 
+    # ── 1. HEADLINE FOCADA EM VALOR & PROVA SOCIAL IMEDIATA ──
     st.markdown("""
-    <div style='max-width: 720px; margin: 15px auto 25px; padding: 0 20px; text-align: center; color: #2c2c2c; line-height: 1.7; font-size: 1.05rem;'>
-      <p style='font-style: italic; color: #0a5c5a; font-size: 1.15rem; margin-bottom: 14px;'>Notícias relevantes, sem ruído, todas as manhãs.</p>
-      <p>O <b>All News Journal</b> é um jornal digital independente que entrega na sua caixa de e-mail, <b>todas as manhãs</b>, uma edição <b>personalizada</b> com os cadernos que você escolheu.</p>
-      <p>Cada manchete é resumida por nossa redação editorial. Você lê em cinco minutos o que importou no mundo e começa o dia informado, sem rolar timeline, sem clicar em link nenhum.</p>
-      <p style='margin-top: 18px; font-size: 0.95rem; color: #555;'>Use o botão abaixo para assinar. É gratuito.</p>
+    <div style='text-align: center; margin-top: 15px; margin-bottom: 22px;'>
+      <h2 style="font-family: 'Newsreader', Georgia, serif; font-size: 2.35rem; font-weight: 600; color: #F8FAFC; line-height: 1.25; margin-bottom: 12px; letter-spacing: -0.02em;">
+        O mundo, seus investimentos e tecnologia explicados em 4 minutos matinais.
+      </h2>
+      <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; color: #94A3B8; max-width: 680px; margin: 0 auto 16px; line-height: 1.6;">
+        Curadoria executiva independente entregue pontualmente na sua caixa de entrada e em áudio neural com <b>Leo &amp; Ana</b> todas as manhãs às 06:15.
+      </p>
+      <div style="display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <span style="background: rgba(37, 99, 235, 0.15); color: #60a5fa; border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 20px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600;">✓ Edição de hoje enviada</span>
+        <span style="background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 20px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600;">8 cadernos temáticos</span>
+        <span style="background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 20px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600;">100% Gratuito</span>
+      </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # Botão CTA centralizado que abre o modal
-    col_cta_l, col_cta_c, col_cta_r = st.columns([1, 2, 1])
-    with col_cta_c:
-        if st.button(" ASSINE GRATUITAMENTE — É RÁPIDO ", type="primary", use_container_width=True, key="btn_open_signup"):
-            modal_inscricao()
+    # ── 2. FORMULÁRIO DE INSCRIÇÃO EM 1 CAMPO INTEGRADO ──
+    c_sub_l, c_sub_main, c_sub_r = st.columns([1, 4, 1])
+    with c_sub_main:
+        col_in1, col_in2 = st.columns([3, 1.8])
+        with col_in1:
+            email_hero = st.text_input(
+                "E-mail",
+                placeholder="Digite seu melhor e-mail...",
+                label_visibility="collapsed",
+                key="hero_email_input"
+            )
+        with col_in2:
+            btn_hero_sub = st.button("Quero receber às 06:15", type="primary", use_container_width=True, key="hero_submit_btn")
 
-    # Data + Edição
+        if btn_hero_sub:
+            if not email_hero or "@" not in email_hero or "." not in email_hero:
+                st.warning("Por favor, informe um e-mail válido para receber a curadoria.")
+            elif email_ja_cadastrado(email_hero):
+                st.info("Este e-mail já está cadastrado! A edição de amanhã será entregue pontualmente às 06:15.")
+            else:
+                nome_hero = email_hero.split("@")[0].replace(".", " ").title()
+                ordem_todos = {t: str(i+1) for i, t in enumerate(ORDEM_CADERNOS)}
+                with st.spinner("Registrando sua assinatura gratuita..."):
+                    ok, msg = salvar_assinante(nome_hero, email_hero, ordem_todos)
+                    if ok:
+                        st.success(f"🎉 Inscrição confirmada para {email_hero}! Você receberá o jornal todas as manhãs às 06:15.")
+                        st.balloons()
+                    else:
+                        st.error(f"Erro ao cadastrar: {msg}")
+
+        st.markdown(
+            "<div style='text-align: center; color: #64748b; font-size: 0.8rem; margin-top: 8px;'>"
+            "Prefere escolher seus cadernos favoritos? "
+            "<span style='color: #38bdf8;'>Você pode personalizar a ordem abaixo.</span>"
+            "</div>",
+            unsafe_allow_html=True
+        )
+        c_opt_l, c_opt_c, c_opt_r = st.columns([1, 2, 1])
+        with c_opt_c:
+            if st.button("⚙️ Personalizar cadernos e preferências", key="btn_open_custom_prefs", use_container_width=True):
+                modal_inscricao()
+
+    # ── 3. PLAYER DEMO INSTANTÂNEO COM INDICADOR PULSANTE ("NO AR HOJE") ──
+    _podcast_hero_path = None
+    try:
+        import glob
+        _mp3_files = sorted(glob.glob(os.path.join("edicoes", "podcasts", "podcast_*.mp3")), reverse=True)
+        if _mp3_files:
+            _podcast_hero_path = _mp3_files[0]
+    except Exception:
+        pass
+
+    st.markdown("""
+    <div class="podcast-hero-box">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <span class="podcast-pill"><span class="pulse-dot-live"></span> NO AR HOJE • BRIEFING COM LEO &amp; ANA</span>
+        <span style="font-size: 0.76rem; color: #94a3b8; font-family: 'Plus Jakarta Sans', sans-serif;">Síntese em áudio neural das manchetes</span>
+      </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if _podcast_hero_path and os.path.exists(_podcast_hero_path):
+        st.audio(_podcast_hero_path, format="audio/mpeg")
+    else:
+        _direct_bytes = gerar_podcast_audio_direto()
+        if _direct_bytes:
+            st.audio(_direct_bytes, format="audio/mpeg")
+
+    # ── 4. CONTAINERS DOS CADERNOS COM BADGES COLORIDAS (PASSO 3 TÁTICO) ──
+    st.markdown("""
+    <div style="margin-top: 40px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+      <div>
+        <h2 style="font-family: 'Newsreader', Georgia, serif; font-size: 1.95rem; font-weight: 600; color: #F8FAFC; margin: 0;">
+          📰 Destaques dos Cadernos de Hoje
+        </h2>
+        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.88rem; color: #94A3B8; margin-top: 4px;">
+          Sínteses jornalísticas aprofundadas e sem ruído
+        </p>
+      </div>
+      <span style="font-size: 0.78rem; font-weight: 600; color: #38bdf8; background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 3px 10px;">
+        Curadoria Editorial IA
+      </span>
+    </div>
+    """, unsafe_allow_html=True)
+
+    BADGE_CLASSES = {
+        "IA": "badge-ia",
+        "INTELIGÊNCIA ARTIFICIAL": "badge-ia",
+        "ECONOMIA": "badge-economia",
+        "MUNDO": "badge-mundo",
+        "POLÍTICA": "badge-politica",
+        "POLITICA": "badge-politica",
+        "CIÊNCIA": "badge-ciencia",
+        "CIENCIA": "badge-ciencia",
+        "WELLNESS": "badge-wellness",
+        "CINEMA": "badge-cinema",
+        "FOFOCA": "badge-fofoca",
+    }
+
+    _todas_noticias_edicao = []
+    try:
+        if os.path.exists(_ed_path):
+            with open(_ed_path, "r", encoding="utf-8") as _fe:
+                _ed_full = json.load(_fe)
+            for _cad_k, _cad_v in _ed_full.get("cadernos", {}).items():
+                if isinstance(_cad_v, list):
+                    for _art in _cad_v:
+                        _t = _art.get("titulo", "").strip()
+                        _l = _art.get("link", "").strip()
+                        _r = _art.get("resumo", "").strip()
+                        _i = _art.get("imagem", "").strip()
+                        if _t:
+                            _todas_noticias_edicao.append({
+                                "caderno": _cad_k,
+                                "titulo": _t,
+                                "link": _l or "#",
+                                "resumo": _r,
+                                "imagem": _i or FALLBACK_IMAGES.get(_cad_k, "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=800&auto=format&fit=crop")
+                            })
+    except Exception:
+        pass
+
+    if _todas_noticias_edicao:
+        col_grid1, col_grid2 = st.columns(2)
+        for idx, item in enumerate(_todas_noticias_edicao):
+            c_col = col_grid1 if idx % 2 == 0 else col_grid2
+            badge_class = BADGE_CLASSES.get(item["caderno"].upper(), "badge-ia")
+            cad_nome = item["caderno"].upper()
+            img_src = item["imagem"] if item["imagem"] and item["imagem"].startswith("http") else "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?q=80&w=800&auto=format&fit=crop"
+            resumo_texto = item["resumo"] if item["resumo"] else "Toque no link abaixo para ler a cobertura completa desta matéria no portal original."
+            link_url = item["link"] if item["link"] and item["link"].startswith("http") else "#"
+            
+            card_html = f"""
+            <div class="news-card">
+                <div class="news-img-box">
+                    <img src="{img_src}" alt="{item['titulo']}" class="news-img" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=800&auto=format&fit=crop'" />
+                </div>
+                <div class="news-content">
+                    <div>
+                        <span class="caderno-badge {badge_class}">{cad_nome}</span>
+                        <a href="{link_url}" target="_blank" class="news-title">{item['titulo']}</a>
+                        <p class="news-desc">{resumo_texto}</p>
+                    </div>
+                    <a href="{link_url}" target="_blank" class="news-source">
+                        <span>Ler matéria completa no portal</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            </div>
+            """
+            with c_col:
+                st.markdown(card_html, unsafe_allow_html=True)
+
+    # ── 5. METADADOS DA EDIÇÃO E CONTADOR DE LEITORES ──
+    st.markdown("<br>", unsafe_allow_html=True)
     hoje = datetime.now()
     meses       = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
     dias_semana = ["Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado","Domingo"]
@@ -1347,11 +1638,11 @@ with aba_inicio:
 
     col_date, col_loc = st.columns(2)
     col_date.markdown(
-        f"<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'> {data_ptbr}</div>",
+        f"<div style='text-align:center; color:#94A3B8; font-weight:600; font-size:0.92rem; padding:8px; background:#131B2E; border:1px solid rgba(255,255,255,0.06); border-radius:8px;'>📅 {data_ptbr}</div>",
         unsafe_allow_html=True
     )
     col_loc.markdown(
-        "<div style='text-align:center; color:#0a5c5a; font-weight:bold; padding:5px;'> Edição Global · Digital</div>",
+        "<div style='text-align:center; color:#94A3B8; font-weight:600; font-size:0.92rem; padding:8px; background:#131B2E; border:1px solid rgba(255,255,255,0.06); border-radius:8px;'>🌐 Edição Global · Digital</div>",
         unsafe_allow_html=True
     )
 
@@ -1373,18 +1664,17 @@ with aba_inicio:
     total_assinantes = obter_total_assinantes()
     if total_assinantes > 0:
         st.markdown(
-            f"<div style='text-align:center;padding:8px;color:#0a5c5a;font-size:0.88rem;'>"
-            f" <b>{total_assinantes}</b> leitores já recebem nossa curadoria</div>",
+            f"<div style='text-align:center;padding:12px;color:#38BDF8;font-size:0.9rem;font-weight:600;'>"
+            f"✨ <b>{total_assinantes}</b> leitores já começam o dia com nossa curadoria</div>",
             unsafe_allow_html=True
         )
 
     st.write("")
 
     # Seção "Sobre"
-    st.markdown("<br>", unsafe_allow_html=True)
-    with st.expander(" Sobre o All News Journal"):
+    with st.expander("📖 Sobre a Linha Editorial do All News Journal"):
         st.markdown("""
-    **Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, resumidas e entregues diretamente no seu e-mail todas as manhãs.
+    **Missão:** Curadoria premium e gratuita das notícias que importam — filtradas, aprofundadas e entregues diretamente no seu e-mail todas as manhãs às 06:15.
 
     **Frequência:** Edição diária enviada **toda manhã** (horário de Brasília), de segunda a domingo.
 
@@ -1392,16 +1682,16 @@ with aba_inicio:
 
     | Caderno | Foco |
     |---|---|
-    |  Mundo | Geopolítica e eventos internacionais |
-    |  Economia | Mercado, investimentos e finanças |
-    |  Política | Brasil: Congresso, governo e Judiciário |
-    |  IA | Inteligência artificial, modelos e laboratórios |
-    |  Wellness | Performance, treino, corrida, ciclismo, nutrição |
-    |  Ciência | Descobertas científicas e saúde |
-    |  Cinema | Filmes, séries e streaming |
-    |  Fofoca | Celebridades internacionais e cultura pop global |
+    | 🌐 Mundo | Geopolítica e eventos internacionais |
+    | 📈 Economia | Mercado, investimentos e finanças |
+    | 🏛️ Política | Brasil: Congresso, governo e Judiciário |
+    | 🤖 IA | Inteligência artificial, modelos e laboratórios |
+    | 🏃 Wellness | Performance, treino, corrida, ciclismo, nutrição |
+    | 🔬 Ciência | Descobertas científicas e saúde |
+    | 🎬 Cinema | Filmes, séries e streaming |
+    | ✨ Fofoca | Celebridades internacionais e cultura pop global |
 
-    **100% automatizado com inteligência artificial** — Google Gemini 1.5 Flash gera resumos jornalísticos de 85 a 105 palavras por notícia, em Português Brasileiro.
+    **100% automatizado com inteligência artificial** — Modelos de ponta sintetizam as reportagens com imparcialidade e clareza, acompanhados pelo podcast neural diário de Leo e Ana.
         """)
 
     # =============================================================================
@@ -1411,19 +1701,19 @@ with aba_inicio:
     st.markdown(
         """
         <div style='
-            border-top: 2px solid #0a5c5a;
-            padding: 25px 0 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px 0 15px;
             text-align: center;
-            color: #0a5c5a;
-            font-family: Playfair Display, serif;
+            color: #94A3B8;
+            font-family: Plus Jakarta Sans, sans-serif;
         '>
-            <p style='font-size:1.1rem; font-weight:bold; letter-spacing:2px; margin:0;'>ALL NEWS JOURNAL</p>
-            <p style='font-size:0.75rem; color:#888; margin:8px 0 0;'>
-                 """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Conteúdo Premium Digital &nbsp;·&nbsp; Edição Global
+            <p style='font-family: Newsreader, serif; font-size:1.3rem; font-weight:600; letter-spacing:1.5px; color:#F8FAFC; margin:0;'>ALL NEWS JOURNAL</p>
+            <p style='font-size:0.8rem; color:#64748B; margin:8px 0 0;'>
+                 """ + str(datetime.now().year) + """ All News Journal Group &nbsp;·&nbsp; Jornalismo Inteligente &nbsp;·&nbsp; Edição Digital
             </p>
-            <p style='font-size:0.72rem; color:#aaa; margin:6px 0 0;'>
+            <p style='font-size:0.75rem; color:#64748B; margin:6px 0 0;'>
                 <a href='mailto:gustavojustusnunes@gmail.com?subject=Contato%20All%20News%20Journal'
-                   style='color:#0a5c5a; text-decoration:none;'>Fale conosco</a>
+                   style='color:#38BDF8; text-decoration:none;'>Fale com a Redação</a>
             </p>
         </div>
         """,
@@ -1439,8 +1729,13 @@ with aba_inicio:
             modal_privacidade()
 
 with aba_podcast:
-    st.markdown("<br><h2 style='text-align: center; color: #0a5c5a; font-family: Playfair Display, serif;'> Ouça a edição em áudio</h2><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #555; max-width: 620px; margin: 0 auto 25px; line-height: 1.6;'>O nosso podcast diário é apresentado por <b>Leo e Ana</b> com os destaques da manhã. Ouça diretamente do seu navegador sem precisar de Spotify ou outros aplicativos!</p>", unsafe_allow_html=True)
+    st.markdown("""
+    <div style='text-align: center; margin-top: 15px; margin-bottom: 25px;'>
+        <div class="podcast-pill" style="margin: 0 auto 12px auto;"><span class="pulse-dot-live"></span> NO AR HOJE • EDIÇÃO EM ÁUDIO</div>
+        <h2 style='text-align: center; color: #F8FAFC; font-family: Newsreader, serif; font-size: 2.2rem; margin-bottom: 8px;'>Ouça o Podcast Diário</h2>
+        <p style='text-align: center; color: #94A3B8; max-width: 620px; margin: 0 auto; line-height: 1.6; font-family: Plus Jakarta Sans, sans-serif;'>Apresentado pelas vozes neurais <b>Leo &amp; Ana</b> com os destaques da manhã. Ouça diretamente do seu navegador sem anúncios!</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # ── Player Nativo (Fallback/Direto ao Vivo) ──
     import os as _os
@@ -1457,78 +1752,83 @@ with aba_podcast:
             _podcast_path = _os.path.join("edicoes", "podcasts", f"podcast_{_data_atual}.mp3")
     
     if _podcast_path and _os.path.exists(_podcast_path):
-        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #333;'>Reproduzir áudio original</div>", unsafe_allow_html=True)
+        st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #38BDF8; font-weight: 600;'>▶️ Reproduzir áudio oficial da edição</div>", unsafe_allow_html=True)
         st.audio(_podcast_path, format="audio/mpeg")
     else:
-        # Garante 100% funcionando no site usando gTTS (sintetizador ao vivo cacheado)
+        # Garante 100% funcionando no site usando edge-tts / direto
         _audio_bytes = gerar_podcast_audio_direto()
         if _audio_bytes:
-            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #0a5c5a; font-weight: bold;'> Edição em Áudio de Hoje (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+            st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #38BDF8; font-weight: 600;'>▶️ Edição em Áudio de Hoje (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
             st.audio(_audio_bytes, format="audio/mpeg")
         else:
             _mp3s = sorted(_glob.glob(_os.path.join("edicoes", "podcasts", "podcast_*.mp3")), reverse=True)
             if _mp3s:
                 st.audio(_mp3s[0], format="audio/mpeg")
             else:
-                st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #888;'><em>O episódio em áudio de hoje está em processamento. Por favor, volte em breve!</em></div>", unsafe_allow_html=True)
+                st.markdown("<div style='text-align: center; margin-bottom: 15px; color: #94A3B8;'><em>O episódio em áudio de hoje está em processamento. Por favor, volte em breve!</em></div>", unsafe_allow_html=True)
 
 with aba_finance:
     st.markdown("""
     <style>
       .finance-header {
-        background: linear-gradient(135deg, #0a2540 0%, #0f3156 100%);
-        padding: 35px 25px;
-        border-radius: 12px;
+        background: #131B2E;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-bottom: 3px solid #10B981;
+        padding: 30px 25px;
+        border-radius: 14px;
         text-align: center;
         color: #ffffff;
-        border-bottom: 4px solid #c9a84c;
         margin-top: 15px;
         margin-bottom: 25px;
       }
       .finance-header h2 {
-        font-family: 'Playfair Display', Georgia, serif;
-        font-size: 2rem;
+        font-family: 'Newsreader', Georgia, serif;
+        font-size: 2.2rem;
         margin: 0;
-        color: #ffffff;
-        letter-spacing: 1px;
+        color: #F8FAFC;
+        letter-spacing: 0.5px;
       }
       .finance-header .sub {
-        color: #c9a84c;
+        color: #10B981;
         font-size: 0.85rem;
         font-weight: 700;
         letter-spacing: 2px;
         text-transform: uppercase;
         margin-top: 8px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
       }
       .finance-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        gap: 16px;
         margin-bottom: 30px;
       }
       .finance-card {
-        background-color: #f8fafc;
-        border-left: 4px solid #0a2540;
-        padding: 15px 18px;
-        border-radius: 6px;
+        background-color: #131B2E;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-left: 4px solid #10B981;
+        padding: 18px 20px;
+        border-radius: 10px;
       }
       .finance-card h4 {
-        color: #0a2540;
-        margin: 0 0 6px 0;
-        font-size: 1.05rem;
+        color: #F8FAFC;
+        margin: 0 0 8px 0;
+        font-size: 1.15rem;
+        font-family: 'Newsreader', Georgia, serif;
       }
       .finance-card p {
-        color: #475569;
+        color: #94A3B8;
         font-size: 0.9rem;
         margin: 0;
-        line-height: 1.5;
+        line-height: 1.55;
+        font-family: 'Plus Jakarta Sans', sans-serif;
       }
       @media (max-width: 600px) {
         .finance-grid { grid-template-columns: 1fr; }
       }
     </style>
     <div class="finance-header">
-      <h2> ALL NEWS FINANCE</h2>
+      <h2>📈 ALL NEWS FINANCE</h2>
       <div class="sub">Economia &bull; Mercados &bull; Negócios</div>
     </div>
     """, unsafe_allow_html=True)
@@ -1570,9 +1870,9 @@ with aba_finance:
         st.markdown("<div style='text-align: center; color: #94a3b8; font-size: 0.95rem;'><em>A primeira edição do All News Finance será exibida aqui após a próxima curadoria.</em></div>", unsafe_allow_html=True)
 
     # ── 2. SEÇÃO DE ASSINATURA E EXPLICAÇÃO DOS CADERNOS ──
-    st.markdown("<hr style='margin: 40px 0 30px; border: none; border-top: 2px solid #e2e8f0;'>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align:center; color:#0a2540; margin-bottom:10px;'> Assine Grátis o All News Finance</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; color:#64748b; font-size:0.95rem; margin-bottom:20px;'>Receba de Segunda a Sexta-feira, antes da abertura do pregão, na sua caixa de entrada.</p>", unsafe_allow_html=True)
+    st.markdown("<hr style='margin: 40px 0 30px; border: none; border-top: 1px solid rgba(255, 255, 255, 0.1);'>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; color:#F8FAFC; margin-bottom:10px; font-family: Newsreader, serif;'>📬 Assine Grátis o All News Finance</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; color:#94A3B8; font-size:0.95rem; margin-bottom:20px; font-family: Plus Jakarta Sans, sans-serif;'>Receba de Segunda a Sexta-feira, antes da abertura do pregão, na sua caixa de entrada.</p>", unsafe_allow_html=True)
 
     col_fin1, col_fin2 = st.columns([1, 1])
     with col_fin1:
@@ -1580,7 +1880,7 @@ with aba_finance:
     with col_fin2:
         email_fin = st.text_input("Seu E-mail", key="fin_email", placeholder="Ex.: ana@empresa.com.br")
 
-    if st.button("INSCREVER-SE NO ALL NEWS FINANCE ", key="btn_fin_subscribe", type="primary", use_container_width=True):
+    if st.button("INSCREVER-SE NO ALL NEWS FINANCE 📈", key="btn_fin_subscribe", type="primary", use_container_width=True):
         if not nome_fin or len(nome_fin.strip()) < 2:
             st.warning("Por favor, informe seu nome.")
         elif not email_fin or "@" not in email_fin or "." not in email_fin:
@@ -1589,30 +1889,30 @@ with aba_finance:
             with st.spinner("Conectando à aba 'all news finance'..."):
                 ok_fin, msg_fin = salvar_assinante_finance(nome_fin, email_fin)
                 if ok_fin:
-                    st.success(f" {msg_fin}")
+                    st.success(f"🎉 {msg_fin}")
                     st.balloons()
                 else:
-                    st.error(f" {msg_fin}")
+                    st.error(f"❌ {msg_fin}")
 
     st.markdown("""
-    <div style="max-width: 700px; margin: 30px auto 25px; text-align: center; color: #334155; line-height: 1.6; font-size: 1.05rem;">
+    <div style="max-width: 700px; margin: 30px auto 25px; text-align: center; color: #94A3B8; line-height: 1.6; font-size: 1.02rem; font-family: Plus Jakarta Sans, sans-serif;">
       <p>O <b>All News Finance</b> é o nosso braço editorial voltado a investidores, profissionais do mercado financeiro e empresários, com 4 cadernos dedicados:</p>
     </div>
     <div class="finance-grid">
       <div class="finance-card">
-        <h4> Mercado &amp; Bolsa</h4>
+        <h4>📊 Mercado &amp; Bolsa</h4>
         <p>Bovespa, Wall Street, Câmbio e tendências de renda variável direto ao ponto.</p>
       </div>
       <div class="finance-card">
-        <h4> Empresas &amp; Negócios</h4>
+        <h4>🏢 Empresas &amp; Negócios</h4>
         <p>Resultados trimestrais, fusões, aquisições e destaques do setor corporativo.</p>
       </div>
       <div class="finance-card">
-        <h4> Macroeconomia</h4>
+        <h4>🏛️ Macroeconomia</h4>
         <p>Selic, Fed, inflação, política monetária e impacto fiscal no Brasil e no exterior.</p>
       </div>
       <div class="finance-card">
-        <h4> Cripto &amp; FinTechs</h4>
+        <h4>⚡ Cripto &amp; FinTechs</h4>
         <p>Bitcoin, ativos digitais, inovação e transformações no setor financeiro.</p>
       </div>
     </div>
@@ -1634,7 +1934,7 @@ with aba_edicao:
             if _indice:
                 st.markdown("<br>", unsafe_allow_html=True)
                 st.markdown(
-                    "<h3 style='text-align:center; letter-spacing:1px;'> Edição de hoje</h3>",
+                    "<h3 style='text-align:center; letter-spacing:1px; color:#F8FAFC; font-family: Newsreader, serif;'>📰 Edição de hoje</h3>",
                     unsafe_allow_html=True,
                 )
                 _datas   = [e["data"] for e in _indice]
@@ -1645,7 +1945,7 @@ with aba_edicao:
                 _param  = st.query_params.get("edicao", "")
                 _padrao = _param if _param in _datas else _datas[0]
                 _sel = st.selectbox(
-                    " Edições anteriores:",
+                    "📅 Edições anteriores:",
                     _datas,
                     index=_datas.index(_padrao),
                     format_func=lambda d: _rotulos.get(d, d),
@@ -1655,7 +1955,7 @@ with aba_edicao:
                     # Tenta carregar o podcast do dia, se existir
                     _podcast_path = _os.path.join("edicoes", "podcasts", f"podcast_{_sel}.mp3")
                     if _os.path.exists(_podcast_path):
-                        st.markdown("<div style='text-align: center; margin-bottom: 10px; color: #0a5c5a; font-weight: bold;'> Ouça o Podcast Diário (Apresentação: Leo e Ana)</div>", unsafe_allow_html=True)
+                        st.markdown("<div style='text-align: center; margin-bottom: 12px;'><span class='podcast-pill'><span class='pulse-dot-live'></span> NO AR HOJE • PODCAST DIÁRIO (LEO E ANA)</span></div>", unsafe_allow_html=True)
                         st.audio(_podcast_path, format="audio/mpeg")
                         
                     with open(_arq, encoding="utf-8") as _f:
