@@ -1,5 +1,5 @@
 {
-    "timestamp_scan": "2026-09-16T11:18:03.954084-03:00",
+    "timestamp_scan": "2026-09-16T18:32:59.814617-03:00",
     "data_hoje": "2026-09-16",
     "sistema_geral": "WARNING",
     "incidentes": [
@@ -26,9 +26,9 @@
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "SCHEDULED",
-            "detalhe": "Aguardando horário agendado (09:15 BRT).",
-            "ultima_edicao": "2026-09-15",
+            "status": "ONLINE",
+            "detalhe": "Posts da edição de 2026-09-16 gerados e registrados.",
+            "ultima_edicao": "2026-09-16",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
@@ -36,13 +36,13 @@
             "status": "ONLINE",
             "detalhe": "Auditoria cognitiva ativa. 59 lições de aprendizado acumuladas.",
             "licoes_aprendidas": 59,
-            "fotos_rastreadas": 55
+            "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-09-16 11:18 BRT",
+            "ultimo_scan": "2026-09-16 18:32 BRT",
             "incidentes_abertos": 1
         }
     }
