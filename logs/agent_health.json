@@ -1,9 +1,9 @@
 {
-    "timestamp_scan": "2026-09-15T18:38:46.802126-03:00",
-    "data_hoje": "2026-09-15",
+    "timestamp_scan": "2026-09-16T11:18:03.954084-03:00",
+    "data_hoje": "2026-09-16",
     "sistema_geral": "WARNING",
     "incidentes": [
-        "All News Finance não concluiu a edição de 2026-09-15."
+        "All News Finance não concluiu a edição de 2026-09-16."
     ],
     "auto_recuperacoes": [
         "finance_daily.yml disparado para auto-recuperação."
@@ -13,7 +13,7 @@
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (16 notícias).",
-            "ultima_edicao": "2026-09-15",
+            "ultima_edicao": "2026-09-16",
             "horario_previsto": "05:20 BRT",
             "total_itens": 16
         },
@@ -26,8 +26,8 @@
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-09-15 gerados e registrados.",
+            "status": "SCHEDULED",
+            "detalhe": "Aguardando horário agendado (09:15 BRT).",
             "ultima_edicao": "2026-09-15",
             "horario_previsto": "09:15 BRT"
         },
@@ -42,7 +42,7 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-09-15 18:38 BRT",
+            "ultimo_scan": "2026-09-16 11:18 BRT",
             "incidentes_abertos": 1
         }
     }
