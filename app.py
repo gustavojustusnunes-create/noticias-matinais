@@ -1113,7 +1113,7 @@ def gerar_podcast_audio_direto():
 # =============================================================================
 st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "🔒 Arquitetura IA", "🔒 Admin Instagram"])
+aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin, aba_cpo = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "🔒 Arquitetura IA", "🔒 Admin Instagram", "💼 Cockpit CPO"])
 with aba_inicio:
     # ── EXTRAÇÃO DAS MANCHETES E FOTOS PARA O HERO ──
     _ticker_noticias = []
@@ -2363,4 +2363,8 @@ with aba_admin:
             st.error(f'Erro: {e}')
     elif senha:
         st.error('Senha incorreta.')
+
+with aba_cpo:
+    from cpo_cockpit import render_cpo_cockpit
+    render_cpo_cockpit()
 

@@ -1,0 +1,70 @@
+{
+  "atualizado_em": "2026-09-15T18:00:00-03:00",
+  "base_total": 1480,
+  "base_ativa": 1472,
+  "novos_7_dias": 84,
+  "crescimento_7d_pct": 5.7,
+  "novos_30_dias": 312,
+  "cancelamentos_semanais": 3,
+  "churn_semanal_pct": 0.2,
+  "resend_metricas": {
+    "edicoes_disparadas": 30,
+    "total_entregues": 44160,
+    "taxa_entrega_pct": 99.4,
+    "taxa_abertura_unica_pct": 46.8,
+    "benchmark_abertura_pct": 42.0,
+    "taxa_cliques_ctr_pct": 7.4,
+    "benchmark_ctr_pct": 6.5,
+    "engajados_diarios_edr": 689
+  },
+  "preferencias_cadernos": {
+    "Economia": {
+      "inscritos": 1362,
+      "pct": 92.0,
+      "cor": "#10B981",
+      "icone": "📈"
+    },
+    "IA": {
+      "inscritos": 1302,
+      "pct": 88.0,
+      "cor": "#8B5CF6",
+      "icone": "🤖"
+    },
+    "Mundo": {
+      "inscritos": 1199,
+      "pct": 81.0,
+      "cor": "#3B82F6",
+      "icone": "🌎"
+    },
+    "Politica": {
+      "inscritos": 1095,
+      "pct": 74.0,
+      "cor": "#F59E0B",
+      "icone": "🏛️"
+    },
+    "Wellness": {
+      "inscritos": 1006,
+      "pct": 68.0,
+      "cor": "#14B8A6",
+      "icone": "🏃"
+    },
+    "Ciencia": {
+      "inscritos": 903,
+      "pct": 61.0,
+      "cor": "#A855F7",
+      "icone": "🔬"
+    },
+    "Cinema": {
+      "inscritos": 799,
+      "pct": 54.0,
+      "cor": "#EC4899",
+      "icone": "🎬"
+    },
+    "Fofoca": {
+      "inscritos": 622,
+      "pct": 42.0,
+      "cor": "#F43F5E",
+      "icone": "⭐"
+    }
+  }
+}
