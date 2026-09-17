@@ -1,0 +1,11 @@
+{
+  "$schema": "https://langgra.ph/schema.json",
+  "dependencies": [
+    "."
+  ],
+  "graphs": {
+    "all_news_journal": "./core/graph_engine.py:graph",
+    "all-news-journal": "./core/graph_engine.py:graph"
+  },
+  "env": ".env"
+}

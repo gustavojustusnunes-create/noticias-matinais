@@ -18,6 +18,18 @@ from typing import TypedDict, List, Dict, Any, Optional
 
 import streamlit as st
 
+# Integração com o Núcleo Determinístico StateGraph (core/graph_engine.py)
+try:
+    from core.graph_engine import (
+        graph as core_graph,
+        exportar_grafo_visual,
+        executar_fluxo as core_executar_fluxo,
+        aprovar_e_despachar as core_aprovar_e_despachar,
+        obter_estado_atual as core_obter_estado_atual
+    )
+except Exception as _e_imp:
+    print(f"⚠️ [agentic_graph] Aviso ao importar core.graph_engine: {_e_imp}")
+
 # =============================================================================
 # --- 1. DEFINIÇÃO DO ESTADO DO GRAFO (GRAPHSTATE) ---
 # =============================================================================
@@ -544,14 +556,19 @@ def render_agentic_graph_dashboard():
     # Seletor de Visão Executiva
     visao = st.radio(
         "Modo de Operação:",
-        ["🕸️ Editor de Grafo & Engenharia de Nós", "📊 Cockpit de Redes Sociais & Tração"],
+        [
+            "🕸️ Orquestração LangGraph & HITL Gate",
+            "🎛️ Editor Granular de Células (Inner/Outer Harness)",
+            "👁️ Visualização de Grafo (Mermaid & JSON)",
+            "📊 Cockpit de Redes Sociais & Tração"
+        ],
         horizontal=True,
         label_visibility="collapsed"
     )
 
     st.markdown("<hr style='margin: 10px 0 20px; border-color: rgba(255,255,255,0.08);'>", unsafe_allow_html=True)
 
-    if "🕸️ Editor de Grafo" in visao:
+    if "🕸️ Orquestração LangGraph" in visao:
         col_canvas, col_status = st.columns([2.5, 1])
 
         with col_canvas:
@@ -572,6 +589,110 @@ def render_agentic_graph_dashboard():
 
         st.markdown("---")
 
+        # ── SEÇÃO HITL: HUMAN-IN-THE-LOOP CONTROL GATE ──
+        st.markdown("### 🛑 Controle Human-In-The-Loop (HITL Founder Gate)")
+        st.markdown(
+            "O StateGraph suspende a execução imediatamente antes do nó `dispatcher` (`interrupt_before=['dispatcher']`), "
+            "aguardando a chancela manual do fundador antes de postar no X e enviar a newsletter no Resend."
+        )
+
+        c_exec1, c_exec2 = st.columns([1.5, 1])
+        with c_exec1:
+            if st.button("▶️ Executar Pipeline LangGraph (Até o Ponto de Interrupção HITL)", type="secondary", use_container_width=True):
+                with st.spinner("Executando Planner ➔ Writer ➔ Critic ➔ Media Generator..."):
+                    try:
+                        res_fluxo = core_executar_fluxo(thread_id="st_founder_session")
+                        st.session_state["ultimo_fluxo_hitl"] = res_fluxo
+                        st.toast("Pipeline avançou até o ponto de interrupção HITL!", icon="⏸️")
+                        st.rerun()
+                    except Exception as e_run:
+                        st.error(f"Erro na execução do grafo: {e_run}")
+
+        # Inspeciona estado atual
+        estado_hitl = st.session_state.get("ultimo_fluxo_hitl") or (core_obter_estado_atual("st_founder_session") if "core_obter_estado_atual" in globals() else None) or {}
+        status_hitl = estado_hitl.get("status", "IDLE")
+
+        if status_hitl in ["AWAITING_FOUNDER_APPROVAL", "SUSPENDED_WAITING_APPROVAL", "MEDIA_READY"] or (estado_hitl and not estado_hitl.get("hitl_approved")):
+            st.markdown("""
+            <div style="background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.4); border-radius: 12px; padding: 18px; margin: 15px 0;">
+              <h4 style="color: #FACC15; margin: 0 0 8px 0;">⚠️ Ponto de Interrupção Ativo: Aguardando Decisão do Fundador</h4>
+              <p style="color: #E2E8F0; font-size: 13px; margin: 0;">
+                O pipeline gerou as mídias e está suspenso antes do nó <strong>dispatcher</strong>. Revise o draft e os ativos abaixo antes de autorizar a publicação definitiva.
+              </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            col_rev1, col_rev2 = st.columns([2, 1])
+            with col_rev1:
+                story_sel = estado_hitl.get("selected_story", {})
+                st.markdown(f"**Pauta Selecionada:** {story_sel.get('titulo', 'Destaque')}")
+                st.markdown(f"**Caderno:** `{story_sel.get('caderno', story_sel.get('tema', 'Economia'))}`")
+                
+                w_count = estado_hitl.get("word_count", 0)
+                st.markdown(f"**Extensão:** `{w_count} palavras` (Meta estrita: 85 a 105 palavras)")
+                st.text_area("Draft Gerado (Pronto para Disparo):", value=estado_hitl.get("draft_text", ""), height=130, disabled=True)
+                st.info(f"**Auditoria Critic:** {estado_hitl.get('critique_feedback', 'Aprovado')}")
+
+            with col_rev2:
+                img_path = estado_hitl.get("image_path")
+                if img_path and os.path.exists(img_path):
+                    st.image(img_path, caption="Slide 1 (Capa Clássica)", use_container_width=True)
+                else:
+                    st.caption("🖼️ Imagem da Capa vinculada em edicoes/imagens/")
+                
+                aud_path = estado_hitl.get("audio_path")
+                if aud_path and os.path.exists(aud_path):
+                    st.audio(aud_path)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            if st.button("🚀 Aprovar e Disparar Edição (APPROVED_BY_FOUNDER)", type="primary", use_container_width=True):
+                with st.spinner("Retomando execução no nó dispatcher... Disparando X e Resend..."):
+                    try:
+                        res_fim = core_aprovar_e_despachar("st_founder_session")
+                        st.session_state["ultimo_fluxo_hitl"] = res_fim
+                        st.balloons()
+                        st.success("✅ Edição aprovada pelo fundador e despachada com sucesso!")
+                        st.rerun()
+                    except Exception as e_app:
+                        st.error(f"Falha ao aprovar e despachar: {e_app}")
+
+        elif status_hitl == "DISPATCHED":
+            st.success("✨ Última execução: Edição integralmente publicada no X e enviada via Resend com aprovação do fundador!")
+
+    elif "👁️ Visualização de Grafo" in visao:
+        st.markdown("### 👁️ Visualização e Exportação de Grafo (Mermaid & JSON)")
+        st.markdown(
+            "Representação viva da topologia do StateGraph. Compatível com **LangGraph Studio**, **D3.js** e **React Flow**."
+        )
+
+        st.info("💡 **LangGraph Studio:** O arquivo `langgraph.json` está configurado na raiz apontando para `./core/graph_engine.py:graph`. Para depurar visualmente em tempo real, execute `langgraph dev` no terminal.")
+
+        try:
+            dados_vis = exportar_grafo_visual()
+        except Exception as e_vis:
+            dados_vis = {"mermaid": "graph TD; A-->B;", "json_schema": {}}
+            st.error(f"Falha ao exportar grafo: {e_vis}")
+
+        tab_m, tab_j = st.tabs(["📐 Diagrama Mermaid", "📦 JSON Schema (D3 / React Flow)"])
+
+        with tab_m:
+            st.markdown("#### Diagrama Oficial StateGraph")
+            st.code(dados_vis.get("mermaid", ""), language="mermaid")
+            st.caption("Diagrama compilado diretamente via `graph.get_graph().draw_mermaid()`.")
+
+        with tab_j:
+            st.markdown("#### Árvore Estrutural JSON")
+            st.json(dados_vis.get("json_schema", {}))
+            json_str = json.dumps(dados_vis.get("json_schema", {}), indent=2, ensure_ascii=False)
+            st.download_button(
+                "⬇️ Baixar JSON do Grafo",
+                data=json_str,
+                file_name="langgraph_all_news.json",
+                mime="application/json",
+                use_container_width=True
+            )
+
+    elif "🎛️ Editor Granular de Células" in visao:
         # ── SEÇÃO DE CUSTOMIZAÇÃO GRANULAR (NODE INSPECTOR) ──
         st.markdown("### 🎛️ Editor Granular de Células (Inner & Outer Harness)")
         st.markdown("Inspecione e ajuste o raciocínio, modelo de linguagem e contratos de entrada/saída de cada nó do fluxo.")
@@ -629,6 +750,7 @@ def render_agentic_graph_dashboard():
                             st.success("✓ Validação X: Tweet principal com 204 caracteres e auto-reply montado.")
                         elif no_selecionado == "Resend":
                             st.success("✓ Resend API: Contrato de e-mail e tags de tracking validadas.")
+
 
     else:
         # ── ABA 2: COCKPIT DE REDES SOCIAIS & TRAÇÃO ──

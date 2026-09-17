@@ -528,9 +528,9 @@ def validar_nome(nome):
 # falhar silenciosamente. cache_resource mantém o objeto vivo.
 @st.cache_resource(ttl=300)
 def conectar_planilha():
-    if "GCP_JSON" not in st.secrets:
-        return None
     try:
+        if "GCP_JSON" not in st.secrets:
+            return None
         creds_dict = json.loads(st.secrets["GCP_JSON"])
         scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)
@@ -580,9 +580,9 @@ def salvar_assinante(nome, email, ordem_temas):
         return False, f"Não consegui registrar: {e}"
 
 def conectar_planilha_finance():
-    if "GCP_JSON" not in st.secrets:
-        return None
     try:
+        if "GCP_JSON" not in st.secrets:
+            return None
         creds_dict = json.loads(st.secrets["GCP_JSON"])
         scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
         creds = Credentials.from_service_account_info(creds_dict, scopes=scopes)

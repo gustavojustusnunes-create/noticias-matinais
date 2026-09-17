@@ -132,6 +132,8 @@ scratch/
 session.json
 .claude/  
 logs/x_preview.json
+logs/graph_state.json
+logs/graph_structure.mmd
 landing/node_modules/
 landing/dist/
 landing/.astro/
