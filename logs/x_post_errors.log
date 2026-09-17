@@ -1,0 +1,17 @@
+[2026-09-17 13:39:12] ❌ Erro da API Tweepy no X: 402 Payment Required
+credits depleted
+Traceback (most recent call last):
+  File "/home/runner/work/noticias-matinais/noticias-matinais/postar_x_diario.py", line 433, in publicar_no_x
+    resp_tweet = client_v2.create_tweet(
+                 ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/tweepy/client.py", line 849, in create_tweet
+    return self._make_request(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/tweepy/client.py", line 133, in _make_request
+    response = self.request(method, route, params=request_params,
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/tweepy/client.py", line 123, in request
+    raise HTTPException(response)
+tweepy.errors.HTTPException: 402 Payment Required
+credits depleted
+
