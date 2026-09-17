@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-09-17",
+  "data_extenso": "Quinta-feira, 17 de Setembro de 2026",
+  "manchete": "Rei Charles III alerta sobre riscos da IA e pede medidas de executivos antes que seja 'tarde demais'",
+  "arquivo_html": "2026-09-17.html"
+ },
+ {
   "data": "2026-09-16",
   "data_extenso": "Quarta-feira, 16 de Setembro de 2026",
   "manchete": "Papa Leão diz que conflitos no Oriente Médio pressionam relações entre judeus e cristãos",
@@ -352,11 +358,5 @@
   "data_extenso": "Domingo, 5 de Julho de 2026",
   "manchete": "Da 'arquitetura chavista' ao colapso econômico: por que os terremotos da Venezuela foram tão devastadores",
   "arquivo_html": "2026-07-05.html"
- },
- {
-  "data": "2026-07-04",
-  "data_extenso": "Sábado, 4 de Julho de 2026",
-  "manchete": "Economia do paradoxo: Noruega ficou rica com o petróleo e hoje lidera a transição para a energia limpa",
-  "arquivo_html": "2026-07-04.html"
  }
 ]
