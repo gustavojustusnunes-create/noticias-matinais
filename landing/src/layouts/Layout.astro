@@ -1,0 +1,77 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "All News Journal — Informação de Alta Densidade Sem Ruído",
+  description = "O mundo, tecnologia e economia explicados em 4 minutos matinais. Resumo analítico e podcast sintético entregues diariamente às 06:15."
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="pt-BR" class="dark scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph / Redes Sociais -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content="https://allnewsjournal.uk" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@allnews_journal" />
+
+    <!-- Google Fonts: Newsreader (Serif) & Plus Jakarta Sans (Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style is:global>
+      @tailwind base;
+      @tailwind components;
+      @tailwind utilities;
+
+      :root {
+        color-scheme: dark;
+      }
+
+      body {
+        background-color: #0B0F14;
+        color: #E2E8F0;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overflow-x: hidden;
+      }
+
+      /* Scrollbar personalizada dark mode */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0B0F14;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #1A2433;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #2563EB;
+      }
+
+      .font-editorial {
+        font-family: 'Newsreader', Georgia, Cambria, serif;
+      }
+    </style>
+  </head>
+  <body class="bg-[#0B0F14] text-[#E2E8F0] min-h-screen flex flex-col selection:bg-[#2563EB] selection:text-white">
+    <slot />
+  </body>
+</html>

@@ -131,3 +131,8 @@ scratch/
 # sessão autenticada do instagrapi (sensível)
 session.json
 .claude/  
+logs/x_preview.json
+landing/node_modules/
+landing/dist/
+landing/.astro/
+landing/.vercel/

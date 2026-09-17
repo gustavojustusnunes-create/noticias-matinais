@@ -1983,7 +1983,7 @@ with aba_ia:
                 pwd_input = st.text_input("Senha de acesso:", type="password", key="senha_arq_input")
                 submit_btn = st.form_submit_button("Desbloquear Painel", type="primary")
                 if submit_btn:
-                    if pwd_input == "3344":
+                    if pwd_input in ["3344", "anj2026"]:
                         st.session_state.autenticado_arquitetura = True
                         st.rerun()
                     else:
@@ -1991,18 +1991,28 @@ with aba_ia:
         with c_lock2:
             st.info("""
             **Sobre esta área confidencial:**
-            - Monitoramento de saúde e telemetria dos robôs em nuvem.
-            - Memória cognitiva contínua do Agente Supervisor.
-            - Grafo visual dinâmico com rotas de autocura do Watchdog.
+            - Grafo Agêntico Interativo (LangGraph) com Editor de Células.
+            - Cockpit de Redes Sociais com Kill Switch e Manual Force.
+            - Memória cognitiva contínua e telemetria do AI Supervisor.
             """)
     else:
         c_head, c_btn = st.columns([4, 1])
         with c_head:
-            st.markdown("<p style='color:#64748b;'>Painel em tempo real de auto-aperfeiçoamento, métricas de auditoria editorial e memória cumulativa da IA.</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:#64748b;'>Painel em tempo real de auto-aperfeiçoamento, orquestração de grafos LangGraph e governança de agentes de IA.</p>", unsafe_allow_html=True)
         with c_btn:
             if st.button("🔒 Bloquear Painel", key="btn_lock_arq"):
                 st.session_state.autenticado_arquitetura = False
                 st.rerun()
+
+        # ── GRAFO AGÊNTICO INTERATIVO & COCKPIT DE REDES SOCIAIS (LANGGRAPH) ──
+        try:
+            from agentic_graph import render_agentic_graph_dashboard
+            render_agentic_graph_dashboard()
+        except Exception as e_graph:
+            st.error(f"⚠️ Falha ao renderizar suíte de grafos agênticos: {e_graph}")
+
+        st.markdown("<hr style='margin: 40px 0 25px;'>", unsafe_allow_html=True)
+        st.markdown("### 🧠 Histórico Cognitivo e Auditoria do AI Supervisor")
 
         # Carregar memória do Supervisor
         import os

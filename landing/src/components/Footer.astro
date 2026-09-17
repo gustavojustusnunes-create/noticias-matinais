@@ -1,0 +1,57 @@
+---
+const anoAtual = new Date().getFullYear();
+---
+
+<footer class="border-t border-white/[0.08] bg-[#070A0F] py-12 text-xs text-[#64748B]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/[0.06]">
+      <div class="flex flex-col sm:flex-row items-center gap-3">
+        <span class="font-serif tracking-widest text-sm font-bold text-white uppercase">
+          ALL NEWS JOURNAL
+        </span>
+        <span class="hidden sm:inline text-white/20">•</span>
+        <span>Jornalismo digital automatizado e independente</span>
+      </div>
+
+      <!-- Links de Redes Sociais -->
+      <div class="flex items-center space-x-5">
+        <a
+          href="https://x.com/allnews_journal"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[#94A3B8] hover:text-white transition-colors flex items-center gap-1.5"
+        >
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          <span>@allnews_journal</span>
+        </a>
+
+        <a
+          href="https://instagram.com/all.news.journal"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[#94A3B8] hover:text-[#EC4899] transition-colors flex items-center gap-1.5"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+          </svg>
+          <span>@all.news.journal</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <p>© {anoAtual} All News Journal. Todos os direitos reservados. Entregue pontualmente todas as manhãs às 06:15.</p>
+      <div class="flex items-center gap-4 text-[11px]">
+        <a href="#assinar" class="hover:text-white transition-colors">Assinar</a>
+        <span>•</span>
+        <a href="#podcast" class="hover:text-white transition-colors">Podcast</a>
+        <span>•</span>
+        <a href="#cadernos" class="hover:text-white transition-colors">Cadernos</a>
+      </div>
+    </div>
+  </div>
+</footer>

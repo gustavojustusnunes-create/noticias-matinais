@@ -1,0 +1,18 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero.astro";
+import AudioPlayer from "../components/AudioPlayer.astro";
+import CadernosGrid from "../components/CadernosGrid.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout>
+  <Navbar />
+  <main class="flex-grow">
+    <Hero />
+    <AudioPlayer />
+    <CadernosGrid />
+  </main>
+  <Footer />
+</Layout>
