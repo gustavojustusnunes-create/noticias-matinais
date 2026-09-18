@@ -1,0 +1,172 @@
+---
+import edicao from "../data/edicao_atual.json";
+
+const cadernosConfig: Record<string, { label: string; cor: string; bg: string; border: string }> = {
+  "Mundo": { label: "Mundo & Geopolítica", cor: "#60A5FA", bg: "rgba(59, 130, 246, 0.15)", border: "rgba(59, 130, 246, 0.3)" },
+  "Economia": { label: "Mercados & Economia", cor: "#34D399", bg: "rgba(16, 185, 129, 0.15)", border: "rgba(16, 185, 129, 0.3)" },
+  "IA": { label: "Inteligência Artificial", cor: "#A78BFA", bg: "rgba(139, 92, 246, 0.15)", border: "rgba(139, 92, 246, 0.3)" },
+  "Politica": { label: "Política Institucional", cor: "#F472B6", bg: "rgba(236, 72, 153, 0.15)", border: "rgba(236, 72, 153, 0.3)" },
+  "Wellness": { label: "Saúde & Longevidade", cor: "#2DD4BF", bg: "rgba(20, 184, 166, 0.15)", border: "rgba(20, 184, 166, 0.3)" },
+  "Ciencia": { label: "Fronteira da Ciência", cor: "#818CF8", bg: "rgba(99, 102, 241, 0.15)", border: "rgba(99, 102, 241, 0.3)" },
+  "Cinema": { label: "Cinema & Cultura", cor: "#FB7185", bg: "rgba(244, 63, 94, 0.15)", border: "rgba(244, 63, 94, 0.3)" },
+  "Fofoca": { label: "Variedades & Bastidores", cor: "#FBBF24", bg: "rgba(245, 158, 11, 0.15)", border: "rgba(245, 158, 11, 0.3)" },
+};
+
+const cadernos = edicao.cadernos || {};
+---
+
+<section class="py-16 sm:py-24 border-t border-white/[0.08]" id="jornal">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    <!-- Cabeçalho da Edição Digital -->
+    <div class="mb-12 text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#131B26] border border-white/[0.1] text-xs font-semibold text-[#60A5FA] uppercase tracking-wider mb-3">
+        <span class="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
+        Edição Digital de Hoje
+      </div>
+      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
+        O Jornal Matinal Completo
+      </h2>
+      <p class="text-xs sm:text-sm text-[#94A3B8] mt-2.5">
+        {edicao.data_extenso || "Edição Executiva Diária"} • Curadoria autônoma dos fatos de maior relevância
+      </p>
+    </div>
+
+    <!-- Manchete Principal Nobre do Dia (Lead Story Hero) -->
+    {edicao.manchete && (
+      <div class="mb-14 p-6 sm:p-8 rounded-2xl bg-gradient-to-br from-[#131B26] to-[#0E1520] border border-white/[0.12] shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-[#2563EB]/15 blur-[100px] rounded-full pointer-events-none"></div>
+        <div class="inline-block px-2.5 py-1 rounded-md bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#60A5FA] text-[11px] font-bold uppercase tracking-wider mb-3">
+          ⭐ Destaque Editorial da Edição
+        </div>
+        <h3 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight mb-4">
+          {edicao.manchete}
+        </h3>
+        <p class="text-xs sm:text-sm text-[#94A3B8] leading-relaxed max-w-3xl mb-4">
+          {edicao.editorial || "Análise sintética dos principais acontecimentos das últimas 24 horas preparados para sua leitura matinal."}
+        </p>
+        <div class="flex items-center gap-3 text-xs text-[#64748B]">
+          <span>8 Cadernos Ativos</span>
+          <span>•</span>
+          <span>Leitura estimada: 4 minutos</span>
+        </div>
+      </div>
+    )}
+
+    <!-- Seções por Caderno Temático -->
+    <div class="space-y-16">
+      {Object.entries(cadernos).map(([nomeCaderno, noticias]) => {
+        const config = cadernosConfig[nomeCaderno] || {
+          label: nomeCaderno,
+          cor: "#93C5FD",
+          bg: "rgba(255,255,255,0.08)",
+          border: "rgba(255,255,255,0.15)"
+        };
+        const items = Array.isArray(noticias) ? noticias : [];
+        if (items.length === 0) return null;
+
+        return (
+          <div class="space-y-6" id={`caderno-${nomeCaderno.toLowerCase()}`}>
+            <!-- Título do Caderno -->
+            <div class="flex items-center justify-between pb-3 border-b border-white/[0.08]">
+              <div class="flex items-center gap-2.5">
+                <span 
+                  class="text-xs font-bold px-3 py-1 rounded-full border uppercase tracking-wider"
+                  style={`color: ${config.cor}; background-color: ${config.bg}; border-color: ${config.border};`}
+                >
+                  {config.label}
+                </span>
+                <span class="text-xs text-[#64748B] hidden sm:inline">• {items.length} reportagens selecionadas</span>
+              </div>
+              <a href="#assinar" class="text-xs text-[#94A3B8] hover:text-white transition-colors">
+                Receber por e-mail &rarr;
+              </a>
+            </div>
+
+            <!-- Grid de Notícias deste Caderno -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {items.map((item: any) => (
+                <article class="group rounded-xl bg-[#131B26] border border-white/[0.08] hover:border-[#2563EB]/50 hover:bg-[#162030] transition-all duration-200 overflow-hidden flex flex-col justify-between shadow-xl shadow-black/30 transform hover:-translate-y-1">
+                  <div>
+                    <!-- Imagem da Matéria -->
+                    {item.imagem ? (
+                      <div class="w-full h-48 overflow-hidden relative bg-[#0B0F14]">
+                        <img 
+                          src={item.imagem} 
+                          alt={item.titulo} 
+                          loading="lazy"
+                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 filter brightness-90 group-hover:brightness-100"
+                          onerror="this.style.display='none'"
+                        />
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#131B26] via-transparent to-transparent opacity-80 pointer-events-none"></div>
+                      </div>
+                    ) : (
+                      <div class="w-full h-24 bg-[#0E1520] flex items-center justify-center text-[#64748B] text-xs font-serif italic border-b border-white/[0.04]">
+                        All News Journal • {nomeCaderno}
+                      </div>
+                    )}
+
+                    <!-- Conteúdo Textual -->
+                    <div class="p-5 sm:p-6">
+                      <h4 class="font-serif text-lg sm:text-xl font-bold text-white group-hover:text-[#93C5FD] transition-colors leading-snug mb-3">
+                        <a href={item.link || "#"} target="_blank" rel="noopener noreferrer">
+                          {item.titulo}
+                        </a>
+                      </h4>
+                      <p class="text-xs sm:text-sm text-[#94A3B8] leading-relaxed line-clamp-4">
+                        {item.resumo}
+                      </p>
+                    </div>
+                  </div>
+
+                  <!-- Rodapé do Card com Link Externo -->
+                  <div class="px-5 sm:px-6 py-3 border-t border-white/[0.06] bg-[#0E141E]/50 flex items-center justify-between text-xs">
+                    <span class="text-[11px] text-[#64748B] uppercase tracking-wider font-semibold">
+                      {nomeCaderno}
+                    </span>
+                    {item.link && (
+                      <a 
+                        href={item.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="inline-flex items-center gap-1.5 text-[#38BDF8] hover:text-[#60A5FA] font-medium transition-colors"
+                      >
+                        Ler na íntegra
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                          <polyline points="15 3 21 3 21 9"></polyline>
+                          <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                      </a>
+                    )}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Banner Final de Assinatura -->
+    <div class="mt-16 p-8 rounded-2xl bg-gradient-to-r from-[#1E3A8A]/30 via-[#131B26] to-[#0E1520] border border-[#2563EB]/40 text-center">
+      <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white mb-2">
+        Gostou da curadoria de hoje?
+      </h3>
+      <p class="text-xs sm:text-sm text-[#94A3B8] max-w-xl mx-auto mb-6">
+        Receba a edição completa e o podcast matinal diretamente no seu e-mail todos os dias às 06:15.
+      </p>
+      <a 
+        href="#assinar" 
+        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-xl shadow-[#2563EB]/30 transition-all transform hover:-translate-y-0.5"
+      >
+        Quero Receber Gratuitamente
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14"></path>
+          <path d="m12 5 7 7-7 7"></path>
+        </svg>
+      </a>
+    </div>
+
+  </div>
+</section>

@@ -1111,9 +1111,40 @@ def gerar_podcast_audio_direto():
 # =============================================================================
 # --- CONTEÚDO PRINCIPAL (LANDING PAGE) ---
 # =============================================================================
-st.markdown("<h1>ALL NEWS JOURNAL</h1>", unsafe_allow_html=True)
+# =============================================================================
+# --- CENTRO DE CONTROLE & ESTÚDIO DE GRAFOS (BACKOFFICE EXECUTIVO) ---
+# =============================================================================
+st.markdown("""
+<div style="background: linear-gradient(135deg, #0B0F14 0%, #131B26 100%); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 18px 24px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; box-shadow: 0 8px 20px -4px rgba(0,0,0,0.6);">
+    <div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 4px;">
+            <span style="font-family: 'Newsreader', serif; font-size: 1.55rem; font-weight: 700; color: #FFFFFF; letter-spacing: 0.04em;">ALL NEWS JOURNAL</span>
+            <span style="background: rgba(37,99,235,0.2); border: 1px solid rgba(37,99,235,0.4); color: #60A5FA; font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 9999px; letter-spacing: 0.08em;">Control Center & Graph Studio</span>
+        </div>
+        <p style="margin: 0; color: #94A3B8; font-size: 0.85rem;">Painel de Governança Agêntica, Orquestração LangGraph (StateGraph), Telemetria e HITL Gate.</p>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <span style="display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #10B981; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); padding: 5px 10px; border-radius: 6px;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #10B981;"></span> LangGraph Live
+        </span>
+        <a href="https://noticias-matinais.vercel.app/" target="_blank" style="background: #2563EB; color: #FFFFFF; font-weight: 600; font-size: 0.82rem; padding: 8px 16px; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(37,99,235,0.3);">
+            🌐 Acessar Jornal dos Leitores (Vercel) ↗
+        </a>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ia, aba_admin, aba_cpo = st.tabs(["🏠 Página Inicial", "📰 Ler Edição de Hoje", "📈 All News Finance", "🎧 Ouvir no Site", "🔒 Arquitetura IA", "🔒 Admin Instagram", "💼 Cockpit CPO"])
+aba_ia, aba_telemetria, aba_cpo, aba_admin, aba_edicao, aba_finance, aba_inicio, aba_podcast = st.tabs([
+    "🕸️ Grafo Agêntico & HITL (LangGraph)",
+    "🛡️ Rede de Agentes & Telemetria",
+    "💼 Cockpit CPO & Tração",
+    "📸 Gestão Redes & Instagram",
+    "📰 Auditoria de Edições",
+    "📈 All News Finance",
+    "🌐 Preview da Vitrine",
+    "🎧 Player de Áudio"
+])
+
 with aba_inicio:
     # ── EXTRAÇÃO DAS MANCHETES E FOTOS PARA O HERO ──
     _ticker_noticias = []
@@ -1968,51 +1999,20 @@ with aba_edicao:
 
 
 with aba_ia:
-    st.markdown("<h2 style='color:#0a5c5a; font-family: Playfair Display, serif;'>Centro de Inteligência & Arquitetura</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color:#60A5FA; font-family: Newsreader, serif;'>🕸️ Centro de Orquestração & Grafo Agêntico (LangGraph)</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color:#94A3B8; font-size: 0.92rem; margin-bottom: 20px;'>StateGraph determinístico com padrão Planner-Critic, Editor Granular de Células (Inner/Outer Harness), observador AI Supervisor e Human-In-The-Loop (HITL) Founder Gate.</p>", unsafe_allow_html=True)
 
-    if "autenticado_arquitetura" not in st.session_state:
-        st.session_state.autenticado_arquitetura = False
+    # ── GRAFO AGÊNTICO INTERATIVO & COCKPIT DE REDES SOCIAIS (LANGGRAPH) ──
+    try:
+        from agentic_graph import render_agentic_graph_dashboard
+        render_agentic_graph_dashboard()
+    except Exception as e_graph:
+        st.error(f"⚠️ Falha ao renderizar suíte de grafos agênticos: {e_graph}")
 
-    if not st.session_state.autenticado_arquitetura:
-        st.markdown("<p style='color:#64748b; font-size: 1.02rem;'>Esta seção contém a arquitetura dos agentes autônomos, logs de auditoria e telemetria de saúde do sistema. É necessário autenticar-se para acessar.</p>", unsafe_allow_html=True)
-
-        c_lock1, c_lock2 = st.columns([1.5, 2.5])
-        with c_lock1:
-            with st.form("form_login_arquitetura"):
-                st.markdown("#### 🔒 Acesso Restrito")
-                pwd_input = st.text_input("Senha de acesso:", type="password", key="senha_arq_input")
-                submit_btn = st.form_submit_button("Desbloquear Painel", type="primary")
-                if submit_btn:
-                    if pwd_input in ["3344", "anj2026"]:
-                        st.session_state.autenticado_arquitetura = True
-                        st.rerun()
-                    else:
-                        st.error("Senha incorreta. Acesso negado.")
-        with c_lock2:
-            st.info("""
-            **Sobre esta área confidencial:**
-            - Grafo Agêntico Interativo (LangGraph) com Editor de Células.
-            - Cockpit de Redes Sociais com Kill Switch e Manual Force.
-            - Memória cognitiva contínua e telemetria do AI Supervisor.
-            """)
-    else:
-        c_head, c_btn = st.columns([4, 1])
-        with c_head:
-            st.markdown("<p style='color:#64748b;'>Painel em tempo real de auto-aperfeiçoamento, orquestração de grafos LangGraph e governança de agentes de IA.</p>", unsafe_allow_html=True)
-        with c_btn:
-            if st.button("🔒 Bloquear Painel", key="btn_lock_arq"):
-                st.session_state.autenticado_arquitetura = False
-                st.rerun()
-
-        # ── GRAFO AGÊNTICO INTERATIVO & COCKPIT DE REDES SOCIAIS (LANGGRAPH) ──
-        try:
-            from agentic_graph import render_agentic_graph_dashboard
-            render_agentic_graph_dashboard()
-        except Exception as e_graph:
-            st.error(f"⚠️ Falha ao renderizar suíte de grafos agênticos: {e_graph}")
-
-        st.markdown("<hr style='margin: 40px 0 25px;'>", unsafe_allow_html=True)
-        st.markdown("### 🧠 Histórico Cognitivo e Auditoria do AI Supervisor")
+with aba_telemetria:
+    if True:
+        st.markdown("<h2 style='color:#10B981; font-family: Newsreader, serif;'>🛡️ Monitoramento & Topologia da Rede de Agentes</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#94A3B8; font-size: 0.92rem; margin-bottom: 20px;'>Telemetria em tempo real dos serviços autônomos, memória cognitiva contínua do AI Supervisor e ações do Watchdog Sentinela.</p>", unsafe_allow_html=True)
 
         # Carregar memória do Supervisor
         import os
