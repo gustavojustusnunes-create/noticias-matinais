@@ -1,34 +1,32 @@
 {
-    "timestamp_scan": "2026-09-18T18:07:49.514433-03:00",
-    "data_hoje": "2026-09-18",
+    "timestamp_scan": "2026-09-19T10:18:07.112519-03:00",
+    "data_hoje": "2026-09-19",
     "sistema_geral": "WARNING",
     "incidentes": [
-        "All News Journal não gerou a edição matinal de 2026-09-18.",
-        "All News Finance não concluiu a edição de 2026-09-18."
+        "All News Journal não gerou a edição matinal de 2026-09-19."
     ],
     "auto_recuperacoes": [
-        "daily.yml disparado para auto-recuperação.",
-        "finance_daily.yml disparado para auto-recuperação."
+        "daily.yml disparado para auto-recuperação."
     ],
     "agentes": {
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "RECOVERING",
-            "detalhe": "Edição de hoje (2026-09-18) não foi gerada até às 18:07 BRT.",
+            "detalhe": "Edição de hoje (2026-09-19) não foi gerada até às 10:18 BRT.",
             "ultima_edicao": "Pendente",
             "horario_previsto": "05:20 BRT"
         },
         "finance": {
             "nome": "All News Finance",
-            "status": "RECOVERING",
-            "detalhe": "Edição financeira de hoje ausente após as 06:20.",
-            "ultima_edicao": "Pendente",
-            "horario_previsto": "05:25 BRT"
+            "status": "WEEKEND_REST",
+            "detalhe": "Mercados fechados aos fins de semana.",
+            "ultima_edicao": "Segunda-feira",
+            "horario_previsto": "Seg-Sex às 05:25"
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "PENDING",
-            "detalhe": "Ainda não postou a edição de hoje (2026-09-18).",
+            "status": "SCHEDULED",
+            "detalhe": "Aguardando horário agendado (09:15 BRT).",
             "ultima_edicao": "2026-09-17",
             "horario_previsto": "09:15 BRT"
         },
@@ -43,8 +41,8 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-09-18 18:07 BRT",
-            "incidentes_abertos": 2
+            "ultimo_scan": "2026-09-19 10:18 BRT",
+            "incidentes_abertos": 1
         }
     }
 }
