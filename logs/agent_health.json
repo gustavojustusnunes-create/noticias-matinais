@@ -1,5 +1,5 @@
 {
-    "timestamp_scan": "2026-09-19T13:40:53.858845-03:00",
+    "timestamp_scan": "2026-09-19T17:54:54.306578-03:00",
     "data_hoje": "2026-09-19",
     "sistema_geral": "WARNING",
     "incidentes": [
@@ -12,7 +12,7 @@
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "RECOVERING",
-            "detalhe": "Edição de hoje (2026-09-19) não foi gerada até às 13:40 BRT.",
+            "detalhe": "Edição de hoje (2026-09-19) não foi gerada até às 17:54 BRT.",
             "ultima_edicao": "Pendente",
             "horario_previsto": "05:20 BRT"
         },
@@ -41,7 +41,7 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-09-19 13:40 BRT",
+            "ultimo_scan": "2026-09-19 17:54 BRT",
             "incidentes_abertos": 1
         }
     }
