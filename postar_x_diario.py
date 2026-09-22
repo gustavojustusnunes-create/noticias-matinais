@@ -449,21 +449,35 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
                 break
 
             # 2. Resolução de Cloudflare Turnstile (se acionado em datacenter)
-            if sec % 2 == 0:
-                # Procura em todos os iframes da página
+            if sec % 3 == 0:
+                # Estratégia A: Clique direto nas coordenadas do checkbox dentro do iframe do Turnstile
+                try:
+                    for ifr in page.locator("iframe").all():
+                        box = ifr.bounding_box()
+                        if box and box["width"] > 100 and box["height"] > 30:
+                            click_x = box["x"] + 30
+                            click_y = box["y"] + (box["height"] / 2)
+                            print(f"   🛡️ Clicando nas coordenadas do Turnstile ({click_x:.1f}, {click_y:.1f}) ({sec}s)...")
+                            page.mouse.move(click_x, click_y)
+                            page.mouse.click(click_x, click_y)
+                            time.sleep(3)
+                            break
+                except Exception:
+                    pass
+
+                # Estratégia B: Procura em todos os frames por elementos interativos
                 for frame in page.frames:
-                    if "cloudflare" in frame.url or "turnstile" in frame.url or "challenge" in frame.url:
-                        try:
-                            cb = frame.locator("input[type='checkbox'], span.mark, div.ctp-checkbox, label.ctp-checkbox-label")
-                            if cb.count() > 0:
-                                print(f"   🛡️ Desafio Cloudflare Turnstile detectado no iframe! Clicando no checkbox ({sec}s)...")
-                                cb.first.click(force=True)
-                                time.sleep(3)
-                                break
-                        except Exception:
-                            pass
+                    try:
+                        cb = frame.locator("input[type='checkbox'], span.mark, div.ctp-checkbox, label.ctp-checkbox-label")
+                        if cb.count() > 0:
+                            print(f"   🛡️ Desafio Cloudflare Turnstile detectado no frame! Clicando ({sec}s)...")
+                            cb.first.click(force=True)
+                            time.sleep(3)
+                            break
+                    except Exception:
+                        pass
                 
-                # Procura na página principal
+                # Estratégia C: Procura na página principal
                 try:
                     cf_root = page.locator("div#challenge-stage, div.cf-turnstile-wrapper, div.ctp-checkbox")
                     if cf_root.count() > 0:
