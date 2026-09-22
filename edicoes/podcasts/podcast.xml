@@ -51,5 +51,12 @@
       <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/edicoes/podcasts/podcast_2026-09-17.mp3" length="1709613" type="audio/mpeg"/>
       <guid isPermaLink="false">anj-2026-09-17</guid>
     </item>
+    <item>
+      <title>Edição de 2026-09-22</title>
+      <description>As notícias desta manhã: 2026-09-22. Apresentado por Leo e Ana.</description>
+      <pubDate>Tue, 22 Sep 2026 20:36:32 +0000</pubDate>
+      <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/edicoes/podcasts/podcast_2026-09-22.mp3" length="1636077" type="audio/mpeg"/>
+      <guid isPermaLink="false">anj-2026-09-22</guid>
+    </item>
   </channel>
 </rss>
