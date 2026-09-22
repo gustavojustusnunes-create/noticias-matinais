@@ -391,17 +391,25 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
     created_ids = []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(
-            headless=True,
-            args=[
+        proxy_server = os.environ.get("X_PROXY") or os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
+        launch_kwargs = {
+            "headless": True,
+            "args": [
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
                 "--disable-gpu",
-                "--disable-blink-features=AutomationControlled"
+                "--disable-blink-features=AutomationControlled",
+                "--disable-site-isolation-trials",
+                "--disable-features=IsolateOrigins,site-per-process"
             ],
-            ignore_default_args=["--enable-automation"]
-        )
+            "ignore_default_args": ["--enable-automation"]
+        }
+        if proxy_server:
+            print(f"   🌐 Utilizando proxy: {proxy_server.split('@')[-1] if '@' in proxy_server else proxy_server}")
+            launch_kwargs["proxy"] = {"server": proxy_server}
+
+        browser = p.chromium.launch(**launch_kwargs)
         context = browser.new_context(
             viewport={"width": 1366, "height": 768},
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",

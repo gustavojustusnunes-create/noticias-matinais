@@ -46,7 +46,7 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
-        run: python postar_x_diario.py
+        run: python -u postar_x_diario.py
 
       - name: Persistir registros e capas geradas
         run: |
