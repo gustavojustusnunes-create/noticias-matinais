@@ -46,6 +46,8 @@ except Exception:
 # --- CONFIGURAÇÃO & VARIÁVEIS DE AMBIENTE ---
 # =============================================================================
 GEMINI_API_KEY        = os.environ.get("GEMINI_API_KEY", "").strip()
+X_AUTH_TOKEN          = os.environ.get("X_AUTH_TOKEN", "").strip()
+X_CT0                 = os.environ.get("X_CT0", "").strip()
 X_API_KEY             = os.environ.get("X_API_KEY", "").strip()
 X_API_SECRET          = os.environ.get("X_API_SECRET", "").strip()
 X_ACCESS_TOKEN        = os.environ.get("X_ACCESS_TOKEN", "").strip()
@@ -60,7 +62,7 @@ ERROR_LOG_FILE        = LOGS_DIR / "x_post_errors.log"
 AUTO_REPLY_TEXT = (
     "A análise completa desta e de outras notícias essenciais foi enviada hoje às 06:15 para nossos leitores.\n\n"
     "Receba as próximas edições em 4 minutos matinais:\n"
-    "https://all-news-journal-ikgdbajp9nobmquagzvx3v.streamlit.app/?utm_source=x&utm_medium=organic&utm_campaign=daily_debate"
+    "https://noticias-matinais.vercel.app/?utm_source=x&utm_medium=organic&utm_campaign=daily_debate"
 )
 
 # =============================================================================
@@ -378,13 +380,221 @@ def autenticar_tweepy() -> tuple[object, object]:
 
     return api_v1, client_v2
 
+def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: str = AUTO_REPLY_TEXT) -> bool:
+    """
+    Publica o tweet principal com capa e auto-reply encadeado via Playwright Headless.
+    Consome R$ 0 em APIs e roda nativamente no motor do Chromium.
+    """
+    from playwright.sync_api import sync_playwright
+
+    print("\n🤖 Iniciando Robô de Postagem Playwright no X (Sessão Headless $0/mês)...")
+    created_ids = []
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu"
+            ]
+        )
+        context = browser.new_context(
+            viewport={"width": 1280, "height": 800},
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+        )
+        context.add_cookies([
+            {"name": "auth_token", "value": X_AUTH_TOKEN, "domain": ".x.com", "path": "/"},
+            {"name": "ct0", "value": X_CT0, "domain": ".x.com", "path": "/"}
+        ])
+        page = context.new_page()
+
+        # Interceptador para capturar o ID do Tweet gerado pelo backend do X
+        def capturar_resposta(response):
+            if "CreateTweet" in response.url and response.status == 200:
+                try:
+                    data = response.json()
+                    tid = data.get("data", {}).get("create_tweet", {}).get("tweet_results", {}).get("result", {}).get("rest_id")
+                    if tid:
+                        created_ids.append(tid)
+                except Exception:
+                    pass
+
+        page.on("response", capturar_resposta)
+
+        print("⏳ Acessando painel https://x.com/home...")
+        page.goto("https://x.com/home", wait_until="domcontentloaded")
+
+        # Localização do Composer
+        print("✍️ Inserindo copy do post principal...")
+        textarea0 = page.wait_for_selector("[data-testid='tweetTextarea_0']", timeout=25000)
+        textarea0.fill(texto_tweet)
+        time.sleep(1)
+
+        # Anexo da Capa Editorial (Slide 1)
+        if caminho_imagem and Path(caminho_imagem).exists():
+            print(f"📎 Anexando imagem da capa ({caminho_imagem})...")
+            file_input = page.locator("input[data-testid='fileInput']").first
+            file_input.set_input_files(str(Path(caminho_imagem).resolve()))
+            page.wait_for_selector("[data-testid='attachments']", timeout=20000)
+            print("   ✅ Capa editorial carregada com sucesso.")
+            time.sleep(2)
+
+        # Encadeamento do Auto-reply (Thread)
+        thread_ativada = False
+        print("🔗 Adicionando segundo tweet da thread (Auto-Reply)...")
+        try:
+            add_btn = page.locator("[data-testid='addButton']").first
+            add_btn.wait_for(state="visible", timeout=6000)
+            add_btn.click(force=True)
+            textarea1 = page.wait_for_selector("[data-testid='tweetTextarea_1']", timeout=8000)
+            textarea1.fill(auto_reply)
+            thread_ativada = True
+            print("   ✅ Auto-reply de conversão encadeado com sucesso.")
+            time.sleep(1)
+        except Exception as e_add:
+            print(f"   ℹ️ Inclusão via thread direta não disponível ({e_add}), prosseguindo com post principal.")
+
+        # Disparo do botão Post / Post all
+        btn_post = page.locator("[data-testid='tweetButton'], [data-testid='tweetButtonInline']").first
+        btn_post.wait_for(state="visible", timeout=10000)
+        time.sleep(1)
+
+        print("🚀 Disparando publicação no X via Playwright...")
+        btn_post.click(force=True)
+
+        # Confirmação da publicação do tweet principal
+        print("⏳ Aguardando confirmação do X...")
+        for _ in range(25):
+            time.sleep(1)
+            if created_ids:
+                print(f"   📡 Confirmação recebida via rede (IDs: {created_ids})")
+                break
+            if page.locator("[data-testid='toast']").count() > 0:
+                print("   📡 Toast de confirmação detectado na interface.")
+                break
+            if thread_ativada and page.locator("[data-testid='tweetTextarea_1']").count() == 0:
+                print("   📡 Modal de composição finalizado com sucesso.")
+                break
+
+        # Se a thread direta não foi ativada, publica o auto-reply encadeado com delay de 12s
+        if not thread_ativada and auto_reply:
+            print("⏳ Aguardando delay de 12 segundos para encadeamento natural de conversão...")
+            time.sleep(12)
+            print("🔗 Publicando Auto-Reply encadeado no post...")
+            try:
+                status_url = None
+                toast_link = page.locator("[data-testid='toast'] a[href*='/status/']").first
+                if toast_link.count() > 0:
+                    href = toast_link.get_attribute("href")
+                    status_url = f"https://x.com{href}" if href.startswith("/") else f"https://x.com/{href}"
+                elif created_ids:
+                    status_url = f"https://x.com/allnews_journal/status/{created_ids[0]}"
+                else:
+                    # Busca o post mais recente no perfil
+                    page.locator("a[data-testid='AppTabBar_Profile_Link']").first.click(force=True)
+                    time.sleep(2)
+                    first_article_link = page.locator("article a[href*='/status/']").first
+                    if first_article_link.count() > 0:
+                        href = first_article_link.get_attribute("href")
+                        status_url = f"https://x.com{href}" if href.startswith("/") else f"https://x.com/{href}"
+
+                if status_url:
+                    print(f"   🎯 Acessando URL do tweet ({status_url}) para responder...")
+                    page.goto(status_url, wait_until="domcontentloaded")
+                    time.sleep(2)
+                    # Descarta modal de onboarding se houver
+                    got_it = page.locator("button:has-text('Got it'), div[role='button']:has-text('Got it')")
+                    if got_it.count() > 0:
+                        got_it.first.click(force=True)
+                        time.sleep(1)
+
+                    reply_box = page.wait_for_selector("[data-testid='tweetTextarea_0']", timeout=15000)
+                    reply_box.fill(auto_reply)
+                    time.sleep(1)
+                    reply_btn = page.locator("[data-testid='tweetButtonInline']").first
+                    reply_btn.click(force=True)
+                    time.sleep(3)
+                    print("   ✅ Auto-Reply de conversão publicado com sucesso na thread!")
+                    thread_ativada = True
+            except Exception as e_rep:
+                print(f"   ⚠️ Falha ao publicar auto-reply sequencial: {e_rep}")
+
+        tweet_id = created_ids[0] if created_ids else "publicado"
+        tweet_url = f"https://x.com/allnews_journal/status/{tweet_id}" if created_ids else "https://x.com/allnews_journal"
+        reply_id = created_ids[1] if (thread_ativada and len(created_ids) > 1) else None
+
+        print(f"🎉 Postagem realizada com sucesso!")
+        print(f"   🔗 URL: {tweet_url}")
+        if reply_id:
+            print(f"   💬 Thread Reply ID: {reply_id}")
+
+        # Registro de Sucesso
+        registrar_sucesso({
+            "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "metodo": "Playwright_Headless_Robot",
+            "tweet_id": tweet_id,
+            "tweet_url": tweet_url,
+            "reply_id": reply_id,
+            "thread_ativada": thread_ativada,
+            "texto": texto_tweet,
+            "imagem": str(caminho_imagem)
+        })
+
+        browser.close()
+        return True
+
+def publicar_via_tweepy(texto_tweet: str, caminho_imagem: Path) -> bool:
+    """
+    Fallback: pipeline de publicação via API oficial do Twitter (Tweepy).
+    """
+    import tweepy
+    print("\n🔐 Autenticando na API do X (Tweepy)...")
+    api_v1, client_v2 = autenticar_tweepy()
+
+    print(f"📤 Fazendo upload da imagem da Capa ({caminho_imagem})...")
+    media = api_v1.media_upload(filename=str(caminho_imagem))
+    media_id = media.media_id
+    print(f"   ✅ Mídia carregada com sucesso (Media ID: {media_id})")
+
+    print("🚀 Publicando Tweet principal...")
+    resp_tweet = client_v2.create_tweet(
+        text=texto_tweet,
+        media_ids=[media_id]
+    )
+    tweet_id = resp_tweet.data.get("id")
+    tweet_url = f"https://x.com/i/web/status/{tweet_id}"
+    print(f"   ✅ Tweet principal publicado: {tweet_url}")
+
+    print("⏳ Aguardando delay de 12 segundos para encadeamento natural...")
+    time.sleep(12)
+
+    print("🔗 Publicando Auto-Reply encadeado de conversão...")
+    resp_reply = client_v2.create_tweet(
+        text=AUTO_REPLY_TEXT,
+        in_reply_to_tweet_id=tweet_id
+    )
+    reply_id = resp_reply.data.get("id")
+    print(f"   ✅ Auto-Reply publicado com sucesso: https://x.com/i/web/status/{reply_id}")
+
+    registrar_sucesso({
+        "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "metodo": "Tweepy_Official_API",
+        "tweet_id": tweet_id,
+        "tweet_url": tweet_url,
+        "reply_id": reply_id,
+        "texto": texto_tweet,
+        "imagem": str(caminho_imagem)
+    })
+    return True
+
 def publicar_no_x(texto_tweet: str, caminho_imagem: Path, dry_run: bool = False) -> bool:
     """
-    Executa a esteira de publicação:
-    1. Upload da Capa Editorial (API v1.1).
-    2. Tweet principal com mídia (API v2).
-    3. Delay de 12 segundos.
-    4. Auto-reply encadeado com link UTM de conversão.
+    Orquestrador de publicação no X:
+    1. Se dry_run: simula sem publicar.
+    2. Prioridade 1: Playwright Headless Robot ($0 custo de API).
+    3. Fallback: API oficial Tweepy (caso credenciais estejam configuradas).
     """
     print(f"\n📝 Post Principal ({len(texto_tweet)} caracteres):")
     print("─" * 60)
@@ -411,63 +621,25 @@ def publicar_no_x(texto_tweet: str, caminho_imagem: Path, dry_run: bool = False)
             json.dump(preview, f, indent=2, ensure_ascii=False)
         return True
 
-    # Checagem graciosa de credenciais
-    if not (X_API_KEY and X_API_SECRET and X_ACCESS_TOKEN and X_ACCESS_TOKEN_SECRET and X_BEARER_TOKEN):
-        msg_aviso = "⚠️ Credenciais do X (Twitter) não configuradas no ambiente. Postagem ignorada sem falhar a pipeline."
-        print(f"\n{msg_aviso}")
-        registrar_erro(msg_aviso)
-        return True
+    # 1. Prioridade: Robô de Sessão Playwright (Custo $0, sem limite de API)
+    if X_AUTH_TOKEN and X_CT0:
+        try:
+            return publicar_via_playwright(texto_tweet, caminho_imagem, AUTO_REPLY_TEXT)
+        except Exception as e_pw:
+            registrar_erro(f"Falha no robô Playwright do X: {e_pw}. Tentando fallback...", e_pw)
 
-    import tweepy
+    # 2. Fallback: API Oficial Tweepy
+    if X_API_KEY and X_API_SECRET and X_ACCESS_TOKEN and X_ACCESS_TOKEN_SECRET and X_BEARER_TOKEN:
+        try:
+            return publicar_via_tweepy(texto_tweet, caminho_imagem)
+        except Exception as e_tw:
+            registrar_erro(f"Falha na API Tweepy do X: {e_tw}", e_tw)
+            return False
 
-    try:
-        print("\n🔐 Autenticando na API do X...")
-        api_v1, client_v2 = autenticar_tweepy()
-
-        print(f"📤 Fazendo upload da imagem da Capa ({caminho_imagem})...")
-        media = api_v1.media_upload(filename=str(caminho_imagem))
-        media_id = media.media_id
-        print(f"   ✅ Mídia carregada com sucesso (Media ID: {media_id})")
-
-        print("🚀 Publicando Tweet principal...")
-        resp_tweet = client_v2.create_tweet(
-            text=texto_tweet,
-            media_ids=[media_id]
-        )
-        tweet_id = resp_tweet.data.get("id")
-        tweet_url = f"https://x.com/i/web/status/{tweet_id}"
-        print(f"   ✅ Tweet principal publicado: {tweet_url}")
-
-        # Delay anti-bot / anti-penalização algorítmica
-        print("⏳ Aguardando delay de 12 segundos para encadeamento natural...")
-        time.sleep(12)
-
-        print("🔗 Publicando Auto-Reply encadeado de conversão...")
-        resp_reply = client_v2.create_tweet(
-            text=AUTO_REPLY_TEXT,
-            in_reply_to_tweet_id=tweet_id
-        )
-        reply_id = resp_reply.data.get("id")
-        print(f"   ✅ Auto-Reply publicado com sucesso: https://x.com/i/web/status/{reply_id}")
-
-        # Salva histórico
-        registrar_sucesso({
-            "data": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "tweet_id": tweet_id,
-            "tweet_url": tweet_url,
-            "reply_id": reply_id,
-            "texto": texto_tweet,
-            "imagem": str(caminho_imagem)
-        })
-
-        return True
-
-    except tweepy.errors.TweepyException as e_tw:
-        registrar_erro(f"Erro da API Tweepy no X: {e_tw}", e_tw)
-        return False
-    except Exception as e_geral:
-        registrar_erro(f"Falha inesperada no pipeline de publicação no X: {e_geral}", e_geral)
-        return False
+    msg_aviso = "⚠️ Nenhuma credencial do X configurada (nem X_AUTH_TOKEN nem chaves Tweepy). Postagem ignorada sem falhar pipeline."
+    print(f"\n{msg_aviso}")
+    registrar_erro(msg_aviso)
+    return True
 
 # =============================================================================
 # --- 6. EXECUÇÃO PRINCIPAL (CLI) ---
