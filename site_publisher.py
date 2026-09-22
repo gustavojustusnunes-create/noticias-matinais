@@ -99,6 +99,18 @@ def publicar_edicao(cache_global, painel, editorial, coluna_autor=None):
         status["json"] = str(caminho_json)
         print(f"   💾 Snapshot salvo: {caminho_json}")
 
+        # Sincroniza snapshot com o portal de leitores em Astro (Vercel)
+        try:
+            landing_data_dir = Path("landing/src/data")
+            if landing_data_dir.exists():
+                caminho_landing = landing_data_dir / "edicao_atual.json"
+                caminho_landing.write_text(
+                    json.dumps(snapshot, ensure_ascii=False, indent=1), encoding="utf-8"
+                )
+                print(f"   🚀 Portal Astro atualizado: {caminho_landing}")
+        except Exception as e_astro:
+            print(f"   ⚠️ Não foi possível atualizar landing Astro: {e_astro}")
+
         # 2) HTML público da edição
         try:
             html = _html_publico(dados, painel, editorial, coluna_autor)

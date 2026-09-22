@@ -282,4 +282,16 @@ def compilar_podcast(edicao):
         print(f"      ⚠️ Erro ao atualizar RSS: {e}")
     
     print(f"   ✅ Podcast finalizado com sucesso! {final_mp3_name} ({size_bytes/1024/1024:.1f} MB)")
+
+    # Sincroniza podcast com o player web da Landing Page (Astro / Vercel)
+    try:
+        landing_audio_dir = Path("landing/public/audio")
+        if landing_audio_dir.exists():
+            import shutil
+            target_latest = landing_audio_dir / "latest.mp3"
+            shutil.copyfile(final_mp3_path, target_latest)
+            print(f"   🎧 Player da Landing Page atualizado: {target_latest}")
+    except Exception as e_audio:
+        print(f"   ⚠️ Não foi possível sincronizar áudio da landing: {e_audio}")
+
     return final_mp3_path
