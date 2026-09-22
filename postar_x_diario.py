@@ -438,39 +438,64 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
         print("⏳ Acessando painel https://x.com/home...")
         page.goto("https://x.com/home", wait_until="domcontentloaded")
 
-        # Trata Cloudflare Turnstile se acionado
-        try:
-            cf_frame = page.frame_locator("iframe[src*='challenges.cloudflare.com'], iframe[src*='turnstile']")
-            cf_box = cf_frame.locator("input[type='checkbox'], .mark, .ctp-checkbox, #challenge-stage")
-            if cf_box.count() > 0:
-                print("   🛡️ Desafio Cloudflare Turnstile detectado! Resolvendo verificação...")
-                cf_box.first.click(force=True)
-                time.sleep(6)
-        except Exception:
-            pass
+        # Loop de detecção ativa do Composer e resolução de Cloudflare Turnstile
+        print("⏳ Aguardando composer ou validação de segurança (até 60s)...")
+        textarea0 = None
+        for sec in range(60):
+            # 1. Checa se o composer já está presente
+            if page.locator("[data-testid='tweetTextarea_0']").count() > 0:
+                textarea0 = page.locator("[data-testid='tweetTextarea_0']").first
+                print(f"   ✅ Composer localizado com sucesso ({sec}s)!")
+                break
 
-        # Se houver banner de cookies/consentimento, aceita
-        try:
-            cookie_banner = page.locator("button:has-text('Accept all cookies'), button:has-text('Aceitar todos os cookies')")
-            if cookie_banner.count() > 0:
-                cookie_banner.first.click(force=True)
-                print("   🍪 Banner de cookies aceito.")
-        except Exception:
-            pass
+            # 2. Resolução de Cloudflare Turnstile (se acionado em datacenter)
+            if sec % 2 == 0:
+                # Procura em todos os iframes da página
+                for frame in page.frames:
+                    if "cloudflare" in frame.url or "turnstile" in frame.url or "challenge" in frame.url:
+                        try:
+                            cb = frame.locator("input[type='checkbox'], span.mark, div.ctp-checkbox, label.ctp-checkbox-label")
+                            if cb.count() > 0:
+                                print(f"   🛡️ Desafio Cloudflare Turnstile detectado no iframe! Clicando no checkbox ({sec}s)...")
+                                cb.first.click(force=True)
+                                time.sleep(3)
+                                break
+                        except Exception:
+                            pass
+                
+                # Procura na página principal
+                try:
+                    cf_root = page.locator("div#challenge-stage, div.cf-turnstile-wrapper, div.ctp-checkbox")
+                    if cf_root.count() > 0:
+                        print(f"   🛡️ Desafio Cloudflare Turnstile detectado na página principal! Clicando ({sec}s)...")
+                        cf_root.first.click(force=True)
+                        time.sleep(3)
+                except Exception:
+                    pass
 
-        # Se houver botão de Recarregar/Retry
-        try:
-            retry_btn = page.locator("button:has-text('Retry'), button:has-text('Tentar novamente')")
-            if retry_btn.count() > 0:
-                retry_btn.first.click(force=True)
-                print("   🔄 Botão Retry acionado.")
-        except Exception:
-            pass
+            # 3. Dismissal de cookie banners
+            if sec % 5 == 0:
+                try:
+                    cookie_banner = page.locator("button:has-text('Accept all cookies'), button:has-text('Aceitar todos os cookies')")
+                    if cookie_banner.count() > 0:
+                        cookie_banner.first.click(force=True)
+                        print("   🍪 Banner de cookies aceito.")
+                except Exception:
+                    pass
 
-        print(f"   🔗 URL atual: {page.url} | Título: {page.title()} | Aguardando composer...")
-        try:
-            textarea0 = page.wait_for_selector("[data-testid='tweetTextarea_0']", timeout=60000)
-        except Exception as e_wait:
+            # 4. Retry button
+            if sec % 10 == 0:
+                try:
+                    retry_btn = page.locator("button:has-text('Retry'), button:has-text('Tentar novamente')")
+                    if retry_btn.count() > 0:
+                        retry_btn.first.click(force=True)
+                        print("   🔄 Botão Retry acionado.")
+                except Exception:
+                    pass
+
+            time.sleep(1)
+
+        if not textarea0 or textarea0.count() == 0:
             print(f"   ❌ Timeout ao aguardar tweetTextarea_0.")
             print(f"   🔗 URL final: {page.url} | Título: {page.title()}")
             Path("logs").mkdir(parents=True, exist_ok=True)
@@ -479,7 +504,7 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
                 print("   📸 Screenshot de erro salvo em logs/x_error_debug.png")
             except Exception:
                 pass
-            raise e_wait
+            raise TimeoutError("Não foi possível carregar o Composer no X dentro de 60 segundos.")
 
         # Localização do Composer
         print("✍️ Inserindo copy do post principal...")
