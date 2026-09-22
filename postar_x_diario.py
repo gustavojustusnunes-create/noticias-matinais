@@ -397,18 +397,30 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
                 "--no-sandbox",
                 "--disable-setuid-sandbox",
                 "--disable-dev-shm-usage",
-                "--disable-gpu"
-            ]
+                "--disable-gpu",
+                "--disable-blink-features=AutomationControlled"
+            ],
+            ignore_default_args=["--enable-automation"]
         )
         context = browser.new_context(
-            viewport={"width": 1280, "height": 800},
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+            viewport={"width": 1366, "height": 768},
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+            locale="pt-BR",
+            timezone_id="America/Sao_Paulo"
         )
         context.add_cookies([
             {"name": "auth_token", "value": X_AUTH_TOKEN, "domain": ".x.com", "path": "/"},
             {"name": "ct0", "value": X_CT0, "domain": ".x.com", "path": "/"}
         ])
         page = context.new_page()
+
+        # Aplica evasões avançadas anti-bot / anti-Turnstile
+        try:
+            from playwright_stealth import Stealth
+            Stealth().apply_stealth_sync(page)
+            print("   🛡️ Perfil stealth anti-bot ativado com sucesso.")
+        except Exception as e_st:
+            print(f"   ℹ️ Stealth fallback: {e_st}")
 
         # Interceptador para capturar o ID do Tweet gerado pelo backend do X
         def capturar_resposta(response):
@@ -425,6 +437,17 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
 
         print("⏳ Acessando painel https://x.com/home...")
         page.goto("https://x.com/home", wait_until="domcontentloaded")
+
+        # Trata Cloudflare Turnstile se acionado
+        try:
+            cf_frame = page.frame_locator("iframe[src*='challenges.cloudflare.com'], iframe[src*='turnstile']")
+            cf_box = cf_frame.locator("input[type='checkbox'], .mark, .ctp-checkbox, #challenge-stage")
+            if cf_box.count() > 0:
+                print("   🛡️ Desafio Cloudflare Turnstile detectado! Resolvendo verificação...")
+                cf_box.first.click(force=True)
+                time.sleep(6)
+        except Exception:
+            pass
 
         # Se houver banner de cookies/consentimento, aceita
         try:
