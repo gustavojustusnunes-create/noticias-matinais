@@ -426,9 +426,41 @@ def publicar_via_playwright(texto_tweet: str, caminho_imagem: Path, auto_reply: 
         print("⏳ Acessando painel https://x.com/home...")
         page.goto("https://x.com/home", wait_until="domcontentloaded")
 
+        # Se houver banner de cookies/consentimento, aceita
+        try:
+            cookie_banner = page.locator("button:has-text('Accept all cookies'), button:has-text('Aceitar todos os cookies')")
+            if cookie_banner.count() > 0:
+                cookie_banner.first.click(force=True)
+                print("   🍪 Banner de cookies aceito.")
+        except Exception:
+            pass
+
+        # Se houver botão de Recarregar/Retry
+        try:
+            retry_btn = page.locator("button:has-text('Retry'), button:has-text('Tentar novamente')")
+            if retry_btn.count() > 0:
+                retry_btn.first.click(force=True)
+                print("   🔄 Botão Retry acionado.")
+        except Exception:
+            pass
+
+        print(f"   🔗 URL atual: {page.url} | Título: {page.title()} | Aguardando composer...")
+        try:
+            textarea0 = page.wait_for_selector("[data-testid='tweetTextarea_0']", timeout=60000)
+        except Exception as e_wait:
+            print(f"   ❌ Timeout ao aguardar tweetTextarea_0.")
+            print(f"   🔗 URL final: {page.url} | Título: {page.title()}")
+            Path("logs").mkdir(parents=True, exist_ok=True)
+            try:
+                page.screenshot(path="logs/x_error_debug.png")
+                print("   📸 Screenshot de erro salvo em logs/x_error_debug.png")
+            except Exception:
+                pass
+            raise e_wait
+
         # Localização do Composer
         print("✍️ Inserindo copy do post principal...")
-        textarea0 = page.wait_for_selector("[data-testid='tweetTextarea_0']", timeout=25000)
+        textarea0.click()
         textarea0.fill(texto_tweet)
         time.sleep(1)
 
@@ -626,9 +658,10 @@ def publicar_no_x(texto_tweet: str, caminho_imagem: Path, dry_run: bool = False)
         try:
             return publicar_via_playwright(texto_tweet, caminho_imagem, AUTO_REPLY_TEXT)
         except Exception as e_pw:
-            registrar_erro(f"Falha no robô Playwright do X: {e_pw}. Tentando fallback...", e_pw)
+            registrar_erro(f"Falha no robô Playwright do X: {e_pw}", e_pw)
+            return False
 
-    # 2. Fallback: API Oficial Tweepy
+    # 2. Fallback: API Oficial Tweepy (somente se chaves de API estiverem configuradas e sessão Playwright não fornecida)
     if X_API_KEY and X_API_SECRET and X_ACCESS_TOKEN and X_ACCESS_TOKEN_SECRET and X_BEARER_TOKEN:
         try:
             return publicar_via_tweepy(texto_tweet, caminho_imagem)
