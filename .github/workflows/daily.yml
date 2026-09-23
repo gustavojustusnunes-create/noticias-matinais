@@ -58,6 +58,7 @@ jobs:
           git add edicoes/
           git add landing/src/data/edicao_atual.json || true
           git add landing/public/audio/latest.mp3 || true
+          git add landing/public/system_schema.json || true
           git add -f logs/ || true
           git diff --staged --quiet || git commit -m "Edição $(date +%F) e memória da IA"
           git pull --rebase origin main

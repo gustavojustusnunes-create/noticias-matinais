@@ -2144,7 +2144,7 @@ with aba_telemetria:
             st.metric(
                 label="🧠 AI Supervisor",
                 value=status_badge.get(sup_info.get("status", "ONLINE"), "🟢 Online"),
-                help=f"{sup_info.get('licoes_aprendidas', len(memoria))} lições acumuladas"
+                help=f"{sup_info.get('licoes_aprendidas', len(_memoria))} lições acumuladas"
             )
         with c_w5:
             st.metric(

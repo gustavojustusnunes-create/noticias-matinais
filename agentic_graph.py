@@ -673,7 +673,42 @@ def render_agentic_graph_dashboard():
             dados_vis = {"mermaid": "graph TD; A-->B;", "json_schema": {}}
             st.error(f"Falha ao exportar grafo: {e_vis}")
 
-        tab_m, tab_j = st.tabs(["📐 Diagrama Mermaid", "📦 JSON Schema (D3 / React Flow)"])
+        tab_app, tab_m, tab_j = st.tabs(["🗺️ Grafo Interativo 360° (Full Studio)", "📐 Diagrama Mermaid", "📦 JSON Schema (D3 / React Flow)"])
+
+        with tab_app:
+            st.markdown("#### Grafo Reativo & Topologia Dinâmica do LangGraph")
+            st.caption("Visualização dinâmica conectada ao StateGraph real e aos submódulos satélites. Reflete instantaneamente alterações nos nós e o estado de execução ativo.")
+
+            c_btn1, c_btn2 = st.columns([1.5, 1])
+            with c_btn1:
+                if st.button("⚡ Reexportar Schema Dinâmico Agora (system_schema.json)", type="primary", use_container_width=True):
+                    try:
+                        from core.export_graph_schema import exportar_schema_completo
+                        sch = exportar_schema_completo()
+                        st.toast(f"Schema reexportado com sucesso! ({sch['stats']['total_nodes']} nós mapeados)", icon="✅")
+                        st.rerun()
+                    except Exception as e_sch:
+                        st.error(f"Erro ao exportar schema: {e_sch}")
+
+            with c_btn2:
+                st.markdown(
+                    "<a href='https://noticias-matinais.vercel.app/grafo' target='_blank' style='display: block; text-align: center; background: #1E293B; color: #38BDF8; padding: 8px 12px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; border: 1px solid rgba(56, 189, 248, 0.3);'>🌐 Abrir Rota Pública na Vercel (/grafo) ↗</a>",
+                    unsafe_allow_html=True
+                )
+
+            _html_path = Path("docs/infra_graph_viewer.html")
+            if not _html_path.exists():
+                _html_path = Path("docs/all_news_journal_graph.html")
+
+            if _html_path.exists():
+                try:
+                    import streamlit.components.v1 as _components
+                    _html_code = _html_path.read_text(encoding="utf-8")
+                    _components.html(_html_code, height=920, scrolling=True)
+                except Exception as _e_comp:
+                    st.error(f"Erro ao carregar componente HTML: {_e_comp}")
+            else:
+                st.info("Artefato interativo gerado em `docs/infra_graph_viewer.html`.")
 
         with tab_m:
             st.markdown("#### Diagrama Oficial StateGraph")

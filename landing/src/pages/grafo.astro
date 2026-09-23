@@ -1,0 +1,1335 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Grafo Reativo de Agentes & Arquitetura — All News Journal">
+  <Navbar />
+
+  <script id="default-schema" type="application/json">
+{
+  "version": "2.0.0",
+  "last_updated": "2026-09-22T21:36:23.310661-03:00",
+  "active_run_state": {
+    "status": "DISPATCHED",
+    "current_active_node": "__end__",
+    "is_approved": true,
+    "word_count": 90,
+    "retry_count": 0,
+    "hitl_approved": true,
+    "selected_story_title": "Meses antes de ataque cibernético, IA da OpenAI ‘investigou’ alvo",
+    "last_updated": "2026-09-22T21:36:23.310551-03:00",
+    "execution_log_count": 5
+  },
+  "clusters": [
+    {
+      "id": "langgraph",
+      "title": "1. ORQUESTRAÇÃO LANGGRAPH (core/graph_engine.py)",
+      "color": "#2563EB",
+      "rect": {
+        "x": 40,
+        "y": 40,
+        "width": 790,
+        "height": 540
+      }
+    },
+    {
+      "id": "observability",
+      "title": "2. OBSERVABILIDADE, MEMÓRIA & SENTINELAS",
+      "color": "#38BDF8",
+      "rect": {
+        "x": 860,
+        "y": 40,
+        "width": 840,
+        "height": 540
+      }
+    },
+    {
+      "id": "delivery",
+      "title": "3. MOTORES DE DISTRIBUIÇÃO MULTICANAL",
+      "color": "#F43F5E",
+      "rect": {
+        "x": 40,
+        "y": 620,
+        "width": 1120,
+        "height": 360
+      }
+    },
+    {
+      "id": "interfaces",
+      "title": "4. CAMADA DE INTERFACES & PORTAIS",
+      "color": "#D1BA73",
+      "rect": {
+        "x": 1190,
+        "y": 620,
+        "width": 510,
+        "height": 360
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "label": "START",
+      "sublabel": "Início do Grafo",
+      "category": "Terminal",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "▶️",
+      "color": "#64748B",
+      "type": "terminal",
+      "file": "core/graph_engine.py",
+      "func": "START",
+      "model": "LangGraph Runtime",
+      "desc": "Ponto de entrada do pipeline diário acionado via scheduler ou manual.",
+      "inputs": [],
+      "outputs": [
+        "GraphState inicializado"
+      ],
+      "resilience": "Inicialização segura do estado.",
+      "pos": {
+        "x": 60,
+        "y": 155
+      },
+      "id": "__start__",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "Planner",
+      "sublabel": "node_planner",
+      "category": "Orquestração",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🎯",
+      "color": "#2563EB",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_planner(state: GraphState)",
+      "model": "Algoritmo de Priorização & Curadoria",
+      "desc": "Analisa o pool de notícias do dia (ou snapshot de edicoes/) e elege a pauta de maior densidade nos cadernos nobres ('IA' ou 'Economia').",
+      "inputs": [
+        "raw_news: List[Dict]"
+      ],
+      "outputs": [
+        "selected_story: Dict",
+        "status: 'PLANNER_DONE'"
+      ],
+      "resilience": "Fallback sintético nobre de alta disponibilidade caso o pool esteja vazio.",
+      "pos": {
+        "x": 170,
+        "y": 140
+      },
+      "id": "planner",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "Writer",
+      "sublabel": "node_writer",
+      "category": "Orquestração",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "✍️",
+      "color": "#2563EB",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_writer(state: GraphState)",
+      "model": "Google Gemini 1.5 Flash (temp: 0.25, max_tokens: 250)",
+      "desc": "Redige rascunho de alta densidade analítica no tom executivo, estruturado em exatamente 2 parágrafos com fatos e desdobramentos de mercado.",
+      "inputs": [
+        "selected_story: Dict",
+        "critique_feedback: Optional[str]",
+        "retry_count: int"
+      ],
+      "outputs": [
+        "draft_text: str",
+        "word_count: int",
+        "status: 'DRAFT_GENERATED'"
+      ],
+      "resilience": "Reescrita reativa orientada pelas correções do Critic. Fallback local calibrado para 85-105 palavras se a API oscilar.",
+      "pos": {
+        "x": 390,
+        "y": 140
+      },
+      "id": "writer",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true,
+      "runtime_retry_count": 0
+    },
+    {
+      "label": "Critic (Quality Gate)",
+      "sublabel": "node_critic",
+      "category": "Quality Gate",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "⚖️",
+      "color": "#A855F7",
+      "type": "gate",
+      "file": "core/graph_engine.py",
+      "func": "node_critic(state: GraphState)",
+      "model": "Auditoria Determinística de Conformidade",
+      "desc": "Valida rigidamente a margem de 85 a 105 palavras (tolerância 82-108) e proíbe interrogações finais ou clickbaits. Aciona loop de autocura.",
+      "inputs": [
+        "draft_text: str",
+        "retry_count: int"
+      ],
+      "outputs": [
+        "is_approved: bool",
+        "word_count: int",
+        "critique_feedback: str",
+        "status: 'CRITIC_APPROVED' | 'CRITIC_REJECTED'"
+      ],
+      "resilience": "Teto de 3 tentativas para evitar loops infinitos. Na 3ª tentativa esgotada, avança com o melhor draft para garantir o SLA.",
+      "pos": {
+        "x": 610,
+        "y": 140
+      },
+      "id": "critic",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true,
+      "runtime_word_count": 90,
+      "runtime_is_approved": true
+    },
+    {
+      "label": "Media Generator",
+      "sublabel": "node_media_gen",
+      "category": "Mídia & Design",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🎨",
+      "color": "#10B981",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_media_generator(state: GraphState)",
+      "model": "Edge-TTS (pt-BR-AntonioNeural) + Pillow Renderer",
+      "desc": "Sintetiza áudio neural do podcast em landing/public/audio/latest.mp3 e renderiza a Capa Editorial Clássica Slide 1 (1080x1350) em tons preto e dourado.",
+      "inputs": [
+        "draft_text: str",
+        "selected_story: Dict"
+      ],
+      "outputs": [
+        "audio_path: str",
+        "image_path: str",
+        "status: 'AWAITING_FOUNDER_APPROVAL'"
+      ],
+      "resilience": "Fallback para gradiente e moldura pura se o download da foto da notícia falhar.",
+      "pos": {
+        "x": 170,
+        "y": 390
+      },
+      "id": "media_generator",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "Dispatcher",
+      "sublabel": "node_dispatcher",
+      "category": "Distribuição",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🚀",
+      "color": "#F43F5E",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_dispatcher(state: GraphState)",
+      "model": "Playwright Bot + Resend Dispatcher",
+      "desc": "Ponto de disparo externo. Executa postagem no X via robô headless e dispara a newsletter por e-mail quando aprovado pelo fundador.",
+      "inputs": [
+        "status: 'APPROVED_BY_FOUNDER'",
+        "image_path: str",
+        "audio_path: str"
+      ],
+      "outputs": [
+        "status: 'DISPATCHED'",
+        "execution_log: List"
+      ],
+      "resilience": "Isolamento de canais: se o X falhar, os e-mails e a landing page continuam sendo publicados.",
+      "pos": {
+        "x": 620,
+        "y": 390
+      },
+      "id": "dispatcher",
+      "is_hitl_gate": true,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "END",
+      "sublabel": "Fim do Grafo",
+      "category": "Terminal",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "⏹️",
+      "color": "#64748B",
+      "type": "terminal",
+      "file": "core/graph_engine.py",
+      "func": "END",
+      "model": "LangGraph Runtime",
+      "desc": "Ciclo completado com sucesso e logs persistidos.",
+      "inputs": [
+        "status: 'DISPATCHED'"
+      ],
+      "outputs": [
+        "Pipeline finalizado"
+      ],
+      "resilience": "Persistência em logs/graph_state.json.",
+      "pos": {
+        "x": 820,
+        "y": 435
+      },
+      "id": "__end__",
+      "is_hitl_gate": false,
+      "is_active": true,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "HITL Founder Gate",
+      "sublabel": "interrupt_before",
+      "category": "Governança & HITL",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🔒",
+      "color": "#F59E0B",
+      "type": "gate",
+      "file": "core/graph_engine.py",
+      "func": "checkpointer.interrupt_before=['dispatcher']",
+      "model": "Controle Human-In-The-Loop",
+      "desc": "Ponto de suspensão determinístico do StateGraph. Exige aprovação manual do fundador no Streamlit para liberar o envio público.",
+      "inputs": [
+        "status: 'AWAITING_FOUNDER_APPROVAL'"
+      ],
+      "outputs": [
+        "status: 'APPROVED_BY_FOUNDER'",
+        "hitl_approved: True"
+      ],
+      "resilience": "Bloqueia o despacho externo se a aprovação não estiver confirmada.",
+      "pos": {
+        "x": 400,
+        "y": 390
+      },
+      "id": "hitl_gate",
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true,
+      "runtime_hitl_approved": true,
+      "is_locked": false
+    },
+    {
+      "id": "ai_supervisor",
+      "label": "AI Supervisor",
+      "sublabel": "ai_supervisor.py",
+      "category": "Observabilidade & Auditoria",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "🕵️",
+      "color": "#38BDF8",
+      "type": "auditor",
+      "file": "ai_supervisor.py",
+      "func": "revisar_edicao_diaria(cache_global)",
+      "model": "Auditor Cognitivo Global",
+      "desc": "Audita os 8 cadernos do Journal e 4 do Finance. Aplica deduplicação semântica multi-veículo (>55%) e garante profundidade de 200 a 400 palavras.",
+      "inputs": [
+        "cache_global com notícias coletadas"
+      ],
+      "outputs": [
+        "cache_global auditado e aprofundado"
+      ],
+      "resilience": "Execução isolada em try/catch para nunca interromper o fluxo principal.",
+      "pos": {
+        "x": 890,
+        "y": 185
+      },
+      "file_mtime": "2026-09-10T17:05:55.458398-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "supervisor_memory",
+      "label": "Memória Cognitiva IA",
+      "sublabel": "supervisor_memory.json",
+      "category": "Memória Contínua",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "🧠",
+      "color": "#38BDF8",
+      "type": "database",
+      "file": "logs/supervisor_memory.json",
+      "func": "carregar_memoria() / salvar_memoria()",
+      "model": "Histórico de Aprendizado JSON",
+      "desc": "Armazena lições aprendidas de erros anteriores para guiar os prompts seguintes e mantém blacklist de fotos usadas para evitar repetição por 90 dias.",
+      "inputs": [
+        "novos_erros: List",
+        "novas_fotos: List"
+      ],
+      "outputs": [
+        "lições formatadas para injeção em prompts"
+      ],
+      "resilience": "Criação automática caso o arquivo não exista.",
+      "pos": {
+        "x": 1150,
+        "y": 185
+      },
+      "file_mtime": "2026-09-22T19:46:42.516749-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "agent_watchdog",
+      "label": "Watchdog Sentinela",
+      "sublabel": "agent_watchdog.py",
+      "category": "Auto-Cura & SLAs",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "🛡️",
+      "color": "#10B981",
+      "type": "sentinel",
+      "file": "agent_watchdog.py",
+      "func": "inspecionar_agentes()",
+      "model": "Monitoramento Horário & GitHub Actions CLI",
+      "desc": "Vigia continuamente os SLAs de entrega das edições, notifica incidentes via Resend e aciona auto-recuperação com 'gh workflow run'.",
+      "inputs": [
+        "Verificação de arquivos em edicoes/ e status de serviços"
+      ],
+      "outputs": [
+        "logs/agent_health.json & Alertas E-mail"
+      ],
+      "resilience": "Reinicia workflows falhados em background sem intervenção humana.",
+      "pos": {
+        "x": 1360,
+        "y": 185
+      },
+      "file_mtime": "2026-09-14T18:38:22.481489-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "telemetry_logs",
+      "label": "Telemetria & Logs",
+      "sublabel": "graph_state.json",
+      "category": "Observabilidade",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "📊",
+      "color": "#64748B",
+      "type": "logs",
+      "file": "logs/graph_state.json",
+      "func": "salvar_estado_disco(estado)",
+      "model": "JSON Telemetry Stream",
+      "desc": "Persiste o snapshot integral do estado do grafo e logs de execução para visualização no Streamlit e monitoramento de falhas.",
+      "inputs": [
+        "Transições de estado do StateGraph"
+      ],
+      "outputs": [
+        "JSON Schema para React Flow e Streamlit"
+      ],
+      "resilience": "I/O atômico em disco.",
+      "pos": {
+        "x": 1160,
+        "y": 380
+      },
+      "file_mtime": "2026-09-17T19:22:47.100084-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "x_robot",
+      "label": "Robô do X (Zero-Custo)",
+      "sublabel": "postar_x_diario.py",
+      "category": "Distribuição Social",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "🐦",
+      "color": "#F43F5E",
+      "type": "robot",
+      "file": "postar_x_diario.py",
+      "func": "postar_x_via_playwright()",
+      "model": "Playwright Headless + Stealth Session",
+      "desc": "Publica no perfil @allnews_journal sem consumir créditos de API paga. Injeta cookies 'auth_token' e 'ct0', anexa a Capa e cria auto-reply com link para a Vercel.",
+      "inputs": [
+        "Snapshot diário e Capa Clássica 1080x1350"
+      ],
+      "outputs": [
+        "Tweet publicado + thread encadeada após 12s"
+      ],
+      "resilience": "Bypass de Cloudflare Turnstile, captura de screenshots de depuração e retry de navegação.",
+      "pos": {
+        "x": 70,
+        "y": 710
+      },
+      "file_mtime": "2026-09-22T20:36:58.964196-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "instagram_poster",
+      "label": "Instagram Carrossel Bot",
+      "sublabel": "instagram_poster.py",
+      "category": "Distribuição Social",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "📸",
+      "color": "#F43F5E",
+      "type": "robot",
+      "file": "instagram_poster.py",
+      "func": "publicar_carrossel_instagram()",
+      "model": "Instagrapi Mobile Session + Pillow Mask",
+      "desc": "Compõe carrosséis verticais com máscara tipográfica recortando a foto nas letras da palavra-chave e publica via sessão mobile com intervalo de 3min.",
+      "inputs": [
+        "edicoes/YYYY-MM-DD.json"
+      ],
+      "outputs": [
+        "Post Carrossel publicado no feed"
+      ],
+      "resilience": "Fallback com envio automático das peças prontas por e-mail se a sessão mobile expirar.",
+      "pos": {
+        "x": 290,
+        "y": 710
+      },
+      "file_mtime": "2026-09-15T18:28:04.293564-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "email_builder",
+      "label": "E-mail Assinantes",
+      "sublabel": "email_builder.py",
+      "category": "Distribuição Transacional",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "✉️",
+      "color": "#F43F5E",
+      "type": "email",
+      "file": "email_builder.py",
+      "func": "gerar_html_final() / enviar_email()",
+      "model": "HTML Responsivo Inline + Resend API / SMTP",
+      "desc": "Monta a newsletter executiva personalizada respeitando a ordem de cadernos de cada leitor na planilha do Google Sheets.",
+      "inputs": [
+        "Assinantes Google Sheets + Pacote de Notícias do Dia"
+      ],
+      "outputs": [
+        "Disparo em lote com tolerância a falhas individuais"
+      ],
+      "resilience": "Falha no e-mail de um leitor nunca interrompe a fila dos outros assinantes.",
+      "pos": {
+        "x": 510,
+        "y": 710
+      },
+      "file_mtime": "2026-09-10T17:05:55.466876-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "podcast_builder",
+      "label": "Podcast Bancada (Leo & Ana)",
+      "sublabel": "podcast_builder.py",
+      "category": "Mídia & Áudio",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "🎙️",
+      "color": "#10B981",
+      "type": "audio",
+      "file": "podcast_builder.py",
+      "func": "compilar_podcast(edicao)",
+      "model": "Edge-TTS Neural Duo (Leo & Ana) + Pydub",
+      "desc": "Roteiriza e grava o diálogo matinal estilo NotebookLM com âncoras virtuais, gera áudio para o site e compila o feed RSS de podcast.",
+      "inputs": [
+        "Snapshot de notícias da edição"
+      ],
+      "outputs": [
+        "landing/public/audio/latest.mp3 e podcast.xml"
+      ],
+      "resilience": "Roteiro conversacional de fallback que garante o podcast completo mesmo sem API de LLM.",
+      "pos": {
+        "x": 730,
+        "y": 710
+      },
+      "file_mtime": "2026-09-22T17:30:23.276404-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "site_publisher",
+      "label": "Site Publisher (Sync Web)",
+      "sublabel": "site_publisher.py",
+      "category": "Sincronização",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "🌐",
+      "color": "#D1BA73",
+      "type": "sync",
+      "file": "site_publisher.py",
+      "func": "publicar_edicao()",
+      "model": "Snapshot Hydration Bridge",
+      "desc": "Grava o snapshot histórico imutável em edicoes/ e atualiza em tempo real o arquivo landing/src/data/edicao_atual.json para a Vercel.",
+      "inputs": [
+        "CACHE_GLOBAL de notícias"
+      ],
+      "outputs": [
+        "landing/src/data/edicao_atual.json e edicoes/index.json"
+      ],
+      "resilience": "Envelopado em try/catch para jamais afetar os disparos de e-mail.",
+      "pos": {
+        "x": 950,
+        "y": 710
+      },
+      "file_mtime": "2026-09-22T17:30:23.280668-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "astro_vercel",
+      "label": "Vitrine dos Leitores (Vercel)",
+      "sublabel": "Astro v4+ SSG",
+      "category": "Interface Pública",
+      "cluster": "interfaces",
+      "cluster_label": "4. Camada de Interfaces & Portais",
+      "icon": "🚀",
+      "color": "#D1BA73",
+      "type": "frontend",
+      "file": "landing/src/pages/index.astro",
+      "func": "Astro SSG Static Build",
+      "model": "Astro v4 + Tailwind Dark Executivo",
+      "desc": "Portal oficial dos leitores (noticias-matinais.vercel.app). Carregamento veloz (< 0.5s), player de áudio integrado e captura de assinantes.",
+      "inputs": [
+        "landing/src/data/edicao_atual.json",
+        "audio/latest.mp3"
+      ],
+      "outputs": [
+        "Experiência do leitor em alta performance"
+      ],
+      "resilience": "100% estático e desacoplado do Streamlit: permanece sempre online no edge.",
+      "pos": {
+        "x": 1215,
+        "y": 715
+      },
+      "file_mtime": "2026-09-18T17:55:26.238298-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "streamlit_admin",
+      "label": "Control Center (Streamlit)",
+      "sublabel": "app.py",
+      "category": "Interface de Gestão",
+      "cluster": "interfaces",
+      "cluster_label": "4. Camada de Interfaces & Portais",
+      "icon": "⚙️",
+      "color": "#38BDF8",
+      "type": "backoffice",
+      "file": "app.py",
+      "func": "Streamlit Backoffice (app.py, agentic_graph.py, cpo_cockpit.py)",
+      "model": "Streamlit Multi-Page Studio",
+      "desc": "Painel de controle interno do fundador com Graph Studio, liberação do HITL Gate, monitoramento dos sentinelas e métricas do CPO (RICE).",
+      "inputs": [
+        "logs/graph_state.json",
+        "logs/supervisor_memory.json",
+        "Google Sheets"
+      ],
+      "outputs": [
+        "Governança, disparo forçado e telemetria de agentes"
+      ],
+      "resilience": "Painel isolado em ambiente privado com autenticação.",
+      "pos": {
+        "x": 1460,
+        "y": 715
+      },
+      "file_mtime": "2026-09-22T21:12:25.172620-03:00",
+      "file_exists": true,
+      "is_active": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge___start___planner",
+      "source": "__start__",
+      "target": "planner",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_critic_media_generator",
+      "source": "critic",
+      "target": "media_generator",
+      "conditional": true,
+      "label": "APPROVED (85-105w)",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_critic_writer",
+      "source": "critic",
+      "target": "writer",
+      "conditional": true,
+      "label": "RETRY (tries < 3)",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "edge_media_to_hitl",
+      "source": "media_generator",
+      "target": "hitl_gate",
+      "conditional": false,
+      "label": "Mídias Prontas",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "edge_hitl_to_dispatcher",
+      "source": "hitl_gate",
+      "target": "dispatcher",
+      "conditional": true,
+      "label": "APPROVED_BY_FOUNDER",
+      "color": "#F43F5E",
+      "is_hitl_edge": true
+    },
+    {
+      "id": "edge_planner_writer",
+      "source": "planner",
+      "target": "writer",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_writer_critic",
+      "source": "writer",
+      "target": "critic",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_dispatcher___end__",
+      "source": "dispatcher",
+      "target": "__end__",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_disp_to_x",
+      "source": "dispatcher",
+      "target": "x_robot",
+      "conditional": false,
+      "label": "Disparo Headless",
+      "color": "#F43F5E"
+    },
+    {
+      "id": "edge_disp_to_email",
+      "source": "dispatcher",
+      "target": "email_builder",
+      "conditional": false,
+      "label": "Resend API",
+      "color": "#F43F5E"
+    },
+    {
+      "id": "edge_disp_to_insta",
+      "source": "dispatcher",
+      "target": "instagram_poster",
+      "conditional": false,
+      "label": "Carrossel Mobile",
+      "color": "#F43F5E"
+    },
+    {
+      "id": "edge_media_to_podcast",
+      "source": "media_generator",
+      "target": "podcast_builder",
+      "conditional": false,
+      "label": "Síntese Edge-TTS",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_disp_to_publisher",
+      "source": "dispatcher",
+      "target": "site_publisher",
+      "conditional": false,
+      "label": "Sync edicao.json",
+      "color": "#D1BA73"
+    },
+    {
+      "id": "edge_pub_to_astro",
+      "source": "site_publisher",
+      "target": "astro_vercel",
+      "conditional": false,
+      "label": "Deploy SSG",
+      "color": "#D1BA73"
+    },
+    {
+      "id": "edge_pod_to_astro",
+      "source": "podcast_builder",
+      "target": "astro_vercel",
+      "conditional": false,
+      "label": "Player Áudio",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_x_to_astro",
+      "source": "x_robot",
+      "target": "astro_vercel",
+      "conditional": true,
+      "label": "Auto-Reply Link",
+      "color": "#60A5FA",
+      "is_dashed": true
+    },
+    {
+      "id": "edge_sup_to_mem",
+      "source": "ai_supervisor",
+      "target": "supervisor_memory",
+      "conditional": false,
+      "label": "Persiste Lições",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_watch_to_telemetry",
+      "source": "agent_watchdog",
+      "target": "telemetry_logs",
+      "conditional": false,
+      "label": "SLA & Alertas",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_telemetry_to_admin",
+      "source": "telemetry_logs",
+      "target": "streamlit_admin",
+      "conditional": false,
+      "label": "Live Stream",
+      "color": "#D1BA73"
+    }
+  ],
+  "stats": {
+    "total_nodes": 19,
+    "langgraph_nodes": 8,
+    "infrastructure_nodes": 11,
+    "total_edges": 19,
+    "current_status": "DISPATCHED",
+    "current_active_node": "__end__"
+  }
+}
+</script>
+<main class="flex-grow flex flex-col h-[calc(100vh-4rem)] bg-[#0B0F14] select-none relative overflow-hidden">
+    <!-- BARRA DE CONTROLE SUPERIOR (LIVE SYNC, FILTROS E EXPORTAÇÃO) -->
+    <section class="bg-[#111827]/90 backdrop-blur border-b border-[#1E293B] px-4 py-2.5 flex items-center justify-between z-30 shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#2563EB] to-[#1D4ED8] flex items-center justify-center text-white font-bold text-sm shadow-md">
+          🕸️
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-bold text-sm text-white tracking-wide">TOPOLOGIA REATIVA LANGGRAPH</h1>
+            <span id="live-indicator" class="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-[#10B981]/20 text-[#34D399] border border-[#10B981]/40 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-ping"></span>
+              Live Sync: 5s
+            </span>
+            <span id="active-node-pill" class="text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-[#2563EB]/20 text-[#60A5FA] border border-[#2563EB]/40">
+              Nó Ativo: Carregando...
+            </span>
+          </div>
+          <p id="last-sync-text" class="text-[11px] text-[#94A3B8]">Conectando ao feed de schema dinâmico (/system_schema.json)...</p>
+        </div>
+      </div>
+
+      <!-- Ações e Filtros -->
+      <div class="flex items-center gap-2.5">
+        <!-- Toggle de Polling -->
+        <button id="btn-toggle-poll" onclick="toggleAutoPolling()" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#1E293B] hover:bg-[#334155] text-[#38BDF8] border border-[#38BDF8]/30 transition flex items-center gap-1.5">
+          <span id="poll-icon">🔄</span>
+          <span id="poll-text">Auto-Sync Ativo</span>
+        </button>
+
+        <button onclick="carregarSchema(true)" title="Forçar Atualização Imediata" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#1E293B] hover:bg-[#334155] text-white transition">
+          ⚡ Sincronizar
+        </button>
+
+        <!-- Filtros Rápidos -->
+        <div class="bg-[#0B0F14] p-0.5 rounded-lg border border-[#1E293B] flex items-center text-xs">
+          <button onclick="setFilter('all')" id="btn-all" class="px-2 py-1 rounded font-medium text-white bg-[#1E293B] transition">Todos</button>
+          <button onclick="setFilter('langgraph')" id="btn-langgraph" class="px-2 py-1 rounded font-medium text-[#94A3B8] hover:text-white transition">LangGraph</button>
+          <button onclick="setFilter('observability')" id="btn-observability" class="px-2 py-1 rounded font-medium text-[#94A3B8] hover:text-white transition">Sentinela</button>
+          <button onclick="setFilter('delivery')" id="btn-delivery" class="px-2 py-1 rounded font-medium text-[#94A3B8] hover:text-white transition">Distribuição</button>
+        </div>
+
+        <!-- Zoom & Export -->
+        <div class="flex items-center gap-1 border-l border-[#1E293B] pl-2">
+          <button onclick="resetView()" class="px-2 py-1 rounded bg-[#1E293B] hover:bg-[#334155] text-[#94A3B8] hover:text-white text-xs transition">⟲</button>
+          <button onclick="zoomCanvas(1.2)" class="w-6 h-6 rounded bg-[#1E293B] hover:bg-[#334155] text-white text-xs font-bold transition">+</button>
+          <button onclick="zoomCanvas(0.8)" class="w-6 h-6 rounded bg-[#1E293B] hover:bg-[#334155] text-white text-xs font-bold transition">-</button>
+          <button onclick="exportSVG()" class="px-2 py-1 rounded bg-[#1E293B] hover:bg-[#334155] text-white text-xs font-semibold transition">SVG</button>
+          <button onclick="exportPNG()" class="px-2 py-1 rounded bg-[#D1BA73] hover:bg-[#e2cb85] text-[#0B0F14] text-xs font-bold transition">PNG</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ÁREA DO CANVAS REATIVO -->
+    <div id="canvas-container" class="relative flex-1 w-full h-full cursor-grab active:cursor-grabbing bg-[#0B0F14]">
+      <!-- SVG Renderizado Dinamicamente -->
+      <svg id="graph-svg" width="100%" height="100%" viewBox="0 0 1750 1020" class="overflow-visible">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#475569" />
+          </marker>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38BDF8" />
+          </marker>
+          <marker id="arrow-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#10B981" />
+          </marker>
+          <marker id="arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#F43F5E" />
+          </marker>
+          <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#F59E0B" />
+          </marker>
+          <marker id="arrow-gold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#D1BA73" />
+          </marker>
+
+          <filter id="active-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        <g id="viewport-group" transform="matrix(1 0 0 1 0 0)">
+          <!-- Clusters Dinâmicos -->
+          <g id="clusters-layer"></g>
+          <!-- Arestas Dinâmicas -->
+          <g id="edges-layer"></g>
+          <!-- Nós Dinâmicos -->
+          <g id="nodes-layer"></g>
+        </g>
+      </svg>
+
+      <!-- Legenda Inferior -->
+      <div class="absolute bottom-4 left-6 bg-[#111827]/90 backdrop-blur border border-[#1E293B] rounded-xl px-3.5 py-2 shadow-xl z-20 flex items-center gap-4 text-[11px]">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#2563EB]"></span>
+          <span class="text-[#CBD5E1]">LangGraph Core</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#38BDF8]"></span>
+          <span class="text-[#CBD5E1]">Observabilidade</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#F43F5E]"></span>
+          <span class="text-[#CBD5E1]">Distribuição</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#D1BA73]"></span>
+          <span class="text-[#CBD5E1]">Portais &amp; Interfaces</span>
+        </div>
+        <div class="flex items-center gap-1.5 border-l border-[#1E293B] pl-3 text-[#10B981] font-bold">
+          <span class="w-2 h-2 rounded-full bg-[#10B981] animate-ping"></span>
+          <span>Nó com Glow = Execução Ativa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- GAVETA LATERAL DE INSPEÇÃO TÉCNICA (DRAWER) -->
+    <aside id="node-drawer" class="fixed top-0 right-0 w-[420px] h-full bg-[#111827]/98 backdrop-blur border-l border-[#1E293B] shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+      <div class="p-4 border-b border-[#1E293B] flex items-center justify-between bg-[#131B26]">
+        <div class="flex items-center gap-3">
+          <div id="drawer-icon" class="w-10 h-10 rounded-xl bg-[#2563EB]/20 border border-[#2563EB]/40 flex items-center justify-center text-xl">
+            ⚙️
+          </div>
+          <div>
+            <h2 id="drawer-title" class="font-bold text-base text-white">Nó</h2>
+            <p id="drawer-file" class="font-mono text-xs text-[#38BDF8]">arquivo.py</p>
+          </div>
+        </div>
+        <button onclick="closeDrawer()" class="w-7 h-7 rounded-lg bg-[#1E293B] hover:bg-[#334155] text-[#94A3B8] hover:text-white flex items-center justify-center text-lg transition">
+          &times;
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-5 space-y-4 text-xs">
+        <div class="flex items-center justify-between">
+          <span id="drawer-category" class="px-2.5 py-0.5 rounded font-bold uppercase text-[10px] bg-[#2563EB]/20 text-[#60A5FA] border border-[#2563EB]/40">
+            Categoria
+          </span>
+          <span id="drawer-func" class="font-mono text-[#A855F7] font-semibold">
+            funcao()
+          </span>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block mb-1">Missão Editorial</label>
+          <p id="drawer-desc" class="text-[#CBD5E1] leading-relaxed text-xs">Descrição...</p>
+        </div>
+
+        <div class="bg-[#0B0F14] border border-[#1E293B] rounded-xl p-3 space-y-2 font-mono text-[11px]">
+          <div>
+            <span class="text-[#38BDF8] font-bold block mb-0.5">Entradas:</span>
+            <div id="drawer-inputs" class="text-[#94A3B8]">GraphState</div>
+          </div>
+          <div class="pt-1 border-t border-[#1E293B]">
+            <span class="text-[#10B981] font-bold block mb-0.5">Saídas:</span>
+            <div id="drawer-outputs" class="text-[#A7F3D0]">Novo Estado</div>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold text-[#64748B] uppercase tracking-wider block mb-1">Stack &amp; Parâmetros</label>
+          <div id="drawer-tech" class="bg-[#131B26] border border-[#1E293B] rounded-xl p-3 text-[#CBD5E1] space-y-1 text-xs">
+            Modelo / Configuração
+          </div>
+        </div>
+
+        <div>
+          <label class="text-[10px] font-bold text-[#F59E0B] uppercase tracking-wider block mb-1">Tolerância a Falhas &amp; Fallbacks</label>
+          <div id="drawer-resilience" class="bg-[#451A03]/20 border border-[#F59E0B]/30 rounded-xl p-3 text-[#FDE68A] text-xs leading-relaxed">
+            Políticas de resiliência...
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-[#1E293B] flex items-center justify-between text-[#64748B] text-[10px]">
+          <span>Última modificação no disco:</span>
+          <span id="drawer-mtime" class="font-mono text-[#94A3B8]">-</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  @keyframes flowDash {
+    to {
+      stroke-dashoffset: -32;
+    }
+  }
+  .edge-flow {
+    stroke-dasharray: 6, 4;
+    animation: flowDash 1.2s linear infinite;
+  }
+  .edge-retry {
+    stroke-dasharray: 5, 4;
+    animation: flowDash 0.8s linear infinite;
+  }
+  .node-active-pulse {
+    animation: nodePulse 2s infinite;
+  }
+  @keyframes nodePulse {
+    0%, 100% {
+      filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.6));
+    }
+    50% {
+      filter: drop-shadow(0 0 24px rgba(56, 189, 248, 0.9));
+    }
+  }
+</style>
+
+<script is:inline>
+  let schemaData = null;
+  let pollIntervalId = null;
+  let isAutoPolling = true;
+  let activeNodeId = null;
+
+  // Zoom & Pan
+  let scale = 1;
+  let pointX = 0;
+  let pointY = 0;
+  let startX = 0;
+  let startY = 0;
+  let isPanning = false;
+
+  const viewportGroup = document.getElementById("viewport-group");
+  const container = document.getElementById("canvas-container");
+
+  function updateTransform() {
+    if (viewportGroup) {
+      viewportGroup.setAttribute("transform", `matrix(${scale} 0 0 ${scale} ${pointX} ${pointY})`);
+    }
+  }
+
+  if (container) {
+    container.addEventListener("mousedown", (e) => {
+      if (e.target.closest(".node-group")) return;
+      isPanning = true;
+      startX = e.clientX - pointX;
+      startY = e.clientY - pointY;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isPanning) return;
+      pointX = e.clientX - startX;
+      pointY = e.clientY - startY;
+      updateTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isPanning = false;
+    });
+
+    container.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      zoomCanvas(zoomFactor);
+    }, { passive: false });
+  }
+
+  function zoomCanvas(factor) {
+    const newScale = scale * factor;
+    if (newScale < 0.35 || newScale > 3.5) return;
+    scale = newScale;
+    updateTransform();
+  }
+
+  function resetView() {
+    scale = 1;
+    pointX = 0;
+    pointY = 0;
+    updateTransform();
+    setFilter("all");
+  }
+
+  // CARREGADOR REATIVO DO SCHEMA
+  async function carregarSchema(isManual = false) {
+    try {
+      // Tenta carregar relativo ou absoluto com timestamp anti-cache
+      const url = `/system_schema.json?t=${Date.now()}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      
+      const mudou = JSON.stringify(data) !== JSON.stringify(schemaData);
+      schemaData = data;
+
+      if (mudou || isManual) {
+        renderizarGrafo(data);
+      }
+
+      const lastSync = new Date(data.last_updated).toLocaleTimeString("pt-BR");
+      document.getElementById("last-sync-text").innerText = `Última sincronização: ${lastSync} • Versão ${data.version}`;
+      
+      const activeState = data.active_run_state || {};
+      activeNodeId = activeState.current_active_node || "planner";
+      const statusText = activeState.status || "IDLE";
+      
+      const pill = document.getElementById("active-node-pill");
+      pill.innerText = `Nó Ativo: ${activeNodeId} (${statusText})`;
+      if (statusText === "DISPATCHED") {
+        pill.className = "text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-[#10B981]/20 text-[#34D399] border border-[#10B981]/40";
+      } else if (statusText.includes("AWAITING")) {
+        pill.className = "text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-[#F59E0B]/20 text-[#FBBF24] border border-[#F59E0B]/40";
+      } else {
+        pill.className = "text-[9px] font-mono uppercase px-2 py-0.5 rounded bg-[#2563EB]/20 text-[#60A5FA] border border-[#2563EB]/40";
+      }
+
+    } catch (err) {
+      console.warn("Aviso ao carregar schema:", err);
+      const embeddedEl = document.getElementById("default-schema");
+        if (embeddedEl && !schemaData) {
+          try {
+            const fallbackData = JSON.parse(embeddedEl.textContent);
+            schemaData = fallbackData;
+            renderizarGrafo(fallbackData);
+            document.getElementById("last-sync-text").innerText = "Modo Offline / Local (Schema Embutido Ativo)";
+            const activeState = fallbackData.active_run_state || {};
+            const pill = document.getElementById("active-node-pill");
+            if (pill) {
+              pill.innerText = `Nó Ativo: ${activeState.current_active_node || 'planner'} (${activeState.status || 'IDLE'})`;
+            }
+          } catch(e) { console.error("Erro no fallback embutido:", e); }
+        }
+    }
+  }
+
+  // RENDERIZAÇÃO COMPLETA NO SVG
+  function renderizarGrafo(data) {
+    const clustersLayer = document.getElementById("clusters-layer");
+    const edgesLayer = document.getElementById("edges-layer");
+    const nodesLayer = document.getElementById("nodes-layer");
+
+    // 1. Renderiza Clusters
+    clustersLayer.innerHTML = (data.clusters || []).map(c => `
+      <g id="cluster-${c.id}" class="cluster-group transition-opacity duration-300">
+        <rect x="${c.rect.x}" y="${c.rect.y}" width="${c.rect.width}" height="${c.rect.height}" rx="16" fill="#111827" fill-opacity="0.6" stroke="${c.color}" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="6,4" />
+        <rect x="${c.rect.x}" y="${c.rect.y}" width="340" height="32" rx="8" fill="${c.color}" fill-opacity="0.15" />
+        <text x="${c.rect.x + 16}" y="${c.rect.y + 21}" fill="${c.color}" font-size="11" font-weight="700" letter-spacing="1">${c.title}</text>
+      </g>
+    `).join("");
+
+    // 2. Renderiza Arestas
+    const nodePosMap = {};
+    (data.nodes || []).forEach(n => {
+      nodePosMap[n.id] = n.pos || { x: 100, y: 100 };
+    });
+
+    edgesLayer.innerHTML = (data.edges || []).map(e => {
+      const src = nodePosMap[e.source];
+      const tgt = nodePosMap[e.target];
+      if (!src || !tgt) return "";
+
+      const x1 = src.x + 80;
+      const y1 = src.y + 45;
+      const x2 = tgt.x + 80;
+      const y2 = tgt.y + 45;
+
+      let marker = "url(#arrow)";
+      if (e.color === "#38BDF8") marker = "url(#arrow-blue)";
+      else if (e.color === "#10B981") marker = "url(#arrow-emerald)";
+      else if (e.color === "#F43F5E") marker = "url(#arrow-rose)";
+      else if (e.color === "#F59E0B") marker = "url(#arrow-amber)";
+      else if (e.color === "#D1BA73") marker = "url(#arrow-gold)";
+
+      const isRetry = e.source === "critic" && e.target === "writer";
+      const pathD = isRetry 
+        ? `M ${src.x + 80} ${src.y} C ${src.x + 80} ${src.y - 60}, ${tgt.x + 80} ${tgt.y - 60}, ${tgt.x + 80} ${tgt.y}`
+        : `M ${x1} ${y1} L ${x2} ${y2}`;
+
+      const cssClass = isRetry ? "edge-retry" : (e.is_dashed ? "edge-flow" : "");
+
+      return `
+        <g id="${e.id}">
+          <path d="${pathD}" stroke="${e.color || '#475569'}" stroke-width="${e.conditional ? 2.5 : 2}" fill="none" marker-end="${marker}" class="${cssClass}" />
+          ${e.label ? `
+            <text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 8}" fill="${e.color}" font-size="9" font-weight="700" text-anchor="middle">${e.label}</text>
+          ` : ""}
+        </g>
+      `;
+    }).join("");
+
+    // 3. Renderiza Nós
+    const activeId = data.active_run_state?.current_active_node || "planner";
+    nodesLayer.innerHTML = (data.nodes || []).map(n => {
+      const pos = n.pos || { x: 100, y: 100 };
+      const isActive = n.id === activeId;
+      const activePulseClass = isActive ? "node-active-pulse" : "";
+
+      return `
+        <g id="node_${n.id}" class="node-group cursor-pointer group ${activePulseClass}" transform="translate(${pos.x}, ${pos.y})" onclick="selectNode('${n.id}')">
+          <rect x="0" y="0" width="165" height="90" rx="12" fill="#131B26" stroke="${isActive ? '#38BDF8' : n.color}" stroke-width="${isActive ? 2.5 : 2}" class="group-hover:stroke-white transition shadow-lg" />
+          <rect x="10" y="10" width="28" height="28" rx="6" fill="${n.color}" fill-opacity="0.2" />
+          <text x="24" y="29" fill="${n.color}" font-size="14" text-anchor="middle">${n.icon || "⚙️"}</text>
+          <text x="44" y="24" fill="#FFFFFF" font-size="12" font-weight="700">${n.label}</text>
+          <text x="44" y="38" fill="${n.color}" font-size="9.5" font-weight="600">${n.sublabel || n.id}</text>
+          <text x="10" y="60" fill="#94A3B8" font-size="8.5">${(n.desc || "").slice(0, 35)}...</text>
+          <rect x="10" y="68" width="80" height="14" rx="4" fill="#1E293B" />
+          <text x="50" y="78" fill="${n.color}" font-size="8" font-weight="700" text-anchor="middle">${n.category || "Processo"}</text>
+          ${isActive ? `
+            <circle cx="152" cy="12" r="4.5" fill="#38BDF8" class="animate-ping" />
+            <circle cx="152" cy="12" r="3.5" fill="#38BDF8" />
+          ` : ""}
+        </g>
+      `;
+    }).join("");
+  }
+
+  // INSPECTOR DRAWER
+  function selectNode(nodeId) {
+    if (!schemaData || !schemaData.nodes) return;
+    const node = schemaData.nodes.find(n => n.id === nodeId);
+    if (!node) return;
+
+    document.getElementById("drawer-icon").innerText = node.icon || "⚙️";
+    document.getElementById("drawer-title").innerText = node.label;
+    document.getElementById("drawer-file").innerText = node.file || "-";
+    document.getElementById("drawer-category").innerText = node.category || "Orquestração";
+    document.getElementById("drawer-func").innerText = node.func || node.id;
+    document.getElementById("drawer-desc").innerText = node.desc || "-";
+    document.getElementById("drawer-inputs").innerText = Array.isArray(node.inputs) ? node.inputs.join("\n") : (node.inputs || "Nenhum");
+    document.getElementById("drawer-outputs").innerText = Array.isArray(node.outputs) ? node.outputs.join("\n") : (node.outputs || "Nenhum");
+    document.getElementById("drawer-tech").innerHTML = `<b>Motor:</b> ${node.model || '-'}`;
+    document.getElementById("drawer-resilience").innerText = node.resilience || "-";
+    document.getElementById("drawer-mtime").innerText = node.file_mtime || "Recente";
+
+    document.getElementById("node-drawer").classList.remove("translate-x-full");
+  }
+
+  function closeDrawer() {
+    document.getElementById("node-drawer").classList.add("translate-x-full");
+  }
+
+  // FILTROS
+  function setFilter(clusterId) {
+    document.querySelectorAll(".cluster-group").forEach(c => {
+      if (clusterId === "all") {
+        c.style.opacity = "1";
+      } else if (c.id === `cluster-${clusterId}`) {
+        c.style.opacity = "1";
+      } else {
+        c.style.opacity = "0.2";
+      }
+    });
+  }
+
+  // AUTO-POLLING
+  function toggleAutoPolling() {
+    isAutoPolling = !isAutoPolling;
+    const btn = document.getElementById("btn-toggle-poll");
+    const icon = document.getElementById("poll-icon");
+    const text = document.getElementById("poll-text");
+    const indicator = document.getElementById("live-indicator");
+
+    if (isAutoPolling) {
+      icon.innerText = "🔄";
+      text.innerText = "Auto-Sync Ativo";
+      indicator.className = "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-[#10B981]/20 text-[#34D399] border border-[#10B981]/40 flex items-center gap-1";
+      iniciarPolling();
+    } else {
+      icon.innerText = "⏸️";
+      text.innerText = "Auto-Sync Pausado";
+      indicator.className = "text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded bg-[#64748B]/20 text-[#94A3B8] border border-[#64748B]/40 flex items-center gap-1";
+      clearInterval(pollIntervalId);
+    }
+  }
+
+  function iniciarPolling() {
+    clearInterval(pollIntervalId);
+    pollIntervalId = setInterval(() => {
+      carregarSchema(false);
+    }, 5000);
+  }
+
+  // EXPORTAÇÃO
+  function exportSVG() {
+    const svg = document.getElementById("graph-svg");
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svg);
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "langgraph_topology.svg";
+    a.click();
+  }
+
+  function exportPNG() {
+    const svg = document.getElementById("graph-svg");
+    const serializer = new XMLSerializer();
+    const source = serializer.serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    canvas.width = 1750;
+    canvas.height = 1020;
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    const blob = new Blob([source], { type: "image/svg+xml;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    img.onload = () => {
+      ctx.fillStyle = "#0B0F14";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0);
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = "langgraph_topology.png";
+      a.click();
+    };
+    img.src = url;
+  }
+
+  // Início
+  carregarSchema(true);
+  iniciarPolling();
+</script>

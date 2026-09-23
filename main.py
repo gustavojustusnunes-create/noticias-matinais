@@ -57,6 +57,13 @@ def main():
     if not validar_ambiente():
         return
 
+    # Sincroniza schema do sistema logo no startup
+    try:
+        from core.export_graph_schema import exportar_schema_completo
+        exportar_schema_completo()
+    except Exception as e_schema:
+        print(f"   ⚠️ Aviso ao atualizar schema dinâmico: {e_schema}")
+
     planilha, sheet_usuarios, sheet_historico, sheet_logs = conectar_banco()
     if not sheet_usuarios:
         return
@@ -218,6 +225,14 @@ def main():
         compilar_podcast(edicao_podcast)
     except Exception as e:
         print(f"   ⚠️ Falha ao gerar podcast: {e}")
+
+    # ── [NOVO] Atualiza o Schema Dinâmico do Grafo (Reflete Status DISPATCHED) ──
+    try:
+        from core.export_graph_schema import exportar_schema_completo
+        print("\n🕸️  Atualizando schema dinâmico do grafo...")
+        exportar_schema_completo()
+    except Exception as e:
+        print(f"   ⚠️ Falha ao atualizar schema dinâmico: {e}")
 
 if __name__ == "__main__":
     main()

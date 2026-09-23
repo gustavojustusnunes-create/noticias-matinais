@@ -71,6 +71,13 @@ def main():
         print("   Encerrando execução normalmente (use --force para testar no fim de semana).")
         return
 
+    # Sincroniza schema do sistema
+    try:
+        from core.export_graph_schema import exportar_schema_completo
+        exportar_schema_completo()
+    except Exception as e_schema:
+        print(f"   ⚠️ Aviso ao atualizar schema dinâmico: {e_schema}")
+
     # 1. Coleta e resumo por IA
     edicao = coletar_noticias_finance()
 
@@ -124,6 +131,13 @@ def main():
     print(f"\n{'─'*65}")
     print(f"✅ All News Finance Concluído — Enviados: {enviados} | Falhas: {falhas}")
     print(f"{'═'*65}")
+
+    # Atualiza o Schema Dinâmico ao final
+    try:
+        from core.export_graph_schema import exportar_schema_completo
+        exportar_schema_completo()
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

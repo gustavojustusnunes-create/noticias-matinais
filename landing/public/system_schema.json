@@ -1,0 +1,808 @@
+{
+  "version": "2.0.0",
+  "last_updated": "2026-09-22T21:36:23.310661-03:00",
+  "active_run_state": {
+    "status": "DISPATCHED",
+    "current_active_node": "__end__",
+    "is_approved": true,
+    "word_count": 90,
+    "retry_count": 0,
+    "hitl_approved": true,
+    "selected_story_title": "Meses antes de ataque cibernético, IA da OpenAI ‘investigou’ alvo",
+    "last_updated": "2026-09-22T21:36:23.310551-03:00",
+    "execution_log_count": 5
+  },
+  "clusters": [
+    {
+      "id": "langgraph",
+      "title": "1. ORQUESTRAÇÃO LANGGRAPH (core/graph_engine.py)",
+      "color": "#2563EB",
+      "rect": {
+        "x": 40,
+        "y": 40,
+        "width": 790,
+        "height": 540
+      }
+    },
+    {
+      "id": "observability",
+      "title": "2. OBSERVABILIDADE, MEMÓRIA & SENTINELAS",
+      "color": "#38BDF8",
+      "rect": {
+        "x": 860,
+        "y": 40,
+        "width": 840,
+        "height": 540
+      }
+    },
+    {
+      "id": "delivery",
+      "title": "3. MOTORES DE DISTRIBUIÇÃO MULTICANAL",
+      "color": "#F43F5E",
+      "rect": {
+        "x": 40,
+        "y": 620,
+        "width": 1120,
+        "height": 360
+      }
+    },
+    {
+      "id": "interfaces",
+      "title": "4. CAMADA DE INTERFACES & PORTAIS",
+      "color": "#D1BA73",
+      "rect": {
+        "x": 1190,
+        "y": 620,
+        "width": 510,
+        "height": 360
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "label": "START",
+      "sublabel": "Início do Grafo",
+      "category": "Terminal",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "▶️",
+      "color": "#64748B",
+      "type": "terminal",
+      "file": "core/graph_engine.py",
+      "func": "START",
+      "model": "LangGraph Runtime",
+      "desc": "Ponto de entrada do pipeline diário acionado via scheduler ou manual.",
+      "inputs": [],
+      "outputs": [
+        "GraphState inicializado"
+      ],
+      "resilience": "Inicialização segura do estado.",
+      "pos": {
+        "x": 60,
+        "y": 155
+      },
+      "id": "__start__",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "Planner",
+      "sublabel": "node_planner",
+      "category": "Orquestração",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🎯",
+      "color": "#2563EB",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_planner(state: GraphState)",
+      "model": "Algoritmo de Priorização & Curadoria",
+      "desc": "Analisa o pool de notícias do dia (ou snapshot de edicoes/) e elege a pauta de maior densidade nos cadernos nobres ('IA' ou 'Economia').",
+      "inputs": [
+        "raw_news: List[Dict]"
+      ],
+      "outputs": [
+        "selected_story: Dict",
+        "status: 'PLANNER_DONE'"
+      ],
+      "resilience": "Fallback sintético nobre de alta disponibilidade caso o pool esteja vazio.",
+      "pos": {
+        "x": 170,
+        "y": 140
+      },
+      "id": "planner",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "Writer",
+      "sublabel": "node_writer",
+      "category": "Orquestração",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "✍️",
+      "color": "#2563EB",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_writer(state: GraphState)",
+      "model": "Google Gemini 1.5 Flash (temp: 0.25, max_tokens: 250)",
+      "desc": "Redige rascunho de alta densidade analítica no tom executivo, estruturado em exatamente 2 parágrafos com fatos e desdobramentos de mercado.",
+      "inputs": [
+        "selected_story: Dict",
+        "critique_feedback: Optional[str]",
+        "retry_count: int"
+      ],
+      "outputs": [
+        "draft_text: str",
+        "word_count: int",
+        "status: 'DRAFT_GENERATED'"
+      ],
+      "resilience": "Reescrita reativa orientada pelas correções do Critic. Fallback local calibrado para 85-105 palavras se a API oscilar.",
+      "pos": {
+        "x": 390,
+        "y": 140
+      },
+      "id": "writer",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true,
+      "runtime_retry_count": 0
+    },
+    {
+      "label": "Critic (Quality Gate)",
+      "sublabel": "node_critic",
+      "category": "Quality Gate",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "⚖️",
+      "color": "#A855F7",
+      "type": "gate",
+      "file": "core/graph_engine.py",
+      "func": "node_critic(state: GraphState)",
+      "model": "Auditoria Determinística de Conformidade",
+      "desc": "Valida rigidamente a margem de 85 a 105 palavras (tolerância 82-108) e proíbe interrogações finais ou clickbaits. Aciona loop de autocura.",
+      "inputs": [
+        "draft_text: str",
+        "retry_count: int"
+      ],
+      "outputs": [
+        "is_approved: bool",
+        "word_count: int",
+        "critique_feedback: str",
+        "status: 'CRITIC_APPROVED' | 'CRITIC_REJECTED'"
+      ],
+      "resilience": "Teto de 3 tentativas para evitar loops infinitos. Na 3ª tentativa esgotada, avança com o melhor draft para garantir o SLA.",
+      "pos": {
+        "x": 610,
+        "y": 140
+      },
+      "id": "critic",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true,
+      "runtime_word_count": 90,
+      "runtime_is_approved": true
+    },
+    {
+      "label": "Media Generator",
+      "sublabel": "node_media_gen",
+      "category": "Mídia & Design",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🎨",
+      "color": "#10B981",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_media_generator(state: GraphState)",
+      "model": "Edge-TTS (pt-BR-AntonioNeural) + Pillow Renderer",
+      "desc": "Sintetiza áudio neural do podcast em landing/public/audio/latest.mp3 e renderiza a Capa Editorial Clássica Slide 1 (1080x1350) em tons preto e dourado.",
+      "inputs": [
+        "draft_text: str",
+        "selected_story: Dict"
+      ],
+      "outputs": [
+        "audio_path: str",
+        "image_path: str",
+        "status: 'AWAITING_FOUNDER_APPROVAL'"
+      ],
+      "resilience": "Fallback para gradiente e moldura pura se o download da foto da notícia falhar.",
+      "pos": {
+        "x": 170,
+        "y": 390
+      },
+      "id": "media_generator",
+      "is_hitl_gate": false,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "Dispatcher",
+      "sublabel": "node_dispatcher",
+      "category": "Distribuição",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🚀",
+      "color": "#F43F5E",
+      "type": "executor",
+      "file": "core/graph_engine.py",
+      "func": "node_dispatcher(state: GraphState)",
+      "model": "Playwright Bot + Resend Dispatcher",
+      "desc": "Ponto de disparo externo. Executa postagem no X via robô headless e dispara a newsletter por e-mail quando aprovado pelo fundador.",
+      "inputs": [
+        "status: 'APPROVED_BY_FOUNDER'",
+        "image_path: str",
+        "audio_path: str"
+      ],
+      "outputs": [
+        "status: 'DISPATCHED'",
+        "execution_log: List"
+      ],
+      "resilience": "Isolamento de canais: se o X falhar, os e-mails e a landing page continuam sendo publicados.",
+      "pos": {
+        "x": 620,
+        "y": 390
+      },
+      "id": "dispatcher",
+      "is_hitl_gate": true,
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "END",
+      "sublabel": "Fim do Grafo",
+      "category": "Terminal",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "⏹️",
+      "color": "#64748B",
+      "type": "terminal",
+      "file": "core/graph_engine.py",
+      "func": "END",
+      "model": "LangGraph Runtime",
+      "desc": "Ciclo completado com sucesso e logs persistidos.",
+      "inputs": [
+        "status: 'DISPATCHED'"
+      ],
+      "outputs": [
+        "Pipeline finalizado"
+      ],
+      "resilience": "Persistência em logs/graph_state.json.",
+      "pos": {
+        "x": 820,
+        "y": 435
+      },
+      "id": "__end__",
+      "is_hitl_gate": false,
+      "is_active": true,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true
+    },
+    {
+      "label": "HITL Founder Gate",
+      "sublabel": "interrupt_before",
+      "category": "Governança & HITL",
+      "cluster": "langgraph",
+      "cluster_label": "1. Orquestração LangGraph Core",
+      "icon": "🔒",
+      "color": "#F59E0B",
+      "type": "gate",
+      "file": "core/graph_engine.py",
+      "func": "checkpointer.interrupt_before=['dispatcher']",
+      "model": "Controle Human-In-The-Loop",
+      "desc": "Ponto de suspensão determinístico do StateGraph. Exige aprovação manual do fundador no Streamlit para liberar o envio público.",
+      "inputs": [
+        "status: 'AWAITING_FOUNDER_APPROVAL'"
+      ],
+      "outputs": [
+        "status: 'APPROVED_BY_FOUNDER'",
+        "hitl_approved: True"
+      ],
+      "resilience": "Bloqueia o despacho externo se a aprovação não estiver confirmada.",
+      "pos": {
+        "x": 400,
+        "y": 390
+      },
+      "id": "hitl_gate",
+      "is_active": false,
+      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_exists": true,
+      "runtime_hitl_approved": true,
+      "is_locked": false
+    },
+    {
+      "id": "ai_supervisor",
+      "label": "AI Supervisor",
+      "sublabel": "ai_supervisor.py",
+      "category": "Observabilidade & Auditoria",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "🕵️",
+      "color": "#38BDF8",
+      "type": "auditor",
+      "file": "ai_supervisor.py",
+      "func": "revisar_edicao_diaria(cache_global)",
+      "model": "Auditor Cognitivo Global",
+      "desc": "Audita os 8 cadernos do Journal e 4 do Finance. Aplica deduplicação semântica multi-veículo (>55%) e garante profundidade de 200 a 400 palavras.",
+      "inputs": [
+        "cache_global com notícias coletadas"
+      ],
+      "outputs": [
+        "cache_global auditado e aprofundado"
+      ],
+      "resilience": "Execução isolada em try/catch para nunca interromper o fluxo principal.",
+      "pos": {
+        "x": 890,
+        "y": 185
+      },
+      "file_mtime": "2026-09-10T17:05:55.458398-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "supervisor_memory",
+      "label": "Memória Cognitiva IA",
+      "sublabel": "supervisor_memory.json",
+      "category": "Memória Contínua",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "🧠",
+      "color": "#38BDF8",
+      "type": "database",
+      "file": "logs/supervisor_memory.json",
+      "func": "carregar_memoria() / salvar_memoria()",
+      "model": "Histórico de Aprendizado JSON",
+      "desc": "Armazena lições aprendidas de erros anteriores para guiar os prompts seguintes e mantém blacklist de fotos usadas para evitar repetição por 90 dias.",
+      "inputs": [
+        "novos_erros: List",
+        "novas_fotos: List"
+      ],
+      "outputs": [
+        "lições formatadas para injeção em prompts"
+      ],
+      "resilience": "Criação automática caso o arquivo não exista.",
+      "pos": {
+        "x": 1150,
+        "y": 185
+      },
+      "file_mtime": "2026-09-22T19:46:42.516749-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "agent_watchdog",
+      "label": "Watchdog Sentinela",
+      "sublabel": "agent_watchdog.py",
+      "category": "Auto-Cura & SLAs",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "🛡️",
+      "color": "#10B981",
+      "type": "sentinel",
+      "file": "agent_watchdog.py",
+      "func": "inspecionar_agentes()",
+      "model": "Monitoramento Horário & GitHub Actions CLI",
+      "desc": "Vigia continuamente os SLAs de entrega das edições, notifica incidentes via Resend e aciona auto-recuperação com 'gh workflow run'.",
+      "inputs": [
+        "Verificação de arquivos em edicoes/ e status de serviços"
+      ],
+      "outputs": [
+        "logs/agent_health.json & Alertas E-mail"
+      ],
+      "resilience": "Reinicia workflows falhados em background sem intervenção humana.",
+      "pos": {
+        "x": 1360,
+        "y": 185
+      },
+      "file_mtime": "2026-09-14T18:38:22.481489-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "telemetry_logs",
+      "label": "Telemetria & Logs",
+      "sublabel": "graph_state.json",
+      "category": "Observabilidade",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "📊",
+      "color": "#64748B",
+      "type": "logs",
+      "file": "logs/graph_state.json",
+      "func": "salvar_estado_disco(estado)",
+      "model": "JSON Telemetry Stream",
+      "desc": "Persiste o snapshot integral do estado do grafo e logs de execução para visualização no Streamlit e monitoramento de falhas.",
+      "inputs": [
+        "Transições de estado do StateGraph"
+      ],
+      "outputs": [
+        "JSON Schema para React Flow e Streamlit"
+      ],
+      "resilience": "I/O atômico em disco.",
+      "pos": {
+        "x": 1160,
+        "y": 380
+      },
+      "file_mtime": "2026-09-17T19:22:47.100084-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "x_robot",
+      "label": "Robô do X (Zero-Custo)",
+      "sublabel": "postar_x_diario.py",
+      "category": "Distribuição Social",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "🐦",
+      "color": "#F43F5E",
+      "type": "robot",
+      "file": "postar_x_diario.py",
+      "func": "postar_x_via_playwright()",
+      "model": "Playwright Headless + Stealth Session",
+      "desc": "Publica no perfil @allnews_journal sem consumir créditos de API paga. Injeta cookies 'auth_token' e 'ct0', anexa a Capa e cria auto-reply com link para a Vercel.",
+      "inputs": [
+        "Snapshot diário e Capa Clássica 1080x1350"
+      ],
+      "outputs": [
+        "Tweet publicado + thread encadeada após 12s"
+      ],
+      "resilience": "Bypass de Cloudflare Turnstile, captura de screenshots de depuração e retry de navegação.",
+      "pos": {
+        "x": 70,
+        "y": 710
+      },
+      "file_mtime": "2026-09-22T20:36:58.964196-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "instagram_poster",
+      "label": "Instagram Carrossel Bot",
+      "sublabel": "instagram_poster.py",
+      "category": "Distribuição Social",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "📸",
+      "color": "#F43F5E",
+      "type": "robot",
+      "file": "instagram_poster.py",
+      "func": "publicar_carrossel_instagram()",
+      "model": "Instagrapi Mobile Session + Pillow Mask",
+      "desc": "Compõe carrosséis verticais com máscara tipográfica recortando a foto nas letras da palavra-chave e publica via sessão mobile com intervalo de 3min.",
+      "inputs": [
+        "edicoes/YYYY-MM-DD.json"
+      ],
+      "outputs": [
+        "Post Carrossel publicado no feed"
+      ],
+      "resilience": "Fallback com envio automático das peças prontas por e-mail se a sessão mobile expirar.",
+      "pos": {
+        "x": 290,
+        "y": 710
+      },
+      "file_mtime": "2026-09-15T18:28:04.293564-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "email_builder",
+      "label": "E-mail Assinantes",
+      "sublabel": "email_builder.py",
+      "category": "Distribuição Transacional",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "✉️",
+      "color": "#F43F5E",
+      "type": "email",
+      "file": "email_builder.py",
+      "func": "gerar_html_final() / enviar_email()",
+      "model": "HTML Responsivo Inline + Resend API / SMTP",
+      "desc": "Monta a newsletter executiva personalizada respeitando a ordem de cadernos de cada leitor na planilha do Google Sheets.",
+      "inputs": [
+        "Assinantes Google Sheets + Pacote de Notícias do Dia"
+      ],
+      "outputs": [
+        "Disparo em lote com tolerância a falhas individuais"
+      ],
+      "resilience": "Falha no e-mail de um leitor nunca interrompe a fila dos outros assinantes.",
+      "pos": {
+        "x": 510,
+        "y": 710
+      },
+      "file_mtime": "2026-09-10T17:05:55.466876-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "podcast_builder",
+      "label": "Podcast Bancada (Leo & Ana)",
+      "sublabel": "podcast_builder.py",
+      "category": "Mídia & Áudio",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "🎙️",
+      "color": "#10B981",
+      "type": "audio",
+      "file": "podcast_builder.py",
+      "func": "compilar_podcast(edicao)",
+      "model": "Edge-TTS Neural Duo (Leo & Ana) + Pydub",
+      "desc": "Roteiriza e grava o diálogo matinal estilo NotebookLM com âncoras virtuais, gera áudio para o site e compila o feed RSS de podcast.",
+      "inputs": [
+        "Snapshot de notícias da edição"
+      ],
+      "outputs": [
+        "landing/public/audio/latest.mp3 e podcast.xml"
+      ],
+      "resilience": "Roteiro conversacional de fallback que garante o podcast completo mesmo sem API de LLM.",
+      "pos": {
+        "x": 730,
+        "y": 710
+      },
+      "file_mtime": "2026-09-22T17:30:23.276404-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "site_publisher",
+      "label": "Site Publisher (Sync Web)",
+      "sublabel": "site_publisher.py",
+      "category": "Sincronização",
+      "cluster": "delivery",
+      "cluster_label": "3. Motores de Distribuição Multicanal",
+      "icon": "🌐",
+      "color": "#D1BA73",
+      "type": "sync",
+      "file": "site_publisher.py",
+      "func": "publicar_edicao()",
+      "model": "Snapshot Hydration Bridge",
+      "desc": "Grava o snapshot histórico imutável em edicoes/ e atualiza em tempo real o arquivo landing/src/data/edicao_atual.json para a Vercel.",
+      "inputs": [
+        "CACHE_GLOBAL de notícias"
+      ],
+      "outputs": [
+        "landing/src/data/edicao_atual.json e edicoes/index.json"
+      ],
+      "resilience": "Envelopado em try/catch para jamais afetar os disparos de e-mail.",
+      "pos": {
+        "x": 950,
+        "y": 710
+      },
+      "file_mtime": "2026-09-22T17:30:23.280668-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "astro_vercel",
+      "label": "Vitrine dos Leitores (Vercel)",
+      "sublabel": "Astro v4+ SSG",
+      "category": "Interface Pública",
+      "cluster": "interfaces",
+      "cluster_label": "4. Camada de Interfaces & Portais",
+      "icon": "🚀",
+      "color": "#D1BA73",
+      "type": "frontend",
+      "file": "landing/src/pages/index.astro",
+      "func": "Astro SSG Static Build",
+      "model": "Astro v4 + Tailwind Dark Executivo",
+      "desc": "Portal oficial dos leitores (noticias-matinais.vercel.app). Carregamento veloz (< 0.5s), player de áudio integrado e captura de assinantes.",
+      "inputs": [
+        "landing/src/data/edicao_atual.json",
+        "audio/latest.mp3"
+      ],
+      "outputs": [
+        "Experiência do leitor em alta performance"
+      ],
+      "resilience": "100% estático e desacoplado do Streamlit: permanece sempre online no edge.",
+      "pos": {
+        "x": 1215,
+        "y": 715
+      },
+      "file_mtime": "2026-09-18T17:55:26.238298-03:00",
+      "file_exists": true,
+      "is_active": false
+    },
+    {
+      "id": "streamlit_admin",
+      "label": "Control Center (Streamlit)",
+      "sublabel": "app.py",
+      "category": "Interface de Gestão",
+      "cluster": "interfaces",
+      "cluster_label": "4. Camada de Interfaces & Portais",
+      "icon": "⚙️",
+      "color": "#38BDF8",
+      "type": "backoffice",
+      "file": "app.py",
+      "func": "Streamlit Backoffice (app.py, agentic_graph.py, cpo_cockpit.py)",
+      "model": "Streamlit Multi-Page Studio",
+      "desc": "Painel de controle interno do fundador com Graph Studio, liberação do HITL Gate, monitoramento dos sentinelas e métricas do CPO (RICE).",
+      "inputs": [
+        "logs/graph_state.json",
+        "logs/supervisor_memory.json",
+        "Google Sheets"
+      ],
+      "outputs": [
+        "Governança, disparo forçado e telemetria de agentes"
+      ],
+      "resilience": "Painel isolado em ambiente privado com autenticação.",
+      "pos": {
+        "x": 1460,
+        "y": 715
+      },
+      "file_mtime": "2026-09-22T21:12:25.172620-03:00",
+      "file_exists": true,
+      "is_active": false
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge___start___planner",
+      "source": "__start__",
+      "target": "planner",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_critic_media_generator",
+      "source": "critic",
+      "target": "media_generator",
+      "conditional": true,
+      "label": "APPROVED (85-105w)",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_critic_writer",
+      "source": "critic",
+      "target": "writer",
+      "conditional": true,
+      "label": "RETRY (tries < 3)",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "edge_media_to_hitl",
+      "source": "media_generator",
+      "target": "hitl_gate",
+      "conditional": false,
+      "label": "Mídias Prontas",
+      "color": "#F59E0B"
+    },
+    {
+      "id": "edge_hitl_to_dispatcher",
+      "source": "hitl_gate",
+      "target": "dispatcher",
+      "conditional": true,
+      "label": "APPROVED_BY_FOUNDER",
+      "color": "#F43F5E",
+      "is_hitl_edge": true
+    },
+    {
+      "id": "edge_planner_writer",
+      "source": "planner",
+      "target": "writer",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_writer_critic",
+      "source": "writer",
+      "target": "critic",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_dispatcher___end__",
+      "source": "dispatcher",
+      "target": "__end__",
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_disp_to_x",
+      "source": "dispatcher",
+      "target": "x_robot",
+      "conditional": false,
+      "label": "Disparo Headless",
+      "color": "#F43F5E"
+    },
+    {
+      "id": "edge_disp_to_email",
+      "source": "dispatcher",
+      "target": "email_builder",
+      "conditional": false,
+      "label": "Resend API",
+      "color": "#F43F5E"
+    },
+    {
+      "id": "edge_disp_to_insta",
+      "source": "dispatcher",
+      "target": "instagram_poster",
+      "conditional": false,
+      "label": "Carrossel Mobile",
+      "color": "#F43F5E"
+    },
+    {
+      "id": "edge_media_to_podcast",
+      "source": "media_generator",
+      "target": "podcast_builder",
+      "conditional": false,
+      "label": "Síntese Edge-TTS",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_disp_to_publisher",
+      "source": "dispatcher",
+      "target": "site_publisher",
+      "conditional": false,
+      "label": "Sync edicao.json",
+      "color": "#D1BA73"
+    },
+    {
+      "id": "edge_pub_to_astro",
+      "source": "site_publisher",
+      "target": "astro_vercel",
+      "conditional": false,
+      "label": "Deploy SSG",
+      "color": "#D1BA73"
+    },
+    {
+      "id": "edge_pod_to_astro",
+      "source": "podcast_builder",
+      "target": "astro_vercel",
+      "conditional": false,
+      "label": "Player Áudio",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_x_to_astro",
+      "source": "x_robot",
+      "target": "astro_vercel",
+      "conditional": true,
+      "label": "Auto-Reply Link",
+      "color": "#60A5FA",
+      "is_dashed": true
+    },
+    {
+      "id": "edge_sup_to_mem",
+      "source": "ai_supervisor",
+      "target": "supervisor_memory",
+      "conditional": false,
+      "label": "Persiste Lições",
+      "color": "#38BDF8"
+    },
+    {
+      "id": "edge_watch_to_telemetry",
+      "source": "agent_watchdog",
+      "target": "telemetry_logs",
+      "conditional": false,
+      "label": "SLA & Alertas",
+      "color": "#10B981"
+    },
+    {
+      "id": "edge_telemetry_to_admin",
+      "source": "telemetry_logs",
+      "target": "streamlit_admin",
+      "conditional": false,
+      "label": "Live Stream",
+      "color": "#D1BA73"
+    }
+  ],
+  "stats": {
+    "total_nodes": 19,
+    "langgraph_nodes": 8,
+    "infrastructure_nodes": 11,
+    "total_edges": 19,
+    "current_status": "DISPATCHED",
+    "current_active_node": "__end__"
+  }
+}
