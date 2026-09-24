@@ -1,16 +1,15 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-09-22T21:36:23.310661-03:00",
+  "last_updated": "2026-09-24T10:40:25.882645-03:00",
   "active_run_state": {
-    "status": "DISPATCHED",
-    "current_active_node": "__end__",
-    "is_approved": true,
-    "word_count": 90,
+    "status": "IDLE",
+    "current_active_node": "planner",
+    "is_approved": false,
+    "word_count": 0,
     "retry_count": 0,
-    "hitl_approved": true,
-    "selected_story_title": "Meses antes de ataque cibernético, IA da OpenAI ‘investigou’ alvo",
-    "last_updated": "2026-09-22T21:36:23.310551-03:00",
-    "execution_log_count": 5
+    "hitl_approved": false,
+    "last_updated": "2026-09-24T10:40:25.882613-03:00",
+    "selected_story_title": null
   },
   "clusters": [
     {
@@ -84,7 +83,7 @@
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true
     },
     {
@@ -114,8 +113,8 @@
       },
       "id": "planner",
       "is_hitl_gate": false,
-      "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "is_active": true,
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true
     },
     {
@@ -149,7 +148,7 @@
       "id": "writer",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true,
       "runtime_retry_count": 0
     },
@@ -184,10 +183,10 @@
       "id": "critic",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true,
-      "runtime_word_count": 90,
-      "runtime_is_approved": true
+      "runtime_word_count": 0,
+      "runtime_is_approved": false
     },
     {
       "label": "Media Generator",
@@ -219,7 +218,7 @@
       "id": "media_generator",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true
     },
     {
@@ -252,7 +251,7 @@
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true
     },
     {
@@ -281,8 +280,8 @@
       },
       "id": "__end__",
       "is_hitl_gate": false,
-      "is_active": true,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "is_active": false,
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true
     },
     {
@@ -312,10 +311,10 @@
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-24T10:36:04.801717-03:00",
       "file_exists": true,
-      "runtime_hitl_approved": true,
-      "is_locked": false
+      "runtime_hitl_approved": false,
+      "is_locked": true
     },
     {
       "id": "ai_supervisor",
@@ -342,7 +341,7 @@
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-09-10T17:05:55.458398-03:00",
+      "file_mtime": "2026-09-24T10:36:04.739166-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -372,7 +371,7 @@
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-09-22T19:46:42.516749-03:00",
+      "file_mtime": "2026-09-24T10:36:04.886543-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -401,7 +400,7 @@
         "x": 1360,
         "y": 185
       },
-      "file_mtime": "2026-09-14T18:38:22.481489-03:00",
+      "file_mtime": "2026-09-24T10:36:04.739166-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -430,8 +429,8 @@
         "x": 1160,
         "y": 380
       },
-      "file_mtime": "2026-09-17T19:22:47.100084-03:00",
-      "file_exists": true,
+      "file_mtime": null,
+      "file_exists": false,
       "is_active": false
     },
     {
@@ -459,7 +458,7 @@
         "x": 70,
         "y": 710
       },
-      "file_mtime": "2026-09-22T20:36:58.964196-03:00",
+      "file_mtime": "2026-09-24T10:36:04.888718-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -488,7 +487,7 @@
         "x": 290,
         "y": 710
       },
-      "file_mtime": "2026-09-15T18:28:04.293564-03:00",
+      "file_mtime": "2026-09-24T10:36:04.877524-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -517,7 +516,7 @@
         "x": 510,
         "y": 710
       },
-      "file_mtime": "2026-09-10T17:05:55.466876-03:00",
+      "file_mtime": "2026-09-24T10:36:04.865718-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -546,7 +545,7 @@
         "x": 730,
         "y": 710
       },
-      "file_mtime": "2026-09-22T17:30:23.276404-03:00",
+      "file_mtime": "2026-09-24T10:36:04.886543-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -575,7 +574,7 @@
         "x": 950,
         "y": 710
       },
-      "file_mtime": "2026-09-22T17:30:23.280668-03:00",
+      "file_mtime": "2026-09-24T10:36:04.888718-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -605,7 +604,7 @@
         "x": 1215,
         "y": 715
       },
-      "file_mtime": "2026-09-18T17:55:26.238298-03:00",
+      "file_mtime": "2026-09-24T10:36:04.886175-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -636,7 +635,7 @@
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-09-22T21:12:25.172620-03:00",
+      "file_mtime": "2026-09-24T10:36:04.739166-03:00",
       "file_exists": true,
       "is_active": false
     }
@@ -802,7 +801,7 @@
     "langgraph_nodes": 8,
     "infrastructure_nodes": 11,
     "total_edges": 19,
-    "current_status": "DISPATCHED",
-    "current_active_node": "__end__"
+    "current_status": "IDLE",
+    "current_active_node": "planner"
   }
 }
