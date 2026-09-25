@@ -185,3 +185,12 @@ Traceback (most recent call last):
     raise TimeoutError("Não foi possível carregar o Composer no X dentro de 60 segundos.")
 TimeoutError: Não foi possível carregar o Composer no X dentro de 60 segundos.
 
+[2026-09-25 14:00:45] ❌ Falha no robô Playwright do X: Não foi possível carregar o Composer no X dentro de 60 segundos.
+Traceback (most recent call last):
+  File "/home/runner/work/noticias-matinais/noticias-matinais/postar_x_diario.py", line 729, in publicar_no_x
+    return publicar_via_playwright(texto_tweet, caminho_imagem, AUTO_REPLY_TEXT)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/noticias-matinais/noticias-matinais/postar_x_diario.py", line 529, in publicar_via_playwright
+    raise TimeoutError("Não foi possível carregar o Composer no X dentro de 60 segundos.")
+TimeoutError: Não foi possível carregar o Composer no X dentro de 60 segundos.
+
