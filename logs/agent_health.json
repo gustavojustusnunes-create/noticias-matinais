@@ -1,29 +1,33 @@
 {
-    "timestamp_scan": "2026-09-27T18:31:26.561156-03:00",
-    "data_hoje": "2026-09-27",
-    "sistema_geral": "HEALTHY",
-    "incidentes": [],
-    "auto_recuperacoes": [],
+    "timestamp_scan": "2026-09-28T14:46:27.311328-03:00",
+    "data_hoje": "2026-09-28",
+    "sistema_geral": "WARNING",
+    "incidentes": [
+        "All News Finance não concluiu a edição de 2026-09-28."
+    ],
+    "auto_recuperacoes": [
+        "finance_daily.yml disparado para auto-recuperação."
+    ],
     "agentes": {
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (16 notícias).",
-            "ultima_edicao": "2026-09-27",
+            "ultima_edicao": "2026-09-28",
             "horario_previsto": "05:20 BRT",
             "total_itens": 16
         },
         "finance": {
             "nome": "All News Finance",
-            "status": "WEEKEND_REST",
-            "detalhe": "Mercados fechados aos fins de semana.",
-            "ultima_edicao": "Segunda-feira",
-            "horario_previsto": "Seg-Sex às 05:25"
+            "status": "RECOVERING",
+            "detalhe": "Edição financeira de hoje ausente após as 06:20.",
+            "ultima_edicao": "Pendente",
+            "horario_previsto": "05:25 BRT"
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-09-27 gerados e registrados.",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-09-28).",
             "ultima_edicao": "2026-09-27",
             "horario_previsto": "09:15 BRT"
         },
@@ -38,8 +42,8 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-09-27 18:31 BRT",
-            "incidentes_abertos": 0
+            "ultimo_scan": "2026-09-28 14:46 BRT",
+            "incidentes_abertos": 1
         }
     }
 }
