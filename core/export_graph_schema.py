@@ -75,17 +75,17 @@ METADATA_LANGGRAPH_NODES = {
         "type": "executor",
         "file": "core/graph_engine.py",
         "func": "node_writer(state: GraphState)",
-        "model": "Google Gemini 1.5 Flash (temp: 0.25, max_tokens: 250)",
-        "desc": "Redige rascunho de alta densidade analítica no tom executivo, estruturado em exatamente 2 parágrafos com fatos e desdobramentos de mercado.",
+        "model": "Google Gemini 1.5 Flash (temp: 0.2, response_mime_type: 'application/json')",
+        "desc": "Redige resumo jornalístico oficial no tom executivo com base no SYSTEM_PROMPT_WRITER, estruturado em 3 períodos (Fato, Causa, Impacto) com 85 a 105 palavras em formato JSON.",
         "inputs": ["selected_story: Dict", "critique_feedback: Optional[str]", "retry_count: int"],
         "outputs": ["draft_text: str", "word_count: int", "status: 'DRAFT_GENERATED'"],
         "resilience": "Reescrita reativa orientada pelas correções do Critic. Fallback local calibrado para 85-105 palavras se a API oscilar.",
         "pos": {"x": 390, "y": 140}
     },
     "critic": {
-        "label": "Critic (Quality Gate)",
+        "label": "Critic (Jev Gate)",
         "sublabel": "node_critic",
-        "category": "Quality Gate",
+        "category": "Quality Gate (System 1)",
         "cluster": "langgraph",
         "cluster_label": "1. Orquestração LangGraph Core",
         "icon": "⚖️",
@@ -93,11 +93,11 @@ METADATA_LANGGRAPH_NODES = {
         "type": "gate",
         "file": "core/graph_engine.py",
         "func": "node_critic(state: GraphState)",
-        "model": "Auditoria Determinística de Conformidade",
-        "desc": "Valida rigidamente a margem de 85 a 105 palavras (tolerância 82-108) e proíbe interrogações finais ou clickbaits. Aciona loop de autocura.",
+        "model": "TypeSafe Jev-1.13 (System 1 Decision Model)",
+        "desc": "Auditoria de conformidade editorial e julgamento ultrarrápido (< 200ms). Avalia primitivos Jev: score (1-5), noul (integridade), choice (APPROVE/REVISE) e confiança >= 0.80. Aciona loop de autocura para o Writer.",
         "inputs": ["draft_text: str", "retry_count: int"],
-        "outputs": ["is_approved: bool", "word_count: int", "critique_feedback: str", "status: 'CRITIC_APPROVED' | 'CRITIC_REJECTED'"],
-        "resilience": "Teto de 3 tentativas para evitar loops infinitos. Na 3ª tentativa esgotada, avança com o melhor draft para garantir o SLA.",
+        "outputs": ["is_approved: bool", "word_count: int", "critique_feedback: str", "jev_decision: Dict", "status: 'CRITIC_APPROVED' | 'CRITIC_REVISED'"],
+        "resilience": "Fallback automático para regras determinísticas caso a confiança caia abaixo de 0.60.",
         "pos": {"x": 610, "y": 140}
     },
     "media_generator": {
@@ -196,6 +196,25 @@ METADATA_LANGGRAPH_NODES = {
 # --- 2. CATÁLOGO DOS SUBMÓDULOS DE INFRAESTRUTURA & SATÉLITES ---
 # =============================================================================
 METADATA_INFRA_NODES = {
+    "jev_gatekeeper": {
+        "id": "jev_gatekeeper",
+        "label": "Jev Gatekeeper",
+        "sublabel": "core/jev_gatekeeper.py",
+        "category": "Decisão Estruturada System 1",
+        "cluster": "observability",
+        "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+        "icon": "⚡",
+        "color": "#8B5CF6",
+        "type": "decision_model",
+        "file": "core/jev_gatekeeper.py",
+        "func": "evaluate_editorial_quality() / quick_triage_supervisor()",
+        "model": "typesafe/jev-1.13 + Local Fast Heuristics (< 1ms)",
+        "desc": "Motor de decisão estruturada de alta velocidade com primitivos discretos (score, noul, choice, confidence). Alimenta o nó Critic e a pré-triagem do AI Supervisor com 0 tokens de LLM generativo.",
+        "inputs": ["draft_text: str", "trace_or_log: str"],
+        "outputs": ["EditorialDecision(score, noul, choice, conf, latency_ms)", "SupervisorTriage"],
+        "resilience": "Dual-engine com fallback heurístico local imediato se API externa oscilar.",
+        "pos": {"x": 890, "y": 380}
+    },
     "ai_supervisor": {
         "id": "ai_supervisor",
         "label": "AI Supervisor",
@@ -517,6 +536,8 @@ def inspecionar_arquivos_infra() -> Dict[str, Any]:
     
     arquivos_para_checar = [
         "core/graph_engine.py",
+        "core/jev_gatekeeper.py",
+        "tests/test_jev_gate.py",
         "ai_supervisor.py",
         "agent_watchdog.py",
         "postar_x_diario.py",
@@ -670,6 +691,8 @@ def compilar_schema_completo() -> Dict[str, Any]:
         {"id": "edge_x_to_astro", "source": "x_robot", "target": "astro_vercel", "conditional": True, "label": "Auto-Reply Link", "color": "#60A5FA", "is_dashed": True},
         
         # Observabilidade & Memória
+        {"id": "edge_critic_to_jev", "source": "critic", "target": "jev_gatekeeper", "conditional": False, "label": "Inferência Jev (<1ms)", "color": "#8B5CF6"},
+        {"id": "edge_sup_to_jev", "source": "ai_supervisor", "target": "jev_gatekeeper", "conditional": False, "label": "Pré-Triagem SLA", "color": "#8B5CF6"},
         {"id": "edge_sup_to_mem", "source": "ai_supervisor", "target": "supervisor_memory", "conditional": False, "label": "Persiste Lições", "color": "#38BDF8"},
         {"id": "edge_watch_to_telemetry", "source": "agent_watchdog", "target": "telemetry_logs", "conditional": False, "label": "SLA & Alertas", "color": "#10B981"},
         {"id": "edge_telemetry_to_admin", "source": "telemetry_logs", "target": "streamlit_admin", "conditional": False, "label": "Live Stream", "color": "#D1BA73"}

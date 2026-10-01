@@ -1,0 +1,52 @@
+{
+  "selected_story": {
+    "titulo": "Teste Selic",
+    "resumo": "Contexto teste com dados."
+  },
+  "draft_text": "O anúncio institucional e a expansão estratégica vinculados a Teste Selic consolidam um novo patamar de competição e consolidação setorial nos mercados globais nesta semana. A movimentação mobiliza fluxos de investimento privado da ordem de bilhões de dólares e impõe uma readequação estrutural profunda de mais de 30% nos contratos de fornecimento tecnológico e industrial vigentes. Especialistas de mercado apontam que a maturidade da iniciativa atenua vulnerabilidades críticas na cadeia de suprimentos, ao mesmo tempo em que pressiona diretamente o posicionamento estratégico dos principais concorrentes diretos no trimestre.",
+  "word_count": 88,
+  "is_approved": true,
+  "status": "CRITIC_APPROVED",
+  "execution_log": [
+    {
+      "timestamp": "2026-10-01 12:54:59",
+      "node": "writer",
+      "message": "Draft gerado com 88 palavras (Ciclo de revisão 0). Título: 'Teste Selic'",
+      "word_count": 88,
+      "retry_count": 0,
+      "titulo_limpo": "Teste Selic"
+    },
+    {
+      "timestamp": "2026-10-01 12:54:59",
+      "node": "critic",
+      "message": "Auditoria Jev concluída: status=CRITIC_APPROVED (latência=0.96ms). Jev System 1 [APPROVE - score 5/5, noul=True, conf=95%, 0.96ms]: Conforme diretrizes editoriais: 88 palavras dentro da margem estrita (85-105) e estrutura analítica aprovada.",
+      "is_approved": true,
+      "word_count": 88,
+      "retry_count": 0,
+      "jev_decision": {
+        "score": 5,
+        "noul": true,
+        "choice": "APPROVE",
+        "confidence": 0.95,
+        "latency_ms": 0.96,
+        "reason": "Conforme diretrizes editoriais: 88 palavras dentro da margem estrita (85-105) e estrutura analítica aprovada.",
+        "word_count": 88,
+        "paragraphs": 1,
+        "model": "typesafe/jev-1.13-fast-local"
+      }
+    }
+  ],
+  "critique_feedback": "Jev System 1 [APPROVE - score 5/5, noul=True, conf=95%, 0.96ms]: Conforme diretrizes editoriais: 88 palavras dentro da margem estrita (85-105) e estrutura analítica aprovada.",
+  "retry_count": 0,
+  "jev_decision": {
+    "score": 5,
+    "noul": true,
+    "choice": "APPROVE",
+    "confidence": 0.95,
+    "latency_ms": 0.96,
+    "reason": "Conforme diretrizes editoriais: 88 palavras dentro da margem estrita (85-105) e estrutura analítica aprovada.",
+    "word_count": 88,
+    "paragraphs": 1,
+    "model": "typesafe/jev-1.13-fast-local"
+  }
+}

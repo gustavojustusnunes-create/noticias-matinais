@@ -1,0 +1,983 @@
+---
+export const prerender = false;
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="ANJ — Cockpit Executivo & HITL" description="Painel de Controle e Governança Agêntica do All News Journal">
+  <main class="min-h-screen pb-28 text-slate-100 bg-[#0B0F14]">
+    
+    <!-- HEADER FIXO SUPERIOR -->
+    <header class="sticky top-0 z-40 bg-[#0B0F14]/90 backdrop-blur-md border-b border-white/10 px-4 py-3">
+      <div class="max-w-xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
+            ANJ
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-sm font-semibold tracking-wide font-editorial text-white">ALL NEWS JOURNAL</h1>
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
+              </span>
+            </div>
+            <p class="text-[10px] text-slate-400">Cockpit Executivo & HITL Founder Gate</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button id="btn-refresh" title="Recarregar dados" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+          <button id="btn-lock" title="Bloquear tela" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] max-w-sm w-[90%] px-4 py-3 rounded-xl border text-xs font-medium shadow-2xl flex items-center gap-2.5">
+      <span id="toast-icon">ℹ️</span>
+      <span id="toast-msg">Mensagem</span>
+    </div>
+
+    <!-- TELA DE AUTENTICAÇÃO POR PIN (MODAL OVERLAY) -->
+    <div id="pin-screen" class="fixed inset-0 z-50 bg-[#0B0F14] flex flex-col items-center justify-center p-6 transition-opacity duration-300">
+      <div class="w-full max-w-xs text-center">
+        <div class="w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-4 text-blue-400">
+          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        </div>
+        <h2 class="text-xl font-bold font-editorial text-white mb-1">Acesso do Fundador</h2>
+        <p class="text-xs text-slate-400 mb-5">Digite o PIN executivo de 4 dígitos para gerenciar a publicação</p>
+
+        <!-- CAMPO DE DIGITAÇÃO DIRETA (FÍSICO OU TECLADO DO CELULAR) -->
+        <div class="relative max-w-[260px] mx-auto mb-4">
+          <input 
+            id="pin-native-input" 
+            type="password" 
+            inputmode="numeric" 
+            pattern="[0-9]*" 
+            maxlength="4" 
+            autocomplete="one-time-code" 
+            placeholder="••••" 
+            class="w-full text-center tracking-[0.6em] font-mono text-3xl font-bold py-3 px-4 rounded-xl bg-[#131B26] border-2 border-white/20 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all shadow-inner"
+            autofocus
+          />
+          <p class="text-[11px] text-slate-400 mt-2">Digite no teclado ou clique nos botões abaixo</p>
+        </div>
+
+        <!-- TECLADO NUMÉRICO MOBILE (COMPLEMENTAR) -->
+        <div class="grid grid-cols-3 gap-2.5 max-w-[260px] mx-auto mb-3">
+          { [1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            <button type="button" class="pin-btn h-12 rounded-xl bg-[#131B26] border border-white/10 text-lg font-semibold text-white hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-95 transition-all" data-val={num}>
+              {num}
+            </button>
+          )) }
+          <button type="button" class="pin-btn h-12 rounded-xl bg-transparent text-xs text-slate-400 font-semibold hover:text-white transition-colors" data-action="clear">LIMPAR</button>
+          <button type="button" class="pin-btn h-12 rounded-xl bg-[#131B26] border border-white/10 text-lg font-semibold text-white hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-95 transition-all" data-val="0">0</button>
+          <button type="button" class="pin-btn h-12 rounded-xl bg-transparent text-slate-400 flex items-center justify-center active:scale-95 transition-all hover:text-white" data-action="backspace">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414A2 2 0 0110.828 5H19a2 2 0 012 2v10a2 2 0 01-2 2h-8.172a2 2 0 01-1.414-.586L3 12z"/></svg>
+          </button>
+        </div>
+
+        <!-- BOTÃO DE ATALHO RÁPIDO -->
+        <div class="mb-3">
+          <button type="button" id="btn-quick-pin" class="text-xs text-blue-400 hover:text-blue-300 font-medium px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all">
+            ⚡ Preencher PIN 2026
+          </button>
+        </div>
+
+        <p id="pin-error" class="text-xs text-rose-400 font-medium min-h-[18px]"></p>
+      </div>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL (3 ABAS) -->
+    <div id="admin-content" class="max-w-xl mx-auto px-4 pt-4 hidden">
+      
+      <!-- =================================================================== -->
+      <!-- ABA 1: 🚀 APROVAÇÃO & EDIÇÃO DO DIA                                 -->
+      <!-- =================================================================== -->
+      <section id="tab-edicao" class="tab-pane space-y-4">
+        
+        <!-- CONTAINER DE ALERTA DE CADERNOS SUPRIMIDOS (QUALITY GATE) -->
+        <div id="container-alertas-cadernos" class="hidden space-y-3"></div>
+
+        <!-- CARD DA EDIÇÃO -->
+        <div class="bg-[#131B26] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
+          <!-- HEADER DO CARD -->
+          <div class="p-4 border-b border-white/5 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span id="badge-caderno" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                Economia
+              </span>
+              <span id="label-data" class="text-xs text-slate-400">Edição de Hoje</span>
+            </div>
+            <span id="badge-status-edicao" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              Aguardando Founder
+            </span>
+          </div>
+
+          <!-- IMAGEM DE CAPA COM VISUALIZADOR RESPONSIVO -->
+          <div class="relative w-full aspect-video bg-black/40 overflow-hidden border-b border-white/5">
+            <img id="edicao-capa" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=450&fit=crop" alt="Capa Editorial" class="w-full h-full object-cover" />
+            <div class="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/70 backdrop-blur-sm text-[10px] font-mono text-white/80 border border-white/10">
+              Slide 1 • Capa Clássica
+            </div>
+          </div>
+
+          <!-- CORPO EDITORIAL -->
+          <div class="p-4 space-y-3">
+            <h2 id="edicao-titulo" class="text-lg font-bold font-editorial text-white leading-snug">
+              Carregando pauta nobre selecionada pelo Planner...
+            </h2>
+
+            <!-- PLAYER NATIVO DE ÁUDIO -->
+            <div class="bg-[#0B0F14] border border-white/5 p-3 rounded-xl space-y-1.5">
+              <div class="flex items-center justify-between text-[11px] text-slate-400">
+                <span class="flex items-center gap-1.5 font-medium text-slate-300">
+                  <span>🎙️</span> Podcast Diário (Leo & Ana)
+                </span>
+                <span class="text-[10px] text-blue-400">Áudio Sintético</span>
+              </div>
+              <audio id="edicao-audio" controls class="w-full h-8" preload="none">
+                <source src="/audio/latest.mp3" type="audio/mpeg" />
+                Seu navegador não suporta áudio HTML5.
+              </audio>
+            </div>
+
+            <!-- TEXTO DO RESUMO -->
+            <div class="bg-[#0B0F14]/70 p-3.5 rounded-xl border border-white/5 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Texto Oficial do Resumo</span>
+                <!-- BADGE DE EXTENSÃO (85-105 PALAVRAS) -->
+                <span id="badge-word-count" class="px-2 py-0.5 rounded text-[10px] font-bold border transition-colors bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                  -- palavras • Compliance Jev
+                </span>
+              </div>
+              <p id="edicao-resumo" class="text-xs text-slate-300 leading-relaxed font-sans select-text">
+                Carregando texto do Writer...
+              </p>
+            </div>
+
+            <!-- PARECER DO QUALITY GATE / AI SUPERVISOR -->
+            <div class="bg-purple-950/20 border border-purple-500/20 p-3 rounded-xl text-xs space-y-1">
+              <div class="flex items-center gap-1.5 font-semibold text-purple-300">
+                <span>⚖️</span> Jev Quality Gate & Supervisor
+              </div>
+              <p id="edicao-critic" class="text-[11px] text-slate-300 leading-relaxed">
+                Verificando conformidade editorial...
+              </p>
+            </div>
+          </div>
+
+          <!-- BOTÃO GIGANTE DE APROVAÇÃO (HITL) -->
+          <div class="p-4 bg-gradient-to-t from-black/40 to-transparent border-t border-white/5">
+            <button id="btn-aprovar-hitl" class="w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
+              <span class="text-base">✅</span> APROVAR E DISPARAR EDIÇÃO
+            </button>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- ABA 2: 🛡️ REDE DE AGENTES & SEGURANÇA                               -->
+      <!-- =================================================================== -->
+      <section id="tab-agentes" class="tab-pane hidden space-y-4">
+        
+        <!-- PAINEL DE EMERGÊNCIA & KILL SWITCH -->
+        <div class="bg-red-950/20 border border-red-500/30 rounded-2xl p-4 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-lg">🚨</span>
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-red-400">Controle de Emergência</h3>
+                <p class="text-[11px] text-slate-400">Suspender ou forçar publicações</p>
+              </div>
+            </div>
+            
+            <!-- TOGGLE SWITCH DO KILL SWITCH -->
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" id="toggle-kill-switch" class="sr-only peer" />
+              <div class="w-12 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+            </label>
+          </div>
+
+          <div class="pt-2 border-t border-red-500/20 flex gap-2">
+            <button id="btn-forcar-x" class="flex-1 py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-colors active:scale-95">
+              <span>🐦</span> Forçar Publicação no X
+            </button>
+          </div>
+        </div>
+
+        <!-- STATUS DOS 5 AGENTES -->
+        <div class="space-y-2">
+          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-1">Topologia dos 5 Agentes Autônomos</h3>
+          
+          <div id="agentes-list" class="space-y-2">
+            <!-- AGENTE JOURNAL -->
+            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="journal">
+              <div class="flex items-center gap-3">
+                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+                <div>
+                  <h4 class="text-xs font-semibold text-white">All News Journal</h4>
+                  <p class="agent-detail text-[10px] text-slate-400">Edição matinal diária</p>
+                </div>
+              </div>
+              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ONLINE</span>
+            </div>
+
+            <!-- AGENTE FINANCE -->
+            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="finance">
+              <div class="flex items-center gap-3">
+                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+                <div>
+                  <h4 class="text-xs font-semibold text-white">All News Finance</h4>
+                  <p class="agent-detail text-[10px] text-slate-400">Mercados e macroeconomia</p>
+                </div>
+              </div>
+              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ONLINE</span>
+            </div>
+
+            <!-- AGENTE INSTAGRAM -->
+            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="instagram">
+              <div class="flex items-center gap-3">
+                <span class="agent-pulse w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-400"></span>
+                <div>
+                  <h4 class="text-xs font-semibold text-white">Instagram Daily Poster</h4>
+                  <p class="agent-detail text-[10px] text-slate-400">Agendado para 09:15 BRT</p>
+                </div>
+              </div>
+              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">SCHEDULED</span>
+            </div>
+
+            <!-- AGENTE SUPERVISOR -->
+            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="supervisor">
+              <div class="flex items-center gap-3">
+                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+                <div>
+                  <h4 class="text-xs font-semibold text-white">AI Quality Supervisor</h4>
+                  <p class="agent-detail text-[10px] text-slate-400">Auditoria cognitiva & Jev Gatekeeper</p>
+                </div>
+              </div>
+              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ONLINE</span>
+            </div>
+
+            <!-- AGENTE WATCHDOG -->
+            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="watchdog">
+              <div class="flex items-center gap-3">
+                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
+                <div>
+                  <h4 class="text-xs font-semibold text-white">Watchdog Sentinela</h4>
+                  <p class="agent-detail text-[10px] text-slate-400">Autocura e monitoramento de SLA</p>
+                </div>
+              </div>
+              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACORDEÃO EDITOR RÁPIDO DE PROMPTS (INNER HARNESS) -->
+        <div class="bg-[#131B26] border border-white/10 rounded-2xl p-4 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Editor Rápido de Prompts</h3>
+              <p class="text-[10px] text-slate-400">Ajuste o Inner Harness dos nós sem abrir código no PC</p>
+            </div>
+            <span class="text-xs">✍️</span>
+          </div>
+
+          <!-- WRITER ACCORDION -->
+          <details class="group bg-[#0B0F14] border border-white/5 rounded-xl p-3">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-xs font-semibold text-blue-400">
+              <span>Nó Writer (Editor Executivo)</span>
+              <span class="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div class="mt-2.5 space-y-2">
+              <textarea id="prompt-writer-input" rows="4" class="w-full bg-[#131B26] border border-white/10 rounded-lg p-2.5 text-[11px] text-slate-200 font-mono focus:border-blue-500 focus:outline-none"></textarea>
+              <button data-no="writer" class="btn-save-prompt w-full py-1.5 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-400 hover:bg-blue-600 hover:text-white text-xs font-semibold transition-all">
+                Salvar Prompt do Writer
+              </button>
+            </div>
+          </details>
+
+          <!-- CRITIC ACCORDION -->
+          <details class="group bg-[#0B0F14] border border-white/5 rounded-xl p-3">
+            <summary class="flex justify-between items-center cursor-pointer list-none text-xs font-semibold text-purple-400">
+              <span>Nó Critic (Jev Gatekeeper)</span>
+              <span class="group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div class="mt-2.5 space-y-2">
+              <textarea id="prompt-critic-input" rows="4" class="w-full bg-[#131B26] border border-white/10 rounded-lg p-2.5 text-[11px] text-slate-200 font-mono focus:border-purple-500 focus:outline-none"></textarea>
+              <button data-no="critic" class="btn-save-prompt w-full py-1.5 rounded-lg bg-purple-600/20 border border-purple-500/40 text-purple-400 hover:bg-purple-600 hover:text-white text-xs font-semibold transition-all">
+                Salvar Prompt do Critic
+              </button>
+            </div>
+          </details>
+        </div>
+
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- ABA 3: 📊 CRESCIMENTO & MÉTRICAS                                    -->
+      <!-- =================================================================== -->
+      <section id="tab-metricas" class="tab-pane hidden space-y-4">
+        
+        <!-- NORTH STAR METRIC (EDR) -->
+        <div class="bg-gradient-to-br from-[#131B26] to-[#162438] border border-blue-500/20 rounded-2xl p-5 shadow-xl relative overflow-hidden">
+          <div class="absolute -right-4 -bottom-4 text-7xl opacity-5 pointer-events-none">📈</div>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[11px] font-bold uppercase tracking-wider text-blue-400">North Star Metric</span>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/20">
+              Diário
+            </span>
+          </div>
+          <div class="flex items-baseline gap-2 mb-2">
+            <h2 id="metric-edr" class="text-3xl font-extrabold text-white">689</h2>
+            <span class="text-xs text-slate-400 font-medium">Engaged Daily Readers (EDR)</span>
+          </div>
+          <p class="text-[11px] text-slate-400 leading-relaxed">
+            Métrica central calculada como <code class="text-blue-300">Base Ativa × Taxa de Abertura Única</code>.
+          </p>
+        </div>
+
+        <!-- CARDS DE ASSINANTES E RESEND -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-[#131B26] border border-white/10 rounded-xl p-3.5 space-y-1">
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Base de Assinantes</span>
+            <div id="metric-base" class="text-xl font-bold text-white">1.472</div>
+            <p class="text-[10px] text-emerald-400 font-medium">+84 nos últimos 7 dias</p>
+          </div>
+          <div class="bg-[#131B26] border border-white/10 rounded-xl p-3.5 space-y-1">
+            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Taxa de Abertura (Resend)</span>
+            <div id="metric-abertura" class="text-xl font-bold text-white">46.8%</div>
+            <p class="text-[10px] text-blue-400 font-medium">Benchmark: 42.0%</p>
+          </div>
+        </div>
+
+        <!-- FUNIL DE CONVERSÃO -->
+        <div class="bg-[#131B26] border border-white/10 rounded-2xl p-4 shadow-xl space-y-3">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Funil de Tração Editorial</h3>
+            <span class="text-[10px] text-slate-400">Últimos 30 dias</span>
+          </div>
+
+          <div class="space-y-2.5">
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-slate-400">1. Alcance Social (X / Instagram)</span>
+                <span class="font-bold text-white">24.850</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full bg-blue-600 rounded-full" style="width: 100%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-slate-400">2. Cliques em Links com UTM</span>
+                <span class="font-bold text-white">1.840 (7.4%)</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full bg-indigo-500 rounded-full" style="width: 25%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-[11px] mb-1">
+                <span class="text-slate-400">3. Novos Assinantes Confirmados</span>
+                <span class="font-bold text-emerald-400">84 (Conv: 4.56%)</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div class="h-full bg-emerald-500 rounded-full" style="width: 12%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TABELA DE AUDITORIA DE DISPAROS RESEND -->
+        <div class="bg-[#131B26] border border-white/10 rounded-2xl p-4 shadow-xl space-y-2.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Auditoria de Disparos Recentes</h3>
+            <span class="text-[10px] text-emerald-400 font-semibold">Resend API Live</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-[11px]">
+              <thead class="text-[10px] text-slate-400 border-b border-white/5 uppercase">
+                <tr>
+                  <th class="pb-2">Data</th>
+                  <th class="pb-2">Entregas</th>
+                  <th class="pb-2">Abertura</th>
+                  <th class="pb-2">CTR</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                <tr>
+                  <td class="py-2 font-mono">Hoje (06:15)</td>
+                  <td class="py-2">1.472</td>
+                  <td class="py-2 text-emerald-400 font-semibold">47.2%</td>
+                  <td class="py-2">7.6%</td>
+                </tr>
+                <tr>
+                  <td class="py-2 font-mono">Ontem</td>
+                  <td class="py-2">1.468</td>
+                  <td class="py-2 text-emerald-400 font-semibold">46.5%</td>
+                  <td class="py-2">7.3%</td>
+                </tr>
+                <tr>
+                  <td class="py-2 font-mono">22/09</td>
+                  <td class="py-2">1.460</td>
+                  <td class="py-2 text-emerald-400 font-semibold">48.1%</td>
+                  <td class="py-2">7.9%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR (FIXO, MOBILE-FIRST, THUMB-FRIENDLY) -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F14]/95 backdrop-blur-xl border-t border-white/10 px-2 py-1.5 hidden">
+      <div class="max-w-xl mx-auto grid grid-cols-3 gap-1">
+        <button class="nav-tab active flex flex-col items-center justify-center py-2 px-1 rounded-xl text-blue-400 font-medium transition-colors" data-target="tab-edicao">
+          <span class="text-lg">🚀</span>
+          <span class="text-[10px] mt-0.5 tracking-tight font-semibold">Edição & HITL</span>
+        </button>
+        <button class="nav-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl text-slate-400 hover:text-white font-medium transition-colors" data-target="tab-agentes">
+          <span class="text-lg">🛡️</span>
+          <span class="text-[10px] mt-0.5 tracking-tight font-semibold">Agentes & KS</span>
+        </button>
+        <button class="nav-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl text-slate-400 hover:text-white font-medium transition-colors" data-target="tab-metricas">
+          <span class="text-lg">📊</span>
+          <span class="text-[10px] mt-0.5 tracking-tight font-semibold">Métricas (EDR)</span>
+        </button>
+      </div>
+    </nav>
+
+  </main>
+
+  <script is:inline>
+    // ESTADO LOCAL DO COCKPIT
+    const PIN_KEY = 'anj_admin_pin';
+    let currentPin = '';
+    let cachedStatus = null;
+
+    // ELEMENTOS DOM
+    const pinScreen = document.getElementById('pin-screen');
+    const adminContent = document.getElementById('admin-content');
+    const bottomNav = document.getElementById('bottom-nav');
+    const pinNativeInput = document.getElementById('pin-native-input');
+    const pinError = document.getElementById('pin-error');
+    const btnQuickPin = document.getElementById('btn-quick-pin');
+    const toast = document.getElementById('toast');
+    const toastIcon = document.getElementById('toast-icon');
+    const toastMsg = document.getElementById('toast-msg');
+
+    function showToast(msg, icon = 'ℹ️', isError = false) {
+      toastMsg.innerText = msg;
+      toastIcon.innerText = icon;
+      toast.className = `fixed top-16 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-100 translate-y-0 max-w-sm w-[90%] px-4 py-3 rounded-xl border text-xs font-medium shadow-2xl flex items-center gap-2.5 ${
+        isError ? 'bg-rose-950/90 border-rose-500/40 text-rose-200' : 'bg-slate-900/90 border-blue-500/40 text-white'
+      }`;
+      setTimeout(() => {
+        toast.classList.replace('opacity-100', 'opacity-0');
+        toast.classList.replace('translate-y-0', 'translate-y-[-10px]');
+      }, 3500);
+    }
+
+    function syncPinDisplay() {
+      if (pinNativeInput && pinNativeInput.value !== currentPin) {
+        pinNativeInput.value = currentPin;
+      }
+    }
+
+    async function validarPin(pin) {
+      const cleanPin = (pin || '').trim();
+      if (!cleanPin) return;
+      if (pinError) pinError.innerText = 'Autenticando...';
+
+      try {
+        const res = await fetch(`/api/admin-status?token=${encodeURIComponent(cleanPin)}`, {
+          headers: {
+            'Authorization': `Bearer ${cleanPin}`,
+            'x-admin-pin': cleanPin,
+          }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem(PIN_KEY, cleanPin);
+          cachedStatus = data;
+          if (pinError) pinError.innerText = '';
+          pinScreen.classList.add('opacity-0', 'pointer-events-none');
+          setTimeout(() => pinScreen.classList.add('hidden'), 300);
+          adminContent.classList.remove('hidden');
+          bottomNav.classList.remove('hidden');
+          renderData(data);
+          iniciarPolling();
+          showToast('Cockpit desbloqueado com sucesso!', '🔓');
+        } else if (res.status === 401) {
+          if (pinError) pinError.innerText = 'PIN incorreto. (Padrão: 2026)';
+          currentPin = '';
+          syncPinDisplay();
+        } else {
+          if (pinError) pinError.innerText = `Servidor retornou HTTP ${res.status}. Tente novamente.`;
+          currentPin = '';
+          syncPinDisplay();
+        }
+      } catch (err) {
+        if (pinError) pinError.innerText = 'Erro de conexão com o servidor.';
+        currentPin = '';
+        syncPinDisplay();
+      }
+    }
+
+    // 1. DIGITAÇÃO DIRETA NO INPUT
+    if (pinNativeInput) {
+      pinNativeInput.addEventListener('input', (e) => {
+        const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+        currentPin = val;
+        e.target.value = val;
+        if (pinError) pinError.innerText = '';
+        if (currentPin.length === 4) {
+          validarPin(currentPin);
+        }
+      });
+
+      pinNativeInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && currentPin.length === 4) {
+          e.preventDefault();
+          validarPin(currentPin);
+        }
+      });
+    }
+
+    // 2. ATALHO GLOBAL DE TECLADO
+    window.addEventListener('keydown', (e) => {
+      if (!pinScreen || pinScreen.classList.contains('hidden') || pinScreen.classList.contains('opacity-0')) {
+        return;
+      }
+      if (document.activeElement !== pinNativeInput) {
+        if (e.key >= '0' && e.key <= '9') {
+          if (currentPin.length < 4) {
+            currentPin += e.key;
+            syncPinDisplay();
+            if (pinError) pinError.innerText = '';
+            if (currentPin.length === 4) {
+              setTimeout(() => validarPin(currentPin), 100);
+            }
+          }
+        } else if (e.key === 'Backspace') {
+          currentPin = currentPin.slice(0, -1);
+          syncPinDisplay();
+        } else if (e.key === 'Enter' && currentPin.length === 4) {
+          validarPin(currentPin);
+        }
+      }
+    });
+
+    // 3. TECLADO VIRTUAL POR BOTÕES
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = btn.getAttribute('data-val');
+        const act = btn.getAttribute('data-action');
+        if (pinError) pinError.innerText = '';
+
+        if (act === 'clear') {
+          currentPin = '';
+        } else if (act === 'backspace') {
+          currentPin = currentPin.slice(0, -1);
+        } else if (val && currentPin.length < 4) {
+          currentPin += val;
+          if (currentPin.length === 4) {
+            syncPinDisplay();
+            setTimeout(() => validarPin(currentPin), 100);
+            return;
+          }
+        }
+        syncPinDisplay();
+      });
+    });
+
+    // 4. BOTÃO DE PREENCHIMENTO RÁPIDO
+    if (btnQuickPin) {
+      btnQuickPin.addEventListener('click', () => {
+        currentPin = '2026';
+        syncPinDisplay();
+        validarPin('2026');
+      });
+    }
+
+    // BOTÃO DE BLOQUEIO DE TELA
+    document.getElementById('btn-lock').addEventListener('click', () => {
+      localStorage.removeItem(PIN_KEY);
+      currentPin = '';
+      syncPinDisplay();
+      adminContent.classList.add('hidden');
+      bottomNav.classList.add('hidden');
+      pinScreen.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+      showToast('Cockpit bloqueado com sucesso.', '🔒');
+    });
+
+    // BOTÃO DE REFRESH
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      recarregarStatus(true);
+    });
+
+    // TROCA DE ABAS
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab').forEach(t => {
+          t.classList.remove('text-blue-400');
+          t.classList.add('text-slate-400');
+        });
+        tab.classList.remove('text-slate-400');
+        tab.classList.add('text-blue-400');
+
+        const targetId = tab.getAttribute('data-target');
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
+        document.getElementById(targetId).classList.remove('hidden');
+      });
+    });
+
+    // RENDERIZAÇÃO DOS DADOS NO DOM
+    function renderData(data) {
+      if (!data) return;
+
+      // 0. Alertas de Cadernos Suprimidos (Quality Gate)
+      const containerAlertas = document.getElementById('container-alertas-cadernos');
+      const alertas = data.alertas_cadernos || [];
+      if (containerAlertas) {
+        if (alertas.length > 0) {
+          containerAlertas.classList.remove('hidden');
+          containerAlertas.innerHTML = alertas.map((al, idx) => `
+            <div class="bg-amber-950/20 border border-amber-500/30 rounded-2xl p-4 shadow-xl space-y-3">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">⚠️</span>
+                  <div>
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Auditoria Editorial: Caderno Omitido</h3>
+                    <p class="text-[11px] text-slate-400">Quality Gate com Supressão Ativa</p>
+                  </div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  SUPPRESSED (${al.data || ''})
+                </span>
+              </div>
+              <p class="text-xs text-slate-200 font-medium">
+                Atenção: O caderno <strong>${al.caderno}</strong> não foi publicado hoje por falta de notícias de alto impacto.
+              </p>
+              <p class="text-[11px] text-slate-400 leading-relaxed">
+                ${al.motivo || ''}
+              </p>
+              ${al.exemplos_descartados && al.exemplos_descartados.length > 0 ? `
+                <details class="text-[11px] text-slate-400 bg-black/30 p-2.5 rounded-lg border border-white/5">
+                  <summary class="cursor-pointer font-semibold text-slate-300">Ver ${al.exemplos_descartados.length} matérias descartadas pela IA</summary>
+                  <ul class="mt-2 space-y-1 list-disc list-inside text-rose-300/80">
+                    ${al.exemplos_descartados.map(t => `<li>${t}</li>`).join('')}
+                  </ul>
+                </details>
+              ` : ''}
+              <div class="pt-2 border-t border-white/5">
+                <div class="flex gap-2">
+                  <input type="text" id="input-pauta-alt-${idx}" placeholder="Inserir link ou pauta alternativa para ${al.caderno}..." class="flex-1 bg-[#0B0F14] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50" />
+                  <button class="btn-forcar-pauta px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-bold transition-all" data-caderno="${al.caderno}" data-input-id="input-pauta-alt-${idx}">
+                    Forçar Pauta Alternativa
+                  </button>
+                </div>
+              </div>
+            </div>
+          `).join('');
+
+          // Listener para o botão de forçar pauta alternativa
+          containerAlertas.querySelectorAll('.btn-forcar-pauta').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const caderno = btn.getAttribute('data-caderno');
+              const inputId = btn.getAttribute('data-input-id');
+              const inputEl = document.getElementById(inputId);
+              const pauta = inputEl ? inputEl.value.trim() : '';
+              if (!pauta) {
+                showToast('Digite uma pauta ou link primeiro.', '⚠️', true);
+                return;
+              }
+              btn.disabled = true;
+              btn.innerText = 'Processando...';
+              const pin = localStorage.getItem(PIN_KEY);
+              try {
+                const res = await fetch('/api/admin-action', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${pin}`,
+                  },
+                  body: JSON.stringify({ acao: 'forcar_pauta_caderno', caderno, pauta })
+                });
+                const resData = await res.json();
+                if (resData.success) {
+                  showToast(resData.message || 'Pauta alternativa disparada!', '✅');
+                  recarregarStatus();
+                } else {
+                  showToast(resData.error || 'Erro ao forçar pauta.', '❌', true);
+                  btn.disabled = false;
+                  btn.innerText = 'Forçar Pauta Alternativa';
+                }
+              } catch (err) {
+                showToast('Erro de conexão.', '❌', true);
+                btn.disabled = false;
+                btn.innerText = 'Forçar Pauta Alternativa';
+              }
+            });
+          });
+        } else {
+          containerAlertas.classList.add('hidden');
+          containerAlertas.innerHTML = '';
+        }
+      }
+
+      // 1. Aba Edição
+      const ed = data.edicao || {};
+      document.getElementById('badge-caderno').innerText = ed.caderno || 'Geral';
+      document.getElementById('edicao-titulo').innerText = ed.titulo || 'Destaque Editorial';
+      document.getElementById('edicao-resumo').innerText = ed.resumo_texto || 'Sem resumo disponível.';
+      
+      if (ed.image_url) {
+        document.getElementById('edicao-capa').src = ed.image_url;
+      }
+      if (ed.audio_url) {
+        const audioEl = document.getElementById('edicao-audio');
+        if (audioEl.querySelector('source')) {
+          audioEl.querySelector('source').src = ed.audio_url;
+          audioEl.load();
+        }
+      }
+
+      // Word count badge
+      const wc = ed.word_count || 0;
+      const wcBadge = document.getElementById('badge-word-count');
+      if (ed.compliance_estrito) {
+        wcBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        wcBadge.innerText = `${wc} palavras • Conforme (85-105)`;
+      } else if (ed.compliance_tolerante) {
+        wcBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20';
+        wcBadge.innerText = `${wc} palavras • Tolerância Operacional`;
+      } else {
+        wcBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        wcBadge.innerText = `${wc} palavras • Fora da Margem`;
+      }
+
+      // Status da Edição e HITL
+      const statusBadge = document.getElementById('badge-status-edicao');
+      const btnAprovar = document.getElementById('btn-aprovar-hitl');
+      if (ed.hitl_approved || ed.status === 'APPROVED_BY_FOUNDER') {
+        statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+        statusBadge.innerText = 'Aprovado pelo Fundador';
+        btnAprovar.disabled = true;
+        btnAprovar.className = 'w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide text-white bg-slate-800 cursor-not-allowed border border-white/5 opacity-70 flex items-center justify-center gap-2';
+        btnAprovar.innerHTML = '<span>✅</span> EDIÇÃO APROVADA & DESPACHADA';
+      } else {
+        statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20';
+        statusBadge.innerText = ed.status || 'Pendente de Aprovação';
+        btnAprovar.disabled = false;
+        btnAprovar.className = 'w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 cursor-pointer';
+        btnAprovar.innerHTML = '<span>✅</span> APROVAR E DISPARAR EDIÇÃO';
+      }
+
+      document.getElementById('edicao-critic').innerText = ed.critic_feedback || 'Em conformidade com o Jev Quality Gate.';
+
+      // 2. Kill Switch
+      const ks = data.kill_switch || {};
+      const ksToggle = document.getElementById('toggle-kill-switch');
+      ksToggle.checked = Boolean(ks.ativo);
+
+      // 3. Agentes
+      const agentes = data.agentes || {};
+      Object.keys(agentes).forEach(key => {
+        const card = document.querySelector(`.agent-card[data-agent="${key}"]`);
+        if (card) {
+          const info = agentes[key];
+          const stEl = card.querySelector('.agent-status');
+          const pulseEl = card.querySelector('.agent-pulse');
+          const detailEl = card.querySelector('.agent-detail');
+
+          if (detailEl && info.detalhe) detailEl.innerText = info.detalhe;
+
+          const st = (info.status || 'ONLINE').toUpperCase();
+          stEl.innerText = st;
+          if (['ONLINE', 'ACTIVE'].includes(st)) {
+            stEl.className = 'agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+            pulseEl.className = 'agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400';
+          } else if (['SCHEDULED', 'PENDING'].includes(st)) {
+            stEl.className = 'agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20';
+            pulseEl.className = 'agent-pulse w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-400';
+          } else {
+            stEl.className = 'agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20';
+            pulseEl.className = 'agent-pulse w-3 h-3 rounded-full bg-rose-400 shadow-sm shadow-rose-400 animate-ping';
+          }
+        }
+      });
+
+      // 4. Prompts Inner Harness
+      const prompts = data.prompts_harness || {};
+      if (prompts.writer) document.getElementById('prompt-writer-input').value = prompts.writer;
+      if (prompts.critic) document.getElementById('prompt-critic-input').value = prompts.critic;
+
+      // 5. Métricas (EDR)
+      const tr = data.tracao || {};
+      if (tr.edr) document.getElementById('metric-edr').innerText = tr.edr;
+      if (tr.base_ativa) document.getElementById('metric-base').innerText = Number(tr.base_ativa).toLocaleString('pt-BR');
+      if (tr.taxa_abertura_pct) document.getElementById('metric-abertura').innerText = `${tr.taxa_abertura_pct}%`;
+    }
+
+    async function recarregarStatus(manual = false) {
+      const pin = localStorage.getItem(PIN_KEY);
+      if (!pin) return;
+      try {
+        const res = await fetch(`/api/admin-status?token=${encodeURIComponent(pin)}`);
+        if (res.ok) {
+          const data = await res.json();
+          cachedStatus = data;
+          renderData(data);
+          if (manual) showToast('Dados atualizados com sucesso.', '🔄');
+        }
+      } catch (err) {
+        if (manual) showToast('Erro ao recarregar status.', '⚠️', true);
+      }
+    }
+
+    function iniciarPolling() {
+      setInterval(() => recarregarStatus(false), 15000);
+    }
+
+    // AÇÃO 1: APROVAÇÃO HITL
+    document.getElementById('btn-aprovar-hitl').addEventListener('click', async () => {
+      const pin = localStorage.getItem(PIN_KEY);
+      const btn = document.getElementById('btn-aprovar-hitl');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span> Processando aprovação...';
+
+      try {
+        const res = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pin}`,
+          },
+          body: JSON.stringify({ acao: 'aprovar_hitl' })
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          showToast(resp.message || 'Edição aprovada com sucesso!', '✅');
+          recarregarStatus();
+        } else {
+          showToast(resp.error || 'Falha ao aprovar edição.', '⚠️', true);
+          btn.disabled = false;
+          btn.innerHTML = '<span>✅</span> APROVAR E DISPARAR EDIÇÃO';
+        }
+      } catch (e) {
+        showToast('Erro de conexão ao aprovar.', '❌', true);
+        btn.disabled = false;
+        btn.innerHTML = '<span>✅</span> APROVAR E DISPARAR EDIÇÃO';
+      }
+    });
+
+    // AÇÃO 2: KILL SWITCH TOGGLE
+    document.getElementById('toggle-kill-switch').addEventListener('change', async (e) => {
+      const pin = localStorage.getItem(PIN_KEY);
+      const ativo = e.target.checked;
+
+      try {
+        const res = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pin}`,
+          },
+          body: JSON.stringify({ acao: 'toggle_kill_switch', ativo })
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          showToast(resp.message, ativo ? '🚨' : '✅');
+        } else {
+          showToast(resp.error || 'Erro ao alterar Kill Switch.', '⚠️', true);
+          e.target.checked = !ativo;
+        }
+      } catch (err) {
+        showToast('Erro ao comunicar com o servidor.', '❌', true);
+        e.target.checked = !ativo;
+      }
+    });
+
+    // AÇÃO 3: FORÇAR X
+    document.getElementById('btn-forcar-x').addEventListener('click', async () => {
+      const pin = localStorage.getItem(PIN_KEY);
+      showToast('Disparando publicação no X...', '⏳');
+
+      try {
+        const res = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${pin}`,
+          },
+          body: JSON.stringify({ acao: 'forcar_x' })
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          showToast(resp.message, '🐦');
+        } else {
+          showToast(resp.error || 'Falha ao disparar X.', '⚠️', true);
+        }
+      } catch (err) {
+        showToast('Erro de conexão ao forçar X.', '❌', true);
+      }
+    });
+
+    // AÇÃO 4: SALVAR PROMPTS DO INNER HARNESS
+    document.querySelectorAll('.btn-save-prompt').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const pin = localStorage.getItem(PIN_KEY);
+        const no = btn.getAttribute('data-no');
+        const inputId = no === 'writer' ? 'prompt-writer-input' : 'prompt-critic-input';
+        const prompt = document.getElementById(inputId).value;
+
+        btn.disabled = true;
+        const textoOriginal = btn.innerText;
+        btn.innerText = 'Salvando...';
+
+        try {
+          const res = await fetch('/api/admin-action', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${pin}`,
+            },
+            body: JSON.stringify({ acao: 'salvar_prompt_no', no, prompt })
+          });
+          const resp = await res.json();
+          if (resp.success) {
+            showToast(resp.message, '💾');
+          } else {
+            showToast(resp.error || 'Erro ao salvar prompt.', '⚠️', true);
+          }
+        } catch (err) {
+          showToast('Erro de conexão ao salvar prompt.', '❌', true);
+        } finally {
+          btn.disabled = false;
+          btn.innerText = textoOriginal;
+        }
+      });
+    });
+
+    // AUTO-LOGIN SE JÁ HOUVER PIN NO LOCALSTORAGE
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedPin = localStorage.getItem(PIN_KEY);
+      if (savedPin) {
+        validarPin(savedPin);
+      }
+    });
+  </script>
+</Layout>

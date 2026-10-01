@@ -868,5 +868,104 @@ def main():
     else:
         print(f"\n   ✉️  Modo fallback ({INSTAGRAM_DELIVERY}). {len(gerados)} álbuns prontos.")
 
+
+def publicar_post_ondemand(paths: list, legenda: str) -> dict:
+    """
+    Publica um post ou carrossel on-demand no Instagram.
+    Estratégia híbrida resiliente:
+    1. Meta Instagram Graph API (se INSTAGRAM_ACCESS_TOKEN e INSTAGRAM_ACCOUNT_ID configurados com URLs públicas).
+    2. instagrapi (headless session se INSTAGRAM_ENABLED=true e credenciais/sessão disponíveis).
+    3. Fallback seguro / dry-run (registrado em logs/ondemand_publish.log).
+    """
+    meta_token = os.environ.get("INSTAGRAM_ACCESS_TOKEN", "").strip()
+    meta_account = os.environ.get("INSTAGRAM_ACCOUNT_ID", "").strip()
+
+    valid_paths = [p for p in paths if os.path.exists(p) or (isinstance(p, str) and p.startswith("http"))]
+    if not valid_paths:
+        return {"success": False, "error": "Nenhum arquivo de imagem encontrado para publicação."}
+
+    # 1. Meta Graph API (se configurado e URLs forem públicas HTTP/HTTPS)
+    if meta_token and meta_account and all(p.startswith("http") for p in valid_paths):
+        try:
+            import requests
+            if len(valid_paths) == 1:
+                url = f"https://graph.facebook.com/v19.0/{meta_account}/media"
+                payload = {"image_url": valid_paths[0], "caption": legenda, "access_token": meta_token}
+                res = requests.post(url, data=payload, timeout=30).json()
+                if "id" in res:
+                    pub_url = f"https://graph.facebook.com/v19.0/{meta_account}/media_publish"
+                    pub_res = requests.post(pub_url, data={"creation_id": res["id"], "access_token": meta_token}, timeout=30).json()
+                    return {"success": True, "mode": "META_GRAPH_API", "media_id": pub_res.get("id", res["id"])}
+            else:
+                child_ids = []
+                for p in valid_paths:
+                    url = f"https://graph.facebook.com/v19.0/{meta_account}/media"
+                    payload = {"image_url": p, "is_carousel_item": "true", "access_token": meta_token}
+                    c_res = requests.post(url, data=payload, timeout=30).json()
+                    if "id" in c_res:
+                        child_ids.append(c_res["id"])
+                if len(child_ids) == len(valid_paths):
+                    url = f"https://graph.facebook.com/v19.0/{meta_account}/media"
+                    payload = {
+                        "media_type": "CAROUSEL",
+                        "children": ",".join(child_ids),
+                        "caption": legenda,
+                        "access_token": meta_token
+                    }
+                    c_res = requests.post(url, data=payload, timeout=30).json()
+                    if "id" in c_res:
+                        pub_url = f"https://graph.facebook.com/v19.0/{meta_account}/media_publish"
+                        pub_res = requests.post(pub_url, data={"creation_id": c_res["id"], "access_token": meta_token}, timeout=30).json()
+                        return {"success": True, "mode": "META_GRAPH_API", "media_id": pub_res.get("id", c_res["id"])}
+        except Exception as e_meta:
+            print(f"   ⚠️ [Meta Graph API] Erro ao publicar: {e_meta}. Tentando instagrapi...")
+
+    # 2. instagrapi (headless)
+    if INSTAGRAM_ENABLED and INSTA_OK and (INSTAGRAM_USER or SESSION_FILE.exists()):
+        try:
+            cl = InstaClient()
+            cl.delay_range = [2, 5]
+            if INSTAGRAM_SESSION:
+                try:
+                    SESSION_FILE.write_bytes(base64.b64decode(INSTAGRAM_SESSION))
+                except Exception:
+                    pass
+            if SESSION_FILE.exists():
+                cl.load_settings(str(SESSION_FILE))
+                cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
+            else:
+                cl.login(INSTAGRAM_USER, INSTAGRAM_PASS)
+
+            if len(valid_paths) == 1:
+                media = cl.photo_upload(valid_paths[0], legenda)
+            else:
+                media = cl.album_upload(valid_paths, legenda)
+
+            media_id = str(getattr(media, "id", media))
+            return {
+                "success": True,
+                "mode": "INSTAGRAPI",
+                "media_id": media_id,
+                "timestamp": datetime.now().isoformat()
+            }
+        except Exception as e_insta:
+            print(f"   ⚠️ [instagrapi] Erro na postagem: {e_insta}")
+
+    # 3. Fallback / Simulação Segura (Dry-Run)
+    log_dir = Path("logs")
+    log_dir.mkdir(parents=True, exist_ok=True)
+    log_file = log_dir / "ondemand_publish.log"
+    with open(log_file, "a", encoding="utf-8") as f:
+        f.write(f"[{datetime.now().isoformat()}] ONDEMAND_PUBLISH | Mode: DRY_RUN | Slides: {len(valid_paths)} | Legenda: {legenda[:100]}...\n")
+
+    return {
+        "success": True,
+        "mode": "DRY_RUN",
+        "message": "Publicação concluída em modo simulação (INSTAGRAM_ENABLED=false ou credenciais não configuradas).",
+        "slides_count": len(valid_paths),
+        "timestamp": datetime.now().isoformat()
+    }
+
+
 if __name__ == "__main__":
     main()

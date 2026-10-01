@@ -1,15 +1,16 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-10-01T13:01:59.922021-03:00",
+  "last_updated": "2026-10-01T12:55:39.266035-03:00",
   "active_run_state": {
-    "status": "IDLE",
-    "current_active_node": "planner",
-    "is_approved": false,
-    "word_count": 0,
+    "status": "CRITIC_APPROVED",
+    "current_active_node": "media_generator",
+    "is_approved": true,
+    "word_count": 88,
     "retry_count": 0,
     "hitl_approved": false,
-    "last_updated": "2026-10-01T13:01:59.921949-03:00",
-    "selected_story_title": null
+    "selected_story_title": "Teste Selic",
+    "last_updated": "2026-10-01T12:55:39.265960-03:00",
+    "execution_log_count": 2
   },
   "clusters": [
     {
@@ -83,7 +84,7 @@
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true
     },
     {
@@ -113,8 +114,8 @@
       },
       "id": "planner",
       "is_hitl_gate": false,
-      "is_active": true,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "is_active": false,
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true
     },
     {
@@ -128,8 +129,8 @@
       "type": "executor",
       "file": "core/graph_engine.py",
       "func": "node_writer(state: GraphState)",
-      "model": "Google Gemini 1.5 Flash (temp: 0.25, max_tokens: 250)",
-      "desc": "Redige rascunho de alta densidade analítica no tom executivo, estruturado em exatamente 2 parágrafos com fatos e desdobramentos de mercado.",
+      "model": "Google Gemini 1.5 Flash (temp: 0.2, response_mime_type: 'application/json')",
+      "desc": "Redige resumo jornalístico oficial no tom executivo com base no SYSTEM_PROMPT_WRITER, estruturado em 3 períodos (Fato, Causa, Impacto) com 85 a 105 palavras em formato JSON.",
       "inputs": [
         "selected_story: Dict",
         "critique_feedback: Optional[str]",
@@ -148,14 +149,14 @@
       "id": "writer",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true,
       "runtime_retry_count": 0
     },
     {
-      "label": "Critic (Quality Gate)",
+      "label": "Critic (Jev Gate)",
       "sublabel": "node_critic",
-      "category": "Quality Gate",
+      "category": "Quality Gate (System 1)",
       "cluster": "langgraph",
       "cluster_label": "1. Orquestração LangGraph Core",
       "icon": "⚖️",
@@ -163,8 +164,8 @@
       "type": "gate",
       "file": "core/graph_engine.py",
       "func": "node_critic(state: GraphState)",
-      "model": "Auditoria Determinística de Conformidade",
-      "desc": "Valida rigidamente a margem de 85 a 105 palavras (tolerância 82-108) e proíbe interrogações finais ou clickbaits. Aciona loop de autocura.",
+      "model": "TypeSafe Jev-1.13 (System 1 Decision Model)",
+      "desc": "Auditoria de conformidade editorial e julgamento ultrarrápido (< 200ms). Avalia primitivos Jev: score (1-5), noul (integridade), choice (APPROVE/REVISE) e confiança >= 0.80. Aciona loop de autocura para o Writer.",
       "inputs": [
         "draft_text: str",
         "retry_count: int"
@@ -173,9 +174,10 @@
         "is_approved: bool",
         "word_count: int",
         "critique_feedback: str",
-        "status: 'CRITIC_APPROVED' | 'CRITIC_REJECTED'"
+        "jev_decision: Dict",
+        "status: 'CRITIC_APPROVED' | 'CRITIC_REVISED'"
       ],
-      "resilience": "Teto de 3 tentativas para evitar loops infinitos. Na 3ª tentativa esgotada, avança com o melhor draft para garantir o SLA.",
+      "resilience": "Fallback automático para regras determinísticas caso a confiança caia abaixo de 0.60.",
       "pos": {
         "x": 610,
         "y": 140
@@ -183,10 +185,10 @@
       "id": "critic",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true,
-      "runtime_word_count": 0,
-      "runtime_is_approved": false
+      "runtime_word_count": 88,
+      "runtime_is_approved": true
     },
     {
       "label": "Media Generator",
@@ -217,8 +219,8 @@
       },
       "id": "media_generator",
       "is_hitl_gate": false,
-      "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "is_active": true,
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true
     },
     {
@@ -251,7 +253,7 @@
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true
     },
     {
@@ -281,7 +283,7 @@
       "id": "__end__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true
     },
     {
@@ -311,10 +313,41 @@
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-10-01T12:29:48.076281-03:00",
+      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
       "file_exists": true,
       "runtime_hitl_approved": false,
       "is_locked": true
+    },
+    {
+      "id": "jev_gatekeeper",
+      "label": "Jev Gatekeeper",
+      "sublabel": "core/jev_gatekeeper.py",
+      "category": "Decisão Estruturada System 1",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "⚡",
+      "color": "#8B5CF6",
+      "type": "decision_model",
+      "file": "core/jev_gatekeeper.py",
+      "func": "evaluate_editorial_quality() / quick_triage_supervisor()",
+      "model": "typesafe/jev-1.13 + Local Fast Heuristics (< 1ms)",
+      "desc": "Motor de decisão estruturada de alta velocidade com primitivos discretos (score, noul, choice, confidence). Alimenta o nó Critic e a pré-triagem do AI Supervisor com 0 tokens de LLM generativo.",
+      "inputs": [
+        "draft_text: str",
+        "trace_or_log: str"
+      ],
+      "outputs": [
+        "EditorialDecision(score, noul, choice, conf, latency_ms)",
+        "SupervisorTriage"
+      ],
+      "resilience": "Dual-engine com fallback heurístico local imediato se API externa oscilar.",
+      "pos": {
+        "x": 890,
+        "y": 380
+      },
+      "file_mtime": "2026-10-01T11:44:37.184061-03:00",
+      "file_exists": true,
+      "is_active": false
     },
     {
       "id": "ai_supervisor",
@@ -341,7 +374,7 @@
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-10-01T12:29:47.993664-03:00",
+      "file_mtime": "2026-10-01T12:52:18.176291-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -371,7 +404,7 @@
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-10-01T12:29:48.243347-03:00",
+      "file_mtime": "2026-09-23T18:00:30.242159-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -400,7 +433,7 @@
         "x": 1360,
         "y": 185
       },
-      "file_mtime": "2026-10-01T12:29:47.993327-03:00",
+      "file_mtime": "2026-09-14T18:38:22.481489-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -429,8 +462,8 @@
         "x": 1160,
         "y": 380
       },
-      "file_mtime": null,
-      "file_exists": false,
+      "file_mtime": "2026-10-01T12:54:59.065454-03:00",
+      "file_exists": true,
       "is_active": false
     },
     {
@@ -458,7 +491,7 @@
         "x": 70,
         "y": 710
       },
-      "file_mtime": "2026-10-01T12:29:48.246666-03:00",
+      "file_mtime": "2026-09-22T20:36:58.964196-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -487,7 +520,7 @@
         "x": 290,
         "y": 710
       },
-      "file_mtime": "2026-10-01T12:29:48.233666-03:00",
+      "file_mtime": "2026-09-29T17:17:20.917678-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -516,7 +549,7 @@
         "x": 510,
         "y": 710
       },
-      "file_mtime": "2026-10-01T12:29:48.218666-03:00",
+      "file_mtime": "2026-09-10T17:05:55.466876-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -545,7 +578,7 @@
         "x": 730,
         "y": 710
       },
-      "file_mtime": "2026-10-01T12:29:48.243666-03:00",
+      "file_mtime": "2026-09-22T17:30:23.276404-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -574,7 +607,7 @@
         "x": 950,
         "y": 710
       },
-      "file_mtime": "2026-10-01T12:29:48.246666-03:00",
+      "file_mtime": "2026-09-22T17:30:23.280668-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -604,7 +637,7 @@
         "x": 1215,
         "y": 715
       },
-      "file_mtime": "2026-10-01T12:29:48.242872-03:00",
+      "file_mtime": "2026-09-18T17:55:26.238298-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -635,7 +668,7 @@
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-10-01T12:29:47.993664-03:00",
+      "file_mtime": "2026-09-29T17:18:33.161320-03:00",
       "file_exists": true,
       "is_active": false
     }
@@ -772,6 +805,22 @@
       "is_dashed": true
     },
     {
+      "id": "edge_critic_to_jev",
+      "source": "critic",
+      "target": "jev_gatekeeper",
+      "conditional": false,
+      "label": "Inferência Jev (<1ms)",
+      "color": "#8B5CF6"
+    },
+    {
+      "id": "edge_sup_to_jev",
+      "source": "ai_supervisor",
+      "target": "jev_gatekeeper",
+      "conditional": false,
+      "label": "Pré-Triagem SLA",
+      "color": "#8B5CF6"
+    },
+    {
       "id": "edge_sup_to_mem",
       "source": "ai_supervisor",
       "target": "supervisor_memory",
@@ -797,11 +846,11 @@
     }
   ],
   "stats": {
-    "total_nodes": 19,
+    "total_nodes": 20,
     "langgraph_nodes": 8,
-    "infrastructure_nodes": 11,
-    "total_edges": 19,
-    "current_status": "IDLE",
-    "current_active_node": "planner"
+    "infrastructure_nodes": 12,
+    "total_edges": 21,
+    "current_status": "CRITIC_APPROVED",
+    "current_active_node": "media_generator"
   }
 }

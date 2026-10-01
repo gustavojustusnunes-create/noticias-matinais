@@ -4,6 +4,12 @@ import time
 from datetime import datetime
 from claude_api import chamar_supervisor_api
 
+# Integração do modelo de decisão estruturada TypeSafe Jev (System 1)
+try:
+    from core.jev_gatekeeper import quick_triage_supervisor, auditar_resumo_critic
+except ImportError:
+    from jev_gatekeeper import quick_triage_supervisor, auditar_resumo_critic
+
 MEMORY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs", "supervisor_memory.json")
 
 def carregar_memoria():
@@ -87,27 +93,38 @@ def revisar_edicao_diaria(cache_global):
             if not resumo_original or resumo_original.strip().upper() == "SKIP":
                 continue
                 
+            # --- Jev System 1: Auditoria Ultrarrápida (< 15ms) ---
+            auditoria = auditar_resumo_critic(resumo_original)
+            if auditoria.get("aprovado") is True:
+                # Notícia aprovada pelo Quality Gate oficial: conformidade perfeita com 85-105 palavras
+                continue
+
+            motivo_audit = auditoria.get("motivo_rejeicao", "")
+            instrucao_audit = auditoria.get("instrucao_reescrita", "")
+
             prompt = (
                 "Você é o Editor-Chefe e Supervisor de Qualidade do All News Journal e All News Finance.\n"
-                "Sua tarefa é auditar a notícia abaixo e garantir que ela esteja impecável, profunda e no mais alto padrão jornalístico.\n\n"
-                "REGRAS DE QUALIDADE:\n"
-                "1. PROFUNDIDADE OBRIGATÓRIA: O texto deve ter entre 200 e 400 palavras, estruturado em 2 a 3 parágrafos substanciais. Se o texto for raso, resumido demais (menos de 150 palavras) ou parecer nota telegráfica, marque como FAIL e reescreva-o com profundidade, contexto e antecedentes.\n"
-                "2. NÃO deve conter 'clickbait', listicles vazios, ou cortes bruscos.\n"
-                "3. NÃO deve terminar com perguntas, convites para o leitor (CTAs) ou frases em aberto.\n"
-                "4. NÃO deve conter emojis em hipótese alguma.\n"
-                "5. NÃO deve ter linguagem robótica ou clichês excessivos.\n"
-                "6. A primeira frase NÃO deve ser uma cópia exata do título.\n"
-                "7. Para notícias financeiras, evite promessas exageradas de lucros e mantenha o rigor jornalístico com números e fatos.\n\n"
-                "LIÇÕES APRENDIDAS DE ERROS ANTERIORES (O QUE NÃO REPETIR):\n"
+                "Sua tarefa é auditar a notícia abaixo e garantir que ela esteja impecável e no padrão oficial do SYSTEM_PROMPT_WRITER.\n\n"
+                "DIRETRIZES RÍGIDAS DE REDAÇÃO:\n"
+                "1. EXTENSÃO OBRIGATÓRIA: O texto DEVE conter rigorosamente entre 85 e 105 palavras (tolerância operacional 82 a 108).\n"
+                "2. ESTRUTURA DOS TRÊS PERÍODOS:\n"
+                "   - Período 1 (O Fato): Explique o acontecimento principal de forma direta e contextualizada (quem, o que e quando).\n"
+                "   - Período 2 (A Causa/Mecânica): Traga os dados fundamentais, valores numéricos, porcentagens e o porquê de o fato ter ocorrido.\n"
+                "   - Período 3 (O Impacto): Finalize com a consequência prática, decisão judicial em curso ou desdobramento de mercado.\n"
+                "3. LIMPEZA TOTAL: Remova imediatamente créditos de imagens (ex: 'Foto: Getty'), legendas e nomes de agências (Reuters, BBC, G1).\n"
+                "4. TOM DE VOZ: Analítico, sofisticado, sóbrio e sem sensacionalismo.\n"
+                "5. PONTUAÇÃO FINAL: O texto DEVE obrigatoriamente terminar com ponto final (.) e ter sentido completo.\n\n"
+                f"APONTAMENTO DO QUALITY GATE:\n{motivo_audit} | {instrucao_audit}\n\n"
+                "LIÇÕES APRENDIDAS DE ERROS ANTERIORES:\n"
                 f"{licoes}\n\n"
-                "NOTÍCIA A SER AVALIADA:\n"
+                "NOTÍCIA A SER REAVALIADA E CORRIGIDA:\n"
                 f"Título: {noticia.get('titulo', '')}\n"
-                f"Texto: {resumo_original}\n\n"
-                "Analise a notícia. Se ela violar qualquer regra (inclusive se for rasa ou curta demais) ou lição, forneça uma versão corrigida profunda e bem estruturada.\n"
+                f"Texto Original: {resumo_original}\n\n"
+                "Forneça a versão corrigida em 3 períodos com rigorosamente entre 85 e 105 palavras.\n"
                 "Responda ESTRITAMENTE em formato JSON com os seguintes campos:\n"
                 "- \"status\": \"PASS\" se estiver perfeita, ou \"FAIL\" se tiver problemas.\n"
                 "- \"motivo\": se FAIL, descreva brevemente o que estava errado.\n"
-                "- \"texto_corrigido\": se FAIL, forneça o texto completo reescrito e perfeito (2 a 3 parágrafos aprofundados).\n"
+                "- \"texto_corrigido\": se FAIL, forneça o texto completo reescrito e perfeito (entre 85 e 105 palavras).\n"
             )
             
             resposta_json_str = chamar_supervisor_api(prompt, max_tokens=2048)

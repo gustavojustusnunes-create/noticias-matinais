@@ -72,33 +72,48 @@ CONFIG_NOS_PADRAO = {
         "cor": "#2563EB"
     },
     "Writer": {
-        "nome": "Writer (Redator Executivo)",
-        "modelo": "Gemini 1.5 Flash (Primary)",
-        "temperatura": 0.3,
+        "nome": "Writer (Editor Executivo)",
+        "modelo": "Gemini 1.5 Flash (Primary - JSON Mode)",
+        "temperatura": 0.2,
         "inner_harness": (
-            "Você é o Redator-Chefe do All News Journal. Redija a matéria selecionada "
-            "em linguagem sóbria, analítica e de alta densidade informativa. "
-            "DIRETRIZ CRÍTICA DE EXTENSÃO: O texto deve ter RIGOROSAMENTE entre 85 e 105 palavras. "
-            "Estruture em 2 parágrafos concisos: no primeiro, o fato substantivo com números/dados; "
-            "no segundo, o desdobramento de mercado e a implicação estratégica."
+            "Você é o Editor Executivo do All News Journal. Redija o resumo jornalístico oficial "
+            "da edição matinal a partir do conteúdo bruto extraído. "
+            "DIRETRIZES RÍGIDAS: (1) Extensão obrigatória entre 85 e 105 palavras. "
+            "(2) Estrutura dos três períodos: Período 1 (O Fato contextualizado); "
+            "Período 2 (A Causa/Mecânica com números/dados); Período 3 (O Impacto/desdobramento). "
+            "(3) Limpeza total de créditos/agências. (4) Tom sóbrio e analítico. "
+            "(5) Saída estritamente em JSON com titulo_limpo, resumo_texto e contagem_palavras."
         ),
-        "outer_harness": "API Google Gemini Flash com fallback para Claude Haiku. Validador de tokens.",
+        "outer_harness": "API Google Gemini Flash com response_mime_type='application/json' e validador Jev Gatekeeper.",
         "tipo": "Geração / Síntese",
         "cor": "#3B82F6"
     },
     "Critic": {
-        "nome": "Critic (Quality Gate)",
-        "modelo": "Gemini 1.5 Flash (Primary)",
-        "temperatura": 0.1,
+        "nome": "Critic (Jev Quality Gate)",
+        "modelo": "TypeSafe Jev-1.13 (System 1 Decision Model)",
+        "temperatura": 0.0,
         "inner_harness": (
-            "Você é o Quality Gate e Auditor Crítico de Redação. Sua função é avaliar se o texto "
-            "atende aos critérios de conformidade: (1) Entre 85 e 105 palavras; (2) Ausência total de clichês ou clickbait; "
-            "(3) Sem perguntas no final; (4) Rigor jornalístico. "
-            "Se qualquer critério for violado, emita STATUS_REJECTED com o motivo detalhado para correção imediata do Writer."
+            "Quality Gate determinístico e ágil (< 200ms). Avalia primitivos estruturados Jev: "
+            "(1) score (1 a 5); (2) noul (integridade/ausência de violação); (3) choice (APPROVE, REVISE, REJECT); "
+            "(4) confidence >= 0.80. Verifica estritamente a margem de 85 a 105 palavras em 2 parágrafos. "
+            "Se reprovado, aciona loop de autocura devolvendo feedback estruturado ao Writer."
         ),
-        "outer_harness": "Verificador de contagem de palavras (split), regex de conformidade e loop de autocura.",
-        "tipo": "Auditoria / Gate",
-        "cor": "#EF4444"
+        "outer_harness": "core/jev_gatekeeper.py: evaluate_editorial_quality() com fallback heurístico determinístico local (< 1ms).",
+        "tipo": "Quality Gate / System 1",
+        "cor": "#A855F7"
+    },
+    "Jev_Gatekeeper": {
+        "nome": "TypeSafe Jev Gatekeeper",
+        "modelo": "typesafe/jev-1.13 + Local Fast Engine",
+        "temperatura": 0.0,
+        "inner_harness": (
+            "Motor de inferência de decisão estruturada de altíssima velocidade. "
+            "Processa pré-triagem do AI Supervisor e validação do Critic com zero consumo de tokens de LLM generativo. "
+            "Executa em menos de 1 milissegundo localmente com 100% de estabilidade."
+        ),
+        "outer_harness": "core/jev_gatekeeper.py com Pydantic v2 schemas: EditorialDecision e SupervisorTriage.",
+        "tipo": "Decisão / System 1",
+        "cor": "#8B5CF6"
     },
     "Audio": {
         "nome": "Audio (Podcast Neural)",
@@ -498,13 +513,14 @@ def renderizar_canvas_animado(critic_status: str, tentativas: int):
           <text x="50" y="63" fill="#93C5FD" font-size="8" text-anchor="middle">Gemini Flash</text>
         </g>
 
-        <!-- NÓ 3: CRITIC (QUALITY GATE) -->
-        <g transform="translate(470, 125)">
-          <rect width="100" height="70" rx="10" fill="#131B26" stroke="{cor_critic}" stroke-width="2" />
-          <text x="50" y="32" fill="#FFFFFF" font-size="13" font-weight="bold" text-anchor="middle" font-family="'Plus Jakarta Sans'">Critic</text>
-          <text x="50" y="48" fill="{cor_critic}" font-size="9" text-anchor="middle">Quality Gate</text>
-          <rect x="18" y="54" width="64" height="12" rx="4" fill="{cor_critic}22" />
-          <text x="50" y="63" fill="{cor_critic}" font-size="8" text-anchor="middle">{status_label}</text>
+        <!-- NÓ 3: CRITIC (QUALITY GATE / JEV SYSTEM 1) -->
+        <g transform="translate(465, 120)">
+          <rect width="115" height="75" rx="10" fill="#131B26" stroke="{cor_critic}" stroke-width="2" />
+          <text x="57" y="26" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle" font-family="'Plus Jakarta Sans'">Critic</text>
+          <text x="57" y="40" fill="#A855F7" font-size="9" text-anchor="middle">⚡ Jev System 1</text>
+          <rect x="15" y="46" width="85" height="12" rx="4" fill="{cor_critic}22" />
+          <text x="57" y="55" fill="{cor_critic}" font-size="7.5" text-anchor="middle">{status_label}</text>
+          <text x="57" y="68" fill="#94A3B8" font-size="7" text-anchor="middle">&lt; 1ms • 0 Tokens</text>
         </g>
 
         <!-- NÓS DE DISPARO -->
@@ -536,10 +552,10 @@ def renderizar_canvas_animado(critic_status: str, tentativas: int):
           <text x="45" y="41" fill="#6EE7B7" font-size="8" text-anchor="middle">06:15 Email</text>
         </g>
 
-        <!-- Observador Global (Supervisor) Rodapé do Canvas -->
-        <rect x="180" y="275" width="460" height="34" rx="8" fill="#1A2433" stroke="rgba(255,255,255,0.1)" />
-        <text x="410" y="296" fill="#94A3B8" font-size="10" text-anchor="middle">
-          🧠 AI Supervisor (Observador Global de Arestas Ativo • 59 Lições Acumuladas)
+        <!-- Observador Global (Supervisor & Jev Gatekeeper) Rodapé do Canvas -->
+        <rect x="130" y="275" width="560" height="34" rx="8" fill="#1A2433" stroke="#8B5CF6" stroke-opacity="0.4" />
+        <text x="410" y="296" fill="#C4B5FD" font-size="10" text-anchor="middle">
+          ⚡ TypeSafe Jev Gatekeeper (&lt;1ms Decision Model) • 🧠 AI Supervisor (Observador de Arestas Ativo)
         </text>
       </svg>
     </div>

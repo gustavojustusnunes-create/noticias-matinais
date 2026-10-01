@@ -236,43 +236,14 @@ FILTROS_TEMA = {
 # --- INSTRUÇÕES POR TEMA (PROMPT IA) ---
 # =============================================================================
 INSTRUCAO_TEMA = {
-    "Mundo": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Esta cobertura deve ser aprofundada, rica em detalhes e desenvolvida em 2 a 3 parágrafos substanciais.\n"
-        "1. Descreva o acontecimento principal com precisão de fatos, datas, locais e declarações diretas das partes.\n"
-        "2. Forneça os antecedentes históricos e geopolíticos: a origem das tensões, acordos prévios, interesses estratégicos dos países envolvidos e o contexto de bastidores.\n"
-        "3. Analise as consequências diretas e futuras: impacto no equilíbrio de poder, segurança regional/global, acordos diplomáticos e economia internacional.\n"
-        "PROIBIDO texto superficial ou resumo curto: construa uma reportagem detalhada e autossuficiente."
-    ),
-    "Economia": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva a notícia em 2 a 3 parágrafos analíticos densos.\n"
-        "Inclua obrigatoriamente: números concretos (percentuais, valores em R$ ou US$, variações de índices), o impacto direto para o investidor e consumidor brasileiro, as razões macroeconômicas (juros, inflação, decisões de bancos centrais ou balanços corporativos) e o contexto de mercado que explica o movimento.\n"
-        "REGRA CRÍTICA DE FILTRAGEM: Se a manchete for sobre política, partidos, eleições, decisões judiciais ou segurança pública SEM impacto econômico direto e mensurável, retorne EXATAMENTE a palavra SKIP e nada mais."
-    ),
-    "Politica": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos substanciais.\n"
-        "Inclua o contexto institucional profundo, as partes envolvidas (partidos, tribunais, parlamentares, lideranças), as motivações políticas de bastidores, o que exatamente está sendo votado/decidido e os possíveis desdobramentos políticos, institucionais e eleitorais para o país."
-    ),
-    "IA": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos ricos em conteúdo técnico e mercadológico.\n"
-        "Inclua: empresa/laboratório envolvido (OpenAI, Anthropic, Google DeepMind, Meta AI, xAI, Mistral, etc.), o nome exato do modelo ou produto, dados técnicos detalhados (parâmetros, benchmarks, contexto de treino, modalidades, custos computacionais) e o impacto prático para usuários, empresas e a corrida de IA. Se for sobre regulação ou ética, detalhe a disputa central e implicações legais. Evite hype — escreva como repórter de tecnologia experiente."
-    ),
-    "Wellness": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos fundamentados.\n"
-        "FOCO: cultura de saúde, performance e longevidade. Cobre corrida, ciclismo, musculação, mobilidade, nutrição esportiva, sono, recuperação e mindset atlético. Detalhe os mecanismos fisiológicos, estudos científicos citados e recomendações práticas com dados (séries, pace, zonas de FC, macros, VO2) quando disponíveis no texto. Evite sensacionalismo ou linguagem de revista de dieta."
-    ),
-    "Ciencia": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos explicativos e científicos.\n"
-        "Inclua: instituição/pesquisadores envolvidos, a metodologia do experimento/estudo, dados e números encontrados, por que essa descoberta é um avanço em relação ao conhecimento anterior e quais são as aplicações práticas futuras para a medicina ou conhecimento humano."
-    ),
-    "Cinema": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: Desenvolva em 2 a 3 parágrafos bem estruturados.\n"
-        "Inclua: gênero, direção, elenco principal, sinopse detalhada e contextualizada (sem spoilers rasos), recepção crítica (Rotten Tomatoes, IMDb), números de bilheteria e relevância para a indústria cinematográfica ou franquia."
-    ),
-    "Fofoca": (
-        "DIRETRIZ DE PROFUNDIDADE MÁXIMA: O caderno Fofoca tem foco em cultura pop INTERNACIONAL: atores de Hollywood, músicos globais e personalidades de alcance mundial.\n"
-        "Desenvolva em 2 a 3 parágrafos completos o histórico do acontecimento, declarações públicas das partes, impacto na indústria do entretenimento e a repercussão na mídia global.\n"
-        "REGRA CRÍTICA DE FILTRAGEM: Se a notícia for sobre subcelebridade brasileira, ex-participante de reality, influenciador sem relevância global ou qualquer figura desconhecida fora do Brasil, retorne EXATAMENTE a palavra SKIP e nada mais."
-    ),
+    "Mundo": "Foco: Geopolítica global e crises diplomáticas substanciais.",
+    "Economia": "Foco: Política monetária, juros, câmbio, balanços e impacto financeiro (nunca atualizações isoladas de apps).",
+    "Politica": "Foco: Fatos institucionais neutros dos três poderes, com foco em medidas públicas e projetos de lei.",
+    "IA": "Foco: Modelos de fronteira, semicondutores, data centers e regulamentação tecnológica.",
+    "Wellness": "Foco: Fisiologia, esportes de resistência (corrida, ciclismo, musculação) e saúde física preventiva.",
+    "Ciencia": "Foco: Descobertas espaciais, medicina baseada em evidências e transição energética.",
+    "Cinema": "Foco: Bilheterias, direção, premiações e mercado audiovisual.",
+    "Fofoca": "Foco: Exclusivamente celebridades de escala global e entretenimento de massa."
 }
 
 # =============================================================================
@@ -397,3 +368,47 @@ NUMERAIS_CADERNO = {
     "Mundo": "I", "Economia": "II", "Politica": "III", "IA": "IV",
     "Wellness": "V", "Ciencia": "VI", "Cinema": "VII", "Fofoca": "VIII",
 }
+
+# =============================================================================
+# --- PROMPTS EDITORIAIS NORMATIVOS (WRITER & CRITIC) ---
+# =============================================================================
+SYSTEM_PROMPT_WRITER = """
+Você é o Editor Executivo do All News Journal. Sua função é redigir o resumo jornalístico oficial da nossa edição matinal a partir do conteúdo bruto extraído.
+
+DIRETRIZES RÍGIDAS DE REDAÇÃO:
+1. EXTENSÃO OBRIGATÓRIA: O texto DEVE conter rigorosamente entre 85 e 105 palavras. Contagens fora dessa margem serão reprovadas.
+2. ESTRUTURA DOS TRÊS PERÍODOS:
+   - Período 1 (O Fato): Explique o acontecimento principal de forma direta e contextualizada (quem, o que e quando).
+   - Período 2 (A Causa/Mecânica): Traga os dados fundamentais, valores numéricos, porcentagens e o porquê de o fato ter ocorrido.
+   - Período 3 (O Impacto): Finalize com a consequência prática, decisão judicial em curso ou desdobramento de mercado.
+3. LIMPEZA TOTAL: Remova imediatamente créditos de imagens (ex: "Foto: Getty"), legendas, nomes de agências (Reuters, BBC, G1) e caracteres truncados.
+4. TOM DE VOZ: Analítico, sofisticado, sóbrio e sem sensacionalismo.
+5. PONTUAÇÃO FINAL: O texto DEVE obrigatoriamente terminar com ponto final (.) e ter sentido completo.
+
+SAÍDA ESTRITAMENTE EM FORMATO JSON:
+{
+  "titulo_limpo": "Título analítico de até 12 palavras em tom institucional",
+  "resumo_texto": "Texto do resumo contendo exatamente entre 85 e 105 palavras.",
+  "contagem_palavras": 92
+}
+"""
+
+SYSTEM_PROMPT_CRITIC = """
+Você é o Quality Gate do All News Journal. Audite o resumo contra as diretrizes normativas da publicação:
+
+REGRAS DE VALIDAÇÃO:
+1. Contagem: O campo "resumo_texto" tem rigorosamente entre 85 e 105 palavras?
+2. Integridade: A frase final termina com ponto final e encerra uma tese sem corte abrupto?
+3. Limpeza: Há algum crédito de foto ("Getty", "BBC", "Foto"), autor ou símbolo HTML quebrado?
+4. Profundidade: O texto explicou a causa e o impacto do fato ou ficou apenas em um anúncio genérico?
+
+RESPOSTA OBRIGATÓRIA (JSON):
+{
+  "aprovado": true,
+  "word_count": 94,
+  "motivo_rejeicao": "",
+  "instrucao_reescrita": ""
+}
+Se reprovado, retorne "aprovado": false e aponte o erro em "instrucao_reescrita" para regeneração imediata.
+"""
+

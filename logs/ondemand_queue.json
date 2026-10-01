@@ -1,0 +1,98 @@
+[
+  {
+    "task_id": "ondemand_20260929_172033_973648",
+    "topic_raw": "Mercado de capitais reage com otimismo ao novo marco de tecnologia e inovacao",
+    "tema": "Economia",
+    "formato": "carrossel",
+    "headline": "MERCADO DE CAPITAIS REAGE COM OTIMISMO AO NOVO MARCO DE TECNOLOGIA E INOVACAO CONSOLIDA NOVO EQUILÍBRIO ESTRATÉGICO",
+    "subtitulo": "Análise profunda dos desdobramentos e impactos imediatos",
+    "keyword": "MERCADO",
+    "slides_text": [
+      "A evolução estratégica recente vinculada a Mercado de capitais reage com otimismo ao novo marco de tecnologia e inovacao estabelece um novo patamar de atenção diplomática e institucional. A movimentação mobiliza lideranças setoriais e impõe uma readequação imediata nas diretrizes operacionais de governança global. Especialistas apontam que a maturidade dos acordos atenua vulnerabilidades estruturais nos contratos multilaterais vigentes, ao passo que reconfigura equilíbrios de poder no ecossistema internacional. Com isso, a iniciativa fortalece a previsibilidade institucional e dita o ritmo das decisões estratégicas do trimestre.",
+      "Os desdobramentos operacionais associados a Mercado de capitais reage com otimismo ao novo marco de tecnologia e inovacao afetam diretamente a percepção de risco e o direcionamento de recursos nos mercados. Com volume expressivo de ativos expostos às decisões, analistas internacionais observam que a nova conjuntura redefine barreiras regulatórias e amplia o escopo de conformidade exigido entre os participantes. A tendência consolida uma postura de cautela analítica, onde a solidez factual e a resposta coordenada dos líderes determinarão a sustentabilidade das operações no curto e médio prazo."
+    ],
+    "caption": "📌  ECONOMIA — ALL NEWS JOURNAL\n\nMERCADO DE CAPITAIS REAGE COM OTIMISMO AO NOVO MARCO DE TECNOLOGIA E INOVACAO CONSOLIDA NOVO EQUILÍBRIO ESTRATÉGICO\n\nA evolução estratégica recente vinculada a Mercado de capitais reage com otimismo ao novo marco de tecnologia e inovacao estabelece um novo patamar de atenção diplomática e institucional. A movimentação mobiliza lideranças setoriais e impõe uma readequação imediata nas diretrizes operacionais de governança global. Especialistas apontam que a maturidade dos acordos atenua vulnerabilidades estruturais nos contratos multilaterais vigentes, ao passo que reconfigura equilíbrios de poder no ecossistema internacional. Com isso, a iniciativa fortalece a previsibilidade institucional e dita o ritmo das decisões estratégicas do trimestre.\n\nOs desdobramentos operacionais associados a Mercado de capitais reage com otimismo ao novo marco de tecnologia e inovacao afetam diretamente a percepção de risco e o direcionamento de recursos nos mercados. Com volume expressivo de ativos expostos às decisões, analistas internacionais observam que a nova conjuntura redefine barreiras regulatórias e amplia o escopo de conformidade exigido entre os participantes. A tendência consolida uma postura de cautela analítica, onde a solidez factual e a resposta coordenada dos líderes determinarão a sustentabilidade das operações no curto e médio prazo.\n\n──────────────\n📩 A curadoria executiva completa chega todas as manhãs às 06:15 no seu e-mail.\nAssine gratuitamente pelo link na nossa bio.\n\n#economia #mercado #investimentos #financas #macroeconomia #allnewsjournal\n@all.news.journal",
+    "image_query": "Mercado de capitais reage com otimismo ao novo marco de tecnologia e inovacao",
+    "slide_paths": [
+      "edicoes\\ondemand\\ondemand_20260929_172033_973648\\slide_01.jpg",
+      "edicoes\\ondemand\\ondemand_20260929_172033_973648\\slide_02.jpg",
+      "edicoes\\ondemand\\ondemand_20260929_172033_973648\\slide_03.jpg"
+    ],
+    "hitl_status": "PUBLISHED",
+    "created_at": "2026-09-29T17:20:38.935482-03:00",
+    "expires_at": "2026-09-29T18:20:38.935482-03:00",
+    "retry_count": 2,
+    "execution_log": [
+      {
+        "node": "node_researcher",
+        "message": "Pesquisa concluída via google_news_rss (1 fontes analisadas).",
+        "search_provider": "google_news_rss"
+      },
+      {
+        "node": "node_writer",
+        "message": "Draft redigido: 2 slide(s) (85 palavras, 87 palavras).",
+        "headline": "MERCADO DE CAPITAIS REAGE COM OTIMISMO AO NOVO MARCO DE TECNOLOGIA E INOVACAO CONSOLIDA NOVO EQUILÍBRIO ESTRATÉGICO",
+        "keyword": "MERCADO"
+      },
+      {
+        "node": "node_ondemand_critic",
+        "message": "Revisão solicitada pelo Jev Gate: Rejeitado por desconformidade crítica: Superdimensionado: 172 palavras (teto obrigatório: 105 palavras).",
+        "is_approved": false,
+        "retry_count": 1,
+        "verdict": {
+          "score": 1,
+          "noul": false,
+          "choice": "REJECT",
+          "confidence": 0.92,
+          "latency_ms": 0.42,
+          "reason": "Rejeitado por desconformidade crítica: Superdimensionado: 172 palavras (teto obrigatório: 105 palavras).",
+          "word_count": 172,
+          "paragraphs": 2,
+          "model": "typesafe/jev-1.13-fast-local"
+        }
+      },
+      {
+        "node": "node_writer",
+        "message": "Draft redigido: 2 slide(s) (85 palavras, 87 palavras).",
+        "headline": "MERCADO DE CAPITAIS REAGE COM OTIMISMO AO NOVO MARCO DE TECNOLOGIA E INOVACAO CONSOLIDA NOVO EQUILÍBRIO ESTRATÉGICO",
+        "keyword": "MERCADO"
+      },
+      {
+        "node": "node_ondemand_critic",
+        "message": "Revisão solicitada pelo Jev Gate: Rejeitado por desconformidade crítica: Superdimensionado: 172 palavras (teto obrigatório: 105 palavras).",
+        "is_approved": false,
+        "retry_count": 2,
+        "verdict": {
+          "score": 1,
+          "noul": false,
+          "choice": "REJECT",
+          "confidence": 0.92,
+          "latency_ms": 0.18,
+          "reason": "Rejeitado por desconformidade crítica: Superdimensionado: 172 palavras (teto obrigatório: 105 palavras).",
+          "word_count": 172,
+          "paragraphs": 2,
+          "model": "typesafe/jev-1.13-fast-local"
+        }
+      },
+      {
+        "node": "node_media_retriever",
+        "message": "3 slide(s) gerado(s) com sucesso em 'edicoes\\ondemand\\ondemand_20260929_172033_973648'.",
+        "slide_paths": [
+          "edicoes\\ondemand\\ondemand_20260929_172033_973648\\slide_01.jpg",
+          "edicoes\\ondemand\\ondemand_20260929_172033_973648\\slide_02.jpg",
+          "edicoes\\ondemand\\ondemand_20260929_172033_973648\\slide_03.jpg"
+        ]
+      }
+    ],
+    "auto_published": true,
+    "timeout_triggered_at": "2026-10-01T11:39:18.719836-03:00",
+    "publish_result": {
+      "success": true,
+      "mode": "DRY_RUN",
+      "message": "Publicação concluída em modo simulação (INSTAGRAM_ENABLED=false ou credenciais não configuradas).",
+      "slides_count": 3,
+      "timestamp": "2026-10-01T11:39:18.754553"
+    },
+    "published_at": "2026-10-01T11:39:18.754580-03:00"
+  }
+]

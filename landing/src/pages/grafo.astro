@@ -10,17 +10,17 @@ import Footer from "../components/Footer.astro";
   <script id="default-schema" type="application/json">
 {
   "version": "2.0.0",
-  "last_updated": "2026-09-22T21:36:23.310661-03:00",
+  "last_updated": "2026-09-25T18:18:15.212898-03:00",
   "active_run_state": {
-    "status": "DISPATCHED",
-    "current_active_node": "__end__",
-    "is_approved": true,
-    "word_count": 90,
-    "retry_count": 0,
-    "hitl_approved": true,
-    "selected_story_title": "Meses antes de ataque cibernético, IA da OpenAI ‘investigou’ alvo",
-    "last_updated": "2026-09-22T21:36:23.310551-03:00",
-    "execution_log_count": 5
+    "status": "CRITIC_REJECTED",
+    "current_active_node": "writer",
+    "is_approved": false,
+    "word_count": 6,
+    "retry_count": 1,
+    "hitl_approved": false,
+    "selected_story_title": null,
+    "last_updated": "2026-09-25T18:18:15.212863-03:00",
+    "execution_log_count": 1
   },
   "clusters": [
     {
@@ -94,7 +94,7 @@ import Footer from "../components/Footer.astro";
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true
     },
     {
@@ -125,7 +125,7 @@ import Footer from "../components/Footer.astro";
       "id": "planner",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true
     },
     {
@@ -158,15 +158,15 @@ import Footer from "../components/Footer.astro";
       },
       "id": "writer",
       "is_hitl_gate": false,
-      "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "is_active": true,
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true,
-      "runtime_retry_count": 0
+      "runtime_retry_count": 1
     },
     {
-      "label": "Critic (Quality Gate)",
+      "label": "Critic (Jev Gate)",
       "sublabel": "node_critic",
-      "category": "Quality Gate",
+      "category": "Quality Gate (System 1)",
       "cluster": "langgraph",
       "cluster_label": "1. Orquestração LangGraph Core",
       "icon": "⚖️",
@@ -174,8 +174,8 @@ import Footer from "../components/Footer.astro";
       "type": "gate",
       "file": "core/graph_engine.py",
       "func": "node_critic(state: GraphState)",
-      "model": "Auditoria Determinística de Conformidade",
-      "desc": "Valida rigidamente a margem de 85 a 105 palavras (tolerância 82-108) e proíbe interrogações finais ou clickbaits. Aciona loop de autocura.",
+      "model": "TypeSafe Jev-1.13 (System 1 Decision Model)",
+      "desc": "Auditoria de conformidade editorial e julgamento ultrarrápido (< 200ms). Avalia primitivos Jev: score (1-5), noul (integridade), choice (APPROVE/REVISE) e confiança >= 0.80. Aciona loop de autocura para o Writer.",
       "inputs": [
         "draft_text: str",
         "retry_count: int"
@@ -184,9 +184,10 @@ import Footer from "../components/Footer.astro";
         "is_approved: bool",
         "word_count: int",
         "critique_feedback: str",
-        "status: 'CRITIC_APPROVED' | 'CRITIC_REJECTED'"
+        "jev_decision: Dict",
+        "status: 'CRITIC_APPROVED' | 'CRITIC_REVISED'"
       ],
-      "resilience": "Teto de 3 tentativas para evitar loops infinitos. Na 3ª tentativa esgotada, avança com o melhor draft para garantir o SLA.",
+      "resilience": "Fallback automático para regras determinísticas caso a confiança caia abaixo de 0.60.",
       "pos": {
         "x": 610,
         "y": 140
@@ -194,10 +195,10 @@ import Footer from "../components/Footer.astro";
       "id": "critic",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true,
-      "runtime_word_count": 90,
-      "runtime_is_approved": true
+      "runtime_word_count": 6,
+      "runtime_is_approved": false
     },
     {
       "label": "Media Generator",
@@ -229,7 +230,7 @@ import Footer from "../components/Footer.astro";
       "id": "media_generator",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true
     },
     {
@@ -262,7 +263,7 @@ import Footer from "../components/Footer.astro";
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true
     },
     {
@@ -291,8 +292,8 @@ import Footer from "../components/Footer.astro";
       },
       "id": "__end__",
       "is_hitl_gate": false,
-      "is_active": true,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "is_active": false,
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true
     },
     {
@@ -322,10 +323,41 @@ import Footer from "../components/Footer.astro";
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-09-17T19:24:56.212272-03:00",
+      "file_mtime": "2026-09-25T18:03:37.730020-03:00",
       "file_exists": true,
-      "runtime_hitl_approved": true,
-      "is_locked": false
+      "runtime_hitl_approved": false,
+      "is_locked": true
+    },
+    {
+      "id": "jev_gatekeeper",
+      "label": "Jev Gatekeeper",
+      "sublabel": "core/jev_gatekeeper.py",
+      "category": "Decisão Estruturada System 1",
+      "cluster": "observability",
+      "cluster_label": "2. Observabilidade, Memória & Sentinelas",
+      "icon": "⚡",
+      "color": "#8B5CF6",
+      "type": "decision_model",
+      "file": "core/jev_gatekeeper.py",
+      "func": "evaluate_editorial_quality() / quick_triage_supervisor()",
+      "model": "typesafe/jev-1.13 + Local Fast Heuristics (< 1ms)",
+      "desc": "Motor de decisão estruturada de alta velocidade com primitivos discretos (score, noul, choice, confidence). Alimenta o nó Critic e a pré-triagem do AI Supervisor com 0 tokens de LLM generativo.",
+      "inputs": [
+        "draft_text: str",
+        "trace_or_log: str"
+      ],
+      "outputs": [
+        "EditorialDecision(score, noul, choice, conf, latency_ms)",
+        "SupervisorTriage"
+      ],
+      "resilience": "Dual-engine com fallback heurístico local imediato se API externa oscilar.",
+      "pos": {
+        "x": 890,
+        "y": 380
+      },
+      "file_mtime": "2026-09-25T18:04:47.452019-03:00",
+      "file_exists": true,
+      "is_active": false
     },
     {
       "id": "ai_supervisor",
@@ -352,7 +384,7 @@ import Footer from "../components/Footer.astro";
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-09-10T17:05:55.458398-03:00",
+      "file_mtime": "2026-09-25T18:04:14.218982-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -382,7 +414,7 @@ import Footer from "../components/Footer.astro";
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-09-22T19:46:42.516749-03:00",
+      "file_mtime": "2026-09-23T18:00:30.242159-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -440,7 +472,7 @@ import Footer from "../components/Footer.astro";
         "x": 1160,
         "y": 380
       },
-      "file_mtime": "2026-09-17T19:22:47.100084-03:00",
+      "file_mtime": "2026-09-25T18:04:53.556463-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -646,7 +678,7 @@ import Footer from "../components/Footer.astro";
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-09-22T21:12:25.172620-03:00",
+      "file_mtime": "2026-09-23T18:00:30.348336-03:00",
       "file_exists": true,
       "is_active": false
     }
@@ -783,6 +815,22 @@ import Footer from "../components/Footer.astro";
       "is_dashed": true
     },
     {
+      "id": "edge_critic_to_jev",
+      "source": "critic",
+      "target": "jev_gatekeeper",
+      "conditional": false,
+      "label": "Inferência Jev (<1ms)",
+      "color": "#8B5CF6"
+    },
+    {
+      "id": "edge_sup_to_jev",
+      "source": "ai_supervisor",
+      "target": "jev_gatekeeper",
+      "conditional": false,
+      "label": "Pré-Triagem SLA",
+      "color": "#8B5CF6"
+    },
+    {
       "id": "edge_sup_to_mem",
       "source": "ai_supervisor",
       "target": "supervisor_memory",
@@ -808,12 +856,12 @@ import Footer from "../components/Footer.astro";
     }
   ],
   "stats": {
-    "total_nodes": 19,
+    "total_nodes": 20,
     "langgraph_nodes": 8,
-    "infrastructure_nodes": 11,
-    "total_edges": 19,
-    "current_status": "DISPATCHED",
-    "current_active_node": "__end__"
+    "infrastructure_nodes": 12,
+    "total_edges": 21,
+    "current_status": "CRITIC_REJECTED",
+    "current_active_node": "writer"
   }
 }
 </script>

@@ -674,6 +674,68 @@ def render_modulo_saude(dados_op, auditorias, telemetria):
         </div>
         """, unsafe_allow_html=True)
 
+    # ── CARD DE AUDITORIA EDITORIAL & CADERNOS SUPRIMIDOS ──
+    try:
+        from core.quality_filter import obter_alertas_cadernos, remover_alerta_caderno
+        alertas = obter_alertas_cadernos()
+    except Exception:
+        alertas = []
+
+    if alertas:
+        hoje_str = datetime.now().strftime("%Y-%m-%d")
+        alertas_recentes = [a for a in alertas if a.get("data") == hoje_str] or alertas[:3]
+        for alerta in alertas_recentes:
+            cad_nome = alerta.get("caderno", "Caderno")
+            motivo = alerta.get("motivo", "")
+            descartados = alerta.get("exemplos_descartados", [])
+            data_alerta = alerta.get("data", "")
+            
+            st.markdown(f"""
+            <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.35); border-left: 5px solid #F59E0B; border-radius: 12px; padding: 18px 22px; margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.2rem;">⚠️</span>
+                        <span style="font-weight: 700; font-size: 0.95rem; color: #FBBF24;">Auditoria Editorial & Cadernos Suprimidos</span>
+                    </div>
+                    <span style="background: rgba(245,158,11,0.2); color: #FDE68A; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 9999px; text-transform: uppercase;">
+                        Status: SUPPRESSED ({data_alerta})
+                    </span>
+                </div>
+                <div style="font-size: 0.95rem; font-weight: 600; color: #FFFFFF; margin-bottom: 6px;">
+                    Atenção: O caderno <u>{cad_nome}</u> não foi publicado hoje por falta de notícias de alto impacto.
+                </div>
+                <div style="font-size: 0.85rem; color: #D1D5DB; margin-bottom: 12px;">
+                    {motivo}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            with st.expander(f"📋 Ver matérias descartadas pelo Quality Gate no caderno {cad_nome} ({len(descartados)} exemplos)", expanded=False):
+                if descartados:
+                    for d_tit in descartados:
+                        st.markdown(f"- ❌ *{d_tit}*")
+                else:
+                    st.info("Nenhum título descartado registrado.")
+                st.caption(f"Justificativa da IA: {motivo}")
+
+            # Botão de contingência manual: "Forçar Pauta Alternativa"
+            with st.expander(f"⚡ Contingência Manual: Forçar Pauta Alternativa para [{cad_nome}]", expanded=False):
+                st.markdown(f"<p style='font-size: 0.85rem; color: #94A3B8;'>Insira abaixo uma notícia ou link de alto impacto para redigir e recuperar o caderno <b>{cad_nome}</b> na edição:</p>", unsafe_allow_html=True)
+                pauta_substituta = st.text_input(f"Pauta / Link Alternativo para {cad_nome}", key=f"pauta_alt_{cad_nome}_{data_alerta}", placeholder="Ex: Fabricante lança nova bike com câmbio eletrônico integrado...")
+                if st.button(f"🚀 Forçar Pauta Alternativa para {cad_nome}", key=f"btn_forcar_{cad_nome}_{data_alerta}", type="primary"):
+                    if not pauta_substituta.strip():
+                        st.warning("Insira uma pauta ou link antes de forçar a geração.")
+                    else:
+                        with st.spinner(f"Processando pauta substituta para {cad_nome} via LangGraph..."):
+                            try:
+                                from core.ondemand_graph import executar_pipeline_ondemand
+                                res_alt = executar_pipeline_ondemand(topic_raw=pauta_substituta.strip(), tema=cad_nome, formato="carrossel")
+                                remover_alerta_caderno(cad_nome, data_alerta)
+                                st.success(f"Pauta gerada e enfileirada no HITL com sucesso! Caderno {cad_nome} recuperado.")
+                                st.rerun()
+                            except Exception as e_alt:
+                                st.error(f"Erro ao processar pauta alternativa: {e_alt}")
+
     # Tabela de Auditoria Editorial das Últimas 5 Edições
     st.markdown("""
     <div class="cpo-card" style="padding: 16px 20px;">
