@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-01",
+  "data_extenso": "Quinta-feira, 1 de Outubro de 2026",
+  "manchete": "Após manifestações de estudantes de ensino médio, universidades aderem a bloqueios na França",
+  "arquivo_html": "2026-10-01.html"
+ },
+ {
   "data": "2026-09-30",
   "data_extenso": "Quarta-feira, 30 de Setembro de 2026",
   "manchete": "Execução de mulher no Tennessee é suspensa uma hora antes de ocorrer",
@@ -352,11 +358,5 @@
   "data_extenso": "Sábado, 18 de Julho de 2026",
   "manchete": "Mísseis balísticos: o que são e por que se tornaram um pesadelo para a Europa; veja INFOGRÁFICO",
   "arquivo_html": "2026-07-18.html"
- },
- {
-  "data": "2026-07-17",
-  "data_extenso": "Sexta-feira, 17 de Julho de 2026",
-  "manchete": "Rússia rejeita acusações de interferência nas eleições americanas",
-  "arquivo_html": "2026-07-17.html"
  }
 ]
