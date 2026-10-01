@@ -201,3 +201,8 @@ export async function GET({ request }: { request: Request }) {
     );
   }
 }
+
+export async function HEAD(context: { request: Request }) {
+  return GET(context);
+}
+
