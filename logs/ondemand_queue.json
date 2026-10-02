@@ -94,5 +94,19 @@
       "timestamp": "2026-10-01T11:39:18.754553"
     },
     "published_at": "2026-10-01T11:39:18.754580-03:00"
+  },
+  {
+    "trackingId": "flash-1790902997714",
+    "criadoEm": "2026-10-02T01:03:17.714Z",
+    "tema": "Copom corta juros",
+    "contexto": "Decisao unanime reduz Selic",
+    "caderno": "Economia",
+    "tom": "Analitico",
+    "destinos": {
+      "instagram": true,
+      "push": false,
+      "story": true
+    },
+    "status": "QUEUED_FOR_EXECUTION"
   }
 ]
