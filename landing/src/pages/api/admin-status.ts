@@ -2,6 +2,7 @@ export const prerender = false;
 
 import fs from 'node:fs';
 import path from 'node:path';
+import edicaoAtualDirect from '../../data/edicao_atual.json';
 
 function resolvePath(rel: string): string {
   // Tenta direto no diretório atual (se executado na raiz)
@@ -84,19 +85,23 @@ export async function GET({ request }: { request: Request }) {
       }
     }
 
+    const fallbackManchete = (edicaoAtualDirect as any)?.manchete || ultimaEdicao?.manchete || 'Acordo Mercosul-União Europeia entra em vigor e impulsiona balança comercial em 21%';
+    const fallbackResumo = (edicaoAtualDirect as any)?.cadernos?.Mundo?.[0]?.resumo || 'O tratado de livre comércio entre o bloco sul-americano e os países europeus consolidou seu primeiro trimestre de vigência com expansão de 21% no volume de exportações agrícolas e industriais transacionadas.';
+    const fallbackImg = (edicaoAtualDirect as any)?.cadernos?.Mundo?.[0]?.imagem || 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80';
+
     const selectedStory = graphState.selected_story || {
-      titulo: ultimaEdicao?.manchete || 'Destaque Editorial do Dia',
-      caderno: 'Economia',
-      resumo: 'Carregando resumo do conteúdo apurado...',
+      titulo: fallbackManchete,
+      caderno: 'Mundo',
+      resumo: fallbackResumo,
     };
 
     const draftText = graphState.draft_text || selectedStory.resumo || '';
-    const wordCount = graphState.word_count || (draftText ? draftText.trim().split(/\s+/).length : 0);
+    const wordCount = graphState.word_count || (draftText ? draftText.trim().split(/\s+/).filter(Boolean).length : 0);
     const isWordCountCompliant = wordCount >= 85 && wordCount <= 105;
     const isWordCountTolerant = wordCount >= 82 && wordCount <= 108;
 
     // Capa e Áudio
-    const imagePath = graphState.image_path || graphState.visual_capa_path || (ultimaEdicao?.cadernos?.Economia?.[0]?.imagem) || (ultimaEdicao?.cadernos?.Mundo?.[0]?.imagem) || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=450&fit=crop';
+    const imagePath = graphState.image_path || graphState.visual_capa_path || fallbackImg;
     const audioPath = graphState.audio_path || '/audio/latest.mp3';
 
     // 3. Kill Switch
@@ -146,7 +151,7 @@ export async function GET({ request }: { request: Request }) {
       overrides: {},
     });
 
-    const edicaoAtualData = readJsonFile('src/data/edicao_atual.json', null) || ultimaEdicao || {};
+    const edicaoAtualData = (edicaoAtualDirect as any) || readJsonFile('src/data/edicao_atual.json', null) || ultimaEdicao || {};
     const curationItems: any[] = [];
     if (edicaoAtualData && edicaoAtualData.cadernos) {
       Object.entries(edicaoAtualData.cadernos).forEach(([cadernoNome, lista]: [string, any]) => {
