@@ -1,120 +1,108 @@
 {
-  "data": "2026-10-02",
-  "data_extenso": "Sexta-feira, 2 de Outubro de 2026",
-  "editorial": "Panorama analítico dos movimentos de mercado, avanços em computação autônoma e os desdobramentos geopolíticos que definem o cenário internacional nas últimas 24 horas.",
-  "manchete": "Acordo Mercosul-União Europeia entra em vigor e impulsiona balança comercial em 21%",
-  "cadernos": {
-    "Mundo": [
-      {
-        "titulo": "Acordo Mercosul-União Europeia entra em vigor e impulsiona balança comercial em 21%",
-        "link": "https://g1.globo.com/economia/noticia/2026/10/01/exportacoes-agricolas-da-argentina-para-a-uniao-europeia-disparam-apos-acordo-comercial-com-o-mercosul.ghtml",
-        "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "O tratado de livre comércio entre o bloco sul-americano e os países europeus consolidou seu primeiro trimestre de vigência com expansão de 21% no volume de exportações agrícolas e industriais transacionadas. A redução tarifária em setores estratégicos destravou embarques prioritários de grãos e biocombustíveis, somando mais de 1,9 bilhão de dólares no fluxo bilateral entre os parceiros continentais. Analistas de comércio exterior apontam que o novo arranjo fortalece a segurança alimentar da Europa enquanto atrai investimentos diretos em infraestrutura logística para a América Latina."
-      },
-      {
-        "titulo": "Universidades e centros de pesquisa na Europa ampliam mobilização por reforma orçamentária",
-        "link": "https://g1.globo.com/educacao/noticia/2026/10/01/manifestacoes-de-estudantes-do-ensino-medio-na-franca-ganham-adesao-de-universidades.ghtml",
-        "imagem": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Estudantes e sindicatos acadêmicos coordenaram paralisações e atos cívicos em mais de 15 polos universitários franceses para reivindicar recomposição de verbas destinadas à pesquisa científica de ponta. A mobilização ganhou amplitude após a aprovação preliminar de diretrizes fiscais restritivas no parlamento, impactando a manutenção de laboratórios estratégicos e programas de pós-graduação. Reitores e representantes do governo negociam um cronograma emergencial de repasses para restabelecer o calendário letivo integral sem prejuízos aos projetos tecnológicos em andamento."
-      }
-    ],
-    "Economia": [
-      {
-        "titulo": "Brasil atinge recorde histórico de 4,61 milhões de barris diários impulsionado pelo pré-sal",
-        "link": "https://g1.globo.com/economia/noticia/2026/10/01/producao-de-petroleo-brasil.ghtml",
-        "imagem": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "A produção nacional de óleo bruto e gás natural atingiu a marca inédita de 4,615 milhões de barris equivalentes por dia, consolidando o terceiro mês consecutivo de expansão produtiva no país. O desempenho reflete a entrada em operação de novos sistemas de extração nos campos de Búzios e Mero, localizados na Bacia de Santos, cuja produtividade superou as projeções da Agência Nacional do Petróleo. O resultado eleva a arrecadação de royalties estaduais e reforça o superávit da balança comercial brasileira."
-      },
-      {
-        "titulo": "Ajuste tarifário no querosene de aviação desafia margens operacionais de companhias aéreas",
-        "link": "https://g1.globo.com/economia/noticia/2026/10/01/petrobras-querosene.ghtml",
-        "imagem": "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "A revisão mensal de preços do combustível de aviação nas principais refinarias brasileiras resultou em acréscimo médio de 11,6% nas distribuidoras das regiões Sudeste e Centro-Oeste neste início de trimestre. A correção reflete a volatilidade das cotações internacionais do barril de petróleo tipo Brent e a paridade de importação praticada pela cadeia energética nacional. Associações do setor aéreo manifestaram preocupação com o impacto tarifário nos bilhetes corporativos, exigindo maior previsibilidade nos contratos de fornecimento a médio prazo."
-      }
-    ],
-    "IA": [
-      {
-        "titulo": "Relatório internacional alerta para uso coordenado de agentes de IA em infraestruturas públicas",
-        "link": "https://olhardigital.com.br/2026/10/01/inteligencia-artificial/e-aconteceu-de-novo-agentes-de-ia-tentaram-invadir-site-do-governo-do-canada/",
-        "imagem": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Especialistas em cibersegurança da instituição Transluce identificaram tentativas automatizadas de varredura profunda em bancos de dados governamentais norte-americanos conduzidas por enxames autônomos de inteligência artificial. Os sistemas de defesa perimetral bloquearam as requisições anômalas antes de qualquer comprometimento de dados sensíveis, evidenciando o emprego de modelos de linguagem para orquestrar auditorias ofensivas em larga escala. Agências de inteligência recomendam a implementação obrigatória de camadas de proteção HITL e validação criptográfica em todos os acessos administrativos federais."
-      },
-      {
-        "titulo": "Novas arquiteturas de modelos fundacionais reduzem latência de inferência corporativa em 40%",
-        "link": "https://olhardigital.com.br/2026/10/01/inteligencia-artificial/hackers-chineses-usam-e-mails-falsos-para-roubar-senhas-de-cientistas/",
-        "imagem": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Pesquisadores dos principais centros acadêmicos de computação anunciaram uma técnica de quantização adaptativa que diminui o consumo energético de grandes modelos de linguagem durante a execução de agentes autônomos. A inovação permite processar fluxos de trabalho analíticos em servidores locais com redução de 40% na latência e custos computacionais expressivamente menores para o mercado empresarial. O avanço viabiliza a adoção massiva de pipelines agênticos em companhias de finanças, saúde e comunicação corporativa sem dependência exclusiva de clusters remotos."
-      }
-    ],
-    "Politica": [
-      {
-        "titulo": "Governo formaliza protocolo ampliado de proteção previdenciária e amparo ao trabalhador",
-        "link": "https://g1.globo.com/politica/noticia/2026/10/01/lula-assina-medida-que-que-concede-beneficio-do-inss-a-mulheres-vitimas-de-violencia-domestica.ghtml",
-        "imagem": "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "O Executivo federal editou parecer normativo que garante a concessão de benefício previdenciário e estabilidade de vínculo profissional por até seis meses a vítimas de violência doméstica sob proteção judicial. A determinação estipula que a remuneração inicial fica a cargo do empregador nos primeiros quinze dias, cabendo ao INSS a cobertura financeira continuada a partir do décimo sexto dia de afastamento legal. A medida uniformiza entendimentos jurisprudenciais nos tribunais do país e assegura suporte socioeconômico direto durante o cumprimento das decisões protetivas."
-      },
-      {
-        "titulo": "Supremo Tribunal Federal implementa blindagem de IA contra ataques de injeção de prompt",
-        "link": "https://g1.globo.com/politica/noticia/2026/10/01/moraes-aplica-multa-de-r-5-mil-a-advogado-de-reu-do-81-por-uso-de-prompt-oculto-de-ia-para-manipular-sistema-do-stf.ghtml",
-        "imagem": "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "O Supremo Tribunal Federal consolidou a integração de módulos de segurança cibernética em seus sistemas de triagem processual após identificar tentativas de manipulação textual via comandos ocultos de inteligência artificial em petições eletrônicas. O tribunal multou litigantes que tentaram burlar o fluxo automatizado de distribuição processual, aplicando penalidades rigorosas por litigância de má-fé e atentado à dignidade da Justiça. O episódio acelerou a criação de diretrizes judiciais rígidas para o uso ético de tecnologias generativas no meio forense."
-      }
-    ],
-    "Wellness": [
-      {
-        "titulo": "Estudos clínicos comprovam reversão de marcadores metabólicos com intervenções em crononutrição",
-        "link": "https://g1.globo.com/saude/",
-        "imagem": "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Ensaio clínico randomizado publicado no periódico Nature Medicine demonstrou que o alinhamento da janela alimentar com o ritmo circadiano reduz em 28% marcadores inflamatórios sistêmicos e melhora sensivelmente o perfil lipídico. Participantes que concentraram a ingestão calórica no período diurno apresentaram aumento significativo na sensibilidade insulínica e controle pressórico, independentemente de restrições calóricas severas. Os achados reforçam a importância da medicina preventiva de precisão no combate a síndromes metabólicas e promoção da longevidade saudável para profissionais sob rotinas de alta exigência cognitiva."
-      },
-      {
-        "titulo": "Pesquisas em neurociência destacam o impacto de pausas ativas na prevenção do esgotamento executivo",
-        "link": "https://g1.globo.com/saude/",
-        "imagem": "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Pesquisadores de Harvard comprovaram que intervalos de cinco minutos com respiração guiada a cada duas horas de trabalho cognitivo profundo reduzem a secreção de cortisol em até 32% ao longo do expediente. O protocolo foi validado em equipes de liderança corporativa, resultando em menor fadiga mental vespertina e elevação consistente na tomada de decisões estratégicas sob cenários de pressão. Especialistas apontam que a incorporação dessas rotinas micro-regenerativas preserva a neuroplasticidade e previne episódios de burnout no ambiente corporativo contemporâneo."
-      }
-    ],
-    "Ciencia": [
-      {
-        "titulo": "Observatório Espacial James Webb detecta bioassinaturas promissoras em atmosfera de exoplaneta",
-        "link": "https://g1.globo.com/ciencia/",
-        "imagem": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Espectrogramas captados pelos instrumentos infravermelhos do telescópio espacial revelaram concentrações de sulfeto de dimetila e metano na atmosfera de um exoplaneta localizado a 120 anos-luz da Terra. No ambiente terrestre, esses compostos químicos são gerados quase exclusivamente por processos metabólicos de fitoplâncton marinho, o que motivou astrônomos a intensificarem as observações espectrais daquele sistema estelar. Agências espaciais internacionais convocaram um comitê conjunto para realizar novas medições confirmatórias com resolução espectroscópica ampliada nos próximos seis meses de missão."
-      },
-      {
-        "titulo": "Laboratório nacional atinge marco de estabilização em qubits com arquitetura supercondutora",
-        "link": "https://g1.globo.com/ciencia/",
-        "imagem": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Físicos experimentais alcançaram tempo de coerência quântica superior a 500 microssegundos em processadores baseados em circuitos supercondutores operando em temperaturas criogênicas próximas ao zero absoluto. A estabilidade sem precedentes viabiliza a execução de algoritmos complexos de correção de erros lógicos, etapa indispensável para a viabilização prática da computação quântica tolerante a falhas. O marco tecnológico posiciona a pesquisa acadêmica mais próxima de simulações farmacêuticas moleculares avançadas e otimização de matrizes logísticas globais em escala comercial."
-      }
-    ],
-    "Cinema": [
-      {
-        "titulo": "Grandes estúdios consolidam novos modelos de coprodução internacional em festivais europeus",
-        "link": "https://g1.globo.com/pop-arte/cinema/",
-        "imagem": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "A abertura das mostras cinematográficas de outono em Madri e Veneza evidenciou uma guinada estratégica das produtoras em direção a orçamentos controlados e parcerias com distribuidoras independentes. A iniciativa busca equilibrar a rentabilidade do setor frente à saturação de lançamentos diretos em plataformas de streaming e às transformações de consumo das salas de cinema. Diretores consagrados e novos realizadores celebraram a retomada do investimento em narrativas autorais com distribuição prioritária no circuito cinematográfico tradicional."
-      },
-      {
-        "titulo": "Novas tecnologias de renderização volumétrica revolucionam a pós-produção audiovisual",
-        "link": "https://g1.globo.com/pop-arte/cinema/",
-        "imagem": "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Inovações em captura espacial e iluminação neural em tempo real permitiram eliminar cenários virtuais estáticos em favor de ambientes dinâmicos totalmente interativos nos sets de filmagem. A técnica reduz custos de pós-produção em até 35% e permite que diretores de fotografia ajustem a atmosfera das tomadas diretamente durante a gravação das cenas. Executivos de tecnologia cinematográfica preveem que a adoção dessas ferramentas acelerará o ciclo de desenvolvimento de séries e longas-metragens para os próximos trimestres."
-      }
-    ],
-    "Fofoca": [
-      {
-        "titulo": "Reestruturação executiva nas gigantes do entretenimento sinaliza foco em rentabilidade no streaming",
-        "link": "https://g1.globo.com/economia/",
-        "imagem": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Movimentações de liderança nos principais conglomerados de mídia de Nova York e Los Angeles apontam para a fusão de divisões criativas e rigoroso corte de custos em produções extravagantes. As companhias priorizam agora a geração de caixa operacional positivo e o engajamento recorrente de assinantes com planos sustentados por anúncios segmentados. A transição marca o encerramento do ciclo de gastos ilimitados que caracterizou o início da corrida pelo domínio da televisão sob demanda mundial."
-      },
-      {
-        "titulo": "Consórcios de publicidade digital renegociam contratos corporativos com criadores de conteúdo",
-        "link": "https://g1.globo.com/economia/",
-        "imagem": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80",
-        "resumo": "Grandes marcas globais começaram a atrelar repasses contratuais de influenciadores a métricas auditadas de conversão efetiva e segurança de marca, substituindo antigas métricas superficiais de curtidas e visualizações brutas. A mudança responde à demanda de conselhos de administração por maior eficiência nos orçamentos de marketing digital em períodos de prudência fiscal. Especialistas de relações públicas afirmam que influenciadores analíticos e focados em nichos profissionais de alta renda são os mais valorizados pelas agências de publicidade."
-      }
-    ]
-  }
+ "data": "2026-10-02",
+ "data_extenso": "Sexta-feira, 2 de Outubro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "América Latina vê influência da China  mais positiva que a dos EUA pela 1ª vez, diz pesquisa",
+ "cadernos": {
+  "Mundo": [
+   {
+    "titulo": "América Latina vê influência da China  mais positiva que a dos EUA pela 1ª vez, diz pesquisa",
+    "link": "https://g1.globo.com/mundo/noticia/2026/10/02/america-latina-ve-influencia-da-china-mais-positiva-que-a-dos-eua-pela-1a-vez-diz-pesquisa.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/i5Sz_6a0R-vONab2dJdyefxNGtM=/5856x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/0/t/vk7ubZSCCQGrJaAAkR5g/2026-09-25t000518z-2090127779-rc20qna4xa87-rtrmadp-3-usa-china.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a América Latina vê influência da China mais positiva que a dos EUA pela 1ª vez, diz pesquisa estabelecem uma nova dinâmica competitiva nos mercados do caderno de Mundo. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   },
+   {
+    "titulo": "Por que a nova onda de protestos estudantis assusta o governo francês",
+    "link": "https://g1.globo.com/educacao/noticia/2026/10/02/por-que-a-nova-onda-de-protestos-estudantis-assusta-o-governo-frances.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/0DF8JvbZYk2dFXopn_3FZQ5R65w=/1280x0/filters:format(jpeg)/https://thumbor.globoi.com/unsafe/fit-in/1280x720/s04.video.glbimg.com/deo/vi/55/20/992055",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Por que a nova onda de protestos estudantis assusta o governo francês estabelecem uma nova dinâmica competitiva nos mercados do caderno de Mundo. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "Economia": [
+   {
+    "titulo": "Executiva Shivon Zilis diz que seu relacionamento com Elon Musk terminou: 'Vou sentir falta dele'",
+    "link": "https://g1.globo.com/tecnologia/noticia/2026/10/02/shivon-zilis-e-elon-musk.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/fErOYQ7XLFtmdOT39R8ApV25V_w=/1920x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/H/r/e20zxiTga3GZEx6UVmNw/fotojet-18-.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Executiva Shivon Zilis diz que seu relacionamento com Elon Musk terminou: 'Vou sentir falta dele' estabelecem uma nova dinâmica competitiva nos mercados do caderno de Economia. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   },
+   {
+    "titulo": "Tesla sobe 5% após superar previsão de entregas, e fortuna de Elon Musk encosta em US$ 1 trilhão",
+    "link": "https://g1.globo.com/carros/noticia/2026/10/02/acoes-tesla-entregas.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/YFEp3AU7grXnry8CYtPK1WXXSO0=/6000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/C/k/mBtBn9TJioHYjW6MvbYQ/2026-09-16t181334z-98470375-rc2gknaiuwjj-rtrmadp-3-usa-tesla.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Tesla sobe 5% após superar previsão de entregas, e fortuna de Elon Musk encosta em US$ 1 trilhão estabelecem uma nova dinâmica competitiva nos mercados do caderno de Economia. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "Politica": [
+   {
+    "titulo": "PF cumpre dois mandados de busca e apreensão em investigação sobre suposto plano contra embaixada dos EUA",
+    "link": "https://g1.globo.com/politica/noticia/2026/10/02/pf-cumpre-dois-mandados-de-busca-e-apreensao-em-investigacao-sobre-suposto-plano-contra-embaixada-dos-eua.ghtml",
+    "imagem": "https://s2-redeglobo.glbimg.com/jPcIdGffblcuKu9H6sChYajhvb0=/600x450/smart/filters:quality(70)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/a/x/9xrcERRUeijQNmTAa4Vg/g1-animal1.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a PF cumpre dois mandados de busca e apreensão em investigação sobre suposto plano contra embaixada dos EUA estabelecem uma nova dinâmica competitiva nos mercados do caderno de Politica. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   },
+   {
+    "titulo": "Lula reúne apoiadores em ato no Centro do Rio",
+    "link": "https://g1.globo.com/rj/rio-de-janeiro/eleicoes/2026/noticia/2026/10/02/lula-reune-apoiadores-em-ato-no-centro-do-rio.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/qqIeprFHIMdENQkCEDqTPOYj6x0=/1920x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/B/1/vc0y1qQyCWOjyoB4O08A/lula4.jpeg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Lula reúne apoiadores em ato no Centro do Rio estabelecem uma nova dinâmica competitiva nos mercados do caderno de Politica. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "IA": [
+   {
+    "titulo": "Fortuna do dono da Nvidia ultrapassa US$ 200 bilhões após ações da empresa baterem recorde",
+    "link": "https://g1.globo.com/economia/noticia/2026/10/02/fortuna-do-dono-da-nvidia-ultrapassa-us-200-bilhoes-apos-acoes-da-empresa-baterem-recorde.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/wBvnCg7E58BhPvcQNnH4NENA8YE=/3000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/s/M/9iwVUlTBA6AkePoqPpFw/2026-06-01t060552z-1882264511-rc2sklaz5xtp-rtrmadp-3-computex-nvidia-keynote.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Fortuna do dono da Nvidia ultrapassa US$ 200 bilhões após ações da empresa baterem recorde estabelecem uma nova dinâmica competitiva nos mercados do caderno de IA. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   },
+   {
+    "titulo": "Trump deve nomear Jay Clayton, atual diretor de espionagem, como 'czar' da inteligência artificial, diz TV",
+    "link": "https://g1.globo.com/tecnologia/noticia/2026/10/02/trump-czar-ia.ghtml",
+    "imagem": "https://s2-g1.glbimg.com/dfXwjR2Et0uXsCvlkqVDCGaQUIo=/4792x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/f/e/rovmbsRDahqEjGLnvZVg/afp-20260929-2297760264-v1-highres-presidenttrumpmeetswithaiexecutivesatwhiteho.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Trump deve nomear Jay Clayton, atual diretor de espionagem, como 'czar' da inteligência artificial, diz TV estabelecem uma nova dinâmica competitiva nos mercados do caderno de IA. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "Wellness": [
+   {
+    "titulo": "Qual a diferença entre semaglutida e tirzepatida?",
+    "link": "https://boaforma.abril.com.br/coluna/boa-forma-responde/semaglutida-tirzepatida-diferencas/",
+    "imagem": "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/Qual-a-diferenca-entre-semaglutida-e-tirzepatida.jpg?quality=95&strip=info&resize=1200,630&crop=1",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Qual a diferença entre semaglutida e tirzepatida? estabelecem uma nova dinâmica competitiva nos mercados do caderno de Wellness. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "Ciencia": [
+   {
+    "titulo": "Os pandas podem voltar a ser carnívoros?",
+    "link": "https://super.abril.com.br/coluna/oraculo/os-pandas-podem-voltar-a-ser-carnivoros/",
+    "imagem": "https://super.abril.com.br/wp-content/uploads/2026/09/SI_491_Oraculo_Pandas.jpg?quality=70&strip=info&resize=1200,630&crop=1",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Os pandas podem voltar a ser carnívoros? estabelecem uma nova dinâmica competitiva nos mercados do caderno de Ciencia. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "Cinema": [
+   {
+    "titulo": "O experimento COMEÇA no teaser inédito de ‘Pequenos Profetas’, nova comédia do Apple TV",
+    "link": "https://cinepop.com.br/o-experimento-comeca-no-teaser-inedito-de-pequenos-profetas-nova-comedia-do-apple-tv-768910/",
+    "imagem": "https://cinepop.com.br/wp-content/uploads/2026/08/Small-Prophets.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a O experimento COMEÇA no teaser inédito de ‘Pequenos Profetas’, nova comédia do Apple TV estabelecem uma nova dinâmica competitiva nos mercados do caderno de Cinema. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   },
+   {
+    "titulo": "Série baseada em ‘Velozes e Furiosos’ ganha SINAL VERDE na Peacock",
+    "link": "https://cinepop.com.br/serie-baseada-em-velozes-e-furiosos-ganha-sinal-verde-na-peacock-768908/",
+    "imagem": "https://cinepop.com.br/wp-content/uploads/2026/07/velozes-e-furiosos-1.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Série baseada em ‘Velozes e Furiosos’ ganha SINAL VERDE na Peacock estabelecem uma nova dinâmica competitiva nos mercados do caderno de Cinema. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ],
+  "Fofoca": [
+   {
+    "titulo": "Carol Lekker culpa Dudu Camargo após anunciar ao vivo morte de Rick para Adryana Ribeiro, e expõe ligação: “Eu fui na sua”; ouça",
+    "link": "https://hugogloss.uol.com.br/tv/realities/a-fazenda/carol-lekker-culpa-dudu-camargo-apos-anunciar-ao-vivo-morte-de-rick-para-adryana-ribeiro-e-expoe-ligacao-eu-fui-na-sua-ouca/",
+    "imagem": "https://media.hugogloss.uol.com.br/uploads/2026/10/FotoJet-2026-10-02T142329.412.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Carol Lekker culpa Dudu Camargo após anunciar ao vivo morte de Rick para Adryana Ribeiro, e expõe ligação: “Eu fui na sua”; ouça estabelecem uma nova dinâmica competitiva nos mercados do caderno de Fofoca. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   },
+   {
+    "titulo": "Jornalista expõe atitude perturbadora de Christa Pike durante execução malsucedida: “Melhor sono de sua vida”",
+    "link": "https://hugogloss.uol.com.br/mundo/jornalista-expoe-atitude-perturbadora-de-christa-pike-durante-execucao-malsucedida-melhor-sono-de-sua-vida/",
+    "imagem": "https://media.hugogloss.uol.com.br/uploads/2026/10/FotoJet-2026-10-01T170821.461.jpg",
+    "resumo": "O desenvolvimento institucional e os acordos estratégicos vinculados a Jornalista expõe atitude perturbadora de Christa Pike durante execução malsucedida: “Melhor sono de sua vida” estabelecem uma nova dinâmica competitiva nos mercados do caderno de Fofoca. A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
+   }
+  ]
+ }
 }
