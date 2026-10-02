@@ -3,861 +3,1078 @@ export const prerender = false;
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="ANJ — Cockpit Executivo & HITL" description="Painel de Controle e Governança Agêntica do All News Journal">
-  <main class="min-h-screen pb-28 text-slate-100 bg-[#0B0F14]">
+<Layout title="ANJ — Mission Control Center | All News Journal" description="Cockpit Executivo & Governança Agêntica Multimodal">
+  <main class="min-h-screen pb-24 lg:pb-12 text-slate-100 bg-[#070A0F] font-sans selection:bg-amber-500 selection:text-slate-950">
     
-    <!-- HEADER FIXO SUPERIOR -->
-    <header class="sticky top-0 z-40 bg-[#0B0F14]/90 backdrop-blur-md border-b border-white/10 px-4 py-3">
-      <div class="max-w-xl mx-auto flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xs">
-            ANJ
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h1 class="text-sm font-semibold tracking-wide font-editorial text-white">ALL NEWS JOURNAL</h1>
-              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
-              </span>
-            </div>
-            <p class="text-[10px] text-slate-400">Cockpit Executivo & HITL Founder Gate</p>
-          </div>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button id="btn-refresh" title="Recarregar dados" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          </button>
-          <button id="btn-lock" title="Bloquear tela" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors border border-white/5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- TOAST DE NOTIFICAÇÃO -->
-    <div id="toast" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] max-w-sm w-[90%] px-4 py-3 rounded-xl border text-xs font-medium shadow-2xl flex items-center gap-2.5">
-      <span id="toast-icon">ℹ️</span>
-      <span id="toast-msg">Mensagem</span>
-    </div>
-
-    <!-- TELA DE AUTENTICAÇÃO POR PIN (MODAL OVERLAY) -->
-    <div id="pin-screen" class="fixed inset-0 z-50 bg-[#0B0F14] flex flex-col items-center justify-center p-6 transition-opacity duration-300">
-      <div class="w-full max-w-xs text-center">
-        <div class="w-16 h-16 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-4 text-blue-400">
-          <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        </div>
-        <h2 class="text-xl font-bold font-editorial text-white mb-1">Acesso do Fundador</h2>
-        <p class="text-xs text-slate-400 mb-5">Digite o PIN executivo de 4 dígitos para gerenciar a publicação</p>
-
-        <!-- CAMPO DE DIGITAÇÃO DIRETA (FÍSICO OU TECLADO DO CELULAR) -->
-        <div class="relative max-w-[260px] mx-auto mb-4">
-          <input 
-            id="pin-native-input" 
-            type="password" 
-            inputmode="numeric" 
-            pattern="[0-9]*" 
-            maxlength="4" 
-            autocomplete="one-time-code" 
-            placeholder="••••" 
-            class="w-full text-center tracking-[0.6em] font-mono text-3xl font-bold py-3 px-4 rounded-xl bg-[#131B26] border-2 border-white/20 text-white placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all shadow-inner"
-            autofocus
-          />
-          <p class="text-[11px] text-slate-400 mt-2">Digite no teclado ou clique nos botões abaixo</p>
-        </div>
-
-        <!-- TECLADO NUMÉRICO MOBILE (COMPLEMENTAR) -->
-        <div class="grid grid-cols-3 gap-2.5 max-w-[260px] mx-auto mb-3">
-          { [1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
-            <button type="button" class="pin-btn h-12 rounded-xl bg-[#131B26] border border-white/10 text-lg font-semibold text-white hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-95 transition-all" data-val={num}>
-              {num}
-            </button>
-          )) }
-          <button type="button" class="pin-btn h-12 rounded-xl bg-transparent text-xs text-slate-400 font-semibold hover:text-white transition-colors" data-action="clear">LIMPAR</button>
-          <button type="button" class="pin-btn h-12 rounded-xl bg-[#131B26] border border-white/10 text-lg font-semibold text-white hover:bg-blue-600/20 hover:border-blue-500/40 active:scale-95 transition-all" data-val="0">0</button>
-          <button type="button" class="pin-btn h-12 rounded-xl bg-transparent text-slate-400 flex items-center justify-center active:scale-95 transition-all hover:text-white" data-action="backspace">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2M3 12l6.414-6.414A2 2 0 0110.828 5H19a2 2 0 012 2v10a2 2 0 01-2 2h-8.172a2 2 0 01-1.414-.586L3 12z"/></svg>
-          </button>
-        </div>
-
-        <!-- BOTÃO DE ATALHO RÁPIDO -->
-        <div class="mb-3">
-          <button type="button" id="btn-quick-pin" class="text-xs text-blue-400 hover:text-blue-300 font-medium px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 transition-all">
-            ⚡ Preencher PIN 2026
-          </button>
-        </div>
-
-        <p id="pin-error" class="text-xs text-rose-400 font-medium min-h-[18px]"></p>
-      </div>
-    </div>
-
-    <!-- CONTEÚDO PRINCIPAL (3 ABAS) -->
-    <div id="admin-content" class="max-w-xl mx-auto px-4 pt-4 hidden">
-      
-      <!-- =================================================================== -->
-      <!-- ABA 1: 🚀 APROVAÇÃO & EDIÇÃO DO DIA                                 -->
-      <!-- =================================================================== -->
-      <section id="tab-edicao" class="tab-pane space-y-4">
+    <!-- =================================================================== -->
+    <!-- 1. TELA DE AUTENTICAÇÃO POR PIN (MODAL EXECUTIVO FULLSCREEN)        -->
+    <!-- =================================================================== -->
+    <div id="pin-screen" class="fixed inset-0 z-50 bg-[#070A0F]/95 backdrop-blur-xl flex items-center justify-center p-4 transition-all duration-300">
+      <div class="w-full max-w-sm rounded-3xl bg-[#0D131C] border border-white/10 p-6 md:p-8 shadow-2xl text-center space-y-6">
         
-        <!-- CONTAINER DE ALERTA DE CADERNOS SUPRIMIDOS (QUALITY GATE) -->
-        <div id="container-alertas-cadernos" class="hidden space-y-3"></div>
-
-        <!-- CARD DA EDIÇÃO -->
-        <div class="bg-[#131B26] border border-white/10 rounded-2xl overflow-hidden shadow-xl">
-          <!-- HEADER DO CARD -->
-          <div class="p-4 border-b border-white/5 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span id="badge-caderno" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                Economia
-              </span>
-              <span id="label-data" class="text-xs text-slate-400">Edição de Hoje</span>
-            </div>
-            <span id="badge-status-edicao" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              Aguardando Founder
-            </span>
-          </div>
-
-          <!-- IMAGEM DE CAPA COM VISUALIZADOR RESPONSIVO -->
-          <div class="relative w-full aspect-video bg-black/40 overflow-hidden border-b border-white/5">
-            <img id="edicao-capa" src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=800&h=450&fit=crop" alt="Capa Editorial" class="w-full h-full object-cover" />
-            <div class="absolute bottom-2 right-2 px-2 py-1 rounded bg-black/70 backdrop-blur-sm text-[10px] font-mono text-white/80 border border-white/10">
-              Slide 1 • Capa Clássica
-            </div>
-          </div>
-
-          <!-- CORPO EDITORIAL -->
-          <div class="p-4 space-y-3">
-            <h2 id="edicao-titulo" class="text-lg font-bold font-editorial text-white leading-snug">
-              Carregando pauta nobre selecionada pelo Planner...
-            </h2>
-
-            <!-- PLAYER NATIVO DE ÁUDIO -->
-            <div class="bg-[#0B0F14] border border-white/5 p-3 rounded-xl space-y-1.5">
-              <div class="flex items-center justify-between text-[11px] text-slate-400">
-                <span class="flex items-center gap-1.5 font-medium text-slate-300">
-                  <span>🎙️</span> Podcast Diário (Leo & Ana)
-                </span>
-                <span class="text-[10px] text-blue-400">Áudio Sintético</span>
-              </div>
-              <audio id="edicao-audio" controls class="w-full h-8" preload="none">
-                <source src="/audio/latest.mp3" type="audio/mpeg" />
-                Seu navegador não suporta áudio HTML5.
-              </audio>
-            </div>
-
-            <!-- TEXTO DO RESUMO -->
-            <div class="bg-[#0B0F14]/70 p-3.5 rounded-xl border border-white/5 space-y-2">
-              <div class="flex items-center justify-between">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Texto Oficial do Resumo</span>
-                <!-- BADGE DE EXTENSÃO (85-105 PALAVRAS) -->
-                <span id="badge-word-count" class="px-2 py-0.5 rounded text-[10px] font-bold border transition-colors bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
-                  -- palavras • Compliance Jev
-                </span>
-              </div>
-              <p id="edicao-resumo" class="text-xs text-slate-300 leading-relaxed font-sans select-text">
-                Carregando texto do Writer...
-              </p>
-            </div>
-
-            <!-- PARECER DO QUALITY GATE / AI SUPERVISOR -->
-            <div class="bg-purple-950/20 border border-purple-500/20 p-3 rounded-xl text-xs space-y-1">
-              <div class="flex items-center gap-1.5 font-semibold text-purple-300">
-                <span>⚖️</span> Jev Quality Gate & Supervisor
-              </div>
-              <p id="edicao-critic" class="text-[11px] text-slate-300 leading-relaxed">
-                Verificando conformidade editorial...
-              </p>
-            </div>
-          </div>
-
-          <!-- BOTÃO GIGANTE DE APROVAÇÃO (HITL) -->
-          <div class="p-4 bg-gradient-to-t from-black/40 to-transparent border-t border-white/5">
-            <button id="btn-aprovar-hitl" class="w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2">
-              <span class="text-base">✅</span> APROVAR E DISPARAR EDIÇÃO
-            </button>
-          </div>
+        <!-- Brand Icon -->
+        <div class="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500/20 to-blue-600/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-serif font-black text-2xl shadow-lg shadow-amber-500/10">
+          AN
         </div>
 
-      </section>
-
-      <!-- =================================================================== -->
-      <!-- ABA 2: 🛡️ REDE DE AGENTES & SEGURANÇA                               -->
-      <!-- =================================================================== -->
-      <section id="tab-agentes" class="tab-pane hidden space-y-4">
-        
-        <!-- PAINEL DE EMERGÊNCIA & KILL SWITCH -->
-        <div class="bg-red-950/20 border border-red-500/30 rounded-2xl p-4 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="text-lg">🚨</span>
-              <div>
-                <h3 class="text-xs font-bold uppercase tracking-wider text-red-400">Controle de Emergência</h3>
-                <p class="text-[11px] text-slate-400">Suspender ou forçar publicações</p>
-              </div>
-            </div>
-            
-            <!-- TOGGLE SWITCH DO KILL SWITCH -->
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" id="toggle-kill-switch" class="sr-only peer" />
-              <div class="w-12 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
-            </label>
-          </div>
-
-          <div class="pt-2 border-t border-red-500/20 flex gap-2">
-            <button id="btn-forcar-x" class="flex-1 py-2.5 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 flex items-center justify-center gap-1.5 transition-colors active:scale-95">
-              <span>🐦</span> Forçar Publicação no X
-            </button>
-          </div>
-        </div>
-
-        <!-- STATUS DOS 5 AGENTES -->
-        <div class="space-y-2">
-          <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-1">Topologia dos 5 Agentes Autônomos</h3>
-          
-          <div id="agentes-list" class="space-y-2">
-            <!-- AGENTE JOURNAL -->
-            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="journal">
-              <div class="flex items-center gap-3">
-                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
-                <div>
-                  <h4 class="text-xs font-semibold text-white">All News Journal</h4>
-                  <p class="agent-detail text-[10px] text-slate-400">Edição matinal diária</p>
-                </div>
-              </div>
-              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ONLINE</span>
-            </div>
-
-            <!-- AGENTE FINANCE -->
-            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="finance">
-              <div class="flex items-center gap-3">
-                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
-                <div>
-                  <h4 class="text-xs font-semibold text-white">All News Finance</h4>
-                  <p class="agent-detail text-[10px] text-slate-400">Mercados e macroeconomia</p>
-                </div>
-              </div>
-              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ONLINE</span>
-            </div>
-
-            <!-- AGENTE INSTAGRAM -->
-            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="instagram">
-              <div class="flex items-center gap-3">
-                <span class="agent-pulse w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-400"></span>
-                <div>
-                  <h4 class="text-xs font-semibold text-white">Instagram Daily Poster</h4>
-                  <p class="agent-detail text-[10px] text-slate-400">Agendado para 09:15 BRT</p>
-                </div>
-              </div>
-              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">SCHEDULED</span>
-            </div>
-
-            <!-- AGENTE SUPERVISOR -->
-            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="supervisor">
-              <div class="flex items-center gap-3">
-                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
-                <div>
-                  <h4 class="text-xs font-semibold text-white">AI Quality Supervisor</h4>
-                  <p class="agent-detail text-[10px] text-slate-400">Auditoria cognitiva & Jev Gatekeeper</p>
-                </div>
-              </div>
-              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ONLINE</span>
-            </div>
-
-            <!-- AGENTE WATCHDOG -->
-            <div class="agent-card bg-[#131B26] border border-white/10 rounded-xl p-3.5 flex items-center justify-between" data-agent="watchdog">
-              <div class="flex items-center gap-3">
-                <span class="agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400"></span>
-                <div>
-                  <h4 class="text-xs font-semibold text-white">Watchdog Sentinela</h4>
-                  <p class="agent-detail text-[10px] text-slate-400">Autocura e monitoramento de SLA</p>
-                </div>
-              </div>
-              <span class="agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- ACORDEÃO EDITOR RÁPIDO DE PROMPTS (INNER HARNESS) -->
-        <div class="bg-[#131B26] border border-white/10 rounded-2xl p-4 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Editor Rápido de Prompts</h3>
-              <p class="text-[10px] text-slate-400">Ajuste o Inner Harness dos nós sem abrir código no PC</p>
-            </div>
-            <span class="text-xs">✍️</span>
-          </div>
-
-          <!-- WRITER ACCORDION -->
-          <details class="group bg-[#0B0F14] border border-white/5 rounded-xl p-3">
-            <summary class="flex justify-between items-center cursor-pointer list-none text-xs font-semibold text-blue-400">
-              <span>Nó Writer (Editor Executivo)</span>
-              <span class="group-open:rotate-180 transition-transform">▼</span>
-            </summary>
-            <div class="mt-2.5 space-y-2">
-              <textarea id="prompt-writer-input" rows="4" class="w-full bg-[#131B26] border border-white/10 rounded-lg p-2.5 text-[11px] text-slate-200 font-mono focus:border-blue-500 focus:outline-none"></textarea>
-              <button data-no="writer" class="btn-save-prompt w-full py-1.5 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-400 hover:bg-blue-600 hover:text-white text-xs font-semibold transition-all">
-                Salvar Prompt do Writer
-              </button>
-            </div>
-          </details>
-
-          <!-- CRITIC ACCORDION -->
-          <details class="group bg-[#0B0F14] border border-white/5 rounded-xl p-3">
-            <summary class="flex justify-between items-center cursor-pointer list-none text-xs font-semibold text-purple-400">
-              <span>Nó Critic (Jev Gatekeeper)</span>
-              <span class="group-open:rotate-180 transition-transform">▼</span>
-            </summary>
-            <div class="mt-2.5 space-y-2">
-              <textarea id="prompt-critic-input" rows="4" class="w-full bg-[#131B26] border border-white/10 rounded-lg p-2.5 text-[11px] text-slate-200 font-mono focus:border-purple-500 focus:outline-none"></textarea>
-              <button data-no="critic" class="btn-save-prompt w-full py-1.5 rounded-lg bg-purple-600/20 border border-purple-500/40 text-purple-400 hover:bg-purple-600 hover:text-white text-xs font-semibold transition-all">
-                Salvar Prompt do Critic
-              </button>
-            </div>
-          </details>
-        </div>
-
-      </section>
-
-      <!-- =================================================================== -->
-      <!-- ABA 3: 📊 CRESCIMENTO & MÉTRICAS                                    -->
-      <!-- =================================================================== -->
-      <section id="tab-metricas" class="tab-pane hidden space-y-4">
-        
-        <!-- NORTH STAR METRIC (EDR) -->
-        <div class="bg-gradient-to-br from-[#131B26] to-[#162438] border border-blue-500/20 rounded-2xl p-5 shadow-xl relative overflow-hidden">
-          <div class="absolute -right-4 -bottom-4 text-7xl opacity-5 pointer-events-none">📈</div>
-          <div class="flex items-center justify-between mb-1">
-            <span class="text-[11px] font-bold uppercase tracking-wider text-blue-400">North Star Metric</span>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/20">
-              Diário
-            </span>
-          </div>
-          <div class="flex items-baseline gap-2 mb-2">
-            <h2 id="metric-edr" class="text-3xl font-extrabold text-white">689</h2>
-            <span class="text-xs text-slate-400 font-medium">Engaged Daily Readers (EDR)</span>
-          </div>
-          <p class="text-[11px] text-slate-400 leading-relaxed">
-            Métrica central calculada como <code class="text-blue-300">Base Ativa × Taxa de Abertura Única</code>.
+        <div>
+          <span class="text-[10px] font-mono tracking-widest text-amber-400 uppercase font-semibold">
+            All News Journal
+          </span>
+          <h2 class="text-xl font-bold text-white tracking-tight font-serif mt-1">
+            Mission Control Center
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Autenticação restrita ao Fundador & Editor Executivo
           </p>
         </div>
 
-        <!-- CARDS DE ASSINANTES E RESEND -->
-        <div class="grid grid-cols-2 gap-3">
-          <div class="bg-[#131B26] border border-white/10 rounded-xl p-3.5 space-y-1">
-            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Base de Assinantes</span>
-            <div id="metric-base" class="text-xl font-bold text-white">1.472</div>
-            <p class="text-[10px] text-emerald-400 font-medium">+84 nos últimos 7 dias</p>
+        <!-- Formulário com Input Nativo -->
+        <form id="pin-form" class="space-y-4" onsubmit="event.preventDefault(); window.submitPin();">
+          <div class="relative">
+            <input
+              id="pin-native-input"
+              type="password"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="6"
+              autocomplete="one-time-code"
+              placeholder="Digite o PIN (2026)"
+              class="w-full text-center tracking-[0.4em] font-mono text-2xl font-bold py-3 px-4 rounded-xl bg-[#141C28] border-2 border-white/15 text-white placeholder-slate-600 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all shadow-inner"
+              autofocus
+            />
           </div>
-          <div class="bg-[#131B26] border border-white/10 rounded-xl p-3.5 space-y-1">
-            <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Taxa de Abertura (Resend)</span>
-            <div id="metric-abertura" class="text-xl font-bold text-white">46.8%</div>
-            <p class="text-[10px] text-blue-400 font-medium">Benchmark: 42.0%</p>
+
+          <p id="pin-error" class="text-xs text-rose-400 font-medium min-h-[16px] transition-all"></p>
+
+          <button
+            id="btn-pin-submit"
+            type="submit"
+            class="w-full py-3 px-4 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>Desbloquear Cockpit</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </button>
+        </form>
+
+        <!-- Teclado Touch Mobile (Opcional / Acessibilidade) -->
+        <div class="pt-2 border-t border-white/5 space-y-2">
+          <div class="grid grid-cols-3 gap-1.5 max-w-[220px] mx-auto">
+            { [1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+              <button type="button" class="pin-touch-btn h-10 rounded-lg bg-[#141C28] hover:bg-white/10 active:scale-95 text-sm font-semibold text-white transition-all" data-val={num}>
+                {num}
+              </button>
+            )) }
+            <button type="button" class="pin-touch-btn h-10 rounded-lg bg-transparent hover:bg-white/5 text-[10px] text-slate-400 font-semibold" data-action="clear">Limpar</button>
+            <button type="button" class="pin-touch-btn h-10 rounded-lg bg-[#141C28] hover:bg-white/10 active:scale-95 text-sm font-semibold text-white transition-all" data-val="0">0</button>
+            <button type="button" class="pin-touch-btn h-10 rounded-lg bg-transparent hover:bg-white/5 text-slate-400 flex items-center justify-center" data-action="backspace">⌫</button>
           </div>
+
+          <!-- Botão de Preenchimento Rápido 1-Clique -->
+          <button
+            type="button"
+            id="btn-quick-pin"
+            class="w-full text-xs text-amber-300 hover:text-amber-200 font-medium py-2 px-3 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-2"
+          >
+            <span>⚡</span>
+            <span>Preenchimento Rápido (PIN 2026)</span>
+          </button>
         </div>
 
-        <!-- FUNIL DE CONVERSÃO -->
-        <div class="bg-[#131B26] border border-white/10 rounded-2xl p-4 shadow-xl space-y-3">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Funil de Tração Editorial</h3>
-            <span class="text-[10px] text-slate-400">Últimos 30 dias</span>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- 2. COCKPIT PRINCIPAL (HABILITADO APÓS AUTH)                         -->
+    <!-- =================================================================== -->
+    <div id="admin-content" class="hidden">
+      
+      <!-- TOAST DE NOTIFICAÇÃO FIXO -->
+      <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-0 translate-y-[-10px] max-w-sm w-[90%] px-4 py-2.5 rounded-2xl border text-xs font-semibold shadow-2xl flex items-center gap-2">
+        <span id="toast-icon">✓</span>
+        <span id="toast-msg">Notificação</span>
+      </div>
+
+      <!-- HEADER FIXO SUPERIOR -->
+      <header class="sticky top-0 z-40 bg-[#070A0F]/90 backdrop-blur-xl border-b border-white/10 px-4 sm:px-8 py-3.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          
+          <!-- Logo & Status -->
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-serif font-bold text-base shadow-lg shadow-amber-500/10">
+              AN
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-sm sm:text-base font-bold text-white tracking-tight font-serif">
+                  ALL NEWS JOURNAL
+                </h1>
+                <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  MISSION CONTROL
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-400 hidden sm:block">
+                Cockpit Executivo & Governança Agêntica Multimodal
+              </p>
+            </div>
           </div>
 
-          <div class="space-y-2.5">
-            <div>
-              <div class="flex justify-between text-[11px] mb-1">
-                <span class="text-slate-400">1. Alcance Social (X / Instagram)</span>
-                <span class="font-bold text-white">24.850</span>
+          <!-- Controles Rápidos -->
+          <div class="flex items-center gap-2">
+            <span id="clock-display" class="hidden md:inline-block font-mono text-[11px] text-slate-400 px-2 py-1 rounded bg-white/5 border border-white/5">
+              --:-- BRT
+            </span>
+            <button
+              id="btn-refresh"
+              title="Recarregar Telemetria"
+              class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/5 transition-all cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button
+              id="btn-lock"
+              title="Bloquear Painel"
+              class="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-white/5 hover:border-rose-500/30 transition-all cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Barra de Navegação Desktop (4 Abas Claras) -->
+        <div class="max-w-7xl mx-auto mt-3 border-t border-white/5 pt-2">
+          <nav class="flex space-x-1 sm:space-x-2 overflow-x-auto scrollbar-none py-1">
+            <button class="tab-btn active px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-lg shadow-amber-500/10" data-tab="metrics">
+              <span>📊</span>
+              <span>Visão Geral & Métricas</span>
+            </button>
+            <button class="tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-tab="graph">
+              <span>🕸️</span>
+              <span>Grafo de Agentes</span>
+            </button>
+            <button class="tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-tab="curation">
+              <span>✍️</span>
+              <span>Curadoria de Conteúdo</span>
+            </button>
+            <button class="tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent" data-tab="flash">
+              <span>⚡</span>
+              <span>Flash News (Disparo)</span>
+            </button>
+          </nav>
+        </div>
+      </header>
+
+      <!-- CONTEÚDO DAS 4 ABAS -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-8 pt-6">
+        
+        <!-- ================================================================= -->
+        <!-- ABA 1: 📊 VISÃO GERAL & MÉTRICAS                                  -->
+        <!-- ================================================================= -->
+        <section id="pane-metrics" class="tab-pane space-y-6">
+          
+          <!-- North Star Metric (EDR) -->
+          <div class="rounded-3xl bg-gradient-to-br from-[#0E1522] via-[#131B26] to-[#0A0E17] border border-amber-500/30 p-6 md:p-8 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-8 -bottom-8 w-48 h-48 bg-amber-500/10 blur-[90px] rounded-full pointer-events-none"></div>
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div>
+                <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-amber-500/10 text-amber-300 border border-amber-500/20 uppercase tracking-widest mb-2">
+                  <span>★</span> NORTH STAR METRIC DO ALL NEWS JOURNAL
+                </div>
+                <div class="flex items-baseline gap-3">
+                  <h2 id="metric-edr-hero" class="text-4xl sm:text-5xl font-extrabold text-white font-serif">689</h2>
+                  <span class="text-sm sm:text-base font-semibold text-amber-400">Engaged Daily Readers (EDR)</span>
+                </div>
+                <p class="text-xs text-slate-400 mt-2 max-w-xl leading-relaxed">
+                  Calculado matematicamente como <code class="text-amber-300">Base Ativa × Taxa de Abertura Única</code>. Representa os leitores fiéis que consom a edição analítica completa diariamente.
+                </p>
               </div>
-              <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
-                <div class="h-full bg-blue-600 rounded-full" style="width: 100%"></div>
+              <div class="shrink-0 flex items-center gap-3">
+                <div class="p-4 rounded-2xl bg-black/40 border border-white/5 text-center">
+                  <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block">Benchmark de Mercado</span>
+                  <span class="text-xl font-bold text-slate-300">42.0%</span>
+                  <span class="text-[10px] text-emerald-400 font-semibold block mt-0.5">ANJ: +4.8% acima</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- KPI Cards Grid (6 Métricas Fundamentais) -->
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-4 space-y-1">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Base Total</span>
+              <div id="kpi-base-total" class="text-2xl font-bold text-white font-mono">1.480</div>
+              <p class="text-[10px] text-emerald-400 font-medium">+84 nos 7d</p>
+            </div>
+            <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-4 space-y-1">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Base Ativa</span>
+              <div id="kpi-base-ativa" class="text-2xl font-bold text-white font-mono">1.472</div>
+              <p class="text-[10px] text-slate-400 font-medium">99.4% entregabilidade</p>
+            </div>
+            <div class="rounded-2xl bg-[#0D131C] border border-emerald-500/20 p-4 space-y-1 bg-emerald-950/10">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-emerald-400">Taxa de Abertura</span>
+              <div id="kpi-abertura" class="text-2xl font-bold text-emerald-300 font-mono">46.8%</div>
+              <p class="text-[10px] text-emerald-400 font-medium">Resend Live API</p>
+            </div>
+            <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-4 space-y-1">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Cliques (CTR)</span>
+              <div id="kpi-ctr" class="text-2xl font-bold text-sky-400 font-mono">7.4%</div>
+              <p class="text-[10px] text-slate-400 font-medium">108 cliques/ed.</p>
+            </div>
+            <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-4 space-y-1">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Alcance Semanal</span>
+              <div class="text-2xl font-bold text-purple-400 font-mono">24.8k</div>
+              <p class="text-[10px] text-slate-400 font-medium">X & Instagram</p>
+            </div>
+            <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-4 space-y-1">
+              <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Conv. Vitrine</span>
+              <div class="text-2xl font-bold text-amber-400 font-mono">4.56%</div>
+              <p class="text-[10px] text-slate-400 font-medium">Landing Page</p>
+            </div>
+          </div>
+
+          <!-- Funil de Tração Visual & Matriz dos 8 Cadernos (Grid 2 Colunas) -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Funil de Tração (5 cols) -->
+            <div class="lg:col-span-5 rounded-2xl bg-[#0D131C] border border-white/10 p-5 space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-white">Funil de Tração Editorial</h3>
+                  <p class="text-[10px] text-slate-400">Conversão de tráfego social em leitores recorrentes</p>
+                </div>
+                <span class="text-xs">📈</span>
+              </div>
+
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-slate-400">1. Alcance Social (X / Instagram)</span>
+                    <span class="font-bold text-white font-mono">24.850</span>
+                  </div>
+                  <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div class="h-full bg-blue-500 rounded-full w-full"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-slate-400">2. Cliques em Links com UTM</span>
+                    <span class="font-bold text-sky-400 font-mono">1.840 (7.4%)</span>
+                  </div>
+                  <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div class="h-full bg-sky-500 rounded-full" style="width: 32%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-slate-400">3. Novos Assinantes Confirmados</span>
+                    <span class="font-bold text-emerald-400 font-mono">84 (Conv: 4.56%)</span>
+                  </div>
+                  <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div class="h-full bg-emerald-500 rounded-full" style="width: 14%"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-xs mb-1.5">
+                    <span class="text-slate-400">4. Leitores Diários Fiéis (EDR)</span>
+                    <span class="font-bold text-amber-400 font-mono">689 (Retenção 46.8%)</span>
+                  </div>
+                  <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
+                    <div class="h-full bg-amber-500 rounded-full" style="width: 48%"></div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div>
-              <div class="flex justify-between text-[11px] mb-1">
-                <span class="text-slate-400">2. Cliques em Links com UTM</span>
-                <span class="font-bold text-white">1.840 (7.4%)</span>
+            <!-- Matriz de Performance dos 8 Cadernos (7 cols) -->
+            <div class="lg:col-span-7 rounded-2xl bg-[#0D131C] border border-white/10 p-5 space-y-3">
+              <div class="flex items-center justify-between pb-3 border-b border-white/5">
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-white">Desempenho dos 8 Cadernos</h3>
+                  <p class="text-[10px] text-slate-400">Métricas de leitura e interesse por editoria</p>
+                </div>
+                <span class="text-[10px] font-mono text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 font-semibold">
+                  AUDITADO
+                </span>
               </div>
-              <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
-                <div class="h-full bg-indigo-500 rounded-full" style="width: 25%"></div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="text-[10px] font-semibold uppercase text-slate-400 border-b border-white/5">
+                    <tr>
+                      <th class="pb-2">Caderno</th>
+                      <th class="pb-2">Leituras</th>
+                      <th class="pb-2">Abertura</th>
+                      <th class="pb-2">CTR</th>
+                      <th class="pb-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cadernos-perf-tbody" class="divide-y divide-white/5 text-slate-200">
+                    <!-- Preenchido dinamicamente via JS -->
+                  </tbody>
+                </table>
               </div>
             </div>
 
-            <div>
-              <div class="flex justify-between text-[11px] mb-1">
-                <span class="text-slate-400">3. Novos Assinantes Confirmados</span>
-                <span class="font-bold text-emerald-400">84 (Conv: 4.56%)</span>
-              </div>
-              <div class="h-2 rounded-full bg-slate-800 overflow-hidden">
-                <div class="h-full bg-emerald-500 rounded-full" style="width: 12%"></div>
-              </div>
+          </div>
+
+          <!-- Top 5 Matérias Mais Engajadas -->
+          <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-5 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/5">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-white">Top 5 Matérias com Maior Engajamento da Semana</h3>
+              <span class="text-xs">🏆</span>
+            </div>
+            <div id="top-posts-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <!-- Preenchido dinamicamente via JS -->
             </div>
           </div>
-        </div>
 
-        <!-- TABELA DE AUDITORIA DE DISPAROS RESEND -->
-        <div class="bg-[#131B26] border border-white/10 rounded-2xl p-4 shadow-xl space-y-2.5">
-          <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-200">Auditoria de Disparos Recentes</h3>
-            <span class="text-[10px] text-emerald-400 font-semibold">Resend API Live</span>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- ABA 2: 🕸️ GRAFO DE AGENTES                                        -->
+        <!-- ================================================================= -->
+        <section id="pane-graph" class="tab-pane hidden space-y-6">
+          
+          <div class="rounded-2xl bg-[#0D131C] border border-sky-500/20 p-5 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></span>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-sky-300">
+                  Topologia da Infraestrutura de Agentes Autônomos (6 Nós Interativos)
+                </h3>
+              </div>
+              <span class="text-[10px] font-mono text-slate-400">Clique em qualquer nó para abrir telemetria</span>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Pipeline orquestrado de ponta a ponta: Ingestão de feeds → Orquestrador Watchdog → Camada Cognitiva Gemini Flash → Governança Jev Quality Gate → Geração Multimodal (Áudio/Imagem) → Distribuição Resend & X.
+            </p>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-[11px]">
-              <thead class="text-[10px] text-slate-400 border-b border-white/5 uppercase">
-                <tr>
-                  <th class="pb-2">Data</th>
-                  <th class="pb-2">Entregas</th>
-                  <th class="pb-2">Abertura</th>
-                  <th class="pb-2">CTR</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-white/5 text-slate-300">
-                <tr>
-                  <td class="py-2 font-mono">Hoje (06:15)</td>
-                  <td class="py-2">1.472</td>
-                  <td class="py-2 text-emerald-400 font-semibold">47.2%</td>
-                  <td class="py-2">7.6%</td>
-                </tr>
-                <tr>
-                  <td class="py-2 font-mono">Ontem</td>
-                  <td class="py-2">1.468</td>
-                  <td class="py-2 text-emerald-400 font-semibold">46.5%</td>
-                  <td class="py-2">7.3%</td>
-                </tr>
-                <tr>
-                  <td class="py-2 font-mono">22/09</td>
-                  <td class="py-2">1.460</td>
-                  <td class="py-2 text-emerald-400 font-semibold">48.1%</td>
-                  <td class="py-2">7.9%</td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Grid dos 6 Nós Conectados -->
+          <div id="nodes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Preenchido dinamicamente via JS -->
           </div>
-        </div>
 
-      </section>
+          <!-- Painel de Emergência (Kill Switch) -->
+          <div class="rounded-2xl bg-red-950/20 border border-red-500/30 p-5 space-y-3 shadow-xl">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-lg">
+                  🚨
+                </div>
+                <div>
+                  <h3 class="text-xs font-bold uppercase tracking-wider text-red-300">Controle de Emergência & Kill Switch Geral</h3>
+                  <p class="text-[11px] text-slate-400">Suspende instantaneamente qualquer disparo automatizado de e-mails ou robôs</p>
+                </div>
+              </div>
+              
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="toggle-kill-switch" class="sr-only peer" />
+                <div class="w-12 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+              </label>
+            </div>
+
+            <div class="pt-3 border-t border-red-500/20 flex flex-wrap gap-2">
+              <button id="btn-forcar-x" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 flex items-center gap-2 transition-all cursor-pointer">
+                <span>🐦</span>
+                <span>Forçar Execução da Esteira no X</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Acordeão Editor de Prompts (Inner Harness) -->
+          <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-5 space-y-3 shadow-xl">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-white">Editor Rápido de Prompts do Inner Harness</h3>
+                <p class="text-[11px] text-slate-400">Ajuste o comportamento do Writer e do Supervisor diretamente da nuvem</p>
+              </div>
+              <span class="text-xs">✍️</span>
+            </div>
+
+            <details class="group bg-[#070A0F] border border-white/5 rounded-xl p-3.5">
+              <summary class="flex justify-between items-center cursor-pointer list-none text-xs font-semibold text-amber-400">
+                <span>Prompt do Nó Writer (Editor Executivo Gemini Flash)</span>
+                <span class="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div class="mt-3 space-y-2">
+                <textarea id="prompt-writer-input" rows="4" class="w-full bg-[#131B26] border border-white/10 rounded-lg p-3 text-xs text-slate-200 font-mono focus:border-amber-400 focus:outline-none"></textarea>
+                <button data-no="writer" class="btn-save-prompt px-4 py-2 rounded-lg bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500 hover:text-slate-950 text-xs font-bold transition-all cursor-pointer">
+                  Salvar Prompt do Writer
+                </button>
+              </div>
+            </details>
+
+            <details class="group bg-[#070A0F] border border-white/5 rounded-xl p-3.5">
+              <summary class="flex justify-between items-center cursor-pointer list-none text-xs font-semibold text-purple-400">
+                <span>Prompt do Nó Critic (Jev Gatekeeper & Compliance)</span>
+                <span class="group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div class="mt-3 space-y-2">
+                <textarea id="prompt-critic-input" rows="4" class="w-full bg-[#131B26] border border-white/10 rounded-lg p-3 text-xs text-slate-200 font-mono focus:border-purple-400 focus:outline-none"></textarea>
+                <button data-no="critic" class="btn-save-prompt px-4 py-2 rounded-lg bg-purple-500/20 border border-purple-500/30 text-purple-300 hover:bg-purple-500 hover:text-white text-xs font-bold transition-all cursor-pointer">
+                  Salvar Prompt do Critic
+                </button>
+              </div>
+            </details>
+          </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- ABA 3: ✍️ CURADORIA DE CONTEÚDO                                   -->
+        <!-- ================================================================= -->
+        <section id="pane-curation" class="tab-pane hidden space-y-6">
+          
+          <!-- Barra de Ações & Automação -->
+          <div class="rounded-2xl bg-[#0D131C] border border-emerald-500/20 p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xl">
+            <div class="flex items-center gap-4">
+              <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <span class="text-xl">⏱️</span>
+              </div>
+              <div>
+                <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400">Disparo Matinal Agendado (05:20 BRT)</span>
+                <div id="countdown-timer" class="text-lg font-bold text-white font-mono">Calculando...</div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <!-- Switch de Publicação Automática -->
+              <div class="flex items-center gap-2 bg-black/40 px-3 py-2 rounded-xl border border-white/5">
+                <span class="text-xs text-slate-300 font-medium">Publicação Automática</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="toggle-auto-publish" class="sr-only peer" checked />
+                  <div class="w-9 h-5 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                </label>
+              </div>
+
+              <!-- Botão Gigante de Aprovação HITL -->
+              <button
+                id="btn-aprovar-hitl"
+                class="px-5 py-2.5 rounded-xl font-bold text-xs tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-900/30 flex items-center gap-2 cursor-pointer"
+              >
+                <span>✅</span>
+                <span>APROVAR & DISPARAR EDIÇÃO</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Legenda de Conformidade Normativa (85-105 palavras) -->
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+            <span class="font-medium text-slate-300">Critério Editorial de Extensão:</span>
+            <div class="flex items-center gap-4">
+              <span class="inline-flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 85 a 105 palavras (Conforme)
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-amber-400 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-amber-400"></span> 82-84 / 106-108 (Tolerância)
+              </span>
+              <span class="inline-flex items-center gap-1.5 text-rose-400 font-semibold">
+                <span class="w-2 h-2 rounded-full bg-rose-400"></span> &lt;82 ou &gt;108 (Reprovado)
+              </span>
+            </div>
+          </div>
+
+          <!-- Grid das Matérias Curadas dos 8 Cadernos -->
+          <div id="curation-cards-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Preenchido dinamicamente via JS -->
+          </div>
+
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- ABA 4: ⚡ FLASH NEWS (DISPARO EXTRAORDINÁRIO)                     -->
+        <!-- ================================================================= -->
+        <section id="pane-flash" class="tab-pane hidden space-y-6">
+          
+          <div class="rounded-2xl bg-gradient-to-br from-[#1A1020] via-[#0D131C] to-[#0A0E17] border border-pink-500/30 p-6 shadow-2xl space-y-6">
+            <div class="flex items-center justify-between pb-3 border-b border-white/5">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 text-lg">
+                  ⚡
+                </div>
+                <div>
+                  <h3 class="text-sm font-bold uppercase tracking-wider text-pink-300">Despacho de Flash News Extraordinário</h3>
+                  <p class="text-xs text-slate-400">Disparo urgente fora do horário regular para notícias de alto impacto global</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-pink-500/10 text-pink-400 border border-pink-500/30 uppercase">
+                BREAKING NEWS
+              </span>
+            </div>
+
+            <!-- Formulário Flash News -->
+            <form id="flash-form" class="space-y-4" onsubmit="event.preventDefault(); window.confirmFlashDispatch();">
+              <div>
+                <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                  Título da Notícia Extraordinária
+                </label>
+                <input
+                  id="flash-title"
+                  type="text"
+                  required
+                  placeholder="Ex: Banco Central anuncia corte extraordinário de 50 bps..."
+                  class="w-full bg-[#131B26] border border-white/10 rounded-xl p-3.5 text-xs text-white placeholder-slate-500 focus:border-pink-400 focus:outline-none"
+                />
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Caderno Temático
+                  </label>
+                  <select
+                    id="flash-caderno"
+                    class="w-full bg-[#131B26] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-pink-400 focus:outline-none"
+                  >
+                    <option value="Mundo">Mundo & Geopolítica</option>
+                    <option value="Economia" selected>Mercados & Economia</option>
+                    <option value="IA">Inteligência Artificial</option>
+                    <option value="Politica">Política Institucional</option>
+                    <option value="Ciencia">Fronteira da Ciência</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+                    Canais de Distribuição
+                  </label>
+                  <div class="flex items-center gap-3 pt-2 text-xs text-slate-300">
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="channel-email" checked class="rounded bg-slate-800 text-pink-500 focus:ring-0" />
+                      <span>E-mail Resend</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="channel-x" checked class="rounded bg-slate-800 text-pink-500 focus:ring-0" />
+                      <span>Post no X</span>
+                    </label>
+                    <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                      <input type="checkbox" id="channel-push" checked class="rounded bg-slate-800 text-pink-500 focus:ring-0" />
+                      <span>Push Web</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label class="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+                    Texto Analítico do Resumo (3 Períodos)
+                  </label>
+                  <span id="flash-word-counter" class="text-xs font-mono font-bold text-slate-400">
+                    0 palavras (Alvo: 85-105)
+                  </span>
+                </div>
+                <textarea
+                  id="flash-resumo"
+                  rows="4"
+                  required
+                  placeholder="Redija o texto com rigor analítico: Período 1 (Fato), Período 2 (Mecânica e dados), Período 3 (Impacto prático)..."
+                  class="w-full bg-[#131B26] border border-white/10 rounded-xl p-3.5 text-xs text-white placeholder-slate-500 focus:border-pink-400 focus:outline-none"
+                ></textarea>
+              </div>
+
+              <div class="pt-2">
+                <button
+                  type="submit"
+                  class="w-full py-3.5 px-6 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-lg shadow-pink-900/40 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>🚨</span>
+                  <span>Disparar Flash News Imediato</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Histórico de Flash News Recentes -->
+          <div class="rounded-2xl bg-[#0D131C] border border-white/10 p-5 space-y-3">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-white">Histórico de Disparos Extraordinários</h3>
+            <div id="flash-history-container" class="space-y-2">
+              <!-- Preenchido dinamicamente via JS -->
+            </div>
+          </div>
+
+        </section>
+
+      </div>
 
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR (FIXO, MOBILE-FIRST, THUMB-FRIENDLY) -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F14]/95 backdrop-blur-xl border-t border-white/10 px-2 py-1.5 hidden">
-      <div class="max-w-xl mx-auto grid grid-cols-3 gap-1">
-        <button class="nav-tab active flex flex-col items-center justify-center py-2 px-1 rounded-xl text-blue-400 font-medium transition-colors" data-target="tab-edicao">
-          <span class="text-lg">🚀</span>
-          <span class="text-[10px] mt-0.5 tracking-tight font-semibold">Edição & HITL</span>
-        </button>
-        <button class="nav-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl text-slate-400 hover:text-white font-medium transition-colors" data-target="tab-agentes">
-          <span class="text-lg">🛡️</span>
-          <span class="text-[10px] mt-0.5 tracking-tight font-semibold">Agentes & KS</span>
-        </button>
-        <button class="nav-tab flex flex-col items-center justify-center py-2 px-1 rounded-xl text-slate-400 hover:text-white font-medium transition-colors" data-target="tab-metricas">
-          <span class="text-lg">📊</span>
-          <span class="text-[10px] mt-0.5 tracking-tight font-semibold">Métricas (EDR)</span>
+    <!-- =================================================================== -->
+    <!-- MODAL 1: INSPEÇÃO DE NÓ DO GRAFO                                    -->
+    <!-- =================================================================== -->
+    <div id="modal-node" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+      <div class="w-full max-w-lg rounded-2xl bg-[#0D131C] border border-white/15 p-6 space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+          <div class="flex items-center gap-2.5">
+            <span id="node-modal-icon" class="text-xl">🕸️</span>
+            <div>
+              <h3 id="node-modal-name" class="text-sm font-bold text-white">Nome do Nó</h3>
+              <p id="node-modal-role" class="text-[10px] text-slate-400">Papel Técnico</p>
+            </div>
+          </div>
+          <button onclick="document.getElementById('modal-node').classList.replace('flex', 'hidden')" class="text-slate-400 hover:text-white p-1">✕</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+            <span class="text-[10px] text-slate-400 block uppercase">Latência Típica</span>
+            <span id="node-modal-latency" class="font-mono font-bold text-sky-400">--</span>
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+            <span class="text-[10px] text-slate-400 block uppercase">Taxa de Erro</span>
+            <span id="node-modal-error" class="font-mono font-bold text-emerald-400">0.0%</span>
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+            <span class="text-[10px] text-slate-400 block uppercase">SLA / Uptime</span>
+            <span id="node-modal-uptime" class="font-mono font-bold text-white">99.98%</span>
+          </div>
+          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
+            <span class="text-[10px] text-slate-400 block uppercase">Motor / LLM</span>
+            <span id="node-modal-model" class="font-mono font-bold text-amber-300">--</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-[10px] text-slate-400 block uppercase mb-1">Descrição Operacional</span>
+          <p id="node-modal-desc" class="text-xs text-slate-300 leading-relaxed bg-[#070A0F] p-3 rounded-xl border border-white/5">
+            --
+          </p>
+        </div>
+
+        <button onclick="document.getElementById('modal-node').classList.replace('flex', 'hidden')" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs transition-colors">
+          Fechar Telemetria
         </button>
       </div>
-    </nav>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 2: EDIÇÃO RÁPIDA DE RESUMO                                    -->
+    <!-- =================================================================== -->
+    <div id="modal-edit" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+      <div class="w-full max-w-xl rounded-2xl bg-[#0D131C] border border-white/15 p-6 space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+          <div>
+            <h3 class="text-sm font-bold text-white">Edição Rápida de Resumo (Inner Editor)</h3>
+            <p id="edit-modal-caderno" class="text-[10px] text-amber-400 font-semibold uppercase">Caderno</p>
+          </div>
+          <button onclick="document.getElementById('modal-edit').classList.replace('flex', 'hidden')" class="text-slate-400 hover:text-white p-1">✕</button>
+        </div>
+
+        <input type="hidden" id="edit-item-id" />
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Título</label>
+          <input id="edit-title" type="text" class="w-full bg-[#131B26] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-amber-400 focus:outline-none" />
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-300 uppercase">Texto do Resumo</label>
+            <span id="edit-word-counter" class="text-xs font-mono font-bold text-slate-400">-- palavras</span>
+          </div>
+          <textarea id="edit-resumo" rows="6" class="w-full bg-[#131B26] border border-white/10 rounded-xl p-3 text-xs text-white focus:border-amber-400 focus:outline-none font-sans leading-relaxed"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
+          <button onclick="document.getElementById('modal-edit').classList.replace('flex', 'hidden')" class="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-semibold">
+            Cancelar
+          </button>
+          <button id="btn-save-edit" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20">
+            Salvar Alterações
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL 3: CONFIRMAÇÃO DE FLASH NEWS                                  -->
+    <!-- =================================================================== -->
+    <div id="modal-confirm-flash" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+      <div class="w-full max-w-md rounded-2xl bg-[#0D131C] border border-pink-500/40 p-6 space-y-4 shadow-2xl text-center">
+        <div class="w-12 h-12 rounded-2xl bg-pink-500/20 border border-pink-500/40 flex items-center justify-center text-pink-400 text-2xl mx-auto">
+          ⚠️
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white">Confirmar Despacho Extraordinário?</h3>
+          <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+            Esta ação disparará imediatamente a notícia extraordinária para <strong class="text-white">1.472 assinantes</strong> e publicará nos canais oficiais selecionados.
+          </p>
+        </div>
+
+        <div class="flex gap-2 pt-2">
+          <button onclick="document.getElementById('modal-confirm-flash').classList.replace('flex', 'hidden')" class="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-semibold">
+            Cancelar
+          </button>
+          <button id="btn-confirm-flash-send" class="flex-1 py-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold text-xs shadow-lg shadow-pink-900/40">
+            Confirmar e Despachar
+          </button>
+        </div>
+      </div>
+    </div>
 
   </main>
 
+  <!-- =================================================================== -->
+  <!-- SCRIPT CLIENT-SIDE DO MISSION CONTROL                               -->
+  <!-- =================================================================== -->
   <script is:inline>
-    // ESTADO LOCAL DO COCKPIT
     const PIN_KEY = 'anj_admin_pin';
-    let currentPin = '';
-    let cachedStatus = null;
+    let currentData = null;
 
-    // ELEMENTOS DOM
-    const pinScreen = document.getElementById('pin-screen');
-    const adminContent = document.getElementById('admin-content');
-    const bottomNav = document.getElementById('bottom-nav');
-    const pinNativeInput = document.getElementById('pin-native-input');
-    const pinError = document.getElementById('pin-error');
-    const btnQuickPin = document.getElementById('btn-quick-pin');
-    const toast = document.getElementById('toast');
-    const toastIcon = document.getElementById('toast-icon');
-    const toastMsg = document.getElementById('toast-msg');
+    // Toast Utilitário
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      const msgEl = document.getElementById('toast-msg');
+      const iconEl = document.getElementById('toast-icon');
+      if (!toast) return;
 
-    function showToast(msg, icon = 'ℹ️', isError = false) {
-      toastMsg.innerText = msg;
-      toastIcon.innerText = icon;
-      toast.className = `fixed top-16 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-100 translate-y-0 max-w-sm w-[90%] px-4 py-3 rounded-xl border text-xs font-medium shadow-2xl flex items-center gap-2.5 ${
-        isError ? 'bg-rose-950/90 border-rose-500/40 text-rose-200' : 'bg-slate-900/90 border-blue-500/40 text-white'
-      }`;
+      msgEl.innerText = msg;
+      if (type === 'error') {
+        iconEl.innerText = '❌';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-100 translate-y-0 max-w-sm w-[90%] px-4 py-2.5 rounded-2xl border text-xs font-semibold shadow-2xl flex items-center gap-2 bg-rose-950/95 border-rose-500/40 text-rose-200';
+      } else if (type === 'warning') {
+        iconEl.innerText = '⚠️';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-100 translate-y-0 max-w-sm w-[90%] px-4 py-2.5 rounded-2xl border text-xs font-semibold shadow-2xl flex items-center gap-2 bg-amber-950/95 border-amber-500/40 text-amber-200';
+      } else {
+        iconEl.innerText = '✅';
+        toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 pointer-events-none opacity-100 translate-y-0 max-w-sm w-[90%] px-4 py-2.5 rounded-2xl border text-xs font-semibold shadow-2xl flex items-center gap-2 bg-[#0F172A]/95 border-emerald-500/40 text-emerald-300';
+      }
+
       setTimeout(() => {
         toast.classList.replace('opacity-100', 'opacity-0');
         toast.classList.replace('translate-y-0', 'translate-y-[-10px]');
       }, 3500);
     }
 
-    function syncPinDisplay() {
-      if (pinNativeInput && pinNativeInput.value !== currentPin) {
-        pinNativeInput.value = currentPin;
-      }
-    }
-
+    // Validação do PIN
     async function validarPin(pin) {
-      const cleanPin = (pin || '').trim();
-      if (!cleanPin) return;
-      if (pinError) pinError.innerText = 'Autenticando...';
+      const clean = (pin || '').trim();
+      const errEl = document.getElementById('pin-error');
+      const btnSubmit = document.getElementById('btn-pin-submit');
+
+      if (!clean) {
+        if (errEl) errEl.innerText = 'Digite o PIN para continuar.';
+        return;
+      }
+
+      if (errEl) errEl.innerText = 'Validando credenciais...';
+      if (btnSubmit) btnSubmit.disabled = true;
 
       try {
-        const res = await fetch(`/api/admin-status?token=${encodeURIComponent(cleanPin)}`, {
+        const res = await fetch(`/api/admin-status?token=${encodeURIComponent(clean)}`, {
           headers: {
-            'Authorization': `Bearer ${cleanPin}`,
-            'x-admin-pin': cleanPin,
+            'Authorization': `Bearer ${clean}`,
+            'x-admin-pin': clean,
           }
         });
 
         if (res.ok) {
-          const data = await res.json();
-          localStorage.setItem(PIN_KEY, cleanPin);
-          cachedStatus = data;
-          if (pinError) pinError.innerText = '';
+          const json = await res.json();
+          localStorage.setItem(PIN_KEY, clean);
+          currentData = json;
+          
+          const pinScreen = document.getElementById('pin-screen');
+          const adminContent = document.getElementById('admin-content');
+          
           pinScreen.classList.add('opacity-0', 'pointer-events-none');
           setTimeout(() => pinScreen.classList.add('hidden'), 300);
           adminContent.classList.remove('hidden');
-          bottomNav.classList.remove('hidden');
-          renderData(data);
-          iniciarPolling();
-          showToast('Cockpit desbloqueado com sucesso!', '🔓');
-        } else if (res.status === 401) {
-          if (pinError) pinError.innerText = 'PIN incorreto. (Padrão: 2026)';
-          currentPin = '';
-          syncPinDisplay();
+
+          renderFullDashboard(json);
+          showToast('Mission Control Desbloqueado!', 'success');
         } else {
-          if (pinError) pinError.innerText = `Servidor retornou HTTP ${res.status}. Tente novamente.`;
-          currentPin = '';
-          syncPinDisplay();
+          if (errEl) errEl.innerText = 'PIN incorreto. (Padrão executivo: 2026)';
+          document.getElementById('pin-native-input').value = '';
         }
-      } catch (err) {
-        if (pinError) pinError.innerText = 'Erro de conexão com o servidor.';
-        currentPin = '';
-        syncPinDisplay();
+      } catch (e) {
+        if (errEl) errEl.innerText = 'Erro ao conectar com o cluster.';
+      } finally {
+        if (btnSubmit) btnSubmit.disabled = false;
       }
     }
 
-    // 1. DIGITAÇÃO DIRETA NO INPUT
-    if (pinNativeInput) {
-      pinNativeInput.addEventListener('input', (e) => {
-        const val = e.target.value.replace(/\D/g, '').slice(0, 4);
-        currentPin = val;
-        e.target.value = val;
-        if (pinError) pinError.innerText = '';
-        if (currentPin.length === 4) {
-          validarPin(currentPin);
-        }
-      });
+    window.submitPin = function() {
+      const input = document.getElementById('pin-native-input');
+      validarPin(input ? input.value : '');
+    };
 
-      pinNativeInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && currentPin.length === 4) {
-          e.preventDefault();
-          validarPin(currentPin);
-        }
-      });
-    }
-
-    // 2. ATALHO GLOBAL DE TECLADO
-    window.addEventListener('keydown', (e) => {
-      if (!pinScreen || pinScreen.classList.contains('hidden') || pinScreen.classList.contains('opacity-0')) {
-        return;
-      }
-      if (document.activeElement !== pinNativeInput) {
-        if (e.key >= '0' && e.key <= '9') {
-          if (currentPin.length < 4) {
-            currentPin += e.key;
-            syncPinDisplay();
-            if (pinError) pinError.innerText = '';
-            if (currentPin.length === 4) {
-              setTimeout(() => validarPin(currentPin), 100);
-            }
-          }
-        } else if (e.key === 'Backspace') {
-          currentPin = currentPin.slice(0, -1);
-          syncPinDisplay();
-        } else if (e.key === 'Enter' && currentPin.length === 4) {
-          validarPin(currentPin);
-        }
-      }
-    });
-
-    // 3. TECLADO VIRTUAL POR BOTÕES
-    document.querySelectorAll('.pin-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const val = btn.getAttribute('data-val');
-        const act = btn.getAttribute('data-action');
-        if (pinError) pinError.innerText = '';
-
-        if (act === 'clear') {
-          currentPin = '';
-        } else if (act === 'backspace') {
-          currentPin = currentPin.slice(0, -1);
-        } else if (val && currentPin.length < 4) {
-          currentPin += val;
-          if (currentPin.length === 4) {
-            syncPinDisplay();
-            setTimeout(() => validarPin(currentPin), 100);
-            return;
-          }
-        }
-        syncPinDisplay();
-      });
-    });
-
-    // 4. BOTÃO DE PREENCHIMENTO RÁPIDO
-    if (btnQuickPin) {
-      btnQuickPin.addEventListener('click', () => {
-        currentPin = '2026';
-        syncPinDisplay();
+    // Preenchimento Rápido com 1-Clique
+    const btnQuick = document.getElementById('btn-quick-pin');
+    if (btnQuick) {
+      btnQuick.addEventListener('click', () => {
+        const input = document.getElementById('pin-native-input');
+        if (input) input.value = '2026';
         validarPin('2026');
       });
     }
 
-    // BOTÃO DE BLOQUEIO DE TELA
-    document.getElementById('btn-lock').addEventListener('click', () => {
-      localStorage.removeItem(PIN_KEY);
-      currentPin = '';
-      syncPinDisplay();
-      adminContent.classList.add('hidden');
-      bottomNav.classList.add('hidden');
-      pinScreen.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
-      showToast('Cockpit bloqueado com sucesso.', '🔒');
-    });
+    // Teclado Numérico Touch
+    document.querySelectorAll('.pin-touch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById('pin-native-input');
+        if (!input) return;
+        const val = btn.getAttribute('data-val');
+        const action = btn.getAttribute('data-action');
 
-    // BOTÃO DE REFRESH
-    document.getElementById('btn-refresh').addEventListener('click', () => {
-      recarregarStatus(true);
-    });
-
-    // TROCA DE ABAS
-    document.querySelectorAll('.nav-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.nav-tab').forEach(t => {
-          t.classList.remove('text-blue-400');
-          t.classList.add('text-slate-400');
-        });
-        tab.classList.remove('text-slate-400');
-        tab.classList.add('text-blue-400');
-
-        const targetId = tab.getAttribute('data-target');
-        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.add('hidden'));
-        document.getElementById(targetId).classList.remove('hidden');
-      });
-    });
-
-    // RENDERIZAÇÃO DOS DADOS NO DOM
-    function renderData(data) {
-      if (!data) return;
-
-      // 0. Alertas de Cadernos Suprimidos (Quality Gate)
-      const containerAlertas = document.getElementById('container-alertas-cadernos');
-      const alertas = data.alertas_cadernos || [];
-      if (containerAlertas) {
-        if (alertas.length > 0) {
-          containerAlertas.classList.remove('hidden');
-          containerAlertas.innerHTML = alertas.map((al, idx) => `
-            <div class="bg-amber-950/20 border border-amber-500/30 rounded-2xl p-4 shadow-xl space-y-3">
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <span class="text-lg">⚠️</span>
-                  <div>
-                    <h3 class="text-xs font-bold uppercase tracking-wider text-amber-400">Auditoria Editorial: Caderno Omitido</h3>
-                    <p class="text-[11px] text-slate-400">Quality Gate com Supressão Ativa</p>
-                  </div>
-                </div>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                  SUPPRESSED (${al.data || ''})
-                </span>
-              </div>
-              <p class="text-xs text-slate-200 font-medium">
-                Atenção: O caderno <strong>${al.caderno}</strong> não foi publicado hoje por falta de notícias de alto impacto.
-              </p>
-              <p class="text-[11px] text-slate-400 leading-relaxed">
-                ${al.motivo || ''}
-              </p>
-              ${al.exemplos_descartados && al.exemplos_descartados.length > 0 ? `
-                <details class="text-[11px] text-slate-400 bg-black/30 p-2.5 rounded-lg border border-white/5">
-                  <summary class="cursor-pointer font-semibold text-slate-300">Ver ${al.exemplos_descartados.length} matérias descartadas pela IA</summary>
-                  <ul class="mt-2 space-y-1 list-disc list-inside text-rose-300/80">
-                    ${al.exemplos_descartados.map(t => `<li>${t}</li>`).join('')}
-                  </ul>
-                </details>
-              ` : ''}
-              <div class="pt-2 border-t border-white/5">
-                <div class="flex gap-2">
-                  <input type="text" id="input-pauta-alt-${idx}" placeholder="Inserir link ou pauta alternativa para ${al.caderno}..." class="flex-1 bg-[#0B0F14] border border-white/10 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50" />
-                  <button class="btn-forcar-pauta px-3 py-2 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-bold transition-all" data-caderno="${al.caderno}" data-input-id="input-pauta-alt-${idx}">
-                    Forçar Pauta Alternativa
-                  </button>
-                </div>
-              </div>
-            </div>
-          `).join('');
-
-          // Listener para o botão de forçar pauta alternativa
-          containerAlertas.querySelectorAll('.btn-forcar-pauta').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const caderno = btn.getAttribute('data-caderno');
-              const inputId = btn.getAttribute('data-input-id');
-              const inputEl = document.getElementById(inputId);
-              const pauta = inputEl ? inputEl.value.trim() : '';
-              if (!pauta) {
-                showToast('Digite uma pauta ou link primeiro.', '⚠️', true);
-                return;
-              }
-              btn.disabled = true;
-              btn.innerText = 'Processando...';
-              const pin = localStorage.getItem(PIN_KEY);
-              try {
-                const res = await fetch('/api/admin-action', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${pin}`,
-                  },
-                  body: JSON.stringify({ acao: 'forcar_pauta_caderno', caderno, pauta })
-                });
-                const resData = await res.json();
-                if (resData.success) {
-                  showToast(resData.message || 'Pauta alternativa disparada!', '✅');
-                  recarregarStatus();
-                } else {
-                  showToast(resData.error || 'Erro ao forçar pauta.', '❌', true);
-                  btn.disabled = false;
-                  btn.innerText = 'Forçar Pauta Alternativa';
-                }
-              } catch (err) {
-                showToast('Erro de conexão.', '❌', true);
-                btn.disabled = false;
-                btn.innerText = 'Forçar Pauta Alternativa';
-              }
-            });
-          });
-        } else {
-          containerAlertas.classList.add('hidden');
-          containerAlertas.innerHTML = '';
-        }
-      }
-
-      // 1. Aba Edição
-      const ed = data.edicao || {};
-      document.getElementById('badge-caderno').innerText = ed.caderno || 'Geral';
-      document.getElementById('edicao-titulo').innerText = ed.titulo || 'Destaque Editorial';
-      document.getElementById('edicao-resumo').innerText = ed.resumo_texto || 'Sem resumo disponível.';
-      
-      if (ed.image_url) {
-        document.getElementById('edicao-capa').src = ed.image_url;
-      }
-      if (ed.audio_url) {
-        const audioEl = document.getElementById('edicao-audio');
-        if (audioEl.querySelector('source')) {
-          audioEl.querySelector('source').src = ed.audio_url;
-          audioEl.load();
-        }
-      }
-
-      // Word count badge
-      const wc = ed.word_count || 0;
-      const wcBadge = document.getElementById('badge-word-count');
-      if (ed.compliance_estrito) {
-        wcBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-        wcBadge.innerText = `${wc} palavras • Conforme (85-105)`;
-      } else if (ed.compliance_tolerante) {
-        wcBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20';
-        wcBadge.innerText = `${wc} palavras • Tolerância Operacional`;
-      } else {
-        wcBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20';
-        wcBadge.innerText = `${wc} palavras • Fora da Margem`;
-      }
-
-      // Status da Edição e HITL
-      const statusBadge = document.getElementById('badge-status-edicao');
-      const btnAprovar = document.getElementById('btn-aprovar-hitl');
-      if (ed.hitl_approved || ed.status === 'APPROVED_BY_FOUNDER') {
-        statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-        statusBadge.innerText = 'Aprovado pelo Fundador';
-        btnAprovar.disabled = true;
-        btnAprovar.className = 'w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide text-white bg-slate-800 cursor-not-allowed border border-white/5 opacity-70 flex items-center justify-center gap-2';
-        btnAprovar.innerHTML = '<span>✅</span> EDIÇÃO APROVADA & DESPACHADA';
-      } else {
-        statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20';
-        statusBadge.innerText = ed.status || 'Pendente de Aprovação';
-        btnAprovar.disabled = false;
-        btnAprovar.className = 'w-full py-4 px-6 rounded-xl font-bold text-sm tracking-wide text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 active:scale-[0.98] transition-all shadow-lg shadow-emerald-900/30 flex items-center justify-center gap-2 cursor-pointer';
-        btnAprovar.innerHTML = '<span>✅</span> APROVAR E DISPARAR EDIÇÃO';
-      }
-
-      document.getElementById('edicao-critic').innerText = ed.critic_feedback || 'Em conformidade com o Jev Quality Gate.';
-
-      // 2. Kill Switch
-      const ks = data.kill_switch || {};
-      const ksToggle = document.getElementById('toggle-kill-switch');
-      ksToggle.checked = Boolean(ks.ativo);
-
-      // 3. Agentes
-      const agentes = data.agentes || {};
-      Object.keys(agentes).forEach(key => {
-        const card = document.querySelector(`.agent-card[data-agent="${key}"]`);
-        if (card) {
-          const info = agentes[key];
-          const stEl = card.querySelector('.agent-status');
-          const pulseEl = card.querySelector('.agent-pulse');
-          const detailEl = card.querySelector('.agent-detail');
-
-          if (detailEl && info.detalhe) detailEl.innerText = info.detalhe;
-
-          const st = (info.status || 'ONLINE').toUpperCase();
-          stEl.innerText = st;
-          if (['ONLINE', 'ACTIVE'].includes(st)) {
-            stEl.className = 'agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-            pulseEl.className = 'agent-pulse w-3 h-3 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400';
-          } else if (['SCHEDULED', 'PENDING'].includes(st)) {
-            stEl.className = 'agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/10 text-amber-400 border border-amber-500/20';
-            pulseEl.className = 'agent-pulse w-3 h-3 rounded-full bg-amber-400 shadow-sm shadow-amber-400';
-          } else {
-            stEl.className = 'agent-status px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-500/10 text-rose-400 border border-rose-500/20';
-            pulseEl.className = 'agent-pulse w-3 h-3 rounded-full bg-rose-400 shadow-sm shadow-rose-400 animate-ping';
+        if (action === 'clear') {
+          input.value = '';
+        } else if (action === 'backspace') {
+          input.value = input.value.slice(0, -1);
+        } else if (val) {
+          if (input.value.length < 6) {
+            input.value += val;
+            if (input.value.length === 4) {
+              validarPin(input.value);
+            }
           }
         }
       });
+    });
 
-      // 4. Prompts Inner Harness
+    // Logout
+    document.getElementById('btn-lock')?.addEventListener('click', () => {
+      localStorage.removeItem(PIN_KEY);
+      location.reload();
+    });
+
+    // Refresh
+    document.getElementById('btn-refresh')?.addEventListener('click', async () => {
+      const pin = localStorage.getItem(PIN_KEY) || '2026';
+      showToast('Sincronizando telemetria...', 'warning');
+      await validarPin(pin);
+    });
+
+    // Navegação de Abas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.className = 'tab-btn px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 text-slate-400 hover:text-white hover:bg-white/5 border border-transparent';
+        });
+        btn.className = 'tab-btn active px-3.5 sm:px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-lg shadow-amber-500/10';
+
+        const tab = btn.getAttribute('data-tab');
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+        document.getElementById(`pane-${tab}`)?.classList.remove('hidden');
+      });
+    });
+
+    // Renderização dos Dados
+    function renderFullDashboard(data) {
+      if (!data) return;
+
+      // 1. Métricas
+      const tr = data.tracao || {};
+      document.getElementById('metric-edr-hero').innerText = tr.edr || '689';
+      document.getElementById('kpi-base-total').innerText = (tr.base_total || 1480).toLocaleString('pt-BR');
+      document.getElementById('kpi-base-ativa').innerText = (tr.base_ativa || 1472).toLocaleString('pt-BR');
+      document.getElementById('kpi-abertura').innerText = `${tr.taxa_abertura_pct || 46.8}%`;
+      document.getElementById('kpi-ctr').innerText = `${tr.taxa_cliques_pct || 7.4}%`;
+
+      // Tabela de Cadernos
+      const perfTbody = document.getElementById('cadernos-perf-tbody');
+      if (perfTbody && tr.performance_cadernos) {
+        perfTbody.innerHTML = tr.performance_cadernos.map(c => `
+          <tr class="hover:bg-white/[0.02]">
+            <td class="py-2.5 font-semibold text-white flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              ${c.caderno}
+            </td>
+            <td class="py-2.5 font-mono text-slate-300">${c.visualizacoes.toLocaleString('pt-BR')}</td>
+            <td class="py-2.5 font-mono font-bold text-emerald-400">${c.taxaAberturaPct}%</td>
+            <td class="py-2.5 font-mono font-bold text-sky-400">${c.ctrPct}%</td>
+            <td class="py-2.5 text-[10px] text-emerald-400">ÓTIMO</td>
+          </tr>
+        `).join('');
+      }
+
+      // Top Posts
+      const topContainer = document.getElementById('top-posts-container');
+      if (topContainer && tr.top_posts) {
+        topContainer.innerHTML = tr.top_posts.map((p, i) => `
+          <div class="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-2 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-[10px] text-amber-400 font-semibold mb-1">
+                <span>#${i + 1} • ${p.caderno}</span>
+                <span class="text-slate-400">${p.cliques} cliques</span>
+              </div>
+              <h4 class="text-xs font-bold text-white line-clamp-2 leading-snug">${p.titulo}</h4>
+            </div>
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-emerald-400">
+              <span>Taxa de Conversão</span>
+              <span class="font-mono font-bold">${p.taxaConversaoPct}%</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // 2. Grafo de Agentes
+      const nodesGrid = document.getElementById('nodes-grid');
+      const nodes = data.nodes_detail || {};
+      if (nodesGrid && Object.keys(nodes).length > 0) {
+        nodesGrid.innerHTML = Object.values(nodes).map(n => `
+          <div class="p-4 rounded-2xl bg-[#0D131C] border border-white/10 hover:border-sky-500/40 transition-all flex flex-col justify-between space-y-3 cursor-pointer group" onclick="window.inspectNode('${n.id}')">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${n.status === 'ONLINE' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-sky-500/10 text-sky-400 border border-sky-500/20'}">
+                  ${n.status}
+                </span>
+                <span class="text-[10px] font-mono text-slate-400">Lat: ${n.latency}</span>
+              </div>
+              <h4 class="text-sm font-bold text-white group-hover:text-sky-300 transition-colors">${n.name}</h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">${n.role}</p>
+            </div>
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-400">
+              <span>${n.model}</span>
+              <span class="text-sky-400 font-semibold group-hover:translate-x-0.5 transition-transform">Ver Detalhes →</span>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Kill Switch State
+      const ks = data.kill_switch || {};
+      const ksToggle = document.getElementById('toggle-kill-switch');
+      if (ksToggle) ksToggle.checked = Boolean(ks.ativo);
+
+      // Prompts
       const prompts = data.prompts_harness || {};
       if (prompts.writer) document.getElementById('prompt-writer-input').value = prompts.writer;
       if (prompts.critic) document.getElementById('prompt-critic-input').value = prompts.critic;
 
-      // 5. Métricas (EDR)
-      const tr = data.tracao || {};
-      if (tr.edr) document.getElementById('metric-edr').innerText = tr.edr;
-      if (tr.base_ativa) document.getElementById('metric-base').innerText = Number(tr.base_ativa).toLocaleString('pt-BR');
-      if (tr.taxa_abertura_pct) document.getElementById('metric-abertura').innerText = `${tr.taxa_abertura_pct}%`;
-    }
+      // 3. Curadoria
+      const cur = data.curation || {};
+      const apToggle = document.getElementById('toggle-auto-publish');
+      if (apToggle) apToggle.checked = Boolean(cur.publicacaoAutomaticaAtiva);
 
-    async function recarregarStatus(manual = false) {
-      const pin = localStorage.getItem(PIN_KEY);
-      if (!pin) return;
-      try {
-        const res = await fetch(`/api/admin-status?token=${encodeURIComponent(pin)}`);
-        if (res.ok) {
-          const data = await res.json();
-          cachedStatus = data;
-          renderData(data);
-          if (manual) showToast('Dados atualizados com sucesso.', '🔄');
+      const curationContainer = document.getElementById('curation-cards-container');
+      if (curationContainer && cur.items) {
+        curationContainer.innerHTML = cur.items.map(it => {
+          const badgeClass = it.compliance === 'compliant'
+            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
+            : (it.compliance === 'warning'
+                ? 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                : 'bg-rose-500/10 text-rose-400 border-rose-500/30');
+
+          const badgeLabel = it.compliance === 'compliant'
+            ? `✓ ${it.wordCount} palavras • Conforme`
+            : (it.compliance === 'warning'
+                ? `⚠️ ${it.wordCount} palavras • Tolerância`
+                : `❌ ${it.wordCount} palavras • Fora da margem`);
+
+          return `
+            <div class="p-4 rounded-2xl bg-[#0D131C] border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between space-y-3">
+              <div>
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-sky-400 px-2.5 py-0.5 rounded-full bg-sky-500/10 border border-sky-500/20">
+                    ${it.caderno}
+                  </span>
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeClass}">
+                    ${badgeLabel}
+                  </span>
+                </div>
+                <h4 class="text-sm font-bold text-white leading-snug">${it.titulo}</h4>
+                <p class="text-xs text-slate-300 mt-2 line-clamp-3 leading-relaxed">${it.resumo}</p>
+              </div>
+
+              <div class="pt-3 border-t border-white/5 flex items-center justify-between">
+                <span class="text-[10px] text-slate-500">Meta: 85 a 105 palavras</span>
+                <button
+                  class="px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-amber-300 transition-colors cursor-pointer"
+                  onclick="window.openEditModal('${it.id}', '${encodeURIComponent(it.titulo)}', '${encodeURIComponent(it.resumo)}', '${it.caderno}')"
+                >
+                  Editar Resumo
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 4. Flash News History
+      const flashContainer = document.getElementById('flash-history-container');
+      const flashHistory = data.flash_news_history || [];
+      if (flashContainer) {
+        if (flashHistory.length === 0) {
+          flashContainer.innerHTML = '<p class="text-xs text-slate-500">Nenhum Flash News disparado recentemente.</p>';
+        } else {
+          flashContainer.innerHTML = flashHistory.map(f => `
+            <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-between text-xs">
+              <div>
+                <span class="text-[10px] font-bold text-pink-400 uppercase">[${f.caderno}]</span>
+                <h5 class="font-bold text-white">${f.titulo}</h5>
+                <span class="text-[10px] text-slate-400">${f.wordCount} palavras • ${f.timestamp.slice(0, 16).replace('T', ' ')}</span>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                DISPARADO
+              </span>
+            </div>
+          `).join('');
         }
-      } catch (err) {
-        if (manual) showToast('Erro ao recarregar status.', '⚠️', true);
       }
     }
 
-    function iniciarPolling() {
-      setInterval(() => recarregarStatus(false), 15000);
-    }
+    // Modal de Inspeção de Nós
+    window.inspectNode = function(id) {
+      if (!currentData || !currentData.nodes_detail) return;
+      const n = currentData.nodes_detail[id];
+      if (!n) return;
 
-    // AÇÃO 1: APROVAÇÃO HITL
-    document.getElementById('btn-aprovar-hitl').addEventListener('click', async () => {
-      const pin = localStorage.getItem(PIN_KEY);
-      const btn = document.getElementById('btn-aprovar-hitl');
-      btn.disabled = true;
-      btn.innerHTML = '<span>⏳</span> Processando aprovação...';
+      document.getElementById('node-modal-name').innerText = n.name;
+      document.getElementById('node-modal-role').innerText = n.role;
+      document.getElementById('node-modal-latency').innerText = n.latency;
+      document.getElementById('node-modal-error').innerText = n.errorRate;
+      document.getElementById('node-modal-uptime').innerText = n.uptime;
+      document.getElementById('node-modal-model').innerText = n.model;
+      document.getElementById('node-modal-desc').innerText = n.description;
+
+      const modal = document.getElementById('modal-node');
+      modal.classList.replace('hidden', 'flex');
+    };
+
+    // Modal de Edição de Notícia
+    window.openEditModal = function(id, encodedTitle, encodedResumo, caderno) {
+      const title = decodeURIComponent(encodedTitle);
+      const resumo = decodeURIComponent(encodedResumo);
+
+      document.getElementById('edit-item-id').value = id;
+      document.getElementById('edit-modal-caderno').innerText = caderno;
+      document.getElementById('edit-title').value = title;
+      const ta = document.getElementById('edit-resumo');
+      ta.value = resumo;
+
+      function updateCounter() {
+        const words = ta.value.trim().split(/\s+/).filter(Boolean).length;
+        const cEl = document.getElementById('edit-word-counter');
+        cEl.innerText = `${words} palavras`;
+        if (words >= 85 && words <= 105) {
+          cEl.className = 'text-xs font-mono font-bold text-emerald-400';
+        } else if (words >= 82 && words <= 108) {
+          cEl.className = 'text-xs font-mono font-bold text-amber-400';
+        } else {
+          cEl.className = 'text-xs font-mono font-bold text-rose-400';
+        }
+      }
+
+      ta.oninput = updateCounter;
+      updateCounter();
+
+      const modal = document.getElementById('modal-edit');
+      modal.classList.replace('hidden', 'flex');
+    };
+
+    // Salvar Edição
+    document.getElementById('btn-save-edit')?.addEventListener('click', async () => {
+      const id = document.getElementById('edit-item-id').value;
+      const titulo = document.getElementById('edit-title').value;
+      const resumo = document.getElementById('edit-resumo').value;
+      const caderno = document.getElementById('edit-modal-caderno').innerText;
+      const pin = localStorage.getItem(PIN_KEY) || '2026';
 
       try {
         const res = await fetch('/api/admin-action', {
@@ -866,117 +1083,202 @@ import Layout from '../layouts/Layout.astro';
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${pin}`,
           },
+          body: JSON.stringify({ acao: 'salvar_edicao', id, titulo, resumo, caderno }),
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          showToast(resp.message, 'success');
+          document.getElementById('modal-edit').classList.replace('flex', 'hidden');
+          validarPin(pin);
+        } else {
+          showToast(resp.error || 'Erro ao salvar.', 'error');
+        }
+      } catch (e) {
+        showToast('Erro de conexão.', 'error');
+      }
+    });
+
+    // Countdown Timer (05:20 BRT)
+    function updateCountdown() {
+      const now = new Date();
+      const brt = new Date(now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+      const target = new Date(brt);
+      target.setHours(5, 20, 0, 0);
+
+      if (brt > target) {
+        target.setDate(target.getDate() + 1);
+      }
+
+      const diff = target.getTime() - brt.getTime();
+      const hrs = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      const el = document.getElementById('countdown-timer');
+      if (el) {
+        el.innerText = `${String(hrs).padStart(2, '0')}h ${String(mins).padStart(2, '0')}m ${String(secs).padStart(2, '0')}s`;
+      }
+
+      const clockEl = document.getElementById('clock-display');
+      if (clockEl) {
+        clockEl.innerText = `${String(brt.getHours()).padStart(2, '0')}:${String(brt.getMinutes()).padStart(2, '0')}:${String(brt.getSeconds()).padStart(2, '0')} BRT`;
+      }
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Ações de Botões (Aprovação HITL, Kill Switch, Flash News)
+    document.getElementById('btn-aprovar-hitl')?.addEventListener('click', async () => {
+      const pin = localStorage.getItem(PIN_KEY) || '2026';
+      showToast('Aprovando e liberando esteira...', 'warning');
+      try {
+        const res = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${pin}` },
           body: JSON.stringify({ acao: 'aprovar_hitl' })
         });
         const resp = await res.json();
         if (resp.success) {
-          showToast(resp.message || 'Edição aprovada com sucesso!', '✅');
-          recarregarStatus();
+          showToast(resp.message, 'success');
+          validarPin(pin);
         } else {
-          showToast(resp.error || 'Falha ao aprovar edição.', '⚠️', true);
-          btn.disabled = false;
-          btn.innerHTML = '<span>✅</span> APROVAR E DISPARAR EDIÇÃO';
+          showToast(resp.error || 'Erro ao aprovar.', 'error');
         }
       } catch (e) {
-        showToast('Erro de conexão ao aprovar.', '❌', true);
-        btn.disabled = false;
-        btn.innerHTML = '<span>✅</span> APROVAR E DISPARAR EDIÇÃO';
+        showToast('Erro de conexão ao aprovar.', 'error');
       }
     });
 
-    // AÇÃO 2: KILL SWITCH TOGGLE
-    document.getElementById('toggle-kill-switch').addEventListener('change', async (e) => {
-      const pin = localStorage.getItem(PIN_KEY);
+    document.getElementById('toggle-kill-switch')?.addEventListener('change', async (e) => {
+      const pin = localStorage.getItem(PIN_KEY) || '2026';
       const ativo = e.target.checked;
-
       try {
         const res = await fetch('/api/admin-action', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${pin}`,
-          },
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${pin}` },
           body: JSON.stringify({ acao: 'toggle_kill_switch', ativo })
         });
         const resp = await res.json();
         if (resp.success) {
-          showToast(resp.message, ativo ? '🚨' : '✅');
+          showToast(resp.message, ativo ? 'error' : 'success');
         } else {
-          showToast(resp.error || 'Erro ao alterar Kill Switch.', '⚠️', true);
+          showToast(resp.error || 'Erro ao alternar Kill Switch.', 'error');
           e.target.checked = !ativo;
         }
-      } catch (err) {
-        showToast('Erro ao comunicar com o servidor.', '❌', true);
+      } catch (e) {
+        showToast('Erro de conexão.', 'error');
         e.target.checked = !ativo;
       }
     });
 
-    // AÇÃO 3: FORÇAR X
-    document.getElementById('btn-forcar-x').addEventListener('click', async () => {
-      const pin = localStorage.getItem(PIN_KEY);
-      showToast('Disparando publicação no X...', '⏳');
-
+    document.getElementById('toggle-auto-publish')?.addEventListener('change', async (e) => {
+      const pin = localStorage.getItem(PIN_KEY) || '2026';
+      const ativo = e.target.checked;
       try {
         const res = await fetch('/api/admin-action', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${pin}`,
-          },
-          body: JSON.stringify({ acao: 'forcar_x' })
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${pin}` },
+          body: JSON.stringify({ acao: 'toggle_auto_publish', ativo })
         });
         const resp = await res.json();
         if (resp.success) {
-          showToast(resp.message, '🐦');
+          showToast(resp.message, 'success');
         } else {
-          showToast(resp.error || 'Falha ao disparar X.', '⚠️', true);
+          showToast(resp.error || 'Erro ao atualizar publicação automática.', 'error');
+          e.target.checked = !ativo;
         }
-      } catch (err) {
-        showToast('Erro de conexão ao forçar X.', '❌', true);
+      } catch (e) {
+        showToast('Erro de conexão.', 'error');
+        e.target.checked = !ativo;
       }
     });
 
-    // AÇÃO 4: SALVAR PROMPTS DO INNER HARNESS
+    // Salvar Prompts
     document.querySelectorAll('.btn-save-prompt').forEach(btn => {
       btn.addEventListener('click', async () => {
-        const pin = localStorage.getItem(PIN_KEY);
         const no = btn.getAttribute('data-no');
         const inputId = no === 'writer' ? 'prompt-writer-input' : 'prompt-critic-input';
         const prompt = document.getElementById(inputId).value;
-
-        btn.disabled = true;
-        const textoOriginal = btn.innerText;
-        btn.innerText = 'Salvando...';
+        const pin = localStorage.getItem(PIN_KEY) || '2026';
 
         try {
           const res = await fetch('/api/admin-action', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${pin}`,
-            },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${pin}` },
             body: JSON.stringify({ acao: 'salvar_prompt_no', no, prompt })
           });
           const resp = await res.json();
           if (resp.success) {
-            showToast(resp.message, '💾');
+            showToast(resp.message, 'success');
           } else {
-            showToast(resp.error || 'Erro ao salvar prompt.', '⚠️', true);
+            showToast(resp.error || 'Erro ao salvar prompt.', 'error');
           }
-        } catch (err) {
-          showToast('Erro de conexão ao salvar prompt.', '❌', true);
-        } finally {
-          btn.disabled = false;
-          btn.innerText = textoOriginal;
+        } catch (e) {
+          showToast('Erro de conexão.', 'error');
         }
       });
     });
 
-    // AUTO-LOGIN SE JÁ HOUVER PIN NO LOCALSTORAGE
+    // Flash News Contador & Confirmação
+    const flashTextarea = document.getElementById('flash-resumo');
+    if (flashTextarea) {
+      flashTextarea.addEventListener('input', () => {
+        const words = flashTextarea.value.trim().split(/\s+/).filter(Boolean).length;
+        const cEl = document.getElementById('flash-word-counter');
+        cEl.innerText = `${words} palavras (Alvo: 85-105)`;
+        if (words >= 85 && words <= 105) {
+          cEl.className = 'text-xs font-mono font-bold text-emerald-400';
+        } else if (words >= 82 && words <= 108) {
+          cEl.className = 'text-xs font-mono font-bold text-amber-400';
+        } else {
+          cEl.className = 'text-xs font-mono font-bold text-rose-400';
+        }
+      });
+    }
+
+    window.confirmFlashDispatch = function() {
+      const modal = document.getElementById('modal-confirm-flash');
+      modal.classList.replace('hidden', 'flex');
+    };
+
+    document.getElementById('btn-confirm-flash-send')?.addEventListener('click', async () => {
+      const titulo = document.getElementById('flash-title').value;
+      const caderno = document.getElementById('flash-caderno').value;
+      const resumo = document.getElementById('flash-resumo').value;
+      const canais = [];
+      if (document.getElementById('channel-email')?.checked) canais.push('email');
+      if (document.getElementById('channel-x')?.checked) canais.push('x');
+      if (document.getElementById('channel-push')?.checked) canais.push('push');
+
+      const pin = localStorage.getItem(PIN_KEY) || '2026';
+      showToast('Despachando Flash News emergencial...', 'warning');
+      document.getElementById('modal-confirm-flash').classList.replace('flex', 'hidden');
+
+      try {
+        const res = await fetch('/api/admin-action', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${pin}` },
+          body: JSON.stringify({ acao: 'disparar_flash_news', titulo, caderno, resumo, canais })
+        });
+        const resp = await res.json();
+        if (resp.success) {
+          showToast(resp.message, 'success');
+          document.getElementById('flash-title').value = '';
+          document.getElementById('flash-resumo').value = '';
+          validarPin(pin);
+        } else {
+          showToast(resp.error || 'Erro no disparo de Flash News.', 'error');
+        }
+      } catch (e) {
+        showToast('Erro de conexão ao despachar.', 'error');
+      }
+    });
+
+    // Auto-login se já houver PIN no localStorage
     window.addEventListener('DOMContentLoaded', () => {
-      const savedPin = localStorage.getItem(PIN_KEY);
-      if (savedPin) {
-        validarPin(savedPin);
+      const saved = localStorage.getItem(PIN_KEY);
+      if (saved) {
+        validarPin(saved);
       }
     });
   </script>

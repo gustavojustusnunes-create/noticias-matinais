@@ -226,7 +226,6 @@ export async function POST({ request }: { request: Request }) {
         });
       }
 
-      // Dispara o script python ondemand em background e remove o alerta
       const script = `from core.ondemand_graph import executar_pipeline_ondemand; from core.quality_filter import remover_alerta_caderno; executar_pipeline_ondemand(${JSON.stringify(pauta)}, tema=${JSON.stringify(caderno)}); remover_alerta_caderno(${JSON.stringify(caderno)}); print("Sucesso")`;
       const child = spawn('python', ['-c', script], {
         cwd: rootDir,
@@ -239,6 +238,119 @@ export async function POST({ request }: { request: Request }) {
         JSON.stringify({
           success: true,
           message: `Pauta alternativa para '${caderno}' disparada com sucesso via LangGraph. O alerta foi removido.`,
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 6. TOGGLE PUBLICAÇÃO AUTOMÁTICA (05:20 BRT)
+    // ─────────────────────────────────────────────────────────────────────────
+    if (acao === 'toggle_auto_publish') {
+      const overridesPath = 'logs/curation_overrides.json';
+      const cur = readJsonFile(overridesPath, { publicacaoAutomaticaAtiva: true });
+      const novoStatus = body?.ativo !== undefined ? Boolean(body.ativo) : !Boolean(cur.publicacaoAutomaticaAtiva);
+      cur.publicacaoAutomaticaAtiva = novoStatus;
+      cur.atualizado_em = new Date().toISOString();
+      writeJsonFile(overridesPath, cur);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          publicacaoAutomaticaAtiva: novoStatus,
+          message: novoStatus
+            ? '✅ Publicação automática (05:20 BRT) ATIVADA com sucesso.'
+            : '⏸️ Publicação automática SUSPENSA. Disparo exigirá liberação HITL manual.',
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 7. SALVAR EDIÇÃO RÁPIDA DE MATÉRIA
+    // ─────────────────────────────────────────────────────────────────────────
+    if (acao === 'salvar_edicao') {
+      const { id, titulo, resumo, caderno } = body || {};
+      if (!resumo) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'O texto do resumo é obrigatório.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const words = resumo.trim().split(/\s+/).filter(Boolean).length;
+      const overridesPath = 'logs/curation_overrides.json';
+      const cur = readJsonFile(overridesPath, { overrides: {} });
+      if (!cur.overrides) cur.overrides = {};
+
+      cur.overrides[id || titulo] = {
+        titulo,
+        resumo,
+        caderno,
+        wordCount: words,
+        salvo_em: new Date().toISOString(),
+      };
+      writeJsonFile(overridesPath, cur);
+
+      // Também sincroniza edicao_atual.json se o arquivo existir
+      try {
+        const edPath = 'src/data/edicao_atual.json';
+        const edData = readJsonFile(edPath, null);
+        if (edData && edData.cadernos && caderno && edData.cadernos[caderno]) {
+          const item = edData.cadernos[caderno].find((it: any) => it.titulo === titulo || it.id === id);
+          if (item) {
+            item.titulo = titulo || item.titulo;
+            item.resumo = resumo;
+            writeJsonFile(edPath, edData);
+          }
+        }
+      } catch (errSync) {
+        console.warn('Aviso ao sincronizar edicao_atual.json:', errSync);
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          wordCount: words,
+          message: `✅ Matéria atualizada com sucesso! (${words} palavras • ${words >= 85 && words <= 105 ? 'Conforme' : 'Atenção aos limites'})`,
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 8. DISPARO EMERGENCIAL DE FLASH NEWS (BREAKING NEWS)
+    // ─────────────────────────────────────────────────────────────────────────
+    if (acao === 'disparar_flash_news') {
+      const { titulo, caderno, resumo, canais } = body || {};
+      if (!titulo || !resumo) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Título e resumo são obrigatórios para o Flash News.' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const words = resumo.trim().split(/\s+/).filter(Boolean).length;
+      const flashPath = 'logs/flash_news_history.json';
+      const history = readJsonFile<any[]>(flashPath, []);
+      const novoFlash = {
+        id: `fn-${Date.now()}`,
+        titulo,
+        caderno: caderno || 'Urgente',
+        resumo,
+        wordCount: words,
+        canais: canais || ['email', 'x'],
+        timestamp: new Date().toISOString(),
+        status: 'DISPATCHED',
+      };
+      history.unshift(novoFlash);
+      writeJsonFile(flashPath, history);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          item: novoFlash,
+          message: `🚨 Flash News disparado com sucesso para ${((canais || []).join(', ') || 'todos os canais').toUpperCase()}!`,
         }),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
