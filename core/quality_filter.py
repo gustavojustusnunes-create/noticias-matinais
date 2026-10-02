@@ -228,15 +228,31 @@ def _avaliar_com_gemini_flash(caderno: str, candidatas: List[Dict[str, Any]]) ->
     try:
         import google.generativeai as genai
         genai.configure(api_key=gemini_key)
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        resp = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.15,
-                response_mime_type="application/json"
-            ),
-            request_options={"timeout": 15}
-        )
+        models_to_try = [
+            "gemini-1.5-flash",
+            "gemini-2.0-flash",
+            "gemini-1.5-flash-latest",
+            "gemini-2.5-flash",
+            "gemini-1.5-pro",
+            "gemini-pro"
+        ]
+        resp = None
+        for m_name in models_to_try:
+            try:
+                model = genai.GenerativeModel(m_name)
+                resp = model.generate_content(
+                    prompt,
+                    generation_config=genai.types.GenerationConfig(
+                        temperature=0.15,
+                        response_mime_type="application/json"
+                    ),
+                    request_options={"timeout": 15}
+                )
+                if resp and resp.text:
+                    break
+            except Exception:
+                continue
+
         if resp and resp.text:
             dados = json.loads(resp.text)
             if isinstance(dados, dict) and "avaliacoes" in dados:
@@ -295,7 +311,7 @@ def triar_caderno_com_ia(caderno: str, candidatas: List[Dict[str, Any]]) -> Dict
     for av in avaliacoes:
         idx = av.get("indice", 0)
         if 0 <= idx < len(candidatas):
-            item = dict(candidatas[idx])
+            item = candidatas[idx]
             item["quality_score"] = float(av.get("score", 0.0))
             item["quality_motivo"] = av.get("motivo", "")
             

@@ -183,17 +183,37 @@ def extrair_contexto_base(entry, max_chars: int = 3500) -> str:
     Remove lixo e garante que termina em frase completa.
     """
     texto = ""
-    if "content" in entry:
-        for c in entry.content:
-            texto += c.value
-    if not texto.strip() and "summary" in entry:
-        texto = entry.summary
+    # Suporta de forma segura FeedParserDict e dict padrão
+    content_val = None
+    if isinstance(entry, dict):
+        content_val = entry.get("content")
+    elif hasattr(entry, "content"):
+        content_val = getattr(entry, "content")
+
+    if content_val:
+        if isinstance(content_val, (list, tuple)):
+            for c in content_val:
+                if hasattr(c, "value"):
+                    texto += str(c.value)
+                elif isinstance(c, dict) and "value" in c:
+                    texto += str(c["value"])
+                elif isinstance(c, str):
+                    texto += c
+        elif isinstance(content_val, str):
+            texto += content_val
+
     if not texto.strip():
-        texto = entry.get("description", "")
+        if isinstance(entry, dict):
+            texto = entry.get("summary") or entry.get("description") or ""
+        else:
+            texto = getattr(entry, "summary", "") or getattr(entry, "description", "") or ""
 
-    texto = limpar_texto_rss(texto)
+    texto = limpar_texto_rss(str(texto))
 
-    titulo = entry.get("title", "")
+    if isinstance(entry, dict):
+        titulo = entry.get("title", "")
+    else:
+        titulo = getattr(entry, "title", "")
     if titulo:
         texto = remover_titulo_duplicado(titulo, texto)
 
