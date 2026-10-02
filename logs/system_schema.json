@@ -1,16 +1,15 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-10-01T12:55:39.266035-03:00",
+  "last_updated": "2026-10-02T16:44:30.217816-03:00",
   "active_run_state": {
-    "status": "CRITIC_APPROVED",
-    "current_active_node": "media_generator",
-    "is_approved": true,
-    "word_count": 88,
+    "status": "IDLE",
+    "current_active_node": "planner",
+    "is_approved": false,
+    "word_count": 0,
     "retry_count": 0,
     "hitl_approved": false,
-    "selected_story_title": "Teste Selic",
-    "last_updated": "2026-10-01T12:55:39.265960-03:00",
-    "execution_log_count": 2
+    "last_updated": "2026-10-02T16:44:30.217771-03:00",
+    "selected_story_title": null
   },
   "clusters": [
     {
@@ -84,7 +83,7 @@
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true
     },
     {
@@ -114,8 +113,8 @@
       },
       "id": "planner",
       "is_hitl_gate": false,
-      "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "is_active": true,
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true
     },
     {
@@ -149,7 +148,7 @@
       "id": "writer",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true,
       "runtime_retry_count": 0
     },
@@ -185,10 +184,10 @@
       "id": "critic",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true,
-      "runtime_word_count": 88,
-      "runtime_is_approved": true
+      "runtime_word_count": 0,
+      "runtime_is_approved": false
     },
     {
       "label": "Media Generator",
@@ -219,8 +218,8 @@
       },
       "id": "media_generator",
       "is_hitl_gate": false,
-      "is_active": true,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "is_active": false,
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true
     },
     {
@@ -253,7 +252,7 @@
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true
     },
     {
@@ -283,7 +282,7 @@
       "id": "__end__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true
     },
     {
@@ -313,7 +312,7 @@
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-10-01T12:54:25.768857-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true,
       "runtime_hitl_approved": false,
       "is_locked": true
@@ -345,7 +344,7 @@
         "x": 890,
         "y": 380
       },
-      "file_mtime": "2026-10-01T11:44:37.184061-03:00",
+      "file_mtime": "2026-10-02T16:43:51.688069-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -374,7 +373,7 @@
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-10-01T12:52:18.176291-03:00",
+      "file_mtime": "2026-10-02T16:43:51.614074-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -404,7 +403,7 @@
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-09-23T18:00:30.242159-03:00",
+      "file_mtime": "2026-10-02T16:43:51.926971-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -433,7 +432,7 @@
         "x": 1360,
         "y": 185
       },
-      "file_mtime": "2026-09-14T18:38:22.481489-03:00",
+      "file_mtime": "2026-10-02T16:43:51.614074-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -462,8 +461,8 @@
         "x": 1160,
         "y": 380
       },
-      "file_mtime": "2026-10-01T12:54:59.065454-03:00",
-      "file_exists": true,
+      "file_mtime": null,
+      "file_exists": false,
       "is_active": false
     },
     {
@@ -491,7 +490,7 @@
         "x": 70,
         "y": 710
       },
-      "file_mtime": "2026-09-22T20:36:58.964196-03:00",
+      "file_mtime": "2026-10-02T16:43:51.929665-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -520,7 +519,7 @@
         "x": 290,
         "y": 710
       },
-      "file_mtime": "2026-09-29T17:17:20.917678-03:00",
+      "file_mtime": "2026-10-02T16:43:51.845487-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -549,7 +548,7 @@
         "x": 510,
         "y": 710
       },
-      "file_mtime": "2026-09-10T17:05:55.466876-03:00",
+      "file_mtime": "2026-10-02T16:43:51.830667-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -578,7 +577,7 @@
         "x": 730,
         "y": 710
       },
-      "file_mtime": "2026-09-22T17:30:23.276404-03:00",
+      "file_mtime": "2026-10-02T16:43:51.926971-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -607,7 +606,7 @@
         "x": 950,
         "y": 710
       },
-      "file_mtime": "2026-09-22T17:30:23.280668-03:00",
+      "file_mtime": "2026-10-02T16:43:51.929665-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -637,7 +636,7 @@
         "x": 1215,
         "y": 715
       },
-      "file_mtime": "2026-09-18T17:55:26.238298-03:00",
+      "file_mtime": "2026-10-02T16:43:51.926429-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -668,7 +667,7 @@
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-09-29T17:18:33.161320-03:00",
+      "file_mtime": "2026-10-02T16:43:51.614667-03:00",
       "file_exists": true,
       "is_active": false
     }
@@ -850,7 +849,7 @@
     "langgraph_nodes": 8,
     "infrastructure_nodes": 12,
     "total_edges": 21,
-    "current_status": "CRITIC_APPROVED",
-    "current_active_node": "media_generator"
+    "current_status": "IDLE",
+    "current_active_node": "planner"
   }
 }
