@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-03",
+  "data_extenso": "Sábado, 3 de Outubro de 2026",
+  "manchete": "Protestos liderados pela geração Z contra cadastro eleitoral da Índia terminam com detenções",
+  "arquivo_html": "2026-10-03.html"
+ },
+ {
   "data": "2026-10-02",
   "data_extenso": "Sexta-feira, 2 de Outubro de 2026",
   "manchete": "América Latina vê influência da China  mais positiva que a dos EUA pela 1ª vez, diz pesquisa",
@@ -352,11 +358,5 @@
   "data_extenso": "Terça-feira, 21 de Julho de 2026",
   "manchete": "Os casos de racismo que mancharam a Copa: 'Ele nunca desapareceu'",
   "arquivo_html": "2026-07-21.html"
- },
- {
-  "data": "2026-07-19",
-  "data_extenso": "Domingo, 19 de Julho de 2026",
-  "manchete": "Ucrânia diz ter abatido 18 dos 41 mísseis lançados pela Rússia",
-  "arquivo_html": "2026-07-19.html"
  }
 ]

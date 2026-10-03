@@ -1,0 +1,16 @@
+[
+  {
+    "data": "2026-10-03",
+    "caderno": "Wellness",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 6 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 4.5/10.",
+    "exemplos_descartados": [
+      "O que é exercício unilateral?",
+      "Salada de macarrão no pote é opção prática para variar o cardápio",
+      "Dá para treinar pesado usando caneta emagrecedora?",
+      "5 momentos do dia em que você pode trocar alguns minutos sentado por movimento",
+      "Você não precisa de uma hora livre: maneiras de encaixar movimento em um dia corrido"
+    ],
+    "timestamp": "2026-10-03T10:32:27.838156-03:00"
+  }
+]
