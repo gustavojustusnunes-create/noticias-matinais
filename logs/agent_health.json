@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-10-03T18:38:46.080593-03:00",
-    "data_hoje": "2026-10-03",
+    "timestamp_scan": "2026-10-04T11:55:38.659261-03:00",
+    "data_hoje": "2026-10-04",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -8,10 +8,10 @@
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
-            "detalhe": "Edição publicada com sucesso (13 notícias).",
-            "ultima_edicao": "2026-10-03",
+            "detalhe": "Edição publicada com sucesso (12 notícias).",
+            "ultima_edicao": "2026-10-04",
             "horario_previsto": "05:20 BRT",
-            "total_itens": 13
+            "total_itens": 12
         },
         "finance": {
             "nome": "All News Finance",
@@ -22,8 +22,8 @@
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-03 gerados e registrados.",
+            "status": "SCHEDULED",
+            "detalhe": "Aguardando horário agendado (09:15 BRT).",
             "ultima_edicao": "2026-10-03",
             "horario_previsto": "09:15 BRT"
         },
@@ -38,7 +38,7 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-03 18:38 BRT",
+            "ultimo_scan": "2026-10-04 11:55 BRT",
             "incidentes_abertos": 0
         }
     }
