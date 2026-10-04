@@ -12,5 +12,17 @@
       "Você não precisa de uma hora livre: maneiras de encaixar movimento em um dia corrido"
     ],
     "timestamp": "2026-10-03T10:32:27.838156-03:00"
+  },
+  {
+    "data": "2026-10-04",
+    "caderno": "Wellness",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 3 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 5.5/10.",
+    "exemplos_descartados": [
+      "Quais os principais benefícios de treinar quadríceps?",
+      "VO₂ máximo não é só coisa de atleta! Entenda por que esse indicador merece atenção e como melhorá-lo",
+      "Antes de emagrecer, ganhe músculo!"
+    ],
+    "timestamp": "2026-10-04T11:11:02.854375-03:00"
   }
 ]
