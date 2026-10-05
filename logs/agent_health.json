@@ -1,29 +1,33 @@
 {
-    "timestamp_scan": "2026-10-04T18:47:12.414458-03:00",
-    "data_hoje": "2026-10-04",
-    "sistema_geral": "HEALTHY",
-    "incidentes": [],
-    "auto_recuperacoes": [],
+    "timestamp_scan": "2026-10-05T15:44:37.840360-03:00",
+    "data_hoje": "2026-10-05",
+    "sistema_geral": "WARNING",
+    "incidentes": [
+        "All News Finance não concluiu a edição de 2026-10-05."
+    ],
+    "auto_recuperacoes": [
+        "finance_daily.yml disparado para auto-recuperação."
+    ],
     "agentes": {
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
-            "detalhe": "Edição publicada com sucesso (12 notícias).",
-            "ultima_edicao": "2026-10-04",
+            "detalhe": "Edição publicada com sucesso (15 notícias).",
+            "ultima_edicao": "2026-10-05",
             "horario_previsto": "05:20 BRT",
-            "total_itens": 12
+            "total_itens": 15
         },
         "finance": {
             "nome": "All News Finance",
-            "status": "WEEKEND_REST",
-            "detalhe": "Mercados fechados aos fins de semana.",
-            "ultima_edicao": "Segunda-feira",
-            "horario_previsto": "Seg-Sex às 05:25"
+            "status": "RECOVERING",
+            "detalhe": "Edição financeira de hoje ausente após as 06:20.",
+            "ultima_edicao": "Pendente",
+            "horario_previsto": "05:25 BRT"
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-04 gerados e registrados.",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-10-05).",
             "ultima_edicao": "2026-10-04",
             "horario_previsto": "09:15 BRT"
         },
@@ -38,8 +42,8 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-04 18:47 BRT",
-            "incidentes_abertos": 0
+            "ultimo_scan": "2026-10-05 15:44 BRT",
+            "incidentes_abertos": 1
         }
     }
 }
