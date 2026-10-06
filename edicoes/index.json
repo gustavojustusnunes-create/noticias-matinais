@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-06",
+  "data_extenso": "Terça-feira, 6 de Outubro de 2026",
+  "manchete": "Primeiro-ministro da França condena violência em protestos estudantis; 250 mil estão nas ruas",
+  "arquivo_html": "2026-10-06.html"
+ },
+ {
   "data": "2026-10-05",
   "data_extenso": "Segunda-feira, 5 de Outubro de 2026",
   "manchete": "Trump culpa ataques da Ucrânia à Rússia por alta dos preços do petróleo",
@@ -352,11 +358,5 @@
   "data_extenso": "Sexta-feira, 24 de Julho de 2026",
   "manchete": "General do Irã diz que EUA usam arsenal 'estocado para Terceira Guerra Mundial' contra o país",
   "arquivo_html": "2026-07-24.html"
- },
- {
-  "data": "2026-07-23",
-  "data_extenso": "Quinta-feira, 23 de Julho de 2026",
-  "manchete": "Rubio: 'Irã implora todos os dias' por acordo e continuará 'pagando preço'",
-  "arquivo_html": "2026-07-23.html"
  }
 ]
