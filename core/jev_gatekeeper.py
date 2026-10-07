@@ -37,18 +37,18 @@ except ImportError:
 # =============================================================================
 
 SYSTEM_PROMPT_CRITIC = """
-Você é o Quality Gate do All News Journal. Audite o resumo contra as diretrizes normativas da publicação:
+Você é o Quality Gate do All News Journal. Audite a resenha contra as diretrizes normativas da publicação (Padrão The Economist):
 
 REGRAS DE VALIDAÇÃO:
-1. Contagem: O campo "resumo_texto" tem rigorosamente entre 85 e 105 palavras?
-2. Integridade: A frase final termina com ponto final e encerra uma tese sem corte abrupto?
-3. Limpeza: Há algum crédito de foto ("Getty", "BBC", "Foto"), autor ou símbolo HTML quebrado?
-4. Profundidade: O texto explicou a causa e o impacto do fato ou ficou apenas em um anúncio genérico?
+1. Contagem: O campo "resumo_texto" tem rigorosamente entre 60 e 90 palavras?
+2. Integridade: A frase final termina com ponto final (.) e encerra o desdobramento crítico sem corte abrupto?
+3. Limpeza & Ausência de Chavões: Ausência de créditos de foto ("Getty", "BBC", "Foto") e ausência de clichês proibidos ("dinâmica competitiva", "cadeia operacional", "acompanhado de perto por analistas").
+4. Estrutura Analítica (3 Passos): O texto contém O Fato (com dados quantitativos), Contexto & Mecânica (forças estruturais) e Desdobramento Crítico (quem ganha/perde e risco)?
 
 RESPOSTA OBRIGATÓRIA (JSON):
 {
   "aprovado": true,
-  "word_count": 94,
+  "word_count": 75,
   "motivo_rejeicao": "",
   "instrucao_reescrita": ""
 }
@@ -95,12 +95,12 @@ class SupervisorTriage(BaseModel):
 
 def auditar_resumo_critic(resumo_texto: str, usar_llm: bool = False) -> Dict[str, Any]:
     """
-    Quality Gate oficial do All News Journal baseado no SYSTEM_PROMPT_CRITIC.
-    Audita o campo 'resumo_texto' contra as 4 diretrizes normativas:
-    1. Contagem: rigorosamente entre 85 e 105 palavras (tolerância operacional 82 a 108).
+    Quality Gate oficial do All News Journal baseado no SYSTEM_PROMPT_CRITIC (Padrão The Economist).
+    Audita o campo 'resumo_texto' contra as diretrizes normativas:
+    1. Contagem: rigorosamente entre 60 e 90 palavras (tolerância operacional 58 a 92).
     2. Integridade: frase final com ponto final e encerramento de tese sem corte abrupto.
-    3. Limpeza: ausência de créditos de foto ('Getty', 'BBC', 'Foto'), autor ou HTML quebrado.
-    4. Profundidade: explicação de causa e impacto do fato, sem anúncio genérico ou clichê.
+    3. Limpeza & Ausência de Chavões: ausência de créditos de foto e ausência de clichês de IA.
+    4. Estrutura Analítica: O Fato com dados, Contexto & Mecânica, e Desdobramento Crítico (So What?).
 
     Retorna estritamente o formato JSON de SYSTEM_PROMPT_CRITIC:
     {
@@ -129,13 +129,13 @@ def auditar_resumo_critic(resumo_texto: str, usar_llm: bool = False) -> Dict[str
     erros = []
     instrucoes = []
 
-    # Regra 1: Contagem de palavras (estrito 85-105, tolerância operacional 82-108)
-    if word_count < 82:
-        erros.append(f"Subdimensionado: {word_count} palavras (mínimo obrigatório: 85 palavras).")
-        instrucoes.append(f"Expanda a matéria com mais dados substantivos para atingir entre 85 e 105 palavras (atualmente {word_count}).")
-    elif word_count > 108:
-        erros.append(f"Superdimensionado: {word_count} palavras (teto obrigatório: 105 palavras).")
-        instrucoes.append(f"Sintetize a matéria para atingir entre 85 e 105 palavras (atualmente {word_count}).")
+    # Regra 1: Contagem de palavras (estrito 60-90, tolerância operacional 58-92)
+    if word_count < 58:
+        erros.append(f"Subdimensionado: {word_count} palavras (mínimo obrigatório: 60 palavras).")
+        instrucoes.append(f"Expanda a resenha com mais dados substantivos para atingir entre 60 e 90 palavras (atualmente {word_count}).")
+    elif word_count > 92:
+        erros.append(f"Superdimensionado: {word_count} palavras (teto obrigatório: 90 palavras).")
+        instrucoes.append(f"Sintetize a resenha para atingir entre 60 e 90 palavras (atualmente {word_count}).")
 
     # Regra 2: Integridade (frase final termina com ponto final e encerra tese sem corte abrupto)
     if texto.endswith("?"):
@@ -171,16 +171,19 @@ def auditar_resumo_critic(resumo_texto: str, usar_llm: bool = False) -> Dict[str
         erros.append("Símbolo HTML quebrado ou tag não autorizada.")
         instrucoes.append("Remova tags HTML quebradas ou não autorizadas (permitido exclusivamente <b> para negrito).")
 
-    # Regra 4: Profundidade (causa e impacto substantivos, sem anúncio genérico ou clichê)
+    # Regra 4: Ausência de clichês e chavões genéricos proibidos (Estilo The Economist)
     termos_proibidos = [
         "você não vai acreditar", "confira a seguir", "veja mais", "clique aqui", 
         "imperdível", "surpreendente", "chocante", "fique ligado", "o artigo fala",
-        "segundo a publicação"
+        "segundo a publicação",
+        "estabelecem uma nova dinâmica competitiva", "nova dinâmica competitiva",
+        "impactos substanciais na cadeia operacional", "cadeia operacional",
+        "acompanhado de perto por analistas", "acompanhado por analistas"
     ]
     for termo in termos_proibidos:
         if termo in texto.lower():
-            erros.append(f"Uso de clichê/clickbait vedado: '{termo}'.")
-            instrucoes.append(f"Substitua o clichê '{termo}' por fatos concretos e causa/impacto verificáveis.")
+            erros.append(f"Uso de clichê/chavão vedado: '{termo}'.")
+            instrucoes.append(f"Substitua o clichê '{termo}' por fatos concretos, dados numéricos e causalidade estrutural.")
             break
 
     aprovado = len(erros) == 0
@@ -219,8 +222,8 @@ def _local_system1_editorial_evaluate(article_text: str, guidelines: str = "") -
         noul = True
         choice = "APPROVE"
         confidence = 0.95
-        reason = f"Conforme diretrizes editoriais: {word_count} palavras dentro da margem estrita (85-105) e estrutura analítica aprovada."
-    elif word_count < 60 or word_count > 140 or len(motivo.split(" | ")) >= 3:
+        reason = f"Conforme diretrizes editoriais: {word_count} palavras dentro da margem estrita (60-90) e estrutura analítica The Economist aprovada."
+    elif word_count < 45 or word_count > 120 or len(motivo.split(" | ")) >= 3:
         # Desvio severo
         score = 1
         noul = False
@@ -229,7 +232,7 @@ def _local_system1_editorial_evaluate(article_text: str, guidelines: str = "") -
         reason = f"Rejeitado por desconformidade crítica: {motivo}"
     else:
         # Desvio recuperável (necessita revisão do Writer)
-        score = 3 if (82 <= word_count <= 108) else 2
+        score = 3 if (58 <= word_count <= 92) else 2
         noul = False
         choice = "REVISE"
         confidence = 0.88

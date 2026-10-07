@@ -53,69 +53,54 @@ LOGO_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "
 LOGO_CID = "anjlogo"
 
 # =============================================================================
-# --- ORDEM EDITORIAL DOS CADERNOS ---
+# --- ORDEM EDITORIAL DOS CADERNOS (OFICIAIS v18.0) ---
 # =============================================================================
-ORDEM_CADERNOS = ["Mundo", "Economia", "Politica", "IA", "Wellness", "Ciencia", "Cinema", "Fofoca"]
+ORDEM_CADERNOS = [
+    "Macroeconomia & Mercados",
+    "Geopolítica & Assuntos Globais",
+    "Estratégia Corporativa & M&A",
+    "Fronteira Tecnológica & IA",
+    "Ciência & Inovação",
+]
 
 # =============================================================================
-# --- FEEDS RSS ---
+# --- FEEDS RSS PRIMÁRIOS (PADRÃO REUTERS & THE ECONOMIST) ---
 # =============================================================================
 RSS_FEEDS = {
-    "Mundo": [
-        "https://g1.globo.com/rss/g1/mundo/",
-        "https://www.bbc.com/portuguese/index.xml",
-        "https://rss.uol.com.br/feed/noticias/internacional.xml",
-        "https://www.dw.com/pt-br/rss/rss/rmundo/s-31600",
-        "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml",
-    ],
-    "Economia": [
-        "https://g1.globo.com/rss/g1/economia/",
-        "https://www.infomoney.com.br/feed/",
-        "https://rss.uol.com.br/feed/economia.xml",
-        "https://economia.uol.com.br/rss.xml",
-        "https://valor.globo.com/rss/",
+    "Macroeconomia & Mercados": [
         "https://www.bloomberglinea.com.br/arc/outboundfeeds/rss/",
+        "https://valor.globo.com/rss/",
+        "https://www.infomoney.com.br/feed/",
         "https://exame.com/invest/feed/",
+        "https://g1.globo.com/rss/g1/economia/",
     ],
-    "Politica": [
-        "https://g1.globo.com/rss/g1/politica/",
-        "https://feeds.folha.uol.com.br/poder/rss091.xml",
-        "https://rss.uol.com.br/feed/noticias/politica.xml",
-        "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml",
+    "Geopolítica & Assuntos Globais": [
+        "https://www.bbc.com/portuguese/index.xml",
+        "https://www.dw.com/pt-br/rss/rss/rmundo/s-31600",
+        "https://g1.globo.com/rss/g1/mundo/",
+        "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml",
+        "https://feeds.folha.uol.com.br/mundo/rss091.xml",
     ],
-    "IA": [
+    "Estratégia Corporativa & M&A": [
+        "https://exame.com/negocios/feed/",
+        "https://valor.globo.com/empresas/rss/",
+        "https://www.infomoney.com.br/mercados/feed/",
+        "https://pipelinevalor.globo.com/feed/",
+        "https://fusoesaquisicoes.com/feed/",
+    ],
+    "Fronteira Tecnológica & IA": [
         "https://olhardigital.com.br/editorias/inteligencia-artificial/feed/",
         "https://canaltech.com.br/inteligencia-artificial/rss/",
         "https://g1.globo.com/rss/g1/tecnologia/",
         "https://rss.uol.com.br/feed/tilt.xml",
         "https://www.tecmundo.com.br/rss",
     ],
-    "Wellness": [
-        "https://ge.globo.com/rss/eu-atleta/",
-        "https://www.runnersworld.com.br/feed/",
-        "https://sportv.globo.com/rss/sportv/categoria/bem-estar-e-fitness/",
-        "https://boaforma.abril.com.br/feed/",
-        "https://vivabem.uol.com.br/rss.xml",
-    ],
-    "Ciencia": [
-        "https://g1.globo.com/rss/g1/ciencia-e-saude/",
-        "https://gizmodo.uol.com.br/feed/",
+    "Ciência & Inovação": [
         "https://www.inovacaotecnologica.com.br/boletim/rss.xml",
-        "https://www.tecmundo.com.br/ciencia/rss",
+        "https://agencia.fapesp.br/rss",
+        "https://canaltech.com.br/ciencia/rss/",
+        "https://g1.globo.com/rss/g1/ciencia-e-saude/",
         "https://www.nationalgeographicbrasil.com/ciencia/rss",
-        "https://super.abril.com.br/feed/",
-    ],
-    "Cinema": [
-        "https://www.omelete.com.br/rss/",
-        "https://www.cinepop.com.br/feed",
-        "https://www.papodecinema.com.br/feed/",
-        "https://www.adorocinema.com/rss/",
-        "https://g1.globo.com/rss/g1/pop-arte/cinema/",
-    ],
-    "Fofoca": [
-        "https://hugogloss.uol.com.br/feed/",
-        "https://revistaquem.globo.com/rss/quem/",
-        "https://g1.globo.com/rss/g1/pop-arte/",
     ],
 }
 
@@ -132,9 +117,7 @@ FILTRO_GLOBAL = [
 ]
 
 FILTROS_TEMA = {
-    "Mundo": [],
-
-    "Economia": [
+    "Macroeconomia & Mercados": [
         "horóscopo", "moda", "futebol", "brasileirão", "campeonato",
         "onde assistir", "onde-assistir", "ao vivo", "ao-vivo",
         "gol", "escalação", "clube", "torcedor",
@@ -142,35 +125,28 @@ FILTROS_TEMA = {
         "previsão do tempo", "clima", "chuva",
         "bbb", "big brother", "prêmio do bbb", "reality",
         "tênis", "fonseca", "alcaraz", "sinner", "nadal",
-        "israel:", "irã:", "civil morto", "guerra de fronteira",
-        "bombardeio", "teerã", "netanyahu", "míssil",
         "lotofácil", "mega-sena", "mega sena", "quina", "lotomania",
         "timemania", "dupla sena", "resultado sorteado",
         "prêmio da loteria", "números sorteados",
-        "lula", "bolsonaro", "lulismo", "bolsonarismo",
-        "stf", "congresso", "senado", "câmara dos deputados",
-        "eleições", "eleição municipal", "eleição presidencial", "eleitoral",
-        "haddad", "palocci", "petista", "pt ", " pt,", " pt.", "psdb", "pl ", " pl,",
-        "partido ", "partidos ", "voto ", "candidato", "deputado", "senador",
-        "ministério da", "ministro da", "secretaria de", "governador",
-        "prefeito", "vereador", "política interna", "reforma ministerial",
-        "impeachment", "pec ", "proposta de emenda", "orçamento secreto",
-        "orçamento federal", "ldo ", " ppa ", "reforma tributária",
-        "cpi ", "comissão parlamentar",
-        "governo federal", "governo lula", "governo bolsonaro",
-        "presidente da república", "presidência da república",
-        "arthur lira", "rodrigo pacheco", "ciro gomes",
-        "flávio dino", "gilmar mendes", "alexandre de moraes",
-        "tse afirma", "tse confirma", "tse decide", "tse determina",
-        "stj decide", "stf decide", "supremo decide",
-        "supremo julga", "moraes determina",
-        "operação policial", "preso", "prisão", "mandado de busca",
-        "inquérito", "investigação policial", "delegacia",
+        "fofoca", "celebridade", "namoro", "casamento",
+        "aposta", "bet", "cassino",
     ],
 
-    "Politica": [],
+    "Geopolítica & Assuntos Globais": [
+        "horóscopo", "moda", "futebol", "carnaval", "celebridade",
+        "reality show", "bbb", "loteria", "sorteio",
+        "crime comum", "acidente de trânsito", "briga de bar",
+        "fofoca", "viralizou", "influenciador",
+    ],
 
-    "IA": [
+    "Estratégia Corporativa & M&A": [
+        "horóscopo", "moda", "futebol", "bbb", "reality",
+        "vida pessoal", "namoro", "casamento", "separação",
+        "crime comum", "acidente", "promoção de supermercado",
+        "cupom de desconto", "queima de estoque",
+    ],
+
+    "Fronteira Tecnológica & IA": [
         "horóscopo", "moda", "futebol", "bbb", "big brother",
         "celebridade", "novela", "morre", "falece", "aniversário",
         "bitcoin", "ethereum", "nft", "blockchain", "criptomoeda",
@@ -179,124 +155,57 @@ FILTROS_TEMA = {
         "aposta", "bet", "cassino",
     ],
 
-    "Wellness": [
-        "aposta", "bet", "cassino", "moda",
-        "maquiagem", "cabelo", "unhas", "beleza", "tatuagem",
-        "câncer", "tumor", "cirurgia", "hospital", "médico recomenda",
-        "remédio", "medicamento", "vacina", "dengue", "vírus",
-        "doença", "diagnóstico", "sintomas", "tratamento clínico",
-        "famoso", "celebridade", "ator", "atriz", "novela",
-        "bbb", "big brother", "reality",
-        "resfriado", "alergia", "gripe",
-        "erros na cozinha", "receita de", "culinária",
-        "velhice", "envelhecimento", "idoso", "terceira idade",
-        "política", "conflito", "guerra", "eleição",
-    ],
-
-    "Ciencia": [
-        "mão de obra", "mercado de trabalho", "emprego",
-        "carreira", "concurso público", "salário",
-    ],
-
-    "Cinema": [
-        "aposta", "bet", "cassino", "futebol", "esporte",
-        "aniversário", "tatuagem", "look", "moda", "relacionamento",
-        "casamento", "separação", "gravidez", "filhos",
-        "morte de", "falecimento", "luto", "velório",
-        "lamenta morte", "celebra aniversário", "faz anos",
-    ],
-
-    "Fofoca": [
-        "ex-bbb", "ex bbb", "bbb ", "big brother",
-        "fazenda ", "a fazenda", "reality show",
-        "sertanejo", "pagodeiro", "funkeiro", "funk",
-        "mc ", "mc.", "dj ",
-        "governo federal", "presidente lula", "bolsonaro",
-        "congresso nacional", "eleições", "partido político",
-        "carlinhos maia", "virgínia", "virginia fonseca",
-        "zé felipe", "ze felipe", "whindersson",
-        "simaria", "simone mendes", "marília mendonça",
-        "ana castela", "maiara", "maraisa",
-        "robinho", "tremembé", "thiago brennand", "suzane richthofen",
-        "mc guimê", "mc guime", "mc daniel", "mc kevin", "pocah",
-        "jojo todynho", "jojo toddynho", "gkay", "gracyanne barbosa", "deolane",
-        "biel ", "naldo benny",
-        "leo santana", "safadão", "safadao",
-        "gusttavo lima", "leonardo (cantor)", "leonardo cantor",
-        "jade picon", "larissa manoela", "maísa",
-        "juliette", "gil do vigor", "arthur aguiar",
-        "davi brito", "matteus", "beatriz reis", "lucas souza",
-        "denílson", "galvão bueno", "datena", "ratinho",
-        "faustão", "silvio santos", "patrícia abravanel", "celso portiolli",
-        "ícaro silva", "joão vicente de castro",
+    "Ciência & Inovação": [
+        "horóscopo", "astrologia", "signo", "tarô",
+        "mão de obra", "mercado de trabalho", "concurso público",
+        "dieta milagrosa", "cura caseira", "emagrecer",
+        "fofoca", "celebridade",
     ],
 }
 
 # =============================================================================
-# --- INSTRUÇÕES POR TEMA (PROMPT IA) ---
+# --- INSTRUÇÕES POR CADERNO (PADRÃO THE ECONOMIST / REUTERS) ---
 # =============================================================================
 INSTRUCAO_TEMA = {
-    "Mundo": "Foco: Geopolítica global e crises diplomáticas substanciais.",
-    "Economia": "Foco: Política monetária, juros, câmbio, balanços e impacto financeiro (nunca atualizações isoladas de apps).",
-    "Politica": "Foco: Fatos institucionais neutros dos três poderes, com foco em medidas públicas e projetos de lei.",
-    "IA": "Foco: Modelos de fronteira, semicondutores, data centers e regulamentação tecnológica.",
-    "Wellness": "Foco: Fisiologia, esportes de resistência (corrida, ciclismo, musculação) e saúde física preventiva.",
-    "Ciencia": "Foco: Descobertas espaciais, medicina baseada em evidências e transição energética.",
-    "Cinema": "Foco: Bilheterias, direção, premiações e mercado audiovisual.",
-    "Fofoca": "Foco: Exclusivamente celebridades de escala global e entretenimento de massa."
+    "Macroeconomia & Mercados": "Foco: Política monetária, juros, câmbio, curvas de rendimento, fluxos de capital global, liquidez e balanços sistêmicos.",
+    "Geopolítica & Assuntos Globais": "Foco: Relações internacionais, diplomacia, disputas comerciais, soberania, segurança nacional e acordos multilaterais.",
+    "Estratégia Corporativa & M&A": "Foco: Fusões, aquisições, governança, alocação de capital corporativo, reestruturações e teses de investimento.",
+    "Fronteira Tecnológica & IA": "Foco: Modelos de fronteira, semicondutores, capacidade computacional, Capex de infraestrutura e regulação de IA.",
+    "Ciência & Inovação": "Foco: Materiais avançados, biotecnologia, transição energética, quebra de paradigmas técnicos e viabilidade comercial.",
 }
 
 # =============================================================================
 # --- IMAGENS DE FALLBACK (BIBLIOTECA INTERNA) ---
-# =============================================================================
 FALLBACK_IMAGES = {
-    "Mundo": [
-        "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1526660690293-bcd32dc3b562?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=600&h=1066&fit=crop"
-    ],
-    "Economia": [
+    "Macroeconomia & Mercados": [
         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1642543492481-44e81e3914a7?w=600&h=1066&fit=crop"
     ],
-    "Politica": [
-        "https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1555848962-6e79363ec58f?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1453945619913-79ec89a82c51?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&h=1066&fit=crop"
+    "Geopolítica & Assuntos Globais": [
+        "https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1494522855154-9297ac14b55f?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1526660690293-bcd32dc3b562?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?w=600&h=1066&fit=crop"
     ],
-    "IA": [
+    "Estratégia Corporativa & M&A": [
+        "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=600&h=1066&fit=crop",
+        "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=1066&fit=crop"
+    ],
+    "Fronteira Tecnológica & IA": [
         "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1655393001768-d946c98d6915?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1684369175836-829141042cb1?w=600&h=1066&fit=crop"
     ],
-    "Wellness": [
-        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=600&h=1066&fit=crop"
-    ],
-    "Ciencia": [
+    "Ciência & Inovação": [
         "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1518152006812-edab29b069ac?w=600&h=1066&fit=crop",
         "https://images.unsplash.com/photo-1564325724739-bae0bd08762c?w=600&h=1066&fit=crop"
-    ],
-    "Cinema": [
-        "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=600&h=1066&fit=crop"
-    ],
-    "Fofoca": [
-        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1493225457224-ca2e6ef23b7b?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1478147427282-58a87a120781?w=600&h=1066&fit=crop",
-        "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&h=1066&fit=crop"
     ],
 }
 
@@ -304,108 +213,125 @@ FALLBACK_IMAGES = {
 # --- IDENTIDADE VISUAL ---
 # =============================================================================
 ICONES_TEMA = {
-    "Mundo":    "🌎",
-    "Economia": "📈",
-    "Politica": "🏛️",
-    "IA":       "🤖",
-    "Wellness": "🏃",
-    "Ciencia":  "🔬",
-    "Cinema":   "🎬",
-    "Fofoca":   "⭐",
+    "Macroeconomia & Mercados":    "📊",
+    "Geopolítica & Assuntos Globais": "🌐",
+    "Estratégia Corporativa & M&A": "🏛️",
+    "Fronteira Tecnológica & IA":    "⚡",
+    "Ciência & Inovação":          "🔬",
 }
 
 CORES_TEMA = {
-    "Mundo":    "2c3e50",
-    "Economia": "1a6b3a",
-    "Politica": "7b0000",
-    "IA":       "5b2c91",
-    "Wellness": "e65100",
-    "Ciencia":  "006064",
-    "Cinema":   "4a0080",
-    "Fofoca":   "6a1b9a",
+    "Macroeconomia & Mercados":    "1a6b3a",
+    "Geopolítica & Assuntos Globais": "1e3a5f",
+    "Estratégia Corporativa & M&A": "8b5a2b",
+    "Fronteira Tecnológica & IA":    "4f46e5",
+    "Ciência & Inovação":          "006064",
 }
 
-# Hashtags para posts Instagram por tema
+# Hashtags para posts Instagram por caderno oficial
 HASHTAGS_TEMA = {
-    "Mundo":    "#noticias #mundo #geopolitica #internacional #atualidades #news",
-    "Economia": "#economia #mercado #investimentos #bolsa #financas #bovespa",
-    "Politica": "#politica #brasil #congresso #governo #democracia #stf",
-    "IA":       "#ia #inteligenciaartificial #ai #chatgpt #claude #tecnologia",
-    "Wellness": "#wellness #corrida #ciclismo #treino #saude #endurance",
-    "Ciencia":  "#ciencia #pesquisa #descoberta #saude #espaco #science",
-    "Cinema":   "#cinema #filmes #series #streaming #netflix #cultura",
-    "Fofoca":   "#celebridades #hollywood #famosos #popculture #entretenimento",
+    "Macroeconomia & Mercados":    "#macroeconomia #mercados #politicaMonetaria #investimentos #financas #economia",
+    "Geopolítica & Assuntos Globais": "#geopolitica #relacoesInternacionais #comercioGlobal #diplomacia #seguranca",
+    "Estratégia Corporativa & M&A": "#corporativo #fusoeAquisicoes #governanca #investimento #negocios",
+    "Fronteira Tecnológica & IA":    "#ia #inteligenciaArtificial #semicondutores #deeptech #tecnologia",
+    "Ciência & Inovação":          "#ciencia #inovacao #biotecnologia #transicaoEnergetica #pesquisa",
 }
 
-# Compatibilidade com colunas antigas do Google Sheets (renomeadas em v15.2)
-# Gustavo: quando puder, renomeie as colunas na planilha:
-#   "Mercado" → "Economia"  |  "Fitness" → "Wellness"
-# E adicione a coluna "IA". Remova "Tech", "Esportes", "Motos".
+# Compatibilidade suave com colunas legadas da planilha Google Sheets
 MAPEAMENTO_LEGADO = {
-    "Mercado": "Economia",
-    "Fitness": "Wellness",
+    "Economia": "Macroeconomia & Mercados",
+    "Mercado": "Macroeconomia & Mercados",
+    "Macroeconomia": "Macroeconomia & Mercados",
+    "Mundo": "Geopolítica & Assuntos Globais",
+    "Politica": "Geopolítica & Assuntos Globais",
+    "Política": "Geopolítica & Assuntos Globais",
+    "Geopolitica": "Geopolítica & Assuntos Globais",
+    "IA": "Fronteira Tecnológica & IA",
+    "Tech": "Fronteira Tecnológica & IA",
+    "Ciencia": "Ciência & Inovação",
+    "Ciência": "Ciência & Inovação",
+    "Macroeconomia & Mercados": "Macroeconomia & Mercados",
+    "Geopolítica & Assuntos Globais": "Geopolítica & Assuntos Globais",
+    "Estratégia Corporativa & M&A": "Estratégia Corporativa & M&A",
+    "Fronteira Tecnológica & IA": "Fronteira Tecnológica & IA",
+    "Ciência & Inovação": "Ciência & Inovação",
 }
 
 # =============================================================================
-# --- PUBLICAÇÃO / SITE (v17.0) ---
+# --- PUBLICAÇÃO / SITE (v18.0) ---
 # =============================================================================
 EDICOES_DIR = "edicoes"
-# Domínio público do jornal (allnewsjournal.streamlit.app NÃO existe;
-# a URL real do Streamlit tem hash — o leitor vê só o domínio próprio).
 SITE_URL    = "https://allnewsjournal.uk"
 
 # =============================================================================
-# --- INSTAGRAM: CARROSSEL + REEL (v17.0) ---
+# --- INSTAGRAM: CARROSSEL + REEL (v18.0) ---
 # =============================================================================
-# Handle real da conta (mudou de @allnews_journal em jun/2026).
 INSTAGRAM_HANDLE         = "@all.news.journal"
-INSTAGRAM_CARROSSEL_MODO = "rotativo"   # "rotativo" | "panorama"
+INSTAGRAM_CARROSSEL_MODO = "rotativo"
 REEL_SEGUNDOS_POR_SLIDE  = 3
 REEL_FADE_SEGUNDOS       = 0.4
 
-# Numerais romanos por caderno (rótulo dos cards)
+# Numerais romanos oficiais por caderno
 NUMERAIS_CADERNO = {
-    "Mundo": "I", "Economia": "II", "Politica": "III", "IA": "IV",
-    "Wellness": "V", "Ciencia": "VI", "Cinema": "VII", "Fofoca": "VIII",
+    "Macroeconomia & Mercados":    "I",
+    "Geopolítica & Assuntos Globais": "II",
+    "Estratégia Corporativa & M&A": "III",
+    "Fronteira Tecnológica & IA":    "IV",
+    "Ciência & Inovação":          "V",
 }
 
 # =============================================================================
-# --- PROMPTS EDITORIAIS NORMATIVOS (WRITER & CRITIC) ---
+# --- PROMPTS EDITORIAIS NORMATIVOS (NÓ 2: THE ECONOMIST / CRITIC) ---
 # =============================================================================
 SYSTEM_PROMPT_WRITER = """
-Você é o Editor Executivo do All News Journal. Sua função é redigir o resumo jornalístico oficial da nossa edição matinal a partir do conteúdo bruto extraído.
+Você é um correspondente sênior e analista executivo do All News Journal. Sua função é redigir a resenha analítica oficial da matéria original em estilo incisivo e executivo (inspirado no padrão The Economist).
 
-DIRETRIZES RÍGIDAS DE REDAÇÃO:
-1. EXTENSÃO OBRIGATÓRIA: O texto DEVE conter rigorosamente entre 85 e 105 palavras. Contagens fora dessa margem serão reprovadas.
-2. ESTRUTURA DOS TRÊS PERÍODOS:
-   - Período 1 (O Fato): Explique o acontecimento principal de forma direta e contextualizada (quem, o que e quando).
-   - Período 2 (A Causa/Mecânica): Traga os dados fundamentais, valores numéricos, porcentagens e o porquê de o fato ter ocorrido.
-   - Período 3 (O Impacto): Finalize com a consequência prática, decisão judicial em curso ou desdobramento de mercado.
-3. LIMPEZA TOTAL: Remova imediatamente créditos de imagens (ex: "Foto: Getty"), legendas, nomes de agências (Reuters, BBC, G1) e caracteres truncados.
-4. TOM DE VOZ: Analítico, sofisticado, sóbrio e sem sensacionalismo.
-5. PONTUAÇÃO FINAL: O texto DEVE obrigatoriamente terminar com ponto final (.) e ter sentido completo.
+ENTRADA:
+Título, categoria e corpo da matéria original.
+
+DIRETRIZES DE ESCRITA E TOM DE VOZ:
+- TOM: Sóbrio, incisivo, perspicaz e livre de clichês jornalísticos ou chavões de IA.
+- PROIBIÇÃO ABSOLUTA: NUNCA gere frases como "estabelecem uma nova dinâmica competitiva", "impactos substanciais na cadeia operacional", "acompanhado de perto por analistas". Cada frase deve ter conteúdo informativo real.
+- LIMPEZA TOTAL: Remova imediatamente créditos de imagens (ex: "Foto: Getty"), legendas, nomes de agências (Reuters, BBC, G1) e caracteres truncados.
+
+ESTRUTURA OBRIGATÓRIA DA RESENHA (ENTRE 60 E 90 PALAVRAS NO TOTAL):
+1. O FATO: 1 frase direta com o sujeito da ação, dados quantitativos e o evento central sem rodeios.
+2. CONTEXTO & MECÂNICA: 1 ou 2 frases explicando as forças estruturais por trás do fato (pressão de custos, dinâmica regulatória, incentivos geopolíticos).
+3. O DESDOBRAMENTO CRÍTICO (SO WHAT?): 1 frase apontando quem ganha, quem perde e qual o risco imediato a ser monitorado.
+PONTUAÇÃO FINAL: O texto DEVE obrigatoriamente terminar com ponto final (.) e ter sentido completo.
+
+TRATAMENTO DE EXCEÇÃO:
+Se o texto-fonte não tiver informações concretas suficientes para preencher os três passos com dados factuais, retorne o campo "status": "DISCARD" em vez de tentar inventar ou usar texto genérico.
 
 SAÍDA ESTRITAMENTE EM FORMATO JSON:
+Se a matéria possuir dados factuais suficientes:
 {
+  "status": "OK",
   "titulo_limpo": "Título analítico de até 12 palavras em tom institucional",
-  "resumo_texto": "Texto do resumo contendo exatamente entre 85 e 105 palavras.",
-  "contagem_palavras": 92
+  "resumo_texto": "Texto da resenha contendo rigorosamente entre 60 e 90 palavras estruturado nos três passos.",
+  "contagem_palavras": 75
+}
+
+Se o texto-fonte for raso ou insuficiente:
+{
+  "status": "DISCARD",
+  "motivo": "Ausência de informações concretas suficientes para preencher os três passos com dados factuais"
 }
 """
 
 SYSTEM_PROMPT_CRITIC = """
-Você é o Quality Gate do All News Journal. Audite o resumo contra as diretrizes normativas da publicação:
+Você é o Quality Gate do All News Journal. Audite a resenha contra as diretrizes normativas da publicação (Padrão The Economist):
 
 REGRAS DE VALIDAÇÃO:
-1. Contagem: O campo "resumo_texto" tem rigorosamente entre 85 e 105 palavras?
-2. Integridade: A frase final termina com ponto final e encerra uma tese sem corte abrupto?
-3. Limpeza: Há algum crédito de foto ("Getty", "BBC", "Foto"), autor ou símbolo HTML quebrado?
-4. Profundidade: O texto explicou a causa e o impacto do fato ou ficou apenas em um anúncio genérico?
+1. Contagem: O campo "resumo_texto" tem rigorosamente entre 60 e 90 palavras?
+2. Integridade: A frase final termina com ponto final (.) e encerra o desdobramento crítico sem corte abrupto?
+3. Limpeza & Ausência de Chavões: Ausência de créditos de foto ("Getty", "BBC", "Foto") e ausência de clichês proibidos ("dinâmica competitiva", "cadeia operacional", "acompanhado de perto por analistas").
+4. Estrutura Analítica (3 Passos): O texto contém O Fato (com dados quantitativos), Contexto & Mecânica (forças estruturais) e Desdobramento Crítico (quem ganha/perde e risco)?
 
 RESPOSTA OBRIGATÓRIA (JSON):
 {
   "aprovado": true,
-  "word_count": 94,
+  "word_count": 75,
   "motivo_rejeicao": "",
   "instrucao_reescrita": ""
 }

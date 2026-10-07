@@ -1,15 +1,16 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-10-06T19:45:19.453303-03:00",
+  "last_updated": "2026-10-06T22:23:01.959688-03:00",
   "active_run_state": {
-    "status": "IDLE",
-    "current_active_node": "planner",
+    "status": "DRAFT_GENERATED",
+    "current_active_node": "critic",
     "is_approved": false,
-    "word_count": 0,
+    "word_count": 67,
     "retry_count": 0,
     "hitl_approved": false,
-    "last_updated": "2026-10-06T19:45:19.453278-03:00",
-    "selected_story_title": null
+    "selected_story_title": "Banco Central mantém juros",
+    "last_updated": "2026-10-06T22:23:01.959561-03:00",
+    "execution_log_count": 1
   },
   "clusters": [
     {
@@ -83,7 +84,7 @@
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true
     },
     {
@@ -113,8 +114,8 @@
       },
       "id": "planner",
       "is_hitl_gate": false,
-      "is_active": true,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "is_active": false,
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true
     },
     {
@@ -129,7 +130,7 @@
       "file": "core/graph_engine.py",
       "func": "node_writer(state: GraphState)",
       "model": "Google Gemini 1.5 Flash (temp: 0.2, response_mime_type: 'application/json')",
-      "desc": "Redige resumo jornalístico oficial no tom executivo com base no SYSTEM_PROMPT_WRITER, estruturado em 3 períodos (Fato, Causa, Impacto) com 85 a 105 palavras em formato JSON.",
+      "desc": "Redige resenha analítica oficial no estilo The Economist com base no SYSTEM_PROMPT_WRITER, estruturada em 3 passos (Fato com dados, Mecânica estrutural e So What?) com 60 a 90 palavras em formato JSON, com suporte a status DISCARD.",
       "inputs": [
         "selected_story: Dict",
         "critique_feedback: Optional[str]",
@@ -138,9 +139,9 @@
       "outputs": [
         "draft_text: str",
         "word_count: int",
-        "status: 'DRAFT_GENERATED'"
+        "status: 'DRAFT_GENERATED' | 'DISCARDED'"
       ],
-      "resilience": "Reescrita reativa orientada pelas correções do Critic. Fallback local calibrado para 85-105 palavras se a API oscilar.",
+      "resilience": "Reescrita reativa orientada pelas correções do Critic. Descarte seguro (DISCARD) se faltarem fatos concretos. Fallback calibrado para 60-90 palavras.",
       "pos": {
         "x": 390,
         "y": 140
@@ -148,7 +149,7 @@
       "id": "writer",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true,
       "runtime_retry_count": 0
     },
@@ -183,10 +184,10 @@
       },
       "id": "critic",
       "is_hitl_gate": false,
-      "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "is_active": true,
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true,
-      "runtime_word_count": 0,
+      "runtime_word_count": 67,
       "runtime_is_approved": false
     },
     {
@@ -219,7 +220,7 @@
       "id": "media_generator",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true
     },
     {
@@ -252,7 +253,7 @@
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true
     },
     {
@@ -282,7 +283,7 @@
       "id": "__end__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true
     },
     {
@@ -312,7 +313,7 @@
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:18:54.302074-03:00",
       "file_exists": true,
       "runtime_hitl_approved": false,
       "is_locked": true
@@ -344,7 +345,7 @@
         "x": 890,
         "y": 380
       },
-      "file_mtime": "2026-10-06T19:44:45.253996-03:00",
+      "file_mtime": "2026-10-06T22:10:07.380794-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -373,7 +374,7 @@
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-10-06T19:44:45.177839-03:00",
+      "file_mtime": "2026-10-06T22:12:28.225219-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -403,7 +404,7 @@
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-10-06T19:44:45.518451-03:00",
+      "file_mtime": "2026-10-01T22:05:48.294250-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -432,7 +433,7 @@
         "x": 1360,
         "y": 185
       },
-      "file_mtime": "2026-10-06T19:44:45.177839-03:00",
+      "file_mtime": "2026-09-14T18:38:22.481489-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -461,8 +462,8 @@
         "x": 1160,
         "y": 380
       },
-      "file_mtime": null,
-      "file_exists": false,
+      "file_mtime": "2026-10-06T22:22:44.020125-03:00",
+      "file_exists": true,
       "is_active": false
     },
     {
@@ -490,7 +491,7 @@
         "x": 70,
         "y": 710
       },
-      "file_mtime": "2026-10-06T19:44:45.520842-03:00",
+      "file_mtime": "2026-09-22T20:36:58.964196-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -519,7 +520,7 @@
         "x": 290,
         "y": 710
       },
-      "file_mtime": "2026-10-06T19:44:45.443143-03:00",
+      "file_mtime": "2026-10-01T13:29:44.567617-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -548,7 +549,7 @@
         "x": 510,
         "y": 710
       },
-      "file_mtime": "2026-10-06T19:44:45.430841-03:00",
+      "file_mtime": "2026-09-10T17:05:55.466876-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -577,7 +578,7 @@
         "x": 730,
         "y": 710
       },
-      "file_mtime": "2026-10-06T19:44:45.518842-03:00",
+      "file_mtime": "2026-09-22T17:30:23.276404-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -606,7 +607,7 @@
         "x": 950,
         "y": 710
       },
-      "file_mtime": "2026-10-06T19:44:45.521842-03:00",
+      "file_mtime": "2026-09-22T17:30:23.280668-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -636,7 +637,7 @@
         "x": 1215,
         "y": 715
       },
-      "file_mtime": "2026-10-06T19:44:45.518158-03:00",
+      "file_mtime": "2026-09-18T17:55:26.238298-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -667,7 +668,7 @@
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-10-06T19:44:45.177839-03:00",
+      "file_mtime": "2026-10-01T13:29:44.513686-03:00",
       "file_exists": true,
       "is_active": false
     }
@@ -849,7 +850,7 @@
     "langgraph_nodes": 8,
     "infrastructure_nodes": 12,
     "total_edges": 21,
-    "current_status": "IDLE",
-    "current_active_node": "planner"
+    "current_status": "DRAFT_GENERATED",
+    "current_active_node": "critic"
   }
 }

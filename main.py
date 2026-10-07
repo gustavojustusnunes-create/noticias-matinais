@@ -71,21 +71,21 @@ def main():
     historico_hashes = carregar_historico(sheet_historico)
     usuarios_raw     = sheet_usuarios.get_all_records()
     
-    # Compatibilidade com colunas legadas da planilha (Mercado→Economia, Fitness→Wellness)
+    # Compatibilidade suave com colunas da planilha (Padrão Oficial 5 Cadernos ANJ)
     usuarios = []
     for usr in usuarios_raw:
+        usr_dict = dict(usr)
         for legado, novo in MAPEAMENTO_LEGADO.items():
-            if legado in usr and novo not in usr:
-                usr[novo] = usr.pop(legado)
-        usuarios.append(usr)
+            if legado in usr_dict and novo not in usr_dict:
+                usr_dict[novo] = usr_dict.get(legado)
+        # Se o assinante recebe Macroeconomia & Mercados, ativa Estratégia Corporativa & M&A por padrão caso a coluna seja nova
+        if "Estratégia Corporativa & M&A" not in usr_dict:
+            val_macro = str(usr_dict.get("Macroeconomia & Mercados", "")).strip().lower()
+            if val_macro in {"sim"} or val_macro.isdigit():
+                usr_dict["Estratégia Corporativa & M&A"] = "Sim"
+        usuarios.append(usr_dict)
         
-    if any(MAPEAMENTO_LEGADO.keys() & set(usuarios_raw[0].keys() if usuarios_raw else [])):
-        print("⚠️  AVISO: A planilha ainda tem colunas com nomes antigos.")
-        print("   Por favor, renomeie no Google Sheets:")
-        for legado, novo in MAPEAMENTO_LEGADO.items():
-            print(f"   '{legado}' → '{novo}'")
-        print("   Adicione também a coluna 'IA' e remova 'Tech', 'Esportes', 'Motos'.")
-    print(f"   👥 {len(usuarios)} assinantes encontrados.")
+    print(f"   👥 {len(usuarios)} assinantes encontrados e mapeados para a nova taxonomia editorial.")
 
     # Descobre temas necessários
     temas_demandados = {

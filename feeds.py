@@ -446,8 +446,8 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             f"DIRETRIZ ESPECÍFICA DO CADERNO: {instrucao}\n"
             f"MANCHETE E CONTEXTO BRUTO:\n"
             f"{input_individual}\n\n"
-            f"IMPORTANTE: Se o fato for fútil, desprovido de substância ou não pertencer ao caderno {tema}, responda em JSON com {{\"skip\": true}}.\n"
-            f"Caso contrário, retorne ESTRITAMENTE o JSON com 'titulo_limpo' (até 12 palavras), 'resumo_texto' (entre 85 e 105 palavras) e 'contagem_palavras'."
+            f"IMPORTANTE: Se o fato for fútil, desprovido de substância ou sem dados concretos para preencher os três passos factuais, responda em JSON com {{\"status\": \"DISCARD\", \"motivo\": \"...\"}}.\n"
+            f"Caso contrário, retorne ESTRITAMENTE o JSON com 'status': 'OK', 'titulo_limpo' (até 12 palavras), 'resumo_texto' (entre 60 e 90 palavras nos 3 passos factuais) e 'contagem_palavras'."
         )
 
         resp_ia = chamar_supervisor_api(prompt) or chamar_claude_api(prompt)
@@ -467,8 +467,8 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
                 if resp_clean.endswith("```"):
                     resp_clean = resp_clean[:-3]
                 dados = json.loads(resp_clean.strip())
-                if dados.get("skip") is True:
-                    print(f"      🚫 SKIP [{tema}]: {titulo_entry[:60]}")
+                if dados.get("skip") is True or dados.get("status") == "DISCARD":
+                    print(f"      🚫 DISCARD/SKIP [{tema}]: {titulo_entry[:60]} ({dados.get('motivo', 'sem dados concretos')})")
                     continue
                 if dados.get("titulo_limpo"):
                     titulo_final = dados["titulo_limpo"].strip()
@@ -476,12 +476,12 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
                     resumo_limpo = limpar_resumo(dados["resumo_texto"])
             except Exception:
                 # Fallback se a resposta não foi JSON estrito
-                if resp_ia.strip().upper() == "SKIP":
-                    print(f"      🚫 SKIP [{tema}]: {titulo_entry[:60]}")
+                if resp_ia.strip().upper() in ("SKIP", "DISCARD"):
+                    print(f"      🚫 DISCARD/SKIP [{tema}]: {titulo_entry[:60]}")
                     continue
                 resumo_limpo = limpar_resumo(resp_ia)
 
-        # ── Fallback 1: Reescrita estruturada em 3 períodos (85-105 palavras) ──
+        # ── Fallback 1: Reescrita estruturada em 3 períodos (60-90 palavras) ──
         if not resumo_limpo:
             contexto_base = extrair_contexto_base(entry, max_chars=3500)
             if contexto_base and len(contexto_base.split()) >= 20:
@@ -499,6 +499,8 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
                         if rclean.endswith("```"):
                             rclean = rclean[:-3]
                         d = json.loads(rclean.strip())
+                        if d.get("status") == "DISCARD":
+                            continue
                         if d.get("titulo_limpo"):
                             titulo_final = d["titulo_limpo"].strip()
                         if d.get("resumo_texto"):
@@ -511,7 +513,7 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
             prompt_mini = (
                 f"{SYSTEM_PROMPT_WRITER}\n\n"
                 f"CADERNO: {tema.upper()}\n"
-                f"Desenvolva o resumo analítico oficial em 3 períodos com base no título abaixo.\n"
+                f"Desenvolva o resumo analítico oficial em 3 passos com base no título abaixo.\n"
                 f"Título: {titulo_entry}"
             )
             mini = chamar_supervisor_api(prompt_mini) or chamar_claude_api(prompt_mini)
@@ -523,6 +525,8 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
                     if mclean.endswith("```"):
                         mclean = mclean[:-3]
                     d = json.loads(mclean.strip())
+                    if d.get("status") == "DISCARD":
+                        continue
                     if d.get("titulo_limpo"):
                         titulo_final = d["titulo_limpo"].strip()
                     if d.get("resumo_texto"):
@@ -530,13 +534,10 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
                 except Exception:
                     resumo_limpo = limpar_resumo(mini)
 
-        # ── Fallback 3 (último recurso): Determinístico calibrado (85-105 palavras) ──
+        # ── Política de Exclusão por Falta de Dados (Manual Editorial ANJ) ──
         if not resumo_limpo:
-            resumo_limpo = (
-                f"O desenvolvimento institucional e os acordos estratégicos vinculados a {titulo_entry} estabelecem uma nova dinâmica competitiva nos mercados do caderno de {tema}. "
-                f"A movimentação atrai a atenção imediata de lideranças setoriais e projeta impactos substanciais na cadeia operacional com métricas em consolidação acelerada no trimestre. "
-                f"Analistas apontam que a maturidade dos desdobramentos ditará as diretrizes de governança e a alocação de capital das entidades envolvidas com rigor ao longo das próximas semanas."
-            )
+            print(f"      🚫 EXCLUSÃO [{tema}]: '{titulo_entry[:60]}' descartada por ausência de dados concretos para os 3 passos.")
+            continue
 
         img = extrair_imagem_rss(entry, tema, idx_entry=i)
         # Evita imagem duplicada dentro do mesmo caderno

@@ -61,6 +61,61 @@ def revisar_edicao_diaria(cache_global):
     
     print("\n🕵️  Iniciando Supervisão e Auditoria de Qualidade da IA...")
     
+    
+    # --- NOVO: NÓ 3 - GUARDRALL ANTI-PLACEBO (VALIDADOR DE QUALIDADE) ---
+    print("   🛡️ Executando NÓ 3: Guardrail Anti-Placebo...")
+    todas_noticias = []
+    for tema, noticias in cache_global.items():
+        for i, noti in enumerate(noticias):
+            todas_noticias.append((tema, i, noti))
+    
+    # 1. Similaridade Lexical do Resumo > 40%
+    para_remover = set()
+    for idx1, (tema1, i1, noti1) in enumerate(todas_noticias):
+        if (tema1, i1) in para_remover: continue
+        resumo1 = noti1.get("resumo", "")
+        if not resumo1 or resumo1.strip().upper() == "SKIP": continue
+        p1 = set(w.lower() for w in resumo1.split() if len(w) > 3)
+        
+        for idx2, (tema2, i2, noti2) in enumerate(todas_noticias[idx1+1:], start=idx1+1):
+            if (tema2, i2) in para_remover: continue
+            resumo2 = noti2.get("resumo", "")
+            if not resumo2 or resumo2.strip().upper() == "SKIP": continue
+            p2 = set(w.lower() for w in resumo2.split() if len(w) > 3)
+            
+            if p1 and p2:
+                intersecao = p1.intersection(p2)
+                menor = min(len(p1), len(p2))
+                if menor > 0 and (len(intersecao) / menor) > 0.40:
+                    print(f"      🚫 Anti-Placebo: Similaridade de resumo > 40% detectada entre '{noti1.get('titulo')[:30]}' e '{noti2.get('titulo')[:30]}'. Abortando a segunda.")
+                    para_remover.add((tema2, i2))
+
+    # 2. Expressões proibidas & 3. Sujeira no Título
+    for tema, i, noti in todas_noticias:
+        if (tema, i) in para_remover: continue
+        
+        # Expressões proibidas
+        resumo = noti.get("resumo", "")
+        if "dinâmica competitiva nos mercados do caderno" in resumo or "alocação de capital das entidades envolvidas" in resumo:
+            print(f"      🚫 Anti-Placebo: Expressões placebo detectadas em '{noti.get('titulo')[:30]}'. Abortando matéria.")
+            para_remover.add((tema, i))
+            continue
+            
+        # Limpeza de Título
+        titulo = noti.get("titulo", "")
+        if titulo:
+            import re as re_mod
+            titulo_limpo = re_mod.sub(r"\(Reprodução/.*?\)", "", titulo, flags=re_mod.IGNORECASE)
+            titulo_limpo = re_mod.sub(r"Foto:.*?$", "", titulo_limpo, flags=re_mod.IGNORECASE)
+            if titulo_limpo != titulo:
+                print(f"      🧹 Anti-Placebo: Título limpo de metadados: '{titulo_limpo.strip()}'")
+                cache_global[tema][i]["titulo"] = titulo_limpo.strip()
+
+    # Reconstruindo o cache_global removendo as inválidas
+    for tema in cache_global.keys():
+        novas_noticias = [noti for i, noti in enumerate(cache_global[tema]) if (tema, i) not in para_remover]
+        cache_global[tema] = novas_noticias
+
     # --- Passo Zero: Deduplicação Semântica de Notícias de Grande Impacto ---
     print("   🔍 Removendo notícias repetidas sobre o mesmo assunto...")
     for tema, noticias in cache_global.items():
@@ -96,7 +151,7 @@ def revisar_edicao_diaria(cache_global):
             # --- Jev System 1: Auditoria Ultrarrápida (< 15ms) ---
             auditoria = auditar_resumo_critic(resumo_original)
             if auditoria.get("aprovado") is True:
-                # Notícia aprovada pelo Quality Gate oficial: conformidade perfeita com 85-105 palavras
+                # Notícia aprovada pelo Quality Gate oficial: conformidade perfeita com 60-90 palavras
                 continue
 
             motivo_audit = auditoria.get("motivo_rejeicao", "")
@@ -104,15 +159,15 @@ def revisar_edicao_diaria(cache_global):
 
             prompt = (
                 "Você é o Editor-Chefe e Supervisor de Qualidade do All News Journal e All News Finance.\n"
-                "Sua tarefa é auditar a notícia abaixo e garantir que ela esteja impecável e no padrão oficial do SYSTEM_PROMPT_WRITER.\n\n"
+                "Sua tarefa é auditar a notícia abaixo e garantir que ela esteja impecável e no padrão oficial do SYSTEM_PROMPT_WRITER (Padrão The Economist).\n\n"
                 "DIRETRIZES RÍGIDAS DE REDAÇÃO:\n"
-                "1. EXTENSÃO OBRIGATÓRIA: O texto DEVE conter rigorosamente entre 85 e 105 palavras (tolerância operacional 82 a 108).\n"
-                "2. ESTRUTURA DOS TRÊS PERÍODOS:\n"
-                "   - Período 1 (O Fato): Explique o acontecimento principal de forma direta e contextualizada (quem, o que e quando).\n"
-                "   - Período 2 (A Causa/Mecânica): Traga os dados fundamentais, valores numéricos, porcentagens e o porquê de o fato ter ocorrido.\n"
-                "   - Período 3 (O Impacto): Finalize com a consequência prática, decisão judicial em curso ou desdobramento de mercado.\n"
-                "3. LIMPEZA TOTAL: Remova imediatamente créditos de imagens (ex: 'Foto: Getty'), legendas e nomes de agências (Reuters, BBC, G1).\n"
-                "4. TOM DE VOZ: Analítico, sofisticado, sóbrio e sem sensacionalismo.\n"
+                "1. EXTENSÃO OBRIGATÓRIA: O texto DEVE conter rigorosamente entre 60 e 90 palavras (tolerância operacional 58 a 92).\n"
+                "2. ESTRUTURA DOS TRÊS PASSOS (THE ECONOMIST):\n"
+                "   - Passo 1 (O Fato): 1 frase direta com sujeito da ação, dados quantitativos e o evento central sem rodeios.\n"
+                "   - Passo 2 (Contexto & Mecânica): 1 ou 2 frases explicando as forças estruturais (pressão de custos, regulação, incentivos geopolíticos).\n"
+                "   - Passo 3 (O Desdobramento Crítico / So What?): 1 frase apontando quem ganha, quem perde e qual o risco imediato a ser monitorado.\n"
+                "3. PROIBIÇÃO ABSOLUTA: NUNCA gere frases como 'estabelecem uma nova dinâmica competitiva', 'impactos substanciais na cadeia operacional', 'acompanhado de perto por analistas'.\n"
+                "4. LIMPEZA TOTAL: Remova imediatamente créditos de imagens (ex: 'Foto: Getty'), legendas e nomes de agências (Reuters, BBC, G1).\n"
                 "5. PONTUAÇÃO FINAL: O texto DEVE obrigatoriamente terminar com ponto final (.) e ter sentido completo.\n\n"
                 f"APONTAMENTO DO QUALITY GATE:\n{motivo_audit} | {instrucao_audit}\n\n"
                 "LIÇÕES APRENDIDAS DE ERROS ANTERIORES:\n"
@@ -120,11 +175,11 @@ def revisar_edicao_diaria(cache_global):
                 "NOTÍCIA A SER REAVALIADA E CORRIGIDA:\n"
                 f"Título: {noticia.get('titulo', '')}\n"
                 f"Texto Original: {resumo_original}\n\n"
-                "Forneça a versão corrigida em 3 períodos com rigorosamente entre 85 e 105 palavras.\n"
+                "Forneça a versão corrigida em 3 passos com rigorosamente entre 60 e 90 palavras.\n"
                 "Responda ESTRITAMENTE em formato JSON com os seguintes campos:\n"
                 "- \"status\": \"PASS\" se estiver perfeita, ou \"FAIL\" se tiver problemas.\n"
                 "- \"motivo\": se FAIL, descreva brevemente o que estava errado.\n"
-                "- \"texto_corrigido\": se FAIL, forneça o texto completo reescrito e perfeito (entre 85 e 105 palavras).\n"
+                "- \"texto_corrigido\": se FAIL, forneça o texto completo reescrito e perfeito (entre 60 e 90 palavras).\n"
             )
             
             resposta_json_str = chamar_supervisor_api(prompt, max_tokens=2048)

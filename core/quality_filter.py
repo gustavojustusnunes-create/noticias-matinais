@@ -43,43 +43,41 @@ ALERTAS_FILE = Path("logs") / "alertas_cadernos.json"
 # --- CRITÉRIOS EDITORIALMENTE CODIFICADOS POR CADERNO ---
 # =============================================================================
 CRITERIOS_CADERNOS = {
+    "Macroeconomia & Mercados": (
+        "EXIGÊNCIAS: Decisões de Bancos Centrais (Copom, Fed, BCE), curva de juros, treasury yields, câmbio, "
+        "liquidez global, sustentabilidade fiscal, commodities e indicadores econômicos globais.\n"
+        "REJEIÇÕES ESTRITAS: Dicas triviais de finanças pessoais, promoções de varejo, flutuações irrelevantes ou colunas opinativas rasas."
+    ),
+    "Geopolítica & Assuntos Globais": (
+        "EXIGÊNCIAS: Relações internacionais, diplomacia de alto nível, disputas comerciais, reorganização de cadeias de suprimento, "
+        "segurança nacional, cúpulas multilaterais e tratados soberanos.\n"
+        "REJEIÇÕES ESTRITAS: Crimes comuns locais, tragédias cotidianas urbanas, curiosidades bizarras ou notas de tabloide."
+    ),
+    "Estratégia Corporativa & M&A": (
+        "EXIGÊNCIAS: Fusões, aquisições, reestruturações patrimoniais, governança corporativa, alocação de capital e teses de investimento de grandes corporações.\n"
+        "REJEIÇÕES ESTRITAS: Fofocas executivas sem impacto financeiro, vida pessoal de CEOs, anúncios triviais de marketing ou lançamentos secundários."
+    ),
+    "Fronteira Tecnológica & IA": (
+        "EXIGÊNCIAS: Modelos fundacionais de fronteira, infraestrutura de semicondutores e hardware (GPUs, NPUs), "
+        "data centers modulares, cibersegurança e regulação de tecnologia/IA.\n"
+        "REJEIÇÕES ESTRITAS: Especulações filosóficas vazias, tutoriais de prompts genéricos, rumores de redes sociais ou reviews de eletrônicos de consumo."
+    ),
+    "Ciência & Inovação": (
+        "EXIGÊNCIAS: Materiais avançados, transição energética em escala industrial, biotecnologia, ensaios clínicos com revisão por pares e quebra de paradigmas técnicos.\n"
+        "REJEIÇÕES ESTRITAS: Pseudosciência, curiosidades de entretenimento, estudos preliminares inconclusivos ou matérias de autoajuda."
+    ),
+    # Aliases de compatibilidade histórica
+    "Economia": "Decisões de Bancos Centrais, câmbio, curva de juros, liquidez e indicadores globais.",
+    "Mundo": "Geopolítica, diplomacia, disputas comerciais e segurança nacional.",
+    "IA": "Modelos de fronteira, semicondutores, capacidade computacional e regulação.",
+    "Ciencia": "Materiais avançados, transição energética e biotecnologia com revisão por pares.",
+    "Politica": "Medidas institucionais, decisões judiciais superiores e impacto fiscal/regulatório.",
     "Wellness": (
         "EXIGÊNCIAS: Inovação tecnológica de produto (engenharia de calçados/tênis de corrida, bikes de alto desempenho, wearables biométricos), "
         "negócios do esporte (contratos bilionários, direitos de mídia, mercado esportivo) ou grandes competições/eventos internacionais.\n"
         "REJEIÇÕES ESTRITAS: Dicas genéricas de treino caseiro, dietas para emagrecer, listas triviais ('5 exercícios para'), "
         "conselhos óbvios de saúde ou matérias de autoajuda sem base científica inovadora."
     ),
-    "IA": (
-        "EXIGÊNCIAS: Lançamentos de modelos de fronteira (pesos abertos/fechados), avanços de semicondutores e hardware (GPUs, NPUs), "
-        "inovações de arquitetura técnica ou casos reais corporativos com métricas tangíveis de ROI.\n"
-        "REJEIÇÕES ESTRITAS: Especulações filosóficas vazias, tutoriais de prompt genéricos, rumores de redes sociais ou opiniões sem anúncio oficial."
-    ),
-    "Economia": (
-        "EXIGÊNCIAS: Decisões de política monetária (Copom, Fed, BCE), indicadores macroeconômicos (inflação, PIB, juros), "
-        "balanços corporativos de peso, fusões/aquisições e movimentações estruturais de mercado.\n"
-        "REJEIÇÕES ESTRITAS: Notícias de finanças pessoais triviais, promoções de varejo comuns, boatos sem números ou colunas opinativas rasas."
-    ),
-    "Mundo": (
-        "EXIGÊNCIAS: Geopolítica de alto impacto, cúpulas internacionais (G20, Brics, ONU), acordos diplomáticos, "
-        "conflitos armados estratégicos e eleições soberanas de impacto global.\n"
-        "REJEIÇÕES ESTRITAS: Curiosidades bizarras internacionais, crimes comuns locais sem desdobramento institucional ou notas de tabloide."
-    ),
-    "Politica": (
-        "EXIGÊNCIAS: Votações legislativas de impacto orçamentário/estrutural, decisões dos tribunais superiores (STF, STJ) e políticas públicas federais.\n"
-        "REJEIÇÕES ESTRITAS: Declarações protocolares de políticos sem ação concreta, bate-bocas estéreis de redes sociais ou fofoca de bastidor partidário."
-    ),
-    "Ciencia": (
-        "EXIGÊNCIAS: Descobertas científicas publicadas em periódicos revisados por pares, avanços de biotecnologia/medicina de ponta, astrofísica ou energia limpa.\n"
-        "REJEIÇÕES ESTRITAS: Pseudosciência, estudos preliminares inconclusivos sem relevância ou curiosidades sensacionalistas."
-    ),
-    "Cinema": (
-        "EXIGÊNCIAS: Movimentações financeiras de estúdios, marcos de bilheteria global, festivais internacionais de prestígio (Cannes, Veneza, Oscar) e direitos autorais/streaming.\n"
-        "REJEIÇÕES ESTRITAS: Sinopses de novelas, fofocas de gravações sem impacto industrial ou listas genéricas de 'filmes para ver no fim de semana'."
-    ),
-    "Fofoca": (
-        "EXIGÊNCIAS: Notícias com confirmação oficial, contratos milionários de celebridades na indústria de entretenimento ou impactos de reputação corporativa.\n"
-        "REJEIÇÕES ESTRITAS: Suposições de namoro não confirmadas, especulações vazias de paparazzi ou posts irrelevantes de stories."
-    )
 }
 
 # Padrões regex que disparam descarte imediato (Score 1.0 a 3.0)
@@ -141,8 +139,8 @@ def _avaliar_heuristica_local(caderno: str, titulo: str, snippet: str = "") -> D
             "motivo": "Rejeitado em Wellness: Ausência de produto tecnológico inovador ou evento de relevância comprovada."
         }
 
-    # 3. Regras específicas para IA
-    if caderno.lower() == "ia":
+    # 3. Regras específicas para IA / Fronteira Tecnológica & IA
+    if "ia" in caderno.lower() or "tecnológica" in caderno.lower() or "fronteira" in caderno.lower():
         termos_tecnicos_ia = [
             "modelo", "llm", "gemini", "gpt", "claude", "anthropic", "openai", "nvidia",
             "hardware", "chip", "semicondutor", "gpu", "parâmetros", "benchmark",

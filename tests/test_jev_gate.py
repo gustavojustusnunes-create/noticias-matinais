@@ -30,38 +30,29 @@ from core.jev_gatekeeper import (
     CriticAuditResult,
     auditar_resumo_critic
 )
-from core.graph_engine import node_critic, rotear_pos_critic, GraphState
+from core.graph_engine import node_writer, node_critic, rotear_pos_critic, GraphState
 
 
 class TestJevGatekeeper(unittest.TestCase):
     """Testes unitários dos primitivos e regras de decisão do TypeSafe Jev."""
 
     def setUp(self):
-        # Texto calibrado com 92 palavras em 2 parágrafos, sem interrogações ou clichês
+        # Resenha calibrada com 61 palavras em 3 passos estilo The Economist (Fato com dados, Mecânica estrutural e So What?)
         self.artigo_perfeito = (
-            "A expansão acelerada dos investimentos globais em infraestrutura de inteligência artificial "
-            "consolida um novo paradigma competitivo para as principais corporações de tecnologia. "
-            "A mobilização de mais de duzentos bilhões de dólares na aquisição de processadores especializados "
-            "e em complexos de energia limpa reforça a resiliência das cadeias produtivas continentais.\n\n"
-            "Analistas de mercado observam que o movimento estabelece barreiras significativas de entrada "
-            "para participantes emergentes no ecossistema de software empresarial. "
-            "Com isso, a governança operacional e a previsibilidade orçamentária passam a ditar o ritmo das fusões corporativas."
+            "A expansão acelerada dos investimentos em inteligência artificial mobilizou 120 bilhões de dólares entre as principais corporações de tecnologia neste trimestre. "
+            "A pressão de custos operacionais e a corrida por semicondutores de última geração forçaram uma reestruturação profunda nos orçamentos de pesquisa e desenvolvimento. "
+            "Fabricantes de chips consolidam margens recordes no curto prazo, enquanto desenvolvedores de software enfrentam compressão de lucros sob risco de consolidação hostil."
         )
         self.artigo_curto = "A inteligência artificial avançou bastante neste último trimestre e trouxe novos investimentos para o setor de computação."
         self.artigo_com_interrogacao = (
-            "A expansão acelerada dos investimentos globais em infraestrutura de inteligência artificial "
-            "consolida um novo paradigma competitivo para as principais corporações de tecnologia. "
-            "A mobilização de mais de duzentos bilhões de dólares na aquisição de processadores especializados "
-            "e em complexos de energia limpa reforça a resiliência das cadeias produtivas continentais.\n\n"
-            "Analistas de mercado observam que o movimento estabelece barreiras significativas de entrada "
-            "para participantes emergentes no ecossistema corporativo. "
+            "A expansão acelerada dos investimentos em inteligência artificial mobilizou 120 bilhões de dólares entre as corporações globais. "
+            "A pressão de custos e a corrida por semicondutores de última geração forçaram uma reestruturação profunda nos orçamentos vigentes. "
             "Será que as empresas conseguirão sustentar esse nível de investimento no próximo ano?"
         )
         self.artigo_com_clickbait = (
-            "A expansão acelerada dos investimentos globais em inteligência artificial consolida um novo paradigma competitivo. "
-            "Você não vai acreditar nas transformações que estão ocorrendo nos data centers de alta capacidade computacional.\n\n"
-            "Analistas de mercado observam que o movimento estabelece barreiras significativas de entrada "
-            "para participantes emergentes no ecossistema corporativo global."
+            "A expansão acelerada dos investimentos em inteligência artificial mobilizou 120 bilhões de dólares entre as corporações globais. "
+            "Você não vai acreditar nas transformações que estão ocorrendo nos data centers de alta capacidade computacional neste momento. "
+            "Fabricantes de semicondutores ampliam receitas imediatas, enquanto empresas menores enfrentam escassez de suprimentos."
         )
 
     def test_approved_article_fast_latency(self):
@@ -79,11 +70,11 @@ class TestJevGatekeeper(unittest.TestCase):
         self.assertTrue(resultado["noul"], "O primitivo noul deve ser True para artigos sem violação")
         self.assertGreaterEqual(resultado["score"], 4)
         self.assertGreaterEqual(resultado["confidence"], 0.80)
-        self.assertGreaterEqual(resultado["word_count"], 82)
-        self.assertLessEqual(resultado["word_count"], 108)
+        self.assertGreaterEqual(resultado["word_count"], 58)
+        self.assertLessEqual(resultado["word_count"], 92)
 
     def test_undersized_article_revises(self):
-        """Valida que textos com menos de 82 palavras são encaminhados para revisão."""
+        """Valida que textos com menos de 58 palavras são encaminhados para revisão."""
         resultado = evaluate_editorial_quality(self.artigo_curto)
         self.assertIn(resultado["choice"], ["REVISE", "REJECT"])
         self.assertFalse(resultado["noul"], "O primitivo noul deve ser False para textos fora de conformidade")
@@ -198,6 +189,46 @@ class TestLangGraphCriticIntegration(unittest.TestCase):
         destino = rotear_pos_critic(estado_esgotado)
         self.assertEqual(destino, "approved")
 
+    def test_node_writer_economist_style(self):
+        """Valida que o Nó 2 (Writer) gera resenha calibrada entre 60 e 90 palavras nos 3 passos."""
+        estado = {
+            "selected_story": {
+                "titulo": "Banco Central mantém juros",
+                "resumo": "Taxa mantida a 10,50%",
+                "caderno": "Economia"
+            },
+            "retry_count": 0
+        }
+        res = node_writer(estado)
+        self.assertEqual(res["status"], "DRAFT_GENERATED")
+        self.assertGreaterEqual(res["word_count"], 58)
+        self.assertLessEqual(res["word_count"], 92)
+
+    def test_node_writer_discard_status(self):
+        """Valida que o Nó 2 (Writer) acata o status DISCARD para matérias rasas."""
+        import json
+        from unittest.mock import MagicMock, patch
+        mock_resp = MagicMock()
+        mock_resp.text = json.dumps({"status": "DISCARD", "motivo": "Ausência de dados concretos."})
+        mock_model = MagicMock()
+        mock_model.generate_content.return_value = mock_resp
+
+        with patch("google.generativeai.GenerativeModel", return_value=mock_model), \
+             patch.dict("os.environ", {"GEMINI_API_KEY": "fake_key_for_test"}):
+            estado = {
+                "selected_story": {
+                    "titulo": "Fato Raso",
+                    "resumo": "Sem dados",
+                    "caderno": "Geral"
+                }
+            }
+            res = node_writer(estado)
+            self.assertEqual(res["status"], "DISCARDED")
+            self.assertIn("Ausência de dados", res["discard_reason"])
+            c_res = node_critic(res)
+            self.assertEqual(c_res["status"], "DISCARDED")
+            self.assertFalse(c_res["is_approved"])
+
     def test_benchmark_latency_and_efficiency(self):
         """Executa bateria de 50 iterações para demonstrar estabilidade sub-10ms e economia de tokens."""
         latencias = []
@@ -219,19 +250,15 @@ class TestQualityGateCriticAudit(unittest.TestCase):
     """Testes específicos das 4 Regras de Validação do SYSTEM_PROMPT_CRITIC."""
 
     def setUp(self):
-        # Texto calibrado com 92 palavras em conformidade estrita
+        # Resenha calibrada com 61 palavras em 3 passos estilo The Economist
         self.resumo_valido = (
-            "A expansão acelerada dos investimentos globais em infraestrutura de inteligência artificial "
-            "consolida um novo paradigma competitivo para as principais corporações de tecnologia. "
-            "A mobilização de mais de duzentos bilhões de dólares na aquisição de processadores especializados "
-            "e em complexos de energia limpa reforça a resiliência das cadeias produtivas continentais.\n\n"
-            "Analistas de mercado observam que o movimento estabelece barreiras significativas de entrada "
-            "para participantes emergentes no ecossistema de software empresarial. "
-            "Com isso, a governança operacional e a previsibilidade orçamentária passam a ditar o ritmo das fusões corporativas."
+            "A expansão acelerada dos investimentos em inteligência artificial mobilizou 120 bilhões de dólares entre as principais corporações de tecnologia neste trimestre. "
+            "A pressão de custos operacionais e a corrida por semicondutores de última geração forçaram uma reestruturação profunda nos orçamentos de pesquisa e desenvolvimento. "
+            "Fabricantes de chips consolidam margens recordes no curto prazo, enquanto desenvolvedores de software enfrentam compressão de lucros sob risco de consolidação hostil."
         )
 
     def test_regra_1_contagem_valida_e_invalida(self):
-        # Válido: 92 palavras
+        # Válido: 61 palavras
         r = auditar_resumo_critic(self.resumo_valido)
         self.assertTrue(r["aprovado"])
         self.assertEqual(r["word_count"], len(self.resumo_valido.split()))
@@ -278,12 +305,24 @@ class TestQualityGateCriticAudit(unittest.TestCase):
         self.assertFalse(r["aprovado"])
         self.assertIn("clichê", r["motivo_rejeicao"].lower())
 
+    def test_cliches_proibidos_the_economist(self):
+        """Valida reprovação de chavões proibidos: nova dinâmica competitiva, cadeia operacional, acompanhado de perto por analistas."""
+        for frase_proibida in [
+            "estabelecem uma nova dinâmica competitiva no mercado internacional.",
+            "geram impactos substanciais na cadeia operacional das corporações.",
+            "o movimento é acompanhado de perto por analistas do setor financeiro."
+        ]:
+            texto_cliche = f"{self.resumo_valido} O cenário {frase_proibida}"
+            r = auditar_resumo_critic(texto_cliche)
+            self.assertFalse(r["aprovado"])
+            self.assertIn("clichê", r["motivo_rejeicao"].lower())
+
     def test_esquema_pydantic_critic_audit_result(self):
         res = auditar_resumo_critic(self.resumo_valido)
         modelo = CriticAuditResult(**res)
         self.assertTrue(modelo.aprovado)
-        self.assertGreaterEqual(modelo.word_count, 85)
-        self.assertLessEqual(modelo.word_count, 105)
+        self.assertGreaterEqual(modelo.word_count, 60)
+        self.assertLessEqual(modelo.word_count, 90)
 
 
 if __name__ == "__main__":

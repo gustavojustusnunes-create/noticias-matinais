@@ -76,10 +76,10 @@ METADATA_LANGGRAPH_NODES = {
         "file": "core/graph_engine.py",
         "func": "node_writer(state: GraphState)",
         "model": "Google Gemini 1.5 Flash (temp: 0.2, response_mime_type: 'application/json')",
-        "desc": "Redige resumo jornalístico oficial no tom executivo com base no SYSTEM_PROMPT_WRITER, estruturado em 3 períodos (Fato, Causa, Impacto) com 85 a 105 palavras em formato JSON.",
+        "desc": "Redige resenha analítica oficial no estilo The Economist com base no SYSTEM_PROMPT_WRITER, estruturada em 3 passos (Fato com dados, Mecânica estrutural e So What?) com 60 a 90 palavras em formato JSON, com suporte a status DISCARD.",
         "inputs": ["selected_story: Dict", "critique_feedback: Optional[str]", "retry_count: int"],
-        "outputs": ["draft_text: str", "word_count: int", "status: 'DRAFT_GENERATED'"],
-        "resilience": "Reescrita reativa orientada pelas correções do Critic. Fallback local calibrado para 85-105 palavras se a API oscilar.",
+        "outputs": ["draft_text: str", "word_count: int", "status: 'DRAFT_GENERATED' | 'DISCARDED'"],
+        "resilience": "Reescrita reativa orientada pelas correções do Critic. Descarte seguro (DISCARD) se faltarem fatos concretos. Fallback calibrado para 60-90 palavras.",
         "pos": {"x": 390, "y": 140}
     },
     "critic": {
