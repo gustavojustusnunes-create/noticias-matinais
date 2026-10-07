@@ -464,6 +464,20 @@
             "texto_original": "O Bitcoin opera com leve retração de 0,7% nesta segunda-feira, sendo negociado pouco abaixo do patamar de US$ 80 mil. Apesar da oscilação negativa nas últimas 24 horas, o ativo sustenta um desempenho positivo no acumulado mensal, com valorização de 21,7%, e mantém estabilidade semanal de 0,4%. O mercado de criptoativos atravessa um momento de indefinição, refletindo a cautela dos investidores diante da agenda macroeconômica dos Estados Unidos, que ditará o ritmo da política monetária do Federal Reserve. O índice de medo e ganância, atualmente em 74 pontos, sinaliza um sentimento de ganância no mercado, mesmo com a volatilidade recente.\n\nA atenção dos agentes financeiros está voltada para a divulgação dos dados de inflação norte-americanos, com o Índice de Preços ao Produtor (PPI) previsto para quinta-feira e o Índice de Preços ao Consumidor (CPI) na sexta-feira. Estes indicadores serão cruciais para ajustar as expectativas sobre a trajetória dos juros pelo Fed. Atualmente, a ferramenta Fed Watch, do CME Group, aponta uma probabilidade de 59,4% de um novo aumento nas taxas de juros já na reunião de setembro. A possível elevação dos custos de capital nos Estados Unidos atua como um fator de pressão sobre ativos de risco, limitando o ímpeto de alta do Bitcoin e mantendo o mercado em compasso de espera por sinais mais claros sobre a resiliência da economia americana.",
             "motivo_falha": "O título original utiliza uma estrutura de listicle/clickbait e o texto apresenta imprecisões factuais sobre o calendário econômico e a política monetária do Federal Reserve, além de necessitar de um tom mais sóbrio e analítico.",
             "correcao_aplicada": "O mercado de criptoativos registra um movimento de acomodação nesta segunda-feira, com o Bitcoin ope..."
+        },
+        {
+            "data": "2026-10-07T23:22:20.833600",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Republicanos, partido de peso no espectro político brasileiro e integrante do Centrão, anunciou nesta quarta-feira seu apoio formal à candidatura de Flávio Bolsonaro (PL) à Presidência no segundo turno. A decisão re",
+            "motivo_falha": "O texto original continha apenas 33 palavras, encontrava-se truncado no final sem pontuação e carecia de profundidade analítica e estrutura nos três passos do padrão The Economist.",
+            "correcao_aplicada": "O Republicanos formalizou seu apoio à candidatura de Flávio Bolsonaro no segundo turno, consolidando..."
+        },
+        {
+            "data": "2026-10-07T23:23:44.496707",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A SLC Agrícola (SLCE3) projeta uma expansão de 2,2% na área de plantio para a safra 2026/27, atingindo 854,4 mil",
+            "motivo_falha": "O texto original continha apenas 20 palavras, estava incompleto e cortado abruptamente sem pontuação final, violando o limite mínimo obrigatório de 60 palavras e a estrutura dos três passos analíticos.",
+            "correcao_aplicada": "A SLC Agrícola projetou um avanço de 2,2% na sua área de plantio para o ciclo 2026/27, alcançando 85..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-06"
