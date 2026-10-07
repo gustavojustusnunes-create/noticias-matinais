@@ -24,5 +24,30 @@
       "Antes de emagrecer, ganhe músculo!"
     ],
     "timestamp": "2026-10-04T11:11:02.854375-03:00"
+  },
+  {
+    "data": "2026-10-07",
+    "caderno": "Ciência & Inovação",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 2 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 6.5/10.",
+    "exemplos_descartados": [
+      "Antena de plasma inovadora transmite e recebe ondas de rádio",
+      "Supercapacitor de cimento fornece energia para edifícios inteligentes"
+    ],
+    "timestamp": "2026-10-07T13:05:47.989500-03:00"
+  },
+  {
+    "data": "2026-10-07",
+    "caderno": "Macroeconomia & Mercados",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 8 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 6.5/10.",
+    "exemplos_descartados": [
+      "Integrantes do PP e União se reúnem com Flávio e dizem que apoio é ‘incondicional’",
+      "Tarcísio, sobre Flávio mudar Constituição: ‘existem algumas mudanças necessárias’",
+      "Como é feita a apuração dos votos nas eleições?",
+      "Tarcísio anuncia reunião de Flávio com Republicanos e espera gesto do MDB",
+      "Bitcoin perde US$ 83 mil e zera ganhos de outubro com disparada dos juros americanos"
+    ],
+    "timestamp": "2026-10-07T13:06:04.917509-03:00"
   }
 ]
