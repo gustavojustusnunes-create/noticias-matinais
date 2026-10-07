@@ -1,22 +1,21 @@
 {
-    "timestamp_scan": "2026-10-07T13:48:33.958930-03:00",
+    "timestamp_scan": "2026-10-07T20:15:08.446357-03:00",
     "data_hoje": "2026-10-07",
     "sistema_geral": "WARNING",
     "incidentes": [
-        "All News Journal não gerou a edição matinal de 2026-10-07.",
         "All News Finance não concluiu a edição de 2026-10-07."
     ],
     "auto_recuperacoes": [
-        "daily.yml disparado para auto-recuperação.",
         "finance_daily.yml disparado para auto-recuperação."
     ],
     "agentes": {
         "journal": {
             "nome": "All News Journal (Edição Diária)",
-            "status": "RECOVERING",
-            "detalhe": "Edição de hoje (2026-10-07) não foi gerada até às 13:48 BRT.",
-            "ultima_edicao": "Pendente",
-            "horario_previsto": "05:20 BRT"
+            "status": "ONLINE",
+            "detalhe": "Edição publicada com sucesso (4 notícias).",
+            "ultima_edicao": "2026-10-07",
+            "horario_previsto": "05:20 BRT",
+            "total_itens": 4
         },
         "finance": {
             "nome": "All News Finance",
@@ -43,8 +42,8 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-07 13:48 BRT",
-            "incidentes_abertos": 2
+            "ultimo_scan": "2026-10-07 20:15 BRT",
+            "incidentes_abertos": 1
         }
     }
 }
