@@ -534,6 +534,21 @@ def processar_tema(tema, historico_hashes, titulos_selecionados=None):
                 except Exception:
                     resumo_limpo = limpar_resumo(mini)
 
+        # ── Fallback 3: Contingência Factual Direta (Fontes Oficiais: Reuters, Valor, Bloomberg, BBC, etc.) ──
+        if not resumo_limpo:
+            contexto_emergencia = extrair_contexto_base(entry, max_chars=800)
+            palavras_ctx = contexto_emergencia.split()
+            if len(palavras_ctx) >= 25:
+                trecho = " ".join(palavras_ctx[:85])
+                ultimo_ponto = max(trecho.rfind("."), trecho.rfind("!"), trecho.rfind("?"))
+                if ultimo_ponto > len(trecho) // 2:
+                    trecho = trecho[:ultimo_ponto + 1]
+                else:
+                    trecho = trecho.rstrip(" ,;:-") + "."
+                resumo_limpo = limpar_resumo(trecho)
+                titulo_final = limpar_titulo_entry(titulo_entry)
+                print(f"      🛡️ [Contingência Factual] '{titulo_entry[:50]}...' preservada com texto factual da fonte ({len(resumo_limpo.split())} palavras).")
+
         # ── Política de Exclusão por Falta de Dados (Manual Editorial ANJ) ──
         if not resumo_limpo:
             print(f"      🚫 EXCLUSÃO [{tema}]: '{titulo_entry[:60]}' descartada por ausência de dados concretos para os 3 passos.")

@@ -118,11 +118,17 @@ def _sintetizar_dossie_com_ia(topic: str, tema: str, fontes: List[Dict[str, str]
         try:
             import google.generativeai as genai
             genai.configure(api_key=gemini_key)
-            model = genai.GenerativeModel("gemini-1.5-flash")
-            resp = model.generate_content(prompt, generation_config={"temperature": 0.2, "response_mime_type": "application/json"})
-            if resp and resp.text:
-                dados = json.loads(resp.text)
-                return dados
+            from claude_api import obter_modelos_gemini
+            models_to_try = obter_modelos_gemini(genai)
+            for m_name in models_to_try:
+                try:
+                    model = genai.GenerativeModel(m_name)
+                    resp = model.generate_content(prompt, generation_config={"temperature": 0.2, "response_mime_type": "application/json"})
+                    if resp and resp.text:
+                        dados = json.loads(resp.text)
+                        return dados
+                except Exception:
+                    continue
         except Exception as e:
             print(f"   ⚠️ [researcher] Falha na síntese Gemini: {e}")
 

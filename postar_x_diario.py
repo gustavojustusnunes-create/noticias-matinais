@@ -226,7 +226,8 @@ def gerar_copy_x(tema: str, titulo: str, resumo: str) -> str:
             import google.generativeai as genai
             genai.configure(api_key=GEMINI_API_KEY)
 
-            modelos = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-2.5-flash"]
+            from claude_api import obter_modelos_gemini
+            modelos = obter_modelos_gemini(genai)
             for m_nome in modelos:
                 try:
                     model = genai.GenerativeModel(

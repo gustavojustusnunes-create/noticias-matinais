@@ -11,13 +11,46 @@ from config import GEMINI_API_KEY
 
 _CACHED_MODELS = None
 
-def obter_modelos_gemini(genai):
+def obter_modelos_gemini(genai=None):
+    """
+    Descobre e retorna a lista ordenada de modelos Gemini disponíveis para geração de conteúdo.
+    Prioriza descoberta dinâmica via genai.list_models() e utiliza modelos modernos (3.8-flash, 2.5-flash)
+    com tolerância estrita a modelos legados descontinuados pelo Google.
+    """
     global _CACHED_MODELS
     if _CACHED_MODELS is not None:
         return _CACHED_MODELS
     
-    # Modelos flash preferenciais do Gemini por ordem de prioridade
-    _CACHED_MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro']
+    descobertos = []
+    if genai is not None:
+        try:
+            for m in genai.list_models():
+                metodos = getattr(m, "supported_generation_methods", []) or []
+                if "generateContent" in metodos:
+                    name = m.name.replace("models/", "")
+                    descobertos.append(name)
+        except Exception as e:
+            print(f"      ⚠️ Falha ao listar modelos dinamicamente ({e}).")
+
+    if descobertos:
+        # Priorizar flash velozes (3.8-flash, 2.5-flash), seguidos de pro e outros
+        flash_models = [m for m in descobertos if "flash" in m.lower()]
+        pro_models = [m for m in descobertos if "pro" in m.lower() and m not in flash_models]
+        outros = [m for m in descobertos if m not in flash_models and m not in pro_models]
+        _CACHED_MODELS = flash_models + pro_models + outros
+        print(f"      🔹 Modelos Gemini descobertos via API: {_CACHED_MODELS[:4]}")
+        return _CACHED_MODELS
+
+    # Fallback estático com suporte prioritário aos modelos 2025/2026
+    _CACHED_MODELS = [
+        "gemini-3.8-flash",
+        "gemini-2.5-flash",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+        "gemini-pro"
+    ]
     return _CACHED_MODELS
 
 
@@ -61,8 +94,8 @@ def chamar_claude_api(prompt, max_tokens=4096):
                         continue
                     else:
                         break
-                elif "not found" in msg or "not_found" in msg:
-                    print(f"      ⚠️ Modelo {clean_name} não encontrado (404). Tentando próximo...")
+                elif "not found" in msg or "not_found" in msg or "no longer available" in msg or "404" in msg:
+                    print(f"      ⚠️ Modelo {clean_name} indisponível/descontinuado (404). Tentando próximo...")
                     break
                 else:
                     print(f"      ⚠️ Exceção no SDK ({clean_name}): {e}")
@@ -297,9 +330,11 @@ def chamar_supervisor_api(prompt, max_tokens=4096):
                         continue
                     else:
                         break
-                elif "404" in msg or "not found" in msg or "supported" in msg:
+                elif "404" in msg or "not found" in msg or "supported" in msg or "no longer available" in msg:
+                    print(f"      ⚠️ Modelo {clean_name} indisponível/descontinuado (404) no supervisor. Tentando próximo...")
                     break
                 else:
+                    print(f"      ⚠️ Exceção no SDK supervisor ({clean_name}): {e}")
                     break
 
     return None

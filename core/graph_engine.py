@@ -205,7 +205,9 @@ def node_writer(state: GraphState) -> Dict[str, Any]:
         try:
             import google.generativeai as genai
             genai.configure(api_key=gemini_key)
-            model = genai.GenerativeModel("gemini-1.5-flash")
+            from claude_api import obter_modelos_gemini
+            models_to_try = obter_modelos_gemini(genai)
+            resp = None
             
             instrucao = SYSTEM_PROMPT_WRITER
             if feedback:
@@ -217,15 +219,23 @@ def node_writer(state: GraphState) -> Dict[str, Any]:
                 f"CONTEÚDO BRUTO EXTRAÍDO:\n{resumo_base}\n\n"
                 f"Retorne ESTRITAMENTE a saída em formato JSON conforme especificado."
             )
-            
-            resp = model.generate_content(
-                f"{instrucao}\n\n{prompt_user}",
-                generation_config=genai.types.GenerationConfig(
-                    temperature=0.2,
-                    max_output_tokens=350,
-                    response_mime_type="application/json"
-                )
-            )
+
+            for clean_name in models_to_try:
+                try:
+                    model = genai.GenerativeModel(clean_name)
+                    resp = model.generate_content(
+                        f"{instrucao}\n\n{prompt_user}",
+                        generation_config=genai.types.GenerationConfig(
+                            temperature=0.2,
+                            max_output_tokens=350,
+                            response_mime_type="application/json"
+                        )
+                    )
+                    if resp and resp.text:
+                        break
+                except Exception:
+                    continue
+
             if resp and resp.text:
                 resp_text = resp.text.strip()
                 if resp_text.startswith("```json"):

@@ -226,14 +226,19 @@ def _avaliar_com_gemini_flash(caderno: str, candidatas: List[Dict[str, Any]]) ->
     try:
         import google.generativeai as genai
         genai.configure(api_key=gemini_key)
-        models_to_try = [
-            "gemini-1.5-flash",
-            "gemini-2.0-flash",
-            "gemini-1.5-flash-latest",
-            "gemini-2.5-flash",
-            "gemini-1.5-pro",
-            "gemini-pro"
-        ]
+        try:
+            from claude_api import obter_modelos_gemini
+            models_to_try = obter_modelos_gemini(genai)
+        except Exception:
+            models_to_try = [
+                "gemini-3.8-flash",
+                "gemini-2.5-flash",
+                "gemini-2.0-flash",
+                "gemini-1.5-flash-latest",
+                "gemini-1.5-flash",
+                "gemini-1.5-pro",
+                "gemini-pro"
+            ]
         resp = None
         for m_name in models_to_try:
             try:
