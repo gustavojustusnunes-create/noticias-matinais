@@ -478,6 +478,20 @@
             "texto_original": "A SLC Agrícola (SLCE3) projeta uma expansão de 2,2% na área de plantio para a safra 2026/27, atingindo 854,4 mil",
             "motivo_falha": "O texto original continha apenas 20 palavras, estava incompleto e cortado abruptamente sem pontuação final, violando o limite mínimo obrigatório de 60 palavras e a estrutura dos três passos analíticos.",
             "correcao_aplicada": "A SLC Agrícola projetou um avanço de 2,2% na sua área de plantio para o ciclo 2026/27, alcançando 85..."
+        },
+        {
+            "data": "2026-10-08T15:53:34.097505",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O governo brasileiro, através do ministro do Desenvolvimento, Indústria, Comércio e Serviços, Márcio Rosa, comunicou nesta quinta-feira que há avanços nas negociações com a União Europeia para resolver o impasse que susp",
+            "motivo_falha": "O texto original estava incompleto, cortado abruptamente e abaixo do limite mínimo de 60 palavras. Foi reescrito seguindo estritamente a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "O governo brasileiro anunciou nesta quinta-feira avanços nas negociações diplomáticas com a União Eu..."
+        },
+        {
+            "data": "2026-10-08T15:57:16.200901",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptomoedas registrou um dia de forte aversão ao risco, com o Bitcoin (BTC) caindo abaixo de US$ 83 mil, negociado a US$ 82.",
+            "motivo_falha": "O texto anterior continha apenas 26 palavras, violando o limite mínimo obrigatório de 60 palavras do Quality Gate.",
+            "correcao_aplicada": "O mercado de criptomoedas registrou um dia de forte aversão ao risco, com o Bitcoin recuando para pa..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-06"
