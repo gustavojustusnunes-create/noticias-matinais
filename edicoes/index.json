@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-08",
+  "data_extenso": "Quinta-feira, 8 de Outubro de 2026",
+  "manchete": "Pressões inflacionárias e de liquidez impactam Wall Street",
+  "arquivo_html": "2026-10-08.html"
+ },
+ {
   "data": "2026-10-07",
   "data_extenso": "Quarta-feira, 7 de Outubro de 2026",
   "manchete": "Euro em Queda: Preocupações Fiscais Francesas Pressionam Moeda e Títulos",
@@ -352,11 +358,5 @@
   "data_extenso": "Domingo, 26 de Julho de 2026",
   "manchete": "Navio afunda no Mar da China Meridional e 23 seguem desaparecidos",
   "arquivo_html": "2026-07-26.html"
- },
- {
-  "data": "2026-07-25",
-  "data_extenso": "Sábado, 25 de Julho de 2026",
-  "manchete": "Ministro da Educação da Índia renuncia após 'protesto das baratas'",
-  "arquivo_html": "2026-07-25.html"
  }
 ]
