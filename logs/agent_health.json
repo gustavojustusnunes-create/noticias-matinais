@@ -1,49 +1,46 @@
 {
-    "timestamp_scan": "2026-10-07T20:15:08.446357-03:00",
-    "data_hoje": "2026-10-07",
-    "sistema_geral": "WARNING",
-    "incidentes": [
-        "All News Finance não concluiu a edição de 2026-10-07."
-    ],
-    "auto_recuperacoes": [
-        "finance_daily.yml disparado para auto-recuperação."
-    ],
+    "timestamp_scan": "2026-10-08T13:48:24.843196-03:00",
+    "data_hoje": "2026-10-08",
+    "sistema_geral": "HEALTHY",
+    "incidentes": [],
+    "auto_recuperacoes": [],
     "agentes": {
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (4 notícias).",
-            "ultima_edicao": "2026-10-07",
+            "ultima_edicao": "2026-10-08",
             "horario_previsto": "05:20 BRT",
             "total_itens": 4
         },
         "finance": {
             "nome": "All News Finance",
-            "status": "RECOVERING",
-            "detalhe": "Edição financeira de hoje ausente após as 06:20.",
-            "ultima_edicao": "Pendente",
-            "horario_previsto": "05:25 BRT"
+            "status": "ONLINE",
+            "detalhe": "Edição de mercado publicada (0 análises).",
+            "ultima_edicao": "2026-10-08",
+            "horario_previsto": "05:25 BRT",
+            "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
             "status": "PENDING",
-            "detalhe": "Ainda não postou a edição de hoje (2026-10-07).",
+            "detalhe": "Ainda não postou a edição de hoje (2026-10-08).",
             "ultima_edicao": "2026-10-06",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 59 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 59,
+            "detalhe": "Auditoria cognitiva ativa. 63 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 63,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-07 20:15 BRT",
-            "incidentes_abertos": 1
+            "ultimo_scan": "2026-10-08 13:48 BRT",
+            "incidentes_abertos": 0
         }
     }
 }
