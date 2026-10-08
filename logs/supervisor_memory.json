@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://s2-g1.glbimg.com/E-0Xwgh4f6_zZ6Et6zArX8fKTyE=/1579x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/t/A/PqnfPRQPmeasiETdGeHg/19937743-5c98-437d-95f2-2c1170d9b0ac.png",
-        "https://s2-g1.glbimg.com/i5Sz_6a0R-vONab2dJdyefxNGtM=/5856x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/0/t/vk7ubZSCCQGrJaAAkR5g/2026-09-25t000518z-2090127779-rc20qna4xa87-rtrmadp-3-usa-china.jpg",
         "https://s2-redeglobo.glbimg.com/gdltADESdnFjJ2wJ8xA7QD7SX8A=/600x450/smart/filters:quality(70)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/z/G/JbPgDVRcqbdwzAXnG1RQ/design-sem-nome-2026-09-25t203042.379.jpg",
         "https://img.odcdn.com.br/wp-content/uploads/2026/09/onu-IA.png",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/09/AHY_King-Crab_Felipe-Terra.jpg?quality=95&strip=info&resize=1200,630&crop=1",
@@ -49,7 +47,9 @@
         "https://s2-g1.glbimg.com/-RYC3kOhBAsjbgbqIb_i_8ygbYE=/3500x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/P/I/AfCMzFTBmN6Yym7rbtfw/2026-02-27t003234z-1-lynxmpem1q018-rtroptp-4-empresas-netflix-warner-bros-dis.jpg",
         "https://s2-g1.glbimg.com/JpsdTRKWIP2Lu1OnDxdQmgAaxjY=/1500x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/B/1/tXwAkDRrG51Xhhg24qXA/fotojet-2-.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/09/inteligencia-artificial-geral.jpg",
-        "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/back-view-portrait-fitness-woman-earphones-stretching.jpg?quality=95&strip=info&resize=1200,630&crop=1"
+        "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/back-view-portrait-fitness-woman-earphones-stretching.jpg?quality=95&strip=info&resize=1200,630&crop=1",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/03/2026-03-29T060934Z_964769431_RC25EKAJLMU1_RTRMADP_3_USA-MARKETS-IRAN-TRADING.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-1.jpg"
     ],
     "erros": [
         {
@@ -494,5 +494,5 @@
             "correcao_aplicada": "O mercado de criptomoedas registrou um dia de forte aversão ao risco, com o Bitcoin recuando para pa..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-06"
+    "ultima_edicao_instagram": "2026-10-08"
 }
