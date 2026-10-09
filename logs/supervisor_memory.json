@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://s2-redeglobo.glbimg.com/gdltADESdnFjJ2wJ8xA7QD7SX8A=/600x450/smart/filters:quality(70)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/z/G/JbPgDVRcqbdwzAXnG1RQ/design-sem-nome-2026-09-25t203042.379.jpg",
-        "https://img.odcdn.com.br/wp-content/uploads/2026/09/onu-IA.png",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/09/AHY_King-Crab_Felipe-Terra.jpg?quality=95&strip=info&resize=1200,630&crop=1",
         "https://s2-g1.glbimg.com/oPzOBrI5ffkh4F1vmwvqxaqInLc=/5500x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/8/u/R1ndZgT3ivOaaUjMReoA/2026-09-27t075000z-295214315-rc2hrna7gpiq-rtrmadp-3-britain-usa-fairford.jpg",
         "https://s2-g1.glbimg.com/UwEs2Eu8Wp4cgq0GxJlqsPt_638=/1829x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/3/m/KVQrIhTbamuq7zOS7XpQ/79440382-1004.jpg",
@@ -49,7 +47,9 @@
         "https://olhardigital.com.br/wp-content/uploads/2026/09/inteligencia-artificial-geral.jpg",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/back-view-portrait-fitness-woman-earphones-stretching.jpg?quality=95&strip=info&resize=1200,630&crop=1",
         "https://www.infomoney.com.br/wp-content/uploads/2026/03/2026-03-29T060934Z_964769431_RC25EKAJLMU1_RTRMADP_3_USA-MARKETS-IRAN-TRADING.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-1.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-1.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/09/2026-09-25T223900Z_154552893_RC2MQNA2LIRJ_RTRMADP_3_BRAZIL-ELECTION-LULA.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/02/claude-chatgpt-scaled-e1772626568145.jpg"
     ],
     "erros": [
         {
@@ -522,5 +522,5 @@
             "correcao_aplicada": "O mercado de criptomoedas registrou uma semana de intensa pressão vendedora, com o Bitcoin recuando ..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-08"
+    "ultima_edicao_instagram": "2026-10-09"
 }
