@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-10-08T20:30:26.504967-03:00",
-    "data_hoje": "2026-10-08",
+    "timestamp_scan": "2026-10-09T13:27:26.507400-03:00",
+    "data_hoje": "2026-10-09",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -9,7 +9,7 @@
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (4 notícias).",
-            "ultima_edicao": "2026-10-08",
+            "ultima_edicao": "2026-10-09",
             "horario_previsto": "05:20 BRT",
             "total_itens": 4
         },
@@ -17,29 +17,29 @@
             "nome": "All News Finance",
             "status": "ONLINE",
             "detalhe": "Edição de mercado publicada (0 análises).",
-            "ultima_edicao": "2026-10-08",
+            "ultima_edicao": "2026-10-09",
             "horario_previsto": "05:25 BRT",
             "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-08 gerados e registrados.",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-10-09).",
             "ultima_edicao": "2026-10-08",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 63 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 63,
+            "detalhe": "Auditoria cognitiva ativa. 67 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 67,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-08 20:30 BRT",
+            "ultimo_scan": "2026-10-09 13:27 BRT",
             "incidentes_abertos": 0
         }
     }
