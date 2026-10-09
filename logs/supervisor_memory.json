@@ -492,6 +492,34 @@
             "texto_original": "O mercado de criptomoedas registrou um dia de forte aversão ao risco, com o Bitcoin (BTC) caindo abaixo de US$ 83 mil, negociado a US$ 82.",
             "motivo_falha": "O texto anterior continha apenas 26 palavras, violando o limite mínimo obrigatório de 60 palavras do Quality Gate.",
             "correcao_aplicada": "O mercado de criptomoedas registrou um dia de forte aversão ao risco, com o Bitcoin recuando para pa..."
+        },
+        {
+            "data": "2026-10-09T15:30:31.920909",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Pilgrim's Pride Corp. informou a formação de um comitê especial independente, composto por conselheiros independentes, para analisar a proposta não solicitada da JBS (JBSS32) de adquirir as ações restantes da empresa de carne de frango norte-americana. A JBS, que já detém aproximadamente 82% da Pilgrim's Pride, manifestou em agosto sua intenção de obter controle total e fechar o capital",
+            "motivo_falha": "O texto original estava truncado, incompleto e sem ponto final, além de ter menos de 60 palavras e não cumprir a estrutura dos três passos analíticos.",
+            "correcao_aplicada": "A Pilgrim’s Pride formou um comitê independente para avaliar a proposta da JBS de adquirir os 18% re..."
+        },
+        {
+            "data": "2026-10-09T15:31:40.249930",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Camil (CAML3) registrou uma valorização expressiva de 43,40% em um mês, mas o balanço do segundo trimestre fiscal de 2026 (junho-ag",
+            "motivo_falha": "O texto original estava truncado com apenas 22 palavras, sem ponto final de encerramento e carente da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "As ações da Camil acumulam valorização de 43,4% em trinta dias, impulsionadas pela recuperação das m..."
+        },
+        {
+            "data": "2026-10-09T15:32:59.432079",
+            "tema": "Macroeconomia",
+            "texto_original": "Apenas 192 das cerca de 4.000 empresas que comercializam eletrônicos no Brasil cumprem a lei de logística reversa, representando menos de 5% do total, conforme dados da Abree (",
+            "motivo_falha": "O texto original continha apenas 29 palavras, encontrava-se incompleto e truncado com parêntese aberto sem pontuação final, violando o piso obrigatório de 60 palavras e a estrutura analítica dos três passos.",
+            "correcao_aplicada": "Apenas 192 das cerca de 4.000 empresas de eletroeletrônicos no Brasil cumprem as metas da Política N..."
+        },
+        {
+            "data": "2026-10-09T15:34:23.438052",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptomoedas registrou uma semana de forte queda, com o Bitcoin (BTC) e o Ethereum (ETH) liderando o movimento de baixa impulsionado por uma onda de liquidações e saídas significativas de fund",
+            "motivo_falha": "O texto original estava incompleto com apenas 34 palavras, cortado abruptamente sem pontuação final e abaixo do limite mínimo obrigatório de 60 palavras do Quality Gate. Foi totalmente reescrito seguindo rigorosamente os três passos do padrão The Economist.",
+            "correcao_aplicada": "O mercado de criptomoedas registrou uma semana de intensa pressão vendedora, com o Bitcoin recuando ..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-08"

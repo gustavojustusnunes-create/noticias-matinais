@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-10-09T12:25:18.972228-03:00",
+  "last_updated": "2026-10-09T12:36:06.398407-03:00",
   "active_run_state": {
     "status": "IDLE",
     "current_active_node": "planner",
@@ -8,7 +8,7 @@
     "word_count": 0,
     "retry_count": 0,
     "hitl_approved": false,
-    "last_updated": "2026-10-09T12:25:18.972201-03:00",
+    "last_updated": "2026-10-09T12:36:06.398382-03:00",
     "selected_story_title": null
   },
   "clusters": [
@@ -83,7 +83,7 @@
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true
     },
     {
@@ -114,7 +114,7 @@
       "id": "planner",
       "is_hitl_gate": false,
       "is_active": true,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true
     },
     {
@@ -148,7 +148,7 @@
       "id": "writer",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true,
       "runtime_retry_count": 0
     },
@@ -184,7 +184,7 @@
       "id": "critic",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true,
       "runtime_word_count": 0,
       "runtime_is_approved": false
@@ -219,7 +219,7 @@
       "id": "media_generator",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true
     },
     {
@@ -252,7 +252,7 @@
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true
     },
     {
@@ -282,7 +282,7 @@
       "id": "__end__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true
     },
     {
@@ -312,7 +312,7 @@
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true,
       "runtime_hitl_approved": false,
       "is_locked": true
@@ -344,7 +344,7 @@
         "x": 890,
         "y": 380
       },
-      "file_mtime": "2026-10-09T12:21:09.737150-03:00",
+      "file_mtime": "2026-10-09T12:26:31.131726-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -373,7 +373,7 @@
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-10-09T12:21:09.677857-03:00",
+      "file_mtime": "2026-10-09T12:26:31.073168-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -403,7 +403,7 @@
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-10-09T12:21:09.965559-03:00",
+      "file_mtime": "2026-10-09T12:36:01.395500-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -432,7 +432,7 @@
         "x": 1360,
         "y": 185
       },
-      "file_mtime": "2026-10-09T12:21:09.677857-03:00",
+      "file_mtime": "2026-10-09T12:26:31.073168-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -490,7 +490,7 @@
         "x": 70,
         "y": 710
       },
-      "file_mtime": "2026-10-09T12:21:09.967086-03:00",
+      "file_mtime": "2026-10-09T12:26:31.347989-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -519,7 +519,7 @@
         "x": 290,
         "y": 710
       },
-      "file_mtime": "2026-10-09T12:21:09.902974-03:00",
+      "file_mtime": "2026-10-09T12:26:31.289233-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -548,7 +548,7 @@
         "x": 510,
         "y": 710
       },
-      "file_mtime": "2026-10-09T12:21:09.890086-03:00",
+      "file_mtime": "2026-10-09T12:26:31.276987-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -577,7 +577,7 @@
         "x": 730,
         "y": 710
       },
-      "file_mtime": "2026-10-09T12:21:09.965559-03:00",
+      "file_mtime": "2026-10-09T12:26:31.346544-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -606,7 +606,7 @@
         "x": 950,
         "y": 710
       },
-      "file_mtime": "2026-10-09T12:21:09.967086-03:00",
+      "file_mtime": "2026-10-09T12:26:31.347989-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -636,7 +636,7 @@
         "x": 1215,
         "y": 715
       },
-      "file_mtime": "2026-10-09T12:21:09.965098-03:00",
+      "file_mtime": "2026-10-09T12:26:31.346133-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -667,7 +667,7 @@
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-10-09T12:21:09.677857-03:00",
+      "file_mtime": "2026-10-09T12:26:31.073168-03:00",
       "file_exists": true,
       "is_active": false
     }
