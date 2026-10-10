@@ -329,3 +329,12 @@ Traceback (most recent call last):
     raise ValueError("Nenhuma matéria encontrada nos cadernos nobres ('IA' ou 'Economia').")
 ValueError: Nenhuma matéria encontrada nos cadernos nobres ('IA' ou 'Economia').
 
+[2026-10-10 14:34:59] ❌ Erro fatal na esteira do X: Nenhuma matéria encontrada nos cadernos nobres ('IA' ou 'Economia').
+Traceback (most recent call last):
+  File "/home/runner/work/noticias-matinais/noticias-matinais/postar_x_diario.py", line 767, in main
+    tema, materia = selecionar_materia_nobre(edicao_dados)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/noticias-matinais/noticias-matinais/postar_x_diario.py", line 156, in selecionar_materia_nobre
+    raise ValueError("Nenhuma matéria encontrada nos cadernos nobres ('IA' ou 'Economia').")
+ValueError: Nenhuma matéria encontrada nos cadernos nobres ('IA' ou 'Economia').
+
