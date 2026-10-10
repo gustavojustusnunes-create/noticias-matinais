@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-10",
+  "data_extenso": "Sábado, 10 de Outubro de 2026",
+  "manchete": "Split Payment: Comércio Alerta para Risco de Capital de Giro Reduzido",
+  "arquivo_html": "2026-10-10.html"
+ },
+ {
   "data": "2026-10-09",
   "data_extenso": "Sexta-feira, 9 de Outubro de 2026",
   "manchete": "Subsídio a Combustíveis: R$ 7,5 Bilhões e o Dilema Fiscal Brasileiro",
@@ -352,11 +358,5 @@
   "data_extenso": "Quarta-feira, 29 de Julho de 2026",
   "manchete": "Terremoto no Japão: sobreviventes que escaparam de shopping relatam 'cenário de pânico'",
   "arquivo_html": "2026-07-29.html"
- },
- {
-  "data": "2026-07-28",
-  "data_extenso": "Terça-feira, 28 de Julho de 2026",
-  "manchete": "Terremoto no Japão: explosão deixa shopping parcialmente destruído e 'muitas' pessoas presas",
-  "arquivo_html": "2026-07-28.html"
  }
 ]
