@@ -520,6 +520,13 @@
             "texto_original": "O mercado de criptomoedas registrou uma semana de forte queda, com o Bitcoin (BTC) e o Ethereum (ETH) liderando o movimento de baixa impulsionado por uma onda de liquidações e saídas significativas de fund",
             "motivo_falha": "O texto original estava incompleto com apenas 34 palavras, cortado abruptamente sem pontuação final e abaixo do limite mínimo obrigatório de 60 palavras do Quality Gate. Foi totalmente reescrito seguindo rigorosamente os três passos do padrão The Economist.",
             "correcao_aplicada": "O mercado de criptomoedas registrou uma semana de intensa pressão vendedora, com o Bitcoin recuando ..."
+        },
+        {
+            "data": "2026-10-11T15:01:55.483499",
+            "tema": "Macroeconomia & Mercados",
+            "texto_original": "{ \"status\": \"OK\", \"titulo_limpo\": \"Ataque Houthi em Riad: Risco Geopolítico e Desafios Econômicos Sauditas\", \"resumo_texto\": \"O ataque Houthi ao Aeroporto Rei Khalid, em Riad, causou 12 mortes e 300 feridos, paralisando 85% dos voos e marcando o incidente mais letal em solo saudita desde o início do conflito regional. O incidente eleva a pressão sobre a economia saudita, que busca atrair investimento estrangeiro via eventos como o Congresso Mundial do Petróleo, agora impactado por cancelamentos. Isso expõe a dinâmica da guerra por procuração no Iêmen e a vulnerabilidade infraestrutural. A percepção de risco para",
+            "motivo_falha": "O texto original estava truncado, incompleto na frase final e violava as diretrizes de concisão e encerramento analítico do padrão The Economist.",
+            "correcao_aplicada": "Um ataque atribuído aos rebeldes Houthis contra o Aeroporto Rei Khalid, em Riad, deixou 12 mortos e ..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-10"
