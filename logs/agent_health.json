@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-10-10T18:55:54.183947-03:00",
-    "data_hoje": "2026-10-10",
+    "timestamp_scan": "2026-10-11T12:53:32.613000-03:00",
+    "data_hoje": "2026-10-11",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -9,7 +9,7 @@
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (3 notícias).",
-            "ultima_edicao": "2026-10-10",
+            "ultima_edicao": "2026-10-11",
             "horario_previsto": "05:20 BRT",
             "total_itens": 3
         },
@@ -22,23 +22,23 @@
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-10 gerados e registrados.",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-10-11).",
             "ultima_edicao": "2026-10-10",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 67 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 67,
+            "detalhe": "Auditoria cognitiva ativa. 68 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 68,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-10 18:55 BRT",
+            "ultimo_scan": "2026-10-11 12:53 BRT",
             "incidentes_abertos": 0
         }
     }
