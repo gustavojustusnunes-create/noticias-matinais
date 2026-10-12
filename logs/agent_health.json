@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-10-11T19:18:13.462503-03:00",
-    "data_hoje": "2026-10-11",
+    "timestamp_scan": "2026-10-12T16:13:48.315596-03:00",
+    "data_hoje": "2026-10-12",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -9,36 +9,37 @@
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (3 notícias).",
-            "ultima_edicao": "2026-10-11",
+            "ultima_edicao": "2026-10-12",
             "horario_previsto": "05:20 BRT",
             "total_itens": 3
         },
         "finance": {
             "nome": "All News Finance",
-            "status": "WEEKEND_REST",
-            "detalhe": "Mercados fechados aos fins de semana.",
-            "ultima_edicao": "Segunda-feira",
-            "horario_previsto": "Seg-Sex às 05:25"
+            "status": "ONLINE",
+            "detalhe": "Edição de mercado publicada (0 análises).",
+            "ultima_edicao": "2026-10-12",
+            "horario_previsto": "05:25 BRT",
+            "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-11 gerados e registrados.",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-10-12).",
             "ultima_edicao": "2026-10-11",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 68 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 68,
+            "detalhe": "Auditoria cognitiva ativa. 74 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 74,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-11 19:18 BRT",
+            "ultimo_scan": "2026-10-12 16:13 BRT",
             "incidentes_abertos": 0
         }
     }
