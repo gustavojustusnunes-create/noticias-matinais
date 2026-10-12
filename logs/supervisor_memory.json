@@ -527,6 +527,48 @@
             "texto_original": "{ \"status\": \"OK\", \"titulo_limpo\": \"Ataque Houthi em Riad: Risco Geopolítico e Desafios Econômicos Sauditas\", \"resumo_texto\": \"O ataque Houthi ao Aeroporto Rei Khalid, em Riad, causou 12 mortes e 300 feridos, paralisando 85% dos voos e marcando o incidente mais letal em solo saudita desde o início do conflito regional. O incidente eleva a pressão sobre a economia saudita, que busca atrair investimento estrangeiro via eventos como o Congresso Mundial do Petróleo, agora impactado por cancelamentos. Isso expõe a dinâmica da guerra por procuração no Iêmen e a vulnerabilidade infraestrutural. A percepção de risco para",
             "motivo_falha": "O texto original estava truncado, incompleto na frase final e violava as diretrizes de concisão e encerramento analítico do padrão The Economist.",
             "correcao_aplicada": "Um ataque atribuído aos rebeldes Houthis contra o Aeroporto Rei Khalid, em Riad, deixou 12 mortos e ..."
+        },
+        {
+            "data": "2026-10-12T18:16:18.961591",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O fundo imobiliário Banrisul Novas Fronteiras (BNFS11) comunicou ter recebido uma proposta de R$ 1,32 milhão para a venda de um de seus imóveis, situado",
+            "motivo_falha": "O texto original continha apenas 25 palavras, estava truncado sem pontuação final e abaixo do limite mínimo de 60 palavras. Foi reescrito seguindo estritamente a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "O fundo imobiliário Banrisul Novas Fronteiras recebeu uma proposta de R$ 1,32 milhão pela venda de u..."
+        },
+        {
+            "data": "2026-10-12T18:18:28.338273",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O calendário de proventos da semana contempla distribuições de capital para investidores posicionados na B3, com destaque para a Lojas Renner (LREN3) e a operadora de telecomunicações Unifique (",
+            "motivo_falha": "O texto original estava truncado com apenas 29 palavras, sem ponto final e abaixo do limite mínimo de 60 palavras do Quality Gate.",
+            "correcao_aplicada": "A Lojas Renner e a Unifique realizarão o pagamento de proventos aos acionistas posicionados nesta se..."
+        },
+        {
+            "data": "2026-10-12T18:20:37.042155",
+            "tema": "Macroeconomia",
+            "texto_original": "A Meta Platforms atingiu a paridade tecnológica na fronteira da inteligência artificial generativa, equiparando-se a concorrentes diretas como OpenAI e Anthropic. A declaração foi feita pelo diretor-presidente Mark Zuckerberg, que descartou qualquer possibilidade de redução nos investimentos corporativos voltados para o setor. A companhia tem direcionado somas bilionárias para a aquisição de infraestrutura computacional avançada, expandindo clusters de processamento de dados e o desenvolvimento de modelos proprietários de linguagem de grande escala. Essa postura firme ocorre em meio a crescentes questionamentos de analistas e investidores institucionais sobre o retorno financeiro de curto prazo frente ao capital intensivo exigido pelo segmento.\n\nO avanço na IA generativa integra a estratégia da empresa para fortalecer sua posição competitiva no ecossistema de publicidade digital e ferramentas corporativas. Wall Street tem monitorado de perto a escalada de despesas operacionais da Meta e de outras gigantes tecnológicas, conhecidas como as Sete Magníficas, que juntas lideram os gastos globais em data centers e semicondutores de alta performance. Para os mercados acionários, a decisão de manter o ritmo acelerado de aportes financeiros sinaliza margens pressionadas no curto prazo, mas reflete a leitura executiva de que a retração representaria um risco existencial de perda de relevância tecnológica e de mercado.\n\nDo ponto de vista estratégico, a consolidação da Meta no pelotão de frente da inteligência artificial altera a dinâmica concorrencial do setor de tecnologia, mantendo a pressão vendedora sobre os preços de componentes essenciais, como as unidades de processamento gráfico fornecidas por fabricantes como a Nvidia. A capacidade da empresa de monetizar sua base de bilhões de usuários ativos por meio de assistentes virtuais integrados e automação comercial será o fiel da balança para justificar a alocação contínua de capital e sustentar a confiança dos acionistas nos próximos trimestres fiscais.",
+            "motivo_falha": "O texto original excedia o limite máximo de palavras permitido pelo Quality Gate (291 palavras). Foi sintetizado para 78 palavras, obedecendo rigorosamente à estrutura de três passos do padrão The Economist e terminando com ponto final.",
+            "correcao_aplicada": "A Meta Platforms alcançou a paridade tecnológica na inteligência artificial generativa, com o direto..."
+        },
+        {
+            "data": "2026-10-12T18:21:41.582460",
+            "tema": "Macroeconomia",
+            "texto_original": "Um ciberataque coordenado atingiu centenas de redes varejistas na França, comprometendo sistemas de refrigeração industrial e expondo a vulnerabilidade da infraestrutura operacional do setor de distribuição de alimentos. A invas",
+            "motivo_falha": "O texto original estava truncado com apenas 27 palavras, abaixo do limite mínimo de 60 palavras, sem pontuação final e incompleto. Foi reescrito seguindo rigorosamente a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "Um ciberataque coordenado elevou a temperatura de centenas de geladeiras industriais em redes vareji..."
+        },
+        {
+            "data": "2026-10-12T18:22:45.889544",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos opera em recuperação moderada, com o Bitcoin (BTC) negociado na faixa de US$ 83,3 mil, registrando leve alta de 0,55% nas",
+            "motivo_falha": "O texto original estava truncado, incompleto na frase final, abaixo do limite mínimo de 60 palavras e sem pontuação de fechamento. Foi reescrito seguindo rigorosamente os três passos do padrão The Economist.",
+            "correcao_aplicada": "O mercado de criptoativos registra uma recuperação moderada nesta segunda-feira, com o Bitcoin cotad..."
+        },
+        {
+            "data": "2026-10-12T18:23:50.180396",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos inicia outubro sob a influência do chamado Uptober, padrão de sazonalidade positiva historicamente caracterizado pela frequência com que o bitcoin (BTC) encerra o período em alta. O ativo digital consolidou",
+            "motivo_falha": "O texto original continha apenas 34 palavras, estava incompleto e truncado no final, violando o limite mínimo obrigatório de 60 palavras e a estrutura analítica dos três passos do padrão The Economist.",
+            "correcao_aplicada": "O mercado de criptoativos inicia outubro sob a influência do chamado Uptober, padrão de sazonalidade..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-11"
