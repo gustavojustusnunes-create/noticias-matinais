@@ -1,0 +1,36 @@
+{
+ "data": "2026-10-13",
+ "data_extenso": "Terça-feira, 13 de Outubro de 2026",
+ "editorial": "As notícias que vão ditar o ritmo do seu dia já estão aqui.",
+ "manchete": "B3 Aprofunda Acesso a Juros EUA com Novos Futuros em Reais",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "B3 Aprofunda Acesso a Juros EUA com Novos Futuros em Reais",
+    "link": "https://www.infomoney.com.br/mercados/b3-lanca-quatro-contratos-futuros-de-treasuries-para-negociacao-em-reais/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/06/EspacoB3_02.jpg",
+    "resumo": "A B3 lançou quatro novos contratos futuros de Treasuries dos EUA, cobrindo vencimentos de 2 a mais de 20 anos, com valores de face de US$ 100 mil a US$ 200 mil. A iniciativa permite a investidores brasileiros negociar a curva de juros americana em reais, facilitando hedge e especulação sem remessa de capital, impulsionada pelos juros elevados nos EUA. Investidores locais ganham ferramenta para gerenciar risco cambial e de juros, expandindo a oferta da B3, mas a exposição direta à volatilidade da política monetária americana aumenta."
+   },
+   {
+    "titulo": "Ibovespa cede: cautela eleitoral e lucros redefinem risco",
+    "link": "https://www.infomoney.com.br/mercados/ibovespa-so-realizacao-de-lucros-ou-cautela-eleitoral-o-que-faz-indice-cair-apos-recordes/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/08/acoes-mercado-bolsa-baixa-queda-2.jpg",
+    "resumo": "O Ibovespa recuou 0,94%, perdendo cerca de 2.900 pontos para 207.004,24, após valorização de 8,82% na semana anterior. A queda reflete a realização de lucros e a crescente cautela com a disputa eleitoral presidencial acirrada, evidenciada por novas pesquisas, e tensões geopolíticas externas. A pressão doméstica sobre o real, impulsionada por incertezas fiscais e a PEC 221, eleva juros futuros e o dólar. Investidores buscam liquidez, penalizando ativos de risco e exigindo monitoramento da volatilidade eleitoral e da política fiscal."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Meta intensifica concorrência em IA de fronteira com Muse Wonder",
+    "link": "https://olhardigital.com.br/2026/10/12/inteligencia-artificial/meta-lanca-muse-wonder-nova-ia-para-competir-com-openai-e-anthropic/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Muse-Wonder-em-Azul-Vibrante.jpg",
+    "resumo": "Meta lançou os modelos de IA de fronteira Muse Wonder e Muse Wonder Full, com assinaturas entre US$20 e US$200, para competir diretamente com OpenAI e Anthropic em raciocínio e programação. A iniciativa reflete a estratégia da Meta de diversificar receitas além da publicidade, impulsionada por investimentos em capacidade computacional e talento. A precificação agressiva visa subcotar líderes, capturando mercado. Meta busca novas receitas e fatia de mercado, pressionando OpenAI e Anthropic. O risco imediato reside na segurança cibernética, pois proteções robustas estão restritas às versões pagas."
+   },
+   {
+    "titulo": "Amazon avança em IA com possível aquisição de Decart por US$7 bilhões",
+    "link": "https://olhardigital.com.br/2026/10/12/pro/amazon-negocia-compra-de-startup-de-ia-avaliada-em-us-7-bilhoes/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon_logo-1.jpg",
+    "resumo": "A Amazon negocia a aquisição da startup de IA Decart por cerca de US$ 7 bilhões, visando seu software de interoperabilidade de chips e modelos de simulação 3D. A movimentação reflete a intensa corrida por capacidade computacional e diferenciação em IA, com a AWS buscando fortalecer seu ecossistema de hardware proprietário contra a hegemonia da Nvidia. Se concretizada, a compra verticaliza a infraestrutura de IA da Amazon, mas o risco reside na integração tecnológica e na capacidade de escalar a solução em um mercado dominado por players estabelecidos."
+   }
+  ]
+ }
+}
