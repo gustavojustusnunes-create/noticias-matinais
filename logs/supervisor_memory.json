@@ -569,6 +569,41 @@
             "texto_original": "O mercado de criptoativos inicia outubro sob a influência do chamado Uptober, padrão de sazonalidade positiva historicamente caracterizado pela frequência com que o bitcoin (BTC) encerra o período em alta. O ativo digital consolidou",
             "motivo_falha": "O texto original continha apenas 34 palavras, estava incompleto e truncado no final, violando o limite mínimo obrigatório de 60 palavras e a estrutura analítica dos três passos do padrão The Economist.",
             "correcao_aplicada": "O mercado de criptoativos inicia outubro sob a influência do chamado Uptober, padrão de sazonalidade..."
+        },
+        {
+            "data": "2026-10-13T16:19:13.977638",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O governo federal anunciou o pacote \"Prospera MEI\", visando estimular microempreendedores individuais (MEIs) com duas medidas principais. A primeira é o \"Pix MEI\", um repasse direto e não reembolsável de",
+            "motivo_falha": "O texto original estava incompleto, truncado na frase final e abaixo do limite mínimo de 60 palavras exigido pelo Quality Gate.",
+            "correcao_aplicada": "O governo federal lançou o programa Prospera MEI, que prevê repasses diretos de R$ 5 mil e a renegoc..."
+        },
+        {
+            "data": "2026-10-13T16:20:52.607749",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Embraer (EMBJ3) e Latam formalizaram um acordo estratégico do Programa Pool para suportar a introdução de 24 aeronaves Embraer E195-E2 na frota da companhia aérea",
+            "motivo_falha": "O texto original continha apenas 26 palavras, estava truncado sem pontuação final e abaixo do limite mínimo de 60 palavras do Quality Gate.",
+            "correcao_aplicada": "A Embraer e a Latam Airlines formalizaram um contrato de longo prazo do Programa Pool para prestar s..."
+        },
+        {
+            "data": "2026-10-13T16:21:31.974573",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O Citi atualizou sua análise sobre o Mercado Livre (MELI; MELI34), elevando a recomendação de \"Neutra/Alto Risco\" para \"Neutra\", em função da menor volatilidade do",
+            "motivo_falha": "O texto original continha apenas 25 palavras, estava truncado sem pontuação final e carecia da estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "O Citi reduziu o preço-alvo dos papéis do Mercado Livre para US$ 2.050, embora tenha elevado a recom..."
+        },
+        {
+            "data": "2026-10-13T16:21:53.969534",
+            "tema": "Macroeconomia",
+            "texto_original": "O diretor-presidente da Agência Nacional de Aviação Civil (Anac), Tiago Faierstein, declarou nesta terça-feira (13) que a infraestrutura aeroportuária brasileira não pode depender exclusivamente do Aer",
+            "motivo_falha": "Subdimensionado: 26 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto estava truncado e não seguia a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O diretor-presidente da Anac, Tiago Faierstein, afirmou que a infraestrutura aeroportuária brasileir..."
+        },
+        {
+            "data": "2026-10-13T16:24:29.476151",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "Fundos e produtos negociados em bolsa (ETPs) de criptomoedas registraram uma forte saída de capital, refletindo um ambiente de maior cautela entre investidores institucionais. Os ETPs de bitcoin à vista nos Estados Unidos acumularam saídas de US$ 679 milhões na última semana, enquanto os ETFs de ether perderam aproximadamente US$ 700 milhões ao longo de nove sessões consecutivas, dos quais US$ 542 milhões ocorreram apenas na última semana. Este movimento contrasta com o desempenho do S&P 500, que renovou máximas e avançou 1,2%, enquanto o bitcoin recuou cerca de 3% para a faixa",
+            "motivo_falha": "O texto original excedia o limite de 90 palavras, estava incompleto na frase final e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "ETPs de criptomoedas registraram saídas líquidas de US$ 1,2 bilhão na última semana, com o Bitcoin r..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-12"
