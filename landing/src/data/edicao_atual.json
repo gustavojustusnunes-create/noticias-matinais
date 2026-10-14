@@ -1,35 +1,43 @@
 {
- "data": "2026-10-13",
- "data_extenso": "Terça-feira, 13 de Outubro de 2026",
- "editorial": "As notícias que vão ditar o ritmo do seu dia já estão aqui.",
- "manchete": "B3 Aprofunda Acesso a Juros EUA com Novos Futuros em Reais",
+ "data": "2026-10-14",
+ "data_extenso": "Quarta-feira, 14 de Outubro de 2026",
+ "editorial": "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
+ "manchete": "Capital Estrangeiro Inunda B3 Pós-Eleições: Liquidez e Risco",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "B3 Aprofunda Acesso a Juros EUA com Novos Futuros em Reais",
-    "link": "https://www.infomoney.com.br/mercados/b3-lanca-quatro-contratos-futuros-de-treasuries-para-negociacao-em-reais/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/06/EspacoB3_02.jpg",
-    "resumo": "A B3 lançou quatro novos contratos futuros de Treasuries dos EUA, cobrindo vencimentos de 2 a mais de 20 anos, com valores de face de US$ 100 mil a US$ 200 mil. A iniciativa permite a investidores brasileiros negociar a curva de juros americana em reais, facilitando hedge e especulação sem remessa de capital, impulsionada pelos juros elevados nos EUA. Investidores locais ganham ferramenta para gerenciar risco cambial e de juros, expandindo a oferta da B3, mas a exposição direta à volatilidade da política monetária americana aumenta."
+    "titulo": "Capital Estrangeiro Inunda B3 Pós-Eleições: Liquidez e Risco",
+    "link": "https://www.infomoney.com.br/mercados/estrangeiros-trouxeram-r-13-bi-para-bolsa-em-uma-semana-apos-1o-turno-das-eleicoes/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/b3-cotacoes-bolsa-e1791318107252.jpg",
+    "resumo": "Investidores estrangeiros aportaram R$ 13,15 bilhões na Bolsa brasileira na semana pós-primeiro turno eleitoral. Este fluxo, o maior semanal desde janeiro, sinaliza uma reavaliação do risco político e busca por retornos em meio à realocação global de capital. A participação estrangeira de 62,88% é um pico histórico, contrastando com a baixa alocação local. A B3 ganha liquidez, mas a dependência externa eleva o risco de reversões abruptas, exigindo monitoramento da estabilidade política e do apetite global por risco."
    },
    {
-    "titulo": "Ibovespa cede: cautela eleitoral e lucros redefinem risco",
-    "link": "https://www.infomoney.com.br/mercados/ibovespa-so-realizacao-de-lucros-ou-cautela-eleitoral-o-que-faz-indice-cair-apos-recordes/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/08/acoes-mercado-bolsa-baixa-queda-2.jpg",
-    "resumo": "O Ibovespa recuou 0,94%, perdendo cerca de 2.900 pontos para 207.004,24, após valorização de 8,82% na semana anterior. A queda reflete a realização de lucros e a crescente cautela com a disputa eleitoral presidencial acirrada, evidenciada por novas pesquisas, e tensões geopolíticas externas. A pressão doméstica sobre o real, impulsionada por incertezas fiscais e a PEC 221, eleva juros futuros e o dólar. Investidores buscam liquidez, penalizando ativos de risco e exigindo monitoramento da volatilidade eleitoral e da política fiscal."
+    "titulo": "Incerteza eleitoral e inflação elevam juros longos do Tesouro",
+    "link": "https://www.infomoney.com.br/onde-investir/tesouro-direto-abertura-fechamento-14102026/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/09/2026-08-26T090003Z_1030496109_RC233NAIN4O1_RTRMADP_3_BRAZIL-ELECTION-MARKETS.jpg",
+    "resumo": "As taxas dos títulos Tesouro IPCA+ de longo prazo, como o 2060, subiram de 6,55% para 6,62%, refletindo a aversão ao risco. Essa elevação reflete a incerteza eleitoral iminente e a revisão para cima das expectativas de inflação para 2026, exacerbadas pela alta do petróleo e dados mistos de serviços. Investidores exigem prêmios maiores por risco político e inflacionário, elevando o custo de captação do Tesouro e sinalizando volatilidade persistente nos juros futuros."
+   }
+  ],
+  "Geopolítica & Assuntos Globais": [
+   {
+    "titulo": "El Salvador: O Revés do Bitcoin como Moeda Nacional",
+    "link": "https://www.bbc.com/portuguese/articles/cwly38g70435o?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3be9/live/6da151e0-c407-11f1-838e-6d1d6d701264.jpg",
+    "resumo": "El Salvador, em 2021, tornou-se o primeiro país a oficializar o bitcoin como moeda nacional. Contudo, o projeto foi amplamente abandonado, refletindo a baixa adesão popular e a intensa pressão regulatória do Fundo Monetário Internacional sobre a estabilidade macroeconômica. Este revés sinaliza um limite para a soberania monetária digital em economias menores, reforçando a influência de credores tradicionais e expondo nações emergentes a riscos de instabilidade financeira e credibilidade."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "Meta intensifica concorrência em IA de fronteira com Muse Wonder",
-    "link": "https://olhardigital.com.br/2026/10/12/inteligencia-artificial/meta-lanca-muse-wonder-nova-ia-para-competir-com-openai-e-anthropic/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Muse-Wonder-em-Azul-Vibrante.jpg",
-    "resumo": "Meta lançou os modelos de IA de fronteira Muse Wonder e Muse Wonder Full, com assinaturas entre US$20 e US$200, para competir diretamente com OpenAI e Anthropic em raciocínio e programação. A iniciativa reflete a estratégia da Meta de diversificar receitas além da publicidade, impulsionada por investimentos em capacidade computacional e talento. A precificação agressiva visa subcotar líderes, capturando mercado. Meta busca novas receitas e fatia de mercado, pressionando OpenAI e Anthropic. O risco imediato reside na segurança cibernética, pois proteções robustas estão restritas às versões pagas."
+    "titulo": "Google expande Gemini 4 Argon: ganhos de eficiência e pressão competitiva",
+    "link": "https://olhardigital.com.br/2026/10/13/inteligencia-artificial/gemini-4-argon-finalmente-chega-ao-app-e-a-busca-do-google-saiba-mais/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/09/gemini.jpg",
+    "resumo": "Google liberou o Gemini 4 Argon para assinantes Pro e Ultra, evidenciando ganhos como a refatoração de 6 milhões de linhas de código no Chrome em semanas e aceleração de inferência de 2,85x no Gemma 4 E2B. A expansão monetiza investimentos em modelos de fronteira, validando a capacidade do Argon em otimizar infraestruturas de software e reduzir custos operacionais via eficiência computacional. Assinantes e desenvolvedores obtêm ferramentas mais potentes; Google reforça sua vantagem em IA, pressionando rivais a igualar performance e eficiência."
    },
    {
-    "titulo": "Amazon avança em IA com possível aquisição de Decart por US$7 bilhões",
-    "link": "https://olhardigital.com.br/2026/10/12/pro/amazon-negocia-compra-de-startup-de-ia-avaliada-em-us-7-bilhoes/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon_logo-1.jpg",
-    "resumo": "A Amazon negocia a aquisição da startup de IA Decart por cerca de US$ 7 bilhões, visando seu software de interoperabilidade de chips e modelos de simulação 3D. A movimentação reflete a intensa corrida por capacidade computacional e diferenciação em IA, com a AWS buscando fortalecer seu ecossistema de hardware proprietário contra a hegemonia da Nvidia. Se concretizada, a compra verticaliza a infraestrutura de IA da Amazon, mas o risco reside na integração tecnológica e na capacidade de escalar a solução em um mercado dominado por players estabelecidos."
+    "titulo": "Cientistas exigem supervisão global independente para IA avançada",
+    "link": "https://olhardigital.com.br/2026/10/13/inteligencia-artificial/cientistas-pedem-orgao-global-para-fiscalizar-sistemas-de-ia-avancada/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/iStock-2285744191.jpg",
+    "resumo": "Cerca de 400 cientistas, incluindo pioneiros da IA, propõem um órgão global para fiscalizar a segurança de sistemas avançados. A iniciativa surge da percepção de que acordos voluntários de big techs são inadequados, após incidentes de modelos de IA quebrando restrições de segurança. A pressão regulatória global, com a UE e EUA já em movimento, sinaliza uma busca por governança mais robusta. A proposta confronta a autonomia das empresas de IA, elevando o risco de custos de conformidade e atrasos no desenvolvimento, enquanto governos buscam maior controle sobre uma tecnologia de impacto sistêmico."
    }
   ]
  }

@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-14",
+  "data_extenso": "Quarta-feira, 14 de Outubro de 2026",
+  "manchete": "Capital Estrangeiro Inunda B3 Pós-Eleições: Liquidez e Risco",
+  "arquivo_html": "2026-10-14.html"
+ },
+ {
   "data": "2026-10-13",
   "data_extenso": "Terça-feira, 13 de Outubro de 2026",
   "manchete": "B3 Aprofunda Acesso a Juros EUA com Novos Futuros em Reais",
@@ -352,11 +358,5 @@
   "data_extenso": "Domingo, 2 de Agosto de 2026",
   "manchete": "Corpo de Nirmal Purja, montanhista recordista mundial, é recuperado por equipes de emergência no Paquistão",
   "arquivo_html": "2026-08-02.html"
- },
- {
-  "data": "2026-08-01",
-  "data_extenso": "Sábado, 1 de Agosto de 2026",
-  "manchete": "Espanha escolta imigrantes para fora de Ceuta e instala barreira no mar para evitar chegadas a nado",
-  "arquivo_html": "2026-08-01.html"
  }
 ]

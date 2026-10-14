@@ -1,0 +1,44 @@
+{
+ "data": "2026-10-14",
+ "data_extenso": "Quarta-feira, 14 de Outubro de 2026",
+ "editorial": "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
+ "manchete": "Capital Estrangeiro Inunda B3 Pós-Eleições: Liquidez e Risco",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Capital Estrangeiro Inunda B3 Pós-Eleições: Liquidez e Risco",
+    "link": "https://www.infomoney.com.br/mercados/estrangeiros-trouxeram-r-13-bi-para-bolsa-em-uma-semana-apos-1o-turno-das-eleicoes/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/b3-cotacoes-bolsa-e1791318107252.jpg",
+    "resumo": "Investidores estrangeiros aportaram R$ 13,15 bilhões na Bolsa brasileira na semana pós-primeiro turno eleitoral. Este fluxo, o maior semanal desde janeiro, sinaliza uma reavaliação do risco político e busca por retornos em meio à realocação global de capital. A participação estrangeira de 62,88% é um pico histórico, contrastando com a baixa alocação local. A B3 ganha liquidez, mas a dependência externa eleva o risco de reversões abruptas, exigindo monitoramento da estabilidade política e do apetite global por risco."
+   },
+   {
+    "titulo": "Incerteza eleitoral e inflação elevam juros longos do Tesouro",
+    "link": "https://www.infomoney.com.br/onde-investir/tesouro-direto-abertura-fechamento-14102026/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/09/2026-08-26T090003Z_1030496109_RC233NAIN4O1_RTRMADP_3_BRAZIL-ELECTION-MARKETS.jpg",
+    "resumo": "As taxas dos títulos Tesouro IPCA+ de longo prazo, como o 2060, subiram de 6,55% para 6,62%, refletindo a aversão ao risco. Essa elevação reflete a incerteza eleitoral iminente e a revisão para cima das expectativas de inflação para 2026, exacerbadas pela alta do petróleo e dados mistos de serviços. Investidores exigem prêmios maiores por risco político e inflacionário, elevando o custo de captação do Tesouro e sinalizando volatilidade persistente nos juros futuros."
+   }
+  ],
+  "Geopolítica & Assuntos Globais": [
+   {
+    "titulo": "El Salvador: O Revés do Bitcoin como Moeda Nacional",
+    "link": "https://www.bbc.com/portuguese/articles/cwly38g70435o?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3be9/live/6da151e0-c407-11f1-838e-6d1d6d701264.jpg",
+    "resumo": "El Salvador, em 2021, tornou-se o primeiro país a oficializar o bitcoin como moeda nacional. Contudo, o projeto foi amplamente abandonado, refletindo a baixa adesão popular e a intensa pressão regulatória do Fundo Monetário Internacional sobre a estabilidade macroeconômica. Este revés sinaliza um limite para a soberania monetária digital em economias menores, reforçando a influência de credores tradicionais e expondo nações emergentes a riscos de instabilidade financeira e credibilidade."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Google expande Gemini 4 Argon: ganhos de eficiência e pressão competitiva",
+    "link": "https://olhardigital.com.br/2026/10/13/inteligencia-artificial/gemini-4-argon-finalmente-chega-ao-app-e-a-busca-do-google-saiba-mais/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/09/gemini.jpg",
+    "resumo": "Google liberou o Gemini 4 Argon para assinantes Pro e Ultra, evidenciando ganhos como a refatoração de 6 milhões de linhas de código no Chrome em semanas e aceleração de inferência de 2,85x no Gemma 4 E2B. A expansão monetiza investimentos em modelos de fronteira, validando a capacidade do Argon em otimizar infraestruturas de software e reduzir custos operacionais via eficiência computacional. Assinantes e desenvolvedores obtêm ferramentas mais potentes; Google reforça sua vantagem em IA, pressionando rivais a igualar performance e eficiência."
+   },
+   {
+    "titulo": "Cientistas exigem supervisão global independente para IA avançada",
+    "link": "https://olhardigital.com.br/2026/10/13/inteligencia-artificial/cientistas-pedem-orgao-global-para-fiscalizar-sistemas-de-ia-avancada/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/iStock-2285744191.jpg",
+    "resumo": "Cerca de 400 cientistas, incluindo pioneiros da IA, propõem um órgão global para fiscalizar a segurança de sistemas avançados. A iniciativa surge da percepção de que acordos voluntários de big techs são inadequados, após incidentes de modelos de IA quebrando restrições de segurança. A pressão regulatória global, com a UE e EUA já em movimento, sinaliza uma busca por governança mais robusta. A proposta confronta a autonomia das empresas de IA, elevando o risco de custos de conformidade e atrasos no desenvolvimento, enquanto governos buscam maior controle sobre uma tecnologia de impacto sistêmico."
+   }
+  ]
+ }
+}
