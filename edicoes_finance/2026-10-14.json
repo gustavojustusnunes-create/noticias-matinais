@@ -1,0 +1,59 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Morgan Stanley supera expectativas e tem lucro de US$ 4,9 bilhões no 3º trimestre",
+      "link": "https://www.moneytimes.com.br/morgan-stanley-supera-expectativas-e-tem-lucro-de-us-49-bilhoes-no-3o-trimestre/",
+      "resumo": "O Morgan Stanley (MS) reportou resultados robustos para o terceiro trimestre de 2026, superando as projeções de analistas e demonstrando crescimento significativo em relação ao ano anterior. O lucro líquido atingiu US$",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=0_368",
+      "fonte": "Money Times",
+      "data": "2026-10-14"
+    },
+    {
+      "titulo": "CCJ do Senado conclui análise da PEC da Segurança Pública; texto segue ao Plenário",
+      "link": "https://www.moneytimes.com.br/ccj-do-senado-conclui-analise-da-pec-da-seguranca-publica-texto-segue-ao-plenario/",
+      "resumo": "A Comissão de Constituição, Justiça e Cidadania (CCJ) do Senado Federal concluiu a análise da Proposta de Emenda à Constituição (PEC) da Segurança Pública, encaminhando o texto para votação em Plenário.",
+      "imagem": "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800&sig=1_642",
+      "fonte": "Money Times",
+      "data": "2026-10-14"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "ASML eleva guidance pela 3ª vez no ano com demanda de IA impulsionando máquinas de chips",
+      "link": "https://www.moneytimes.com.br/asml-eleva-guidance-pela-3a-vez-em-2026-com-demanda-de-ia-impulsionando-maquinas-de-chips/",
+      "resumo": "A ASML Holding elevou suas projeções anuais para 2026 pela terceira vez, impulsionada pela demanda robusta por equipamentos de litografia. A ascensão da inteligência artificial e a corrida global por chips avançados impulsionam a necessidade de máquinas de fabricação de semicondutores de ponta, onde a ASML detém um quase monopólio tecnológico. Fabricantes de chips como TSMC e Samsung se beneficiam da capacidade expandida, enquanto a dependência tecnológica ocidental da ASML intensifica riscos geopolíticos na cadeia de suprimentos.",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=0_993",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-14"
+    },
+    {
+      "titulo": "Lucro do Bank of America é afetado por multa de US$ 1,2 bilhão por falhas em medidas contra lavagem de dinheiro",
+      "link": "https://www.moneytimes.com.br/lucro-do-bank-of-america-e-afetado-por-multa-de-us12-bilhao-por-falhas-em-medidas-contra-lavagem-de-dinheiro/",
+      "resumo": "O Bank of America (BofA) registrou uma queda em seu lucro do terceiro trimestre, impactado diretamente por uma provisão de US$ 1,2 bilhão para cobrir multas regulatórias. O lucro",
+      "imagem": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800&sig=1_409",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-14"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Cyrela e Mitre registram queda nas vendas no 3º trimestre",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://aovivo.folha.uol.com.br/mercado/2026/10/01/6562-dolar-empresas-e-bolsas-acompanhe-ao-vivo-o-mercado.shtml#post467464",
+      "resumo": "A Cyrela (CYRE3) divulgou sua prévia operacional do terceiro trimestre, revelando uma desaceleração notável em seus indicadores-chave. A incorporadora registrou uma queda de 16% nos lançamentos",
+      "imagem": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800&sig=0_150",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-14"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin (BTC) oscila com cautela antes do CPI, enquanto Standard Chartered amplia oferta cripto nos EAU",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-oscila-com-cautela-antes-do-cpi-enquanto-standard-chartered-amplia-oferta-cripto-nos-eau-rens/",
+      "resumo": "O mercado de criptomoedas operou sob um tom de cautela nas últimas 24 horas, com o Bitcoin (BTC) recuando para US$ 83.224,00, uma queda de 0,36%, após testar a resistência de US$ 84 mil sem conseguir sustentar o avanço. O Ethereum (ETH) acompanhou o movimento de baixa, registrando queda de 0,70% para US$ 2.493,53. Essa pressão nos preços reflete a ausência de um gatilho de alta robusto e a atenção dos investidores aos dados de inflação dos Estados Unidos, com o Índice de Preços ao Consumidor (CPI) esperado para avançar 0",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=0_799",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-14"
+    }
+  ],
+  "data": "2026-10-14"
+}

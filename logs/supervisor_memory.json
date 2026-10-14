@@ -604,6 +604,13 @@
             "texto_original": "Fundos e produtos negociados em bolsa (ETPs) de criptomoedas registraram uma forte saída de capital, refletindo um ambiente de maior cautela entre investidores institucionais. Os ETPs de bitcoin à vista nos Estados Unidos acumularam saídas de US$ 679 milhões na última semana, enquanto os ETFs de ether perderam aproximadamente US$ 700 milhões ao longo de nove sessões consecutivas, dos quais US$ 542 milhões ocorreram apenas na última semana. Este movimento contrasta com o desempenho do S&P 500, que renovou máximas e avançou 1,2%, enquanto o bitcoin recuou cerca de 3% para a faixa",
             "motivo_falha": "O texto original excedia o limite de 90 palavras, estava incompleto na frase final e carecia da estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "ETPs de criptomoedas registraram saídas líquidas de US$ 1,2 bilhão na última semana, com o Bitcoin r..."
+        },
+        {
+            "data": "2026-10-14T13:59:49.637048",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A ASML Holding elevou suas projeções anuais para 2026 pela terceira vez, impulsionada pela demanda robusta por máquinas avançadas de fabricação de semicondutores, essencial para a expansão global",
+            "motivo_falha": "Subdimensionado: 28 palavras (mínimo obrigatório: 60 palavras). O texto original não seguia a estrutura analítica de três passos do padrão The Economist e carecia de contexto e desdobramento crítico.",
+            "correcao_aplicada": "A ASML Holding elevou suas projeções anuais para 2026 pela terceira vez, impulsionada pela demanda r..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-13"
