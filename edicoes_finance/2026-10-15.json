@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Localiza (RENT3) dispara no radar do Citi: banco eleva preço-alvo, mas faz alerta",
+      "link": "https://www.moneytimes.com.br/localiza-rent3-dispara-no-radar-do-citi-banco-eleva-preco-alvo-mas-faz-alerta/",
+      "resumo": "O Citi elevou o preço-alvo das ações da Localiza (RENT3) de R$ 45 para R$ 56, um aumento de 24,4%, e reiterou a recomendação",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=0_136",
+      "fonte": "Money Times",
+      "data": "2026-10-15"
+    },
+    {
+      "titulo": "App gratuito pode reduzir multas e cortar gastos na hora de vender o carro",
+      "link": "https://www.moneytimes.com.br/app-gratuito-cnh-pode-reduzir-multas-cortar-gastos-vender-carro-rsgp/",
+      "resumo": "O aplicativo Carteira Digital de Trânsito expandiu o acesso a descontos de até 40% em multas e viabilizou a transferência eletrônica de veículos sem taxa cartorária. A digitalização pelo Sistema de Notificação Eletrônica integra Detrans estaduais e bases federais, eliminando a intermediação de despachantes e custos postais da administração pública. Motoristas e compradores economizam tempo e taxas administrativas, enquanto cartórios e intermediários perdem receitas com a migração regulatória para canais digitais.",
+      "imagem": "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800&sig=1_456",
+      "fonte": "Money Times",
+      "data": "2026-10-15"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Even (EVEN3): Vendas e lançamentos recuam no 3T26; veja os destaques",
+      "link": "https://www.moneytimes.com.br/even-even3-vendas-e-lancamentos-recuam-no-3t26-veja-os-destaques-igdl/",
+      "resumo": "A construtora Even (EVEN3) reportou uma prévia operacional desafiadora para o terceiro trimestre de 2026 (3T26), com quedas expressivas em suas principais métricas.",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=0_496",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-15"
+    },
+    {
+      "titulo": "Azzas 2154 (AZZA3): ‘Divórcio’ entre Arezzo e Soma avança com aval do Cade",
+      "link": "https://www.moneytimes.com.br/azzas-2154-azza3-divorcio-entre-arezzo-e-soma-avanca-com-aval-do-cade/",
+      "resumo": "A Superintendência-Geral do Conselho Administrativo de Defesa Econômica (Cade) aprovou sem restrições a reorganização societária da Azzas 2154 (AZZA3), um passo crucial",
+      "imagem": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800&sig=1_162",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-15"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Soja e milho terão safra recorde neste ano, diz companhia nacional",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/agro/2026/10/soja-e-milho-terao-safra-recorde-neste-ano-diz-companhia-nacional.shtml",
+      "resumo": "A Companhia Nacional de Abastecimento projeta uma safra recorde de 325 milhões de toneladas de grãos para o ciclo 2026/27, puxada pelo avanço da soja e do milho. A expansão de 3,5% na área plantada e a normalização do regime de chuvas no Centro-Oeste sustentam o ganho de produtividade no campo, compensando a alta nos custos de fertilizantes importados. Tradings globais e operadores logísticos capturam margens maiores no escoamento portuário, enquanto produtores alavancados enfrentam compressão de renda diante da queda esperada nas cotações internacionais em Chicago.",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=0_889",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-15"
+    },
+    {
+      "titulo": "MP-SP opina a favor da recuperação judicial do grupo Casas Bahia",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/negocios/2026/10/mp-sp-opina-a-favor-da-recuperacao-judicial-do-grupo-casas-bahia.shtml",
+      "resumo": "O Ministério Público de São Paulo emitiu parecer favorável ao pedido de recuperação judicial do Grupo Casas Bahia, avaliado em R$ 4,1 bilhões em dívidas reestruturadas. A varejista enfrenta forte pressão de margens decorrente da alta prolongada da taxa básica de juros e da retração no consumo de bens duráveis de baixa renda. Credores quirografários assumem o principal risco de deságio nos pagamentos, enquanto concorrentes de e-commerce ganham espaço para capturar a fatia de mercado abandonada pela rede física.",
+      "imagem": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800&sig=1_594",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-15"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin (BTC) perde os US$ 82 mil com aversão ao risco e saídas de ETFs pressionando o mercado de criptomoedas",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-perde-os-us-82-mil-com-aversao-ao-risco-e-saidas-de-etfs-pressionando-o-mercado-de-criptomoedas-rens/",
+      "resumo": "O Bitcoin (BTC) registrou uma queda acentuada, perdendo o patamar de US$ 82 mil e sendo negociado a US$ 81.020,00, uma desvalorização de",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=0_765",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-15"
+    },
+    {
+      "titulo": "Bitcoin (BTC) oscila com cautela antes do CPI, enquanto Standard Chartered amplia oferta cripto nos EAU",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-oscila-com-cautela-antes-do-cpi-enquanto-standard-chartered-amplia-oferta-cripto-nos-eau-rens/",
+      "resumo": "O mercado de criptoativos opera em compasso de espera, com o Bitcoin (BTC) perdendo tração próximo da resistência técnica de US$ 84 mil e recuando para o patamar de US$ 83,2 mil, em baixa de 0,36% nas últimas vinte e quatro horas. O movimento foi acompanhado pelo Ethereum (ETH), cotado a US$ 2",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=1_381",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-15"
+    }
+  ],
+  "data": "2026-10-15"
+}
