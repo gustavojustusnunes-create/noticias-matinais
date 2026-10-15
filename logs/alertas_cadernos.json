@@ -49,5 +49,19 @@
       "Bitcoin perde US$ 83 mil e zera ganhos de outubro com disparada dos juros americanos"
     ],
     "timestamp": "2026-10-07T13:06:04.917509-03:00"
+  },
+  {
+    "data": "2026-10-15",
+    "caderno": "Geopolítica & Assuntos Globais",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 13 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 7.5/10.",
+    "exemplos_descartados": [
+      "Brasil aprova maior mudança da jornada de trabalho desde 1988",
+      "Como foi a votação do Senado que aprovou fim da escala 6x1: veja repercussão",
+      "Aplicativo BBC News Brasil: como baixar e receber alerta de notícias e análises",
+      "Fim da escala 6x1 é fruto de luta dos trabalhadores, não do governo, diz sociólogo",
+      "Os dilemas de empresários após fim da 6x1: 'Entendo, mas a conta não fecha'"
+    ],
+    "timestamp": "2026-10-15T10:32:23.308917-03:00"
   }
 ]
