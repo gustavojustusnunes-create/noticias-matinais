@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://s2-g1.glbimg.com/KduuV64qT5R1lDQbqit2mT1JseM=/810x456/top/smart/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/A/9/hXLfAXSiq8lJgtPUn5Ag/lula-e-flavio.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/09/tony-ramos.png",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/09/Da-para-ganhar-musculo-na-menopausa.jpg?quality=95&strip=info&resize=1200,630&crop=1",
         "https://s2-g1.glbimg.com/bMtl1q8W507C0UOeCZMqx2Lv-ag=/1200x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/N/t/KJucRQRhAr9FbjBL5Arg/imagem-1200x800-11-.jpg",
         "https://s2-g1.glbimg.com/pF9DXD_LtHCHOahrJOYaqfanmJ4=/6000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2023/c/D/nSBB62SfuoDZCOUStu3g/dima-solomin-upbkrmhjrci-unsplash.jpg",
@@ -49,7 +47,9 @@
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3be9/live/6da151e0-c407-11f1-838e-6d1d6d701264.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/09/gemini.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2024/10/2024-10-29T143820Z_1_LYNXMPEK9S0MC_RTROPTP_3_USA-ECONOMY.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/08/Alibaba-1.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/08/Alibaba-1.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/03/blogging-guide-K5DY18hy5JQ-unsplash_red.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_5600lm5600lm5600.jpg"
     ],
     "erros": [
         {
@@ -669,5 +669,5 @@
             "correcao_aplicada": "O mercado de criptomoedas operou com cautela nas últimas 24 horas, com o Bitcoin recuando 0,36% para..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-15"
+    "ultima_edicao_instagram": "2026-10-16"
 }
