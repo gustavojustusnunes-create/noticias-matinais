@@ -632,6 +632,41 @@
             "texto_original": "O Ministério Público de São Paulo (MP-SP) emitiu parecer favorável ao pedido de recuperação judicial do Grupo Casas Bahia (BHIA3), marcando um desenvolvimento crucial para a varejista. O posicionamento, formalizado",
             "motivo_falha": "O texto original estava incompleto e truncado, contendo apenas 33 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "O Ministério Público de São Paulo emitiu parecer favorável ao pedido de recuperação judicial do Grup..."
+        },
+        {
+            "data": "2026-10-16T13:26:16.494364",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Revista Piauí revelou que o ministro do Supremo Tribunal Federal (STF) e presidente do Tribunal Superior Eleitoral (TSE), Kassio Nunes Marques, participou de uma festa patrocinada pelo ex-banqueiro Daniel",
+            "motivo_falha": "O texto original continha apenas 30 palavras, estava truncado sem conclusão e violava as diretrizes de extensão mínima e a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "O ministro do Supremo Tribunal Federal Kassio Nunes Marques participou de uma celebração em um trípl..."
+        },
+        {
+            "data": "2026-10-16T13:28:30.599065",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Brava Energia (BRAV3) comunicou à Agência Nacional do Petróleo, Gás Natural e Biocombustíveis (ANP) a descoberta de hidrocarbonetos em seu primeiro poço exploratório onshore,",
+            "motivo_falha": "O texto original continha apenas 21 palavras, estava incompleto e truncado no final, violando o limite mínimo obrigatório de 60 palavras e a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "A Brava Energia comunicou à Agência Nacional do Petróleo a identificação de indícios de hidrocarbone..."
+        },
+        {
+            "data": "2026-10-16T13:30:17.221843",
+            "tema": "Macroeconomia",
+            "texto_original": "O Índice de Atividade Econômica do Banco Central (IBC-Br), frequentemente considerado uma prévia do Produto Interno Bruto (PIB), registrou um crescimento de 0,3% em agosto na comparação com",
+            "motivo_falha": "O texto original continha apenas 32 palavras, estava truncado sem pontuação final e abaixo do limite mínimo obrigatório de 60 palavras exigido pelo Quality Gate e padrão The Economist.",
+            "correcao_aplicada": "O Índice de Atividade Econômica do Banco Central registrou alta de 0,3% em agosto na comparação com ..."
+        },
+        {
+            "data": "2026-10-16T13:30:45.402468",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) rompeu o patamar de US$ 82 mil nesta quinta-feira, operando a US$ 81.020,00 com queda de 2,69% em",
+            "motivo_falha": "Subdimensionado: 21 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto estava truncado e não seguia a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin (BTC) caiu abaixo de US$ 82 mil nesta quinta-feira, operando a US$ 81.020,00 com uma desva..."
+        },
+        {
+            "data": "2026-10-16T13:31:34.299854",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptomoedas operou com cautela nas últimas 24 horas, com o Bitcoin (BTC) recuando 0,36% para US$ 83.224,00 e o",
+            "motivo_falha": "O texto original estava truncado com apenas 22 palavras, abaixo do limite mínimo de 60 palavras, e não continha a estrutura analítica completa de três passos.",
+            "correcao_aplicada": "O mercado de criptomoedas operou com cautela nas últimas 24 horas, com o Bitcoin recuando 0,36% para..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-15"
