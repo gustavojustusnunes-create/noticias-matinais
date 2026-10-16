@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-16",
+  "data_extenso": "Sexta-feira, 16 de Outubro de 2026",
+  "manchete": "Dólar: Estabilidade Pós-Pesquisa e Incerteza Fiscal",
+  "arquivo_html": "2026-10-16.html"
+ },
+ {
   "data": "2026-10-15",
   "data_extenso": "Quinta-feira, 15 de Outubro de 2026",
   "manchete": "Inflação ao produtor nos EUA acelera, superando projeções em setembro",
@@ -352,11 +358,5 @@
   "data_extenso": "Terça-feira, 4 de Agosto de 2026",
   "manchete": "EUA utilizaram 'praticamente todo' o estoque de mísseis de precisão de longo alcance durante guerra do Irã, diz agência",
   "arquivo_html": "2026-08-04.html"
- },
- {
-  "data": "2026-08-03",
-  "data_extenso": "Segunda-feira, 3 de Agosto de 2026",
-  "manchete": "Chefe da UE diz que Espanha 'foi eficiente' para resolver crise de migrantes em Ceuta e que bloco precisa reforçar suas ",
-  "arquivo_html": "2026-08-03.html"
  }
 ]
