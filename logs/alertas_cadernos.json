@@ -63,5 +63,19 @@
       "Os dilemas de empresários após fim da 6x1: 'Entendo, mas a conta não fecha'"
     ],
     "timestamp": "2026-10-15T10:32:23.308917-03:00"
+  },
+  {
+    "data": "2026-10-17",
+    "caderno": "Geopolítica & Assuntos Globais",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 7 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 3.5/10.",
+    "exemplos_descartados": [
+      "Senador do PL promete dinheiro de emendas a cidades com mais votos em Flávio: especialistas veem indício de crime eleitoral",
+      "Como PF e PGR mapeiam suposta rede de exploração sexual de Vorcaro: 'Voo das kengas é para sair de manhã'",
+      "Flávio Bolsonaro na Globo: o que disse o candidato à Presidência na 2ª entrevista à emissora",
+      "Debate na Band no segundo turno: o que esperar do primeiro confronto entre Lula e Flávio Bolsonaro",
+      "Distância entre Flávio e Lula é de 3 pontos no agregador de pesquisas da BBC"
+    ],
+    "timestamp": "2026-10-17T09:16:40.596791-03:00"
   }
 ]
