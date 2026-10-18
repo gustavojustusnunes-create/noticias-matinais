@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://s2-g1.glbimg.com/pF9DXD_LtHCHOahrJOYaqfanmJ4=/6000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2023/c/D/nSBB62SfuoDZCOUStu3g/dima-solomin-upbkrmhjrci-unsplash.jpg",
-        "https://s2-g1.glbimg.com/aro1DbKsyH9FUlQ6dv_RtRDpPn8=/1920x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/K/9/x87f2cRl25XR4xlKZRJQ/videoframe-5226040.png",
         "https://olhardigital.com.br/wp-content/uploads/2026/09/placa_mcdonalds-scaled-1.jpg",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/09/Georgina-Rodriguez-at-The-Store-Show.-GucciTheStoreShow-GeorginaRodriguez.jpg?quality=95&strip=info&resize=1200,630&crop=1",
         "https://s2-g1.glbimg.com/1AydRIeuy5mNEkeF2xoqqbY82kY=/6000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/q/f/EeB4zESCOnO3wM9XfTxw/2026-10-01t073555z-2105011183-rc27unazhzgy-rtrmadp-3-france-protest.jpg",
@@ -49,7 +47,9 @@
         "https://www.infomoney.com.br/wp-content/uploads/2026/03/blogging-guide-K5DY18hy5JQ-unsplash_red.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_5600lm5600lm5600.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/FMI_Tailandia.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_ifnc7aifnc7aifnc.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_ifnc7aifnc7aifnc.jpg",
+        "https://ichef.bbci.co.uk/news/1200/branded_portuguese/4f59/live/79b69bc0-ca24-11f1-a718-8f4bc8d2cdf5.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/Meta-AI-eleioes-no-Brasil.jpg"
     ],
     "erros": [
         {
@@ -669,5 +669,5 @@
             "correcao_aplicada": "O mercado de criptomoedas operou com cautela nas últimas 24 horas, com o Bitcoin recuando 0,36% para..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-17"
+    "ultima_edicao_instagram": "2026-10-18"
 }
