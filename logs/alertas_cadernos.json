@@ -77,5 +77,19 @@
       "Distância entre Flávio e Lula é de 3 pontos no agregador de pesquisas da BBC"
     ],
     "timestamp": "2026-10-17T09:16:40.596791-03:00"
+  },
+  {
+    "data": "2026-10-18",
+    "caderno": "Macroeconomia & Mercados",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 8 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 5.0/10.",
+    "exemplos_descartados": [
+      "Empresas estudam pontos para “carros voadores” em SP",
+      "Ministério da Justiça aciona MP e ANPD contra a Meta por falhas que afetaram Lula",
+      "De faxineiro a gerente: como fica a jornada de 30 profissões com o fim da 6×1",
+      "Clientes cobram resultados da IA e ameaçam trocar de escritório de advocacia",
+      "Por que debate entre Lula e Flávio pode atrair audiência, mas não deve mudar eleição"
+    ],
+    "timestamp": "2026-10-18T09:41:02.970557-03:00"
   }
 ]

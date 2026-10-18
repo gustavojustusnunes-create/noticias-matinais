@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-18",
+  "data_extenso": "Domingo, 18 de Outubro de 2026",
+  "manchete": "Trump suspende sanções russas: reavaliação estratégica em meio à crise ucraniana",
+  "arquivo_html": "2026-10-18.html"
+ },
+ {
   "data": "2026-10-17",
   "data_extenso": "Sábado, 17 de Outubro de 2026",
   "manchete": "FMI Alerta para Vulnerabilidade Fiscal Global e Pede Apoio Urgente",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 6 de Agosto de 2026",
   "manchete": "Jogadoras iranianas que ficaram na Austrália após Copa da Ásia recebem cidadania australiana",
   "arquivo_html": "2026-08-06.html"
- },
- {
-  "data": "2026-08-05",
-  "data_extenso": "Quarta-feira, 5 de Agosto de 2026",
-  "manchete": "Homem armado é preso em campo de golfe de Trump dias antes de visita do presidente dos EUA; 'Evitamos uma tragédia', diz",
-  "arquivo_html": "2026-08-05.html"
  }
 ]

@@ -1,35 +1,23 @@
 {
- "data": "2026-10-17",
- "data_extenso": "Sábado, 17 de Outubro de 2026",
- "editorial": "As notícias que vão ditar o ritmo do seu dia já estão aqui.",
- "manchete": "FMI Alerta para Vulnerabilidade Fiscal Global e Pede Apoio Urgente",
+ "data": "2026-10-18",
+ "data_extenso": "Domingo, 18 de Outubro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "Trump suspende sanções russas: reavaliação estratégica em meio à crise ucraniana",
  "cadernos": {
-  "Macroeconomia & Mercados": [
+  "Geopolítica & Assuntos Globais": [
    {
-    "titulo": "FMI Alerta para Vulnerabilidade Fiscal Global e Pede Apoio Urgente",
-    "link": "https://www.infomoney.com.br/economia/fmi-pede-apoio-a-economias-que-sofrem-com-guerras-e-cita-vulnerabilidade-fiscal/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/FMI_Tailandia.jpg",
-    "resumo": "O Fundo Monetário Internacional (FMI) instou países-membros a intensificarem o apoio financeiro a economias vulneráveis, citando riscos globais e a alta de rendimentos de títulos soberanos. Essa demanda surge em meio a uma resiliência econômica global frágil, exacerbada por conflitos, pressões inflacionárias e o aumento da dívida pública, que eleva os custos de refinanciamento. A falha na consolidação fiscal e na cooperação multilateral pode agravar a instabilidade, expondo economias a choques de liquidez e elevando o risco de crises de dívida soberana."
-   },
-   {
-    "titulo": "Ajuste Fiscal: Caminho para Juros Reais Menores e Estabilidade Monetária",
-    "link": "https://www.infomoney.com.br/onde-investir/corte-nos-gastos-do-governo-pode-reduzir-juro-real-para-5-diz-economista/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/Screenshot_71336f.png?fit=1245%2C691&quality=70&strip=all",
-    "resumo": "Economista Aurélio Bicalho projeta que a contenção do crescimento das despesas públicas para 2% anuais pode reduzir o juro real brasileiro de 6,7% para 5-5,5%. A percepção pública de estabilidade em benefícios sociais, aliada à elevação dos juros reais globais, pressiona por maior disciplina fiscal interna. O histórico do Banco Central demonstra que a convergência inflacionária exige aperto monetário incisivo. A falha em desacelerar gastos mantém juros elevados, penalizando o investimento e o crescimento, enquanto o sucesso fiscal pode aliviar o custo do capital."
+    "titulo": "Trump suspende sanções russas: reavaliação estratégica em meio à crise ucraniana",
+    "link": "https://www.bbc.com/portuguese/articles/cmdxw58v17gno?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/4f59/live/79b69bc0-ca24-11f1-a718-8f4bc8d2cdf5.jpg",
+    "resumo": "O presidente dos EUA suspendeu temporariamente diversas sanções contra a Rússia, previamente aprovadas pelo Congresso. A medida, justificada por 'segurança nacional', ocorre em um período de escalada de tensões com a Ucrânia, sugerindo uma reavaliação da estratégia de contenção. Moscou ganha alívio tático, enquanto a autoridade do Congresso é minada e a pressão sobre Kiev pode aumentar, exigindo monitoramento da coerência diplomática americana."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "Gigantes de tecnologia lançam modelos abertos de IA nos EUA",
-    "link": "https://olhardigital.com.br/2026/10/16/inteligencia-artificial/nvidia-meta-e-apple-lancam-novos-modelos-abertos-de-ia-nos-eua/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_ifnc7aifnc7aifnc.jpg",
-    "resumo": "Nvidia lançou três novos modelos abertos de IA para empresas, enquanto Meta e Apple anunciaram um modelo de pesos abertos para execução local em Macs. A iniciativa fortalece a oferta de IA americana, respondendo a preocupações regulatórias sobre modelos chineses e capitalizando na customização para eficiência empresarial. Empresas ganham flexibilidade e privacidade, mas a competitividade contra alternativas chinesas de menor custo é incerta, exigindo monitoramento da adoção e custos."
-   },
-   {
-    "titulo": "IA: Nova Teoria Propõe Interpretabilidade de Redes Neurais",
-    "link": "https://olhardigital.com.br/2026/10/16/inteligencia-artificial/nova-teoria-pode-ajudar-cientistas-a-entender-como-a-ia-pensa/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Rob-Pensativo-entre-Perigo-e-Proteo.png",
-    "resumo": "Nick Cammarata (ex-OpenAI) publicou em 15 de fevereiro uma teoria que propõe a interpretabilidade do funcionamento interno de redes neurais via análise de padrões de ativação. A tese desafia a \"caixa-preta\" da IA, sugerindo que conexões aparentemente aleatórias revelam características comuns não óbvias a humanos, como um neurônio reagindo a formas triangulares em objetos distintos. Isso oferece aos pesquisadores uma via para decifrar comportamentos inesperados de sistemas de IA, crucial para a segurança e mitigação de riscos, apesar de ser uma proposta teórica."
+    "titulo": "TSE multa Meta por viés de IA em eleições",
+    "link": "https://olhardigital.com.br/2026/10/17/pro/meta-pode-pagar-r500-mil-por-dia-por-tratamento-diferenciado-entre-lula-e-flavio-bolsonaro/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Meta-AI-eleioes-no-Brasil.jpg",
+    "resumo": "O Tribunal Superior Eleitoral (TSE) impôs à Meta uma multa diária de R$500 mil por tratamento desigual de candidatos presidenciais via sua ferramenta de inteligência artificial. A decisão decorre de falhas da Meta AI em gerar imagens equitativamente, suscitando preocupações sobre viés algorítmico e a integridade eleitoral. A empresa reagiu proibindo temporariamente a geração de imagens de candidatos. O risco imediato é a intensificação da fiscalização regulatória sobre plataformas de IA em eleições, com precedentes para moderação de conteúdo e transparência algorítmica."
    }
   ]
  }
