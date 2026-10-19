@@ -1,23 +1,35 @@
 {
- "data": "2026-10-18",
- "data_extenso": "Domingo, 18 de Outubro de 2026",
- "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
- "manchete": "Trump suspende sanções russas: reavaliação estratégica em meio à crise ucraniana",
+ "data": "2026-10-19",
+ "data_extenso": "Segunda-feira, 19 de Outubro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "Recuperação de Ações de IA Impulsiona S&P 500 e Nasdaq",
  "cadernos": {
-  "Geopolítica & Assuntos Globais": [
+  "Macroeconomia & Mercados": [
    {
-    "titulo": "Trump suspende sanções russas: reavaliação estratégica em meio à crise ucraniana",
-    "link": "https://www.bbc.com/portuguese/articles/cmdxw58v17gno?at_medium=RSS&at_campaign=rss",
-    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/4f59/live/79b69bc0-ca24-11f1-a718-8f4bc8d2cdf5.jpg",
-    "resumo": "O presidente dos EUA suspendeu temporariamente diversas sanções contra a Rússia, previamente aprovadas pelo Congresso. A medida, justificada por 'segurança nacional', ocorre em um período de escalada de tensões com a Ucrânia, sugerindo uma reavaliação da estratégia de contenção. Moscou ganha alívio tático, enquanto a autoridade do Congresso é minada e a pressão sobre Kiev pode aumentar, exigindo monitoramento da coerência diplomática americana."
+    "titulo": "Recuperação de Ações de IA Impulsiona S&P 500 e Nasdaq",
+    "link": "https://www.infomoney.com.br/mercados/sp-500-e-nasdaq-sobem-com-recuperacao-de-acoes-ligadas-a-ia-antes-de-balancos/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/06/NASDAQ_stock_market_display.jpg",
+    "resumo": "O S&P 500 e o Nasdaq Composite registraram altas de 0,45% e 0,95%, respectivamente, impulsionados pela recuperação de ações de inteligência artificial após uma semana de fortes perdas. A recuperação sucede a maior queda semanal dos índices desde junho, impulsionada por temores de juros elevados e o custo da expansão da IA, evidenciado pela dívida de US$ 50 bilhões da CoreWeave. A queda do petróleo ofereceu suporte adicional. Enquanto o setor de tecnologia respira, a sustentabilidade do financiamento da IA e os iminentes balanços corporativos, incluindo Tesla, permanecem como riscos cruciais a serem monitorados."
+   },
+   {
+    "titulo": "Volatilidade Eleitoral e Petróleo Reduzem Ibovespa",
+    "link": "https://www.infomoney.com.br/mercados/ibovespa-incerteza-eleitoral-e-petroleo-ofuscam-alta-de-ny-e-indice-registra-queda/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/09/Captura-de-tela-2024-09-06-100616.png",
+    "resumo": "O Ibovespa recuou 0,27%, fechando a 204.872 pontos, após abrir na mínima de 205.439,71. A incerteza eleitoral, com pesquisas apertadas e promessas fiscais vagas, somou-se à queda de 1,5% no preço do petróleo, influenciada pelo alívio das sanções dos EUA à Rússia. Investidores monitoram a volatilidade política e a pressão sobre as ações de commodities, enquanto a potencial desinflação do petróleo pode ser mitigada por projeções fiscais incertas."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "TSE multa Meta por viés de IA em eleições",
-    "link": "https://olhardigital.com.br/2026/10/17/pro/meta-pode-pagar-r500-mil-por-dia-por-tratamento-diferenciado-entre-lula-e-flavio-bolsonaro/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Meta-AI-eleioes-no-Brasil.jpg",
-    "resumo": "O Tribunal Superior Eleitoral (TSE) impôs à Meta uma multa diária de R$500 mil por tratamento desigual de candidatos presidenciais via sua ferramenta de inteligência artificial. A decisão decorre de falhas da Meta AI em gerar imagens equitativamente, suscitando preocupações sobre viés algorítmico e a integridade eleitoral. A empresa reagiu proibindo temporariamente a geração de imagens de candidatos. O risco imediato é a intensificação da fiscalização regulatória sobre plataformas de IA em eleições, com precedentes para moderação de conteúdo e transparência algorítmica."
+    "titulo": "IA Autônoma: Ciberataques de Baixo Custo Ameaçam Corporações",
+    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/hacker-usou-ia-para-invadir-mais-de-100-sites-com-baixo-custo-diz-reuters/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
+    "resumo": "Um hacker utilizou agentes de IA para invadir mais de 100 sites corporativos, como Deere e Cummins, com um custo total de US$ 5 mil e cerca de US$ 50 por invasão bem-sucedida. Esta automação de baixo custo, impulsionada por modelos como DeepSeek e Claude Code, permite ataques complexos com mínima intervenção humana, redefinindo a economia do cibercrime. Agentes demonstraram capacidade de adaptação e exploração de vulnerabilidades sofisticadas. Empresas enfrentam risco imediato de violações de dados e interrupções operacionais, exigindo reavaliação urgente das defesas digitais contra ameaças autônomas."
+   },
+   {
+    "titulo": "Anthropic destinará 5% de suas ações a fundo de benefício público",
+    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/anthropic-destinara-5-de-suas-acoes-a-fundo-de-beneficio-publico/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/anthropic.jpg",
+    "resumo": "A Anthropic destinará 5% de suas ações a um fundo de benefício público, com potencial de 20%, e alocou US$ 200 milhões para mitigar impactos da IA no emprego. Esta medida reflete a crescente pressão regulatória e as preocupações da empresa com os riscos \"catastróficos\" da IA, buscando antecipar o escrutínio governamental e legitimar seu desenvolvimento. A Anthropic ganha capital político e tenta moldar a narrativa regulatória, enquanto o risco de intervenção governamental permanece alto para o setor."
    }
   ]
  }

@@ -667,6 +667,13 @@
             "texto_original": "O mercado de criptomoedas operou com cautela nas últimas 24 horas, com o Bitcoin (BTC) recuando 0,36% para US$ 83.224,00 e o",
             "motivo_falha": "O texto original estava truncado com apenas 22 palavras, abaixo do limite mínimo de 60 palavras, e não continha a estrutura analítica completa de três passos.",
             "correcao_aplicada": "O mercado de criptomoedas operou com cautela nas últimas 24 horas, com o Bitcoin recuando 0,36% para..."
+        },
+        {
+            "data": "2026-10-19T15:45:33.382355",
+            "tema": "Fronteira Tecnológica & IA",
+            "texto_original": "{ \"status\": \"OK\", \"titulo_limpo\": \"Anthropic: Fundo de Benefício e a Pressão Regulatória da IA\", \"resumo_texto\": \"A Anthropic destinará 5% de suas ações a um fundo de benefício público, com potencial de atingir 20% via compromissos adicionais, e alocou US$ 200 milhões para mitigar impactos da IA no emprego. A iniciativa reflete a crescente pressão regulatória e as preocupações da empresa com os riscos \\\"catastróficos\\\" da IA, visando antecipar o escrutínio governamental e legitimar seu desenvolvimento. A Anthropic ganha capital político e aten",
+            "motivo_falha": "O texto original estava incompleto e truncado, contendo apenas 59 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura analítica de três passos do padrão The Economist. A frase final não terminava com ponto final.",
+            "correcao_aplicada": "A Anthropic destinará 5% de suas ações a um fundo de benefício público, com potencial de 20%, e aloc..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-18"
