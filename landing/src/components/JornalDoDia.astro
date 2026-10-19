@@ -1,5 +1,6 @@
 ---
 import edicao from "../data/edicao_atual.json";
+import SubscribeForm from "./SubscribeForm.astro";
 
 const cadernosConfig: Record<string, { label: string; cor: string; bg: string; border: string }> = {
   "Macroeconomia & Mercados": { label: "Macroeconomia & Mercados", cor: "#34D399", bg: "rgba(16, 185, 129, 0.15)", border: "rgba(16, 185, 129, 0.3)" },
@@ -167,7 +168,7 @@ const cadernos = edicao.cadernos || {};
       })}
     </div>
 
-    <!-- Banner Final de Assinatura -->
+    <!-- Banner Final de Assinatura dentro de #jornal -->
     <div class="mt-16 p-8 rounded-2xl bg-gradient-to-r from-[#1E3A8A]/30 via-[#131B26] to-[#0E1520] border border-[#2563EB]/40 text-center">
       <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white mb-2">
         Gostou da curadoria de hoje?
@@ -175,16 +176,7 @@ const cadernos = edicao.cadernos || {};
       <p class="text-xs sm:text-sm text-[#94A3B8] max-w-xl mx-auto mb-6">
         Receba a edição completa e o podcast matinal diretamente no seu e-mail todos os dias às 06:15.
       </p>
-      <a 
-        href="#assinar" 
-        class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-xl shadow-[#2563EB]/30 transition-all transform hover:-translate-y-0.5"
-      >
-        Quero Receber Gratuitamente
-        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M5 12h14"></path>
-          <path d="m12 5 7 7-7 7"></path>
-        </svg>
-      </a>
+      <SubscribeForm containerId="assinar-jornal" />
     </div>
 
   </div>
