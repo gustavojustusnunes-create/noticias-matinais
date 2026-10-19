@@ -674,6 +674,13 @@
             "texto_original": "{ \"status\": \"OK\", \"titulo_limpo\": \"Anthropic: Fundo de Benefício e a Pressão Regulatória da IA\", \"resumo_texto\": \"A Anthropic destinará 5% de suas ações a um fundo de benefício público, com potencial de atingir 20% via compromissos adicionais, e alocou US$ 200 milhões para mitigar impactos da IA no emprego. A iniciativa reflete a crescente pressão regulatória e as preocupações da empresa com os riscos \\\"catastróficos\\\" da IA, visando antecipar o escrutínio governamental e legitimar seu desenvolvimento. A Anthropic ganha capital político e aten",
             "motivo_falha": "O texto original estava incompleto e truncado, contendo apenas 59 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura analítica de três passos do padrão The Economist. A frase final não terminava com ponto final.",
             "correcao_aplicada": "A Anthropic destinará 5% de suas ações a um fundo de benefício público, com potencial de 20%, e aloc..."
+        },
+        {
+            "data": "2026-10-19T15:52:52.293865",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O governo federal anunciou a antecipação do calendário de pagamentos do programa Bolsa Família referente a outubro, assegurando que todos os beneficiários recebam os valores antes do segundo turno das eleições, marcado para o próximo domingo (25",
+            "motivo_falha": "O texto original estava incompleto, truncado com apenas 37 palavras, violava o limite mínimo de 60 palavras e a última frase não terminava com ponto final.",
+            "correcao_aplicada": "O governo federal antecipou o calendário de pagamentos do Bolsa Família para outubro, garantindo que..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-18"
