@@ -1,35 +1,43 @@
 {
- "data": "2026-10-19",
- "data_extenso": "Segunda-feira, 19 de Outubro de 2026",
- "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
- "manchete": "Recuperação de Ações de IA Impulsiona S&P 500 e Nasdaq",
+ "data": "2026-10-20",
+ "data_extenso": "Terça-feira, 20 de Outubro de 2026",
+ "editorial": "As notícias que vão ditar o ritmo do seu dia já estão aqui.",
+ "manchete": "Juros do Tesouro Caem: Eleições e Risco Político Reduzido",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Recuperação de Ações de IA Impulsiona S&P 500 e Nasdaq",
-    "link": "https://www.infomoney.com.br/mercados/sp-500-e-nasdaq-sobem-com-recuperacao-de-acoes-ligadas-a-ia-antes-de-balancos/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/06/NASDAQ_stock_market_display.jpg",
-    "resumo": "O S&P 500 e o Nasdaq Composite registraram altas de 0,45% e 0,95%, respectivamente, impulsionados pela recuperação de ações de inteligência artificial após uma semana de fortes perdas. A recuperação sucede a maior queda semanal dos índices desde junho, impulsionada por temores de juros elevados e o custo da expansão da IA, evidenciado pela dívida de US$ 50 bilhões da CoreWeave. A queda do petróleo ofereceu suporte adicional. Enquanto o setor de tecnologia respira, a sustentabilidade do financiamento da IA e os iminentes balanços corporativos, incluindo Tesla, permanecem como riscos cruciais a serem monitorados."
+    "titulo": "Juros do Tesouro Caem: Eleições e Risco Político Reduzido",
+    "link": "https://www.infomoney.com.br/onde-investir/tesouro-direto-abertura-fechamento-20102026/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-19T004434Z_475095858_RC206OACRIDP_RTRMADP_3_BRAZIL-ELECTION-DEBATE.jpg",
+    "resumo": "As taxas dos títulos prefixados do Tesouro Direto recuaram até 14 pontos-base, com o Prefixado 2029 caindo de 12,83% para 12,69%. A queda reflete a reação do mercado a novas pesquisas eleitorais indicando vantagem para Flávio Bolsonaro, sinalizando menor prêmio de risco político, mesmo com a alta do petróleo no exterior. Investidores em renda fixa perdem rendimento, enquanto o governo se beneficia de um custo de dívida menor, mas a volatilidade persistirá até a definição eleitoral."
    },
    {
-    "titulo": "Volatilidade Eleitoral e Petróleo Reduzem Ibovespa",
-    "link": "https://www.infomoney.com.br/mercados/ibovespa-incerteza-eleitoral-e-petroleo-ofuscam-alta-de-ny-e-indice-registra-queda/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/09/Captura-de-tela-2024-09-06-100616.png",
-    "resumo": "O Ibovespa recuou 0,27%, fechando a 204.872 pontos, após abrir na mínima de 205.439,71. A incerteza eleitoral, com pesquisas apertadas e promessas fiscais vagas, somou-se à queda de 1,5% no preço do petróleo, influenciada pelo alívio das sanções dos EUA à Rússia. Investidores monitoram a volatilidade política e a pressão sobre as ações de commodities, enquanto a potencial desinflação do petróleo pode ser mitigada por projeções fiscais incertas."
+    "titulo": "Americanas: Fim da Recuperação Judicial Impulsiona Ações e Desafia Governança",
+    "link": "https://www.infomoney.com.br/mercados/americanas-amer3-acao-salta-25-apos-justica-decretar-fim-da-recuperacao-judicial/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/05/americanas.jpg",
+    "resumo": "As ações da Americanas (AMER3) dispararam 25,63% após a Justiça do Rio de Janeiro encerrar sua recuperação judicial, processo iniciado com dívidas de R$ 43 bilhões. A decisão judicial, que valida o cumprimento do plano de reestruturação em dois anos conforme a Lei 11.101/2005, sinaliza uma fase de normalização para a varejista no mercado de capitais. A empresa ganha credibilidade e flexibilidade operacional, enquanto investidores monitoram a sustentabilidade do negócio e os desdobramentos das acusações de fraude contra ex-executivos, um risco latente para a governança corporativa."
+   }
+  ],
+  "Geopolítica & Assuntos Globais": [
+   {
+    "titulo": "BYD no Brasil: Expansão Chinesa e Desafios Industriais Locais",
+    "link": "https://www.bbc.com/portuguese/articles/c8g47z0dg0ywo?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3f09/live/65ad9dc0-c346-11f1-9a39-31b474234113.jpg",
+    "resumo": "A BYD, líder global em veículos elétricos, estabeleceu sua maior fábrica latino-americana em Camaçari, Bahia. A escolha reflete a estratégia chinesa de deslocalização industrial para mercados emergentes, visando acesso direto a consumidores e mitigação de barreiras comerciais, impulsionada por incentivos fiscais locais. Este movimento consolida a influência industrial chinesa na região, gerando investimentos e empregos no Brasil, mas intensificando a concorrência para fabricantes locais e a dependência tecnológica."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "IA Autônoma: Ciberataques de Baixo Custo Ameaçam Corporações",
-    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/hacker-usou-ia-para-invadir-mais-de-100-sites-com-baixo-custo-diz-reuters/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
-    "resumo": "Um hacker utilizou agentes de IA para invadir mais de 100 sites corporativos, como Deere e Cummins, com um custo total de US$ 5 mil e cerca de US$ 50 por invasão bem-sucedida. Esta automação de baixo custo, impulsionada por modelos como DeepSeek e Claude Code, permite ataques complexos com mínima intervenção humana, redefinindo a economia do cibercrime. Agentes demonstraram capacidade de adaptação e exploração de vulnerabilidades sofisticadas. Empresas enfrentam risco imediato de violações de dados e interrupções operacionais, exigindo reavaliação urgente das defesas digitais contra ameaças autônomas."
+    "titulo": "EUA Banam DeepSeek: Escalada na Guerra Tecnológica da IA",
+    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/eua-mandam-banir-inteligencia-artificial-deepseek-de-redes-federais/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/deepseek.jpg",
+    "resumo": "O Departamento de Segurança Interna dos EUA determinou a remoção de tecnologias de inteligência artificial da chinesa DeepSeek de sistemas federais civis, proibindo novas aquisições. A ação, fundamentada na Lei de Segurança de Aquisições de 2018, visa conter riscos de segurança de dados e potencial transferência de informações sensíveis para a China, refletindo uma política mais ampla de contenção tecnológica. Esta medida aprofunda a fragmentação do mercado global de IA, impondo custos de transição às agências e intensificando a polarização tecnológica entre Washington e Pequim."
    },
    {
-    "titulo": "Anthropic destinará 5% de suas ações a fundo de benefício público",
-    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/anthropic-destinara-5-de-suas-acoes-a-fundo-de-beneficio-publico/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/anthropic.jpg",
-    "resumo": "A Anthropic destinará 5% de suas ações a um fundo de benefício público, com potencial de 20%, e alocou US$ 200 milhões para mitigar impactos da IA no emprego. Esta medida reflete a crescente pressão regulatória e as preocupações da empresa com os riscos \"catastróficos\" da IA, buscando antecipar o escrutínio governamental e legitimar seu desenvolvimento. A Anthropic ganha capital político e tenta moldar a narrativa regulatória, enquanto o risco de intervenção governamental permanece alto para o setor."
+    "titulo": "IA Autônoma Redefine Cibersegurança: Ataques de Baixo Custo a Corporações",
+    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/hacker-usou-ia-para-invadir-mais-de-100-sites-com-baixo-custo-diz-reuters/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
+    "resumo": "Um hacker empregou agentes de inteligência artificial para comprometer mais de 100 sites corporativos, incluindo Deere e Cummins, com um custo total estimado em US$ 5 mil. A operação demonstrou a capacidade de IA de executar ataques complexos, levando cerca de 23 horas e custando US$ 50 por invasão bem-sucedida, utilizando modelos como DeepSeek e Claude Code. Este avanço automatizado eleva o risco cibernético para empresas, que agora enfrentam ameaças sofisticadas com barreiras de entrada financeiras mínimas para atacantes."
    }
   ]
  }

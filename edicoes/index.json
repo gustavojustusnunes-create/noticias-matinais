@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-20",
+  "data_extenso": "Terça-feira, 20 de Outubro de 2026",
+  "manchete": "Juros do Tesouro Caem: Eleições e Risco Político Reduzido",
+  "arquivo_html": "2026-10-20.html"
+ },
+ {
   "data": "2026-10-19",
   "data_extenso": "Segunda-feira, 19 de Outubro de 2026",
   "manchete": "Recuperação de Ações de IA Impulsiona S&P 500 e Nasdaq",
@@ -352,11 +358,5 @@
   "data_extenso": "Sábado, 8 de Agosto de 2026",
   "manchete": "EUA estão vulneráveis? Como a baixa nos estoques de mísseis ameaça a defesa norte-americana",
   "arquivo_html": "2026-08-08.html"
- },
- {
-  "data": "2026-08-07",
-  "data_extenso": "Sexta-feira, 7 de Agosto de 2026",
-  "manchete": "Trump prefere guerra ideológica com Brasil a interesse estratégico dos EUA no país, diz analista",
-  "arquivo_html": "2026-08-07.html"
  }
 ]
