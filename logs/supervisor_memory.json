@@ -1,8 +1,5 @@
 {
     "imagens_recentes": [
-        "https://s2-g1.glbimg.com/1AydRIeuy5mNEkeF2xoqqbY82kY=/6000x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/q/f/EeB4zESCOnO3wM9XfTxw/2026-10-01t073555z-2105011183-rc27unazhzgy-rtrmadp-3-france-protest.jpg",
-        "https://s2-g1.glbimg.com/OtowCRweQWa1NIh79OMXOXjfDZs=/5472x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/p/w/wCR8ddTkWlDT6bfcazyg/mg-1446-0.jpg",
-        "https://s2-g1.glbimg.com/EWLjxn4RjY8ANx2PzkhqHgPHcDw=/1280x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/Q/B/BTwIrlRrOUwZab9Aq4RQ/55560524207-7aaa8244a8-o.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_7758un7758un7758.jpg",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/Antes-e-depois-do-marido-de-Simone-Mendes-apos-perder-175-kg-veja.jpg?quality=95&strip=info&resize=1200,630&crop=1",
         "https://s2-g1.glbimg.com/dU5mTAEZbwueEMPfhlvPBFmJlsk=/1300x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/I/c/RdmFiAR0qxENXCgbDB0g/2026-10-03t094753z-608712218-rc2lvnaycp96-rtrmadp-3-india-politics-gen-z-1-2-.jpg",
@@ -49,7 +46,10 @@
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/4f59/live/79b69bc0-ca24-11f1-a718-8f4bc8d2cdf5.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Meta-AI-eleioes-no-Brasil.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/06/NASDAQ_stock_market_display.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-19T004434Z_475095858_RC206OACRIDP_RTRMADP_3_BRAZIL-ELECTION-DEBATE.jpg",
+        "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3f09/live/65ad9dc0-c346-11f1-9a39-31b474234113.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/deepseek.jpg"
     ],
     "erros": [
         {
@@ -704,5 +704,5 @@
             "correcao_aplicada": "O Bitcoin subiu 2,4% nesta sessão, recuperando o patamar de US$ 82.400 impulsionado pela expectativa..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-19"
+    "ultima_edicao_instagram": "2026-10-20"
 }
