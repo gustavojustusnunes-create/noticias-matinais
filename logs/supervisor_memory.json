@@ -681,6 +681,27 @@
             "texto_original": "O governo federal anunciou a antecipação do calendário de pagamentos do programa Bolsa Família referente a outubro, assegurando que todos os beneficiários recebam os valores antes do segundo turno das eleições, marcado para o próximo domingo (25",
             "motivo_falha": "O texto original estava incompleto, truncado com apenas 37 palavras, violava o limite mínimo de 60 palavras e a última frase não terminava com ponto final.",
             "correcao_aplicada": "O governo federal antecipou o calendário de pagamentos do Bolsa Família para outubro, garantindo que..."
+        },
+        {
+            "data": "2026-10-20T13:56:45.650765",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Desde o primeiro turno das eleições presidenciais, a Vale (VALE3) registrou uma desvalorização de R$ 24,64 bilhões em seu valor de mercado, correspondendo a uma queda de aproximadamente 8%.",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 34 palavras, abaixo do limite mínimo de 60 palavras exigido pelo Quality Gate e padrão The Economist, além de carecer da estrutura analítica completa de três passos.",
+            "correcao_aplicada": "Desde o primeiro turno das eleições presidenciais, a mineradora Vale registrou uma desvalorização de..."
+        },
+        {
+            "data": "2026-10-20T14:01:06.030449",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A companhia aérea Azul (AZUL3) revisou suas projeções para o horizonte financeiro e assumiu uma postura de cautela operacional, sinalizando que o processo de recuperação pós-reestruturação será mais prolongado do que o previsto inicialmente. Em declarações recentes do diretor financeiro Antonio Carlos Garcia, a empresa apontou que os patamares elevados dos preços do combustível de aviação continuam comprimindo severamente as margens operacionais, exigindo uma disciplina rígida na gestão da capacidade. A companhia projeta encerrar 2026 com uma capacidade aproximadamente 5% inferior em termos anualizados, mantendo a retração estrategicamente implementada para mitigar a volatilidade das commodities. No segundo trimestre, a oferta foi reduzida em mais de 10%, embora a gestão espere retomar um crescimento modesto a partir do quarto trimestre, com a reativação gradual de aeronaves e frequências, sem caracterizar uma expansão agressiva.\n\nApesar de ter conseguido repassar entre 60% e 65% da alta do querosene de aviação diretamente para as tarifas dos passageiros, o impacto no fluxo de caixa permanece relevante. A empresa, que concluiu seu processo de recuperação judicial sob o Chapter 11 em fevereiro e reduziu sua dívida total para R$ 21,4 bilhões em agosto, caminha para a positividade do fluxo de caixa livre operacional, mas segue onerada por obrigações financeiras vinculadas à reestruturação de seu passivo. Como contrapeso à volatilidade do setor aeroviário tradicional, a Azul intensifica a exploração de linhas de receita alternativas, como seu programa de fidelidade, divisões de carga, serviços turísticos e unidades de manutenção. \n\nPara investidores e executivos, o cenário para a AZUL3 exige monitoramento rigoroso dos custos de insumos e da elasticidade da demanda. O cronograma de desalavancagem e normalização das margens permanece diretamente atrelado ao comportamento internacional do petróleo. Com a administração focada exclusivamente na otimização interna e na eficiência de bilheteria, eventuais teses de consolidação societária no setor latino-americano encontram-se temporariamente fora do radar estratégico da companhia.",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras (possía mais de 300 palavras). Foi reescrito para cumprir estritamente o padrão The Economist de três passos e o limite de 60 a 90 palavras.",
+            "correcao_aplicada": "A companhia aérea Azul (AZUL3) revisou suas projeções financeiras e sinalizou um processo de recuper..."
+        },
+        {
+            "data": "2026-10-20T14:03:51.556291",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos opera em compasso de espera, com o Bitcoin (BTC) sustentando cotação acima de US$ 82.400 após oscilação positiva de 0,",
+            "motivo_falha": "O texto original estava truncado, com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras e carecendo da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin subiu 2,4% nesta sessão, recuperando o patamar de US$ 82.400 impulsionado pela expectativa..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-19"
