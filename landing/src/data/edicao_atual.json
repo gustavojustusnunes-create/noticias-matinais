@@ -1,43 +1,35 @@
 {
- "data": "2026-10-20",
- "data_extenso": "Terça-feira, 20 de Outubro de 2026",
- "editorial": "As notícias que vão ditar o ritmo do seu dia já estão aqui.",
- "manchete": "Juros do Tesouro Caem: Eleições e Risco Político Reduzido",
+ "data": "2026-10-21",
+ "data_extenso": "Quarta-feira, 21 de Outubro de 2026",
+ "editorial": "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
+ "manchete": "Mercado de DIs: Queda Reflete Eleição e Cenário Global",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Juros do Tesouro Caem: Eleições e Risco Político Reduzido",
-    "link": "https://www.infomoney.com.br/onde-investir/tesouro-direto-abertura-fechamento-20102026/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-19T004434Z_475095858_RC206OACRIDP_RTRMADP_3_BRAZIL-ELECTION-DEBATE.jpg",
-    "resumo": "As taxas dos títulos prefixados do Tesouro Direto recuaram até 14 pontos-base, com o Prefixado 2029 caindo de 12,83% para 12,69%. A queda reflete a reação do mercado a novas pesquisas eleitorais indicando vantagem para Flávio Bolsonaro, sinalizando menor prêmio de risco político, mesmo com a alta do petróleo no exterior. Investidores em renda fixa perdem rendimento, enquanto o governo se beneficia de um custo de dívida menor, mas a volatilidade persistirá até a definição eleitoral."
+    "titulo": "Mercado de DIs: Queda Reflete Eleição e Cenário Global",
+    "link": "https://www.infomoney.com.br/mercados/taxas-dos-dis-caem-com-eleicao-no-brasil-e-exterior-no-radar/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/06/chart-1905224_1280.jpg",
+    "resumo": "As taxas dos Depósitos Interfinanceiros (DIs) de longo prazo no Brasil caíram, com o DI para janeiro de 2035 recuando 9 pontos-base para 12,665% e o de janeiro de 2028 diminuindo 4 pontos-base para 12,735%. O movimento reflete a queda dos rendimentos dos Treasuries globais e a expectativa de um cenário fiscal mais conservador pós-eleição, impulsionando a precificação de um corte de 25 pontos-base na Selic em novembro. Investidores apostam na desinflação e ajuste fiscal, mas a volatilidade eleitoral e a ausência de propostas econômicas concretas representam o risco imediato a ser monitorado."
    },
    {
-    "titulo": "Americanas: Fim da Recuperação Judicial Impulsiona Ações e Desafia Governança",
-    "link": "https://www.infomoney.com.br/mercados/americanas-amer3-acao-salta-25-apos-justica-decretar-fim-da-recuperacao-judicial/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/05/americanas.jpg",
-    "resumo": "As ações da Americanas (AMER3) dispararam 25,63% após a Justiça do Rio de Janeiro encerrar sua recuperação judicial, processo iniciado com dívidas de R$ 43 bilhões. A decisão judicial, que valida o cumprimento do plano de reestruturação em dois anos conforme a Lei 11.101/2005, sinaliza uma fase de normalização para a varejista no mercado de capitais. A empresa ganha credibilidade e flexibilidade operacional, enquanto investidores monitoram a sustentabilidade do negócio e os desdobramentos das acusações de fraude contra ex-executivos, um risco latente para a governança corporativa."
-   }
-  ],
-  "Geopolítica & Assuntos Globais": [
-   {
-    "titulo": "BYD no Brasil: Expansão Chinesa e Desafios Industriais Locais",
-    "link": "https://www.bbc.com/portuguese/articles/c8g47z0dg0ywo?at_medium=RSS&at_campaign=rss",
-    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3f09/live/65ad9dc0-c346-11f1-9a39-31b474234113.jpg",
-    "resumo": "A BYD, líder global em veículos elétricos, estabeleceu sua maior fábrica latino-americana em Camaçari, Bahia. A escolha reflete a estratégia chinesa de deslocalização industrial para mercados emergentes, visando acesso direto a consumidores e mitigação de barreiras comerciais, impulsionada por incentivos fiscais locais. Este movimento consolida a influência industrial chinesa na região, gerando investimentos e empregos no Brasil, mas intensificando a concorrência para fabricantes locais e a dependência tecnológica."
+    "titulo": "EUA Vinculam Financiamento à Argentina à Alinhamento Político Direitista",
+    "link": "https://www.infomoney.com.br/mundo/eua-condicionam-dinheiro-a-argentina-apos-a-resultado-eleitoral-rumo-a-direita/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/10/2025-10-14T174301Z_2059039714_RC2TBHAE250F_RTRMADP_3_USA-ARGENTINA.jpg",
+    "resumo": "O embaixador dos EUA na Argentina, Peter Lamelas, condicionou um potencial financiamento de até US$ 20 bilhões a projetos de investimento à manutenção de uma orientação política \"à direita\" após 2027. Esta postura reflete uma estratégia geopolítica de Washington para solidificar alianças ideológicas na América Latina, usando o apoio financeiro como alavanca para influenciar resultados eleitorais e políticas domésticas. O governo Milei obtém suporte financeiro crucial, mas a Argentina arrisca maior polarização interna e soberania comprometida por condicionantes externos."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "EUA Banam DeepSeek: Escalada na Guerra Tecnológica da IA",
-    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/eua-mandam-banir-inteligencia-artificial-deepseek-de-redes-federais/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/deepseek.jpg",
-    "resumo": "O Departamento de Segurança Interna dos EUA determinou a remoção de tecnologias de inteligência artificial da chinesa DeepSeek de sistemas federais civis, proibindo novas aquisições. A ação, fundamentada na Lei de Segurança de Aquisições de 2018, visa conter riscos de segurança de dados e potencial transferência de informações sensíveis para a China, refletindo uma política mais ampla de contenção tecnológica. Esta medida aprofunda a fragmentação do mercado global de IA, impondo custos de transição às agências e intensificando a polarização tecnológica entre Washington e Pequim."
+    "titulo": "Amazon lança TorchNeuron, mirando domínio da Nvidia em chips de IA",
+    "link": "https://olhardigital.com.br/2026/10/20/inteligencia-artificial/amazon-lanca-ferramenta-para-desafiar-dominio-da-nvidia-em-chips-de-ia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon-1-scaled.jpg",
+    "resumo": "A Amazon lançou o TorchNeuron, ferramenta que permite a desenvolvedores migrar aplicações PyTorch para seus chips Trainium com uma única alteração de configuração. Esta iniciativa desafia o domínio da Nvidia, consolidado pelo ecossistema CUDA, ao oferecer uma alternativa integrada à infraestrutura AWS para otimização de custos e performance em treinamento e inferência de IA. A Amazon busca atrair clientes com ganhos de eficiência, como a Deepgram que processou 70% mais áudio por dólar, pressionando a hegemonia da Nvidia e exigindo monitoramento da adoção real."
    },
    {
-    "titulo": "IA Autônoma Redefine Cibersegurança: Ataques de Baixo Custo a Corporações",
-    "link": "https://olhardigital.com.br/2026/10/19/inteligencia-artificial/hacker-usou-ia-para-invadir-mais-de-100-sites-com-baixo-custo-diz-reuters/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
-    "resumo": "Um hacker empregou agentes de inteligência artificial para comprometer mais de 100 sites corporativos, incluindo Deere e Cummins, com um custo total estimado em US$ 5 mil. A operação demonstrou a capacidade de IA de executar ataques complexos, levando cerca de 23 horas e custando US$ 50 por invasão bem-sucedida, utilizando modelos como DeepSeek e Claude Code. Este avanço automatizado eleva o risco cibernético para empresas, que agora enfrentam ameaças sofisticadas com barreiras de entrada financeiras mínimas para atacantes."
+    "titulo": "Pequim Contesta Proibição de IA e Sanções Americanas",
+    "link": "https://olhardigital.com.br/2026/10/20/inteligencia-artificial/china-exige-que-eua-retirem-deepseek-de-lista-de-proibicoes-em-orgaos-federais/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/deepseek_china-e1767983230351.jpg",
+    "resumo": "Pequim exigiu que Washington revogue a proibição do modelo de IA DeepSeek em agências federais civis e contesta sanções contra cinco entidades chinesas por suposto roubo de segredos de IA. A medida americana, motivada por preocupações com segurança de dados e transferência de informações confidenciais, reflete a crescente desconfiança e a disputa por supremacia tecnológica. Este embate intensifica a fragmentação do ecossistema global de IA, elevando riscos de retaliação e dificultando a cooperação em padrões tecnológicos."
    }
   ]
  }

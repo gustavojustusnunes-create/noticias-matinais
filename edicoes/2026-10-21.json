@@ -1,0 +1,36 @@
+{
+ "data": "2026-10-21",
+ "data_extenso": "Quarta-feira, 21 de Outubro de 2026",
+ "editorial": "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
+ "manchete": "Mercado de DIs: Queda Reflete Eleição e Cenário Global",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Mercado de DIs: Queda Reflete Eleição e Cenário Global",
+    "link": "https://www.infomoney.com.br/mercados/taxas-dos-dis-caem-com-eleicao-no-brasil-e-exterior-no-radar/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/06/chart-1905224_1280.jpg",
+    "resumo": "As taxas dos Depósitos Interfinanceiros (DIs) de longo prazo no Brasil caíram, com o DI para janeiro de 2035 recuando 9 pontos-base para 12,665% e o de janeiro de 2028 diminuindo 4 pontos-base para 12,735%. O movimento reflete a queda dos rendimentos dos Treasuries globais e a expectativa de um cenário fiscal mais conservador pós-eleição, impulsionando a precificação de um corte de 25 pontos-base na Selic em novembro. Investidores apostam na desinflação e ajuste fiscal, mas a volatilidade eleitoral e a ausência de propostas econômicas concretas representam o risco imediato a ser monitorado."
+   },
+   {
+    "titulo": "EUA Vinculam Financiamento à Argentina à Alinhamento Político Direitista",
+    "link": "https://www.infomoney.com.br/mundo/eua-condicionam-dinheiro-a-argentina-apos-a-resultado-eleitoral-rumo-a-direita/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/10/2025-10-14T174301Z_2059039714_RC2TBHAE250F_RTRMADP_3_USA-ARGENTINA.jpg",
+    "resumo": "O embaixador dos EUA na Argentina, Peter Lamelas, condicionou um potencial financiamento de até US$ 20 bilhões a projetos de investimento à manutenção de uma orientação política \"à direita\" após 2027. Esta postura reflete uma estratégia geopolítica de Washington para solidificar alianças ideológicas na América Latina, usando o apoio financeiro como alavanca para influenciar resultados eleitorais e políticas domésticas. O governo Milei obtém suporte financeiro crucial, mas a Argentina arrisca maior polarização interna e soberania comprometida por condicionantes externos."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Amazon lança TorchNeuron, mirando domínio da Nvidia em chips de IA",
+    "link": "https://olhardigital.com.br/2026/10/20/inteligencia-artificial/amazon-lanca-ferramenta-para-desafiar-dominio-da-nvidia-em-chips-de-ia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon-1-scaled.jpg",
+    "resumo": "A Amazon lançou o TorchNeuron, ferramenta que permite a desenvolvedores migrar aplicações PyTorch para seus chips Trainium com uma única alteração de configuração. Esta iniciativa desafia o domínio da Nvidia, consolidado pelo ecossistema CUDA, ao oferecer uma alternativa integrada à infraestrutura AWS para otimização de custos e performance em treinamento e inferência de IA. A Amazon busca atrair clientes com ganhos de eficiência, como a Deepgram que processou 70% mais áudio por dólar, pressionando a hegemonia da Nvidia e exigindo monitoramento da adoção real."
+   },
+   {
+    "titulo": "Pequim Contesta Proibição de IA e Sanções Americanas",
+    "link": "https://olhardigital.com.br/2026/10/20/inteligencia-artificial/china-exige-que-eua-retirem-deepseek-de-lista-de-proibicoes-em-orgaos-federais/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/deepseek_china-e1767983230351.jpg",
+    "resumo": "Pequim exigiu que Washington revogue a proibição do modelo de IA DeepSeek em agências federais civis e contesta sanções contra cinco entidades chinesas por suposto roubo de segredos de IA. A medida americana, motivada por preocupações com segurança de dados e transferência de informações confidenciais, reflete a crescente desconfiança e a disputa por supremacia tecnológica. Este embate intensifica a fragmentação do ecossistema global de IA, elevando riscos de retaliação e dificultando a cooperação em padrões tecnológicos."
+   }
+  ]
+ }
+}
