@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Wall Street avança com balanço do 3T26 em foco; SpaceX dispara mais de 10%",
+      "link": "https://www.moneytimes.com.br/wall-street-abertura-21-10-26-lils/",
+      "resumo": "O índice S&P 500 subiu 0,8% nesta quarta-feira, impulsionado pela temporada de balanços corporativos e pela valorização superior a 10% de papéis do setor aeroespacial. O alívio decorre da queda nos rendimentos dos Treasuries para 4,15%, enfraquecendo apostas de juros restritivos diante da moderação nos índices inflacionários recentes. Fundos de ações e companhias de inovação capturam liquidez imediata, enquanto ativos defensivos perdem atratividade sob a vigilância de novos repiques de custos.",
+      "imagem": "https://images.unsplash.com/photo-1535320903710-d993d3d77d29?auto=format&fit=crop&q=80&w=800&sig=0_371",
+      "fonte": "Money Times",
+      "data": "2026-10-21"
+    },
+    {
+      "titulo": "A diversificação como tese de investimento; veja quais ações comprar em cenário tão volátil",
+      "link": "https://www.moneytimes.com.br/diversificacao-pode-ser-uma-tese-de-investimento-veja-quais-acoes-comprar-em-cenario-volatil-mlem/",
+      "resumo": "Gestoras globais elevaram em 15% a alocação em ações defensivas e pagadoras de dividendos, buscando blindagem contra a volatilidade nos mercados acionários. A corrida por investimentos de US$ 200 bilhões em inteligência artificial e a incerteza sobre o ritmo de cortes nos juros americanos desestabilizam o fluxo de capital nas gigantes de tecnologia. Empresas de serviços básicos e consumo essencial capturam recursos com fluxos de caixa previsíveis, enquanto papéis de crescimento excessivamente alavancados enfrentam compressão de múltiplos e perda de liquidez.",
+      "imagem": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800&sig=1_211",
+      "fonte": "Money Times",
+      "data": "2026-10-21"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Vamos (VAMO3) divulga prévia do 3T26 com receita recorde em locação e avanço de contratos de extensão",
+      "link": "https://www.moneytimes.com.br/vamos-vamo3-divulga-previa-do-3t26-com-receita-recorde-em-locacao-e-avanco-de-contratos-de-extensao-lmrs/",
+      "resumo": "A Vamos (VAMO3) reportou na prévia operacional do terceiro trimestre de 2026 uma receita líquida recorde de R$ 1,59 bilhão, impulsionada pelo forte desempenho do segmento de locação de caminhões e máquinas. O crescimento reflete a estratégia da companhia em capturar a demanda por renovação de frotas corporativas em meio a custos elevados de aquisição de ativos novos. Os acionistas capturam ganhos com a expansão da margem, enquanto concorrentes menores enfrentam restrições de capital para disputar novos contratos.",
+      "imagem": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800&sig=0_719",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-21"
+    },
+    {
+      "titulo": "SpaceX (SPCX) sobe 9% após balanço sólido, mas BTG aponta dois fatores de risco para tese; veja",
+      "link": "https://www.moneytimes.com.br/spacex-spcx-sobe-8-apos-balanco-solido-mas-btg-aponta-dois-fatores-de-risco-para-tese-veja-rens/",
+      "resumo": "As ações da SpaceX avançaram 9% após a companhia divulgar receita de US$ 14,58 bilhões no terceiro trimestre, superando as projeções de Wall Street. O crescimento foi impulsionado pela expansão da rede Starlink e pelo aumento de contratos de lançamentos comerciais, embora a pesada queima de caixa no desenvolvimento do Starship comprima as margens. Investidores de tecnologia consolidam ganhos, mas o mercado monitora atrasos regulatórios e a erosão de capital diante da concorrência espacial.",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=1_907",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-21"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Fundos pedem Chapter 11 de unidade da Braskem nos Estados Unidos",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/negocios/2026/10/fundos-pedem-chapter-11-de-unidade-da-braskem-nos-estados-unidos.shtml",
+      "resumo": "Três fundos geridos pela americana Bracebridge Capital protocolaram um pedido de recuperação judicial involuntária sob o Chapter 11 contra a Braskem Finance nos Estados Unidos, cobrando dívidas de 4,7 milhões de dólares. A manobra jurídica pressiona a petroquímica brasileira em meio ao peso de passivos bilionários ligados ao afundamento do solo em Maceió e ao aperto no ciclo global de resinas. Se a corte americana aceitar o pleito, credores ganham poder para acelerar vencimentos externos, encarecendo a rolagem da dívida da companhia.",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=0_469",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-21"
+    },
+    {
+      "titulo": "Justiça de SP aprova recuperação judicial do Grupo Casas Bahia",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/negocios/2026/10/justica-de-sp-aprova-recuperacao-judicial-do-grupo-casas-bahia.shtml",
+      "resumo": "A Justiça de São Paulo aprovou o pedido de recuperação judicial do Grupo Casas Bahia (BHIA3), conforme decisão publicada nesta quarta-feira. A juíza Taina Maria Leonardo De Oliveira validou o processo, afirmando que a",
+      "imagem": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800&sig=1_597",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-21"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin (BTC) sobe com expectativa de alívio nos juros e recobra os US$ 82 mil, mas saídas de ETFs pressionam o apetite por risco",
+      "link": "https://www.moneytimes.com.br/bitcoin-sobe-com-alivio-nos-juros-enquanto-saidas-de-etfs-pressionam-o-apetite-por-risco-rens/",
+      "resumo": "O Bitcoin subiu 2,4% nesta sessão, recuperando o patamar de US$ 82.400, impulsionado pela expectativa de alívio nas taxas de juros americanas. O movimento reflete uma busca tática por ativos de maior risco em meio à acomodação dos rendimentos dos títulos do Tesouro e à volatilidade cambial. Mineradores e fundos negociados em bolsa lideram a exposição compradora, enquanto o mercado monitora a resistência técnica imediata nos US$ 85.000.",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=0_165",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-21"
+    },
+    {
+      "titulo": "Bitcoin (BTC) sobe e tenta recuperar US$ 82 mil, mas preços caem na semana com menor apetite por risco",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-sobe-e-tenta-recuperar-us-82-mil-mas-precos-caem-na-semana-com-menor-apetite-por-risco-rens/",
+      "resumo": "O Bitcoin subiu 1,9% nesta sessão, cotado a US$ 81.800, mas acumula perdas semanais diante da aversão global ao risco. Essa retração reflete a saída de capital institucional dos fundos negociados em bolsa, pressionados pela alta dos rendimentos dos títulos do Tesouro americano. Enquanto os grandes detentores acumulam moedas a preços descontados, os investidores de varejo enfrentam perdas imediatas com a volatilidade.",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=1_960",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-21"
+    }
+  ],
+  "data": "2026-10-21"
+}

@@ -702,6 +702,55 @@
             "texto_original": "O mercado de criptoativos opera em compasso de espera, com o Bitcoin (BTC) sustentando cotação acima de US$ 82.400 após oscilação positiva de 0,",
             "motivo_falha": "O texto original estava truncado, com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras e carecendo da estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "O Bitcoin subiu 2,4% nesta sessão, recuperando o patamar de US$ 82.400 impulsionado pela expectativa..."
+        },
+        {
+            "data": "2026-10-21T14:05:26.488276",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Wall Street registrou avanços nesta quarta-feira, impulsionada pelo foco nos balanços corporativos do terceiro trimestre e pela queda nos rendimentos dos Treasuries, que reflete a diminuição do temor inflacionário",
+            "motivo_falha": "O texto original continha apenas 29 palavras, estava truncado sem pontuação final e não cumpria a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O índice S&P 500 subiu 0,8% nesta quarta-feira, impulsionado pela temporada de balanços corporativos..."
+        },
+        {
+            "data": "2026-10-21T14:06:03.775512",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O cenário econômico e financeiro global permanece em profunda transformação, caracterizado por uma volatilidade acentuada. Fatores como os investimentos bilionários em inteligência artificial, a intensa disputa por liderança entre gigantes da tecnologia e",
+            "motivo_falha": "O texto original continha apenas 33 palavras, estava truncado sem conclusão e violava as diretrizes de extensão mínima (60 a 90 palavras) e a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "Gestoras globais elevaram em 15% a alocação em ações defensivas e pagadoras de dividendos, buscando ..."
+        },
+        {
+            "data": "2026-10-21T14:08:22.668729",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Vamos (VAMO3) reportou números operacionais consistentes na prévia do terceiro trimestre de 2026, totalizando receita de R$ 1,59 bilhão, expansão de 4",
+            "motivo_falha": "O texto original estava incompleto e truncado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura de três passos.",
+            "correcao_aplicada": "A Vamos (VAMO3) reportou na prévia operacional do terceiro trimestre de 2026 uma receita líquida rec..."
+        },
+        {
+            "data": "2026-10-21T14:09:04.434865",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A SpaceX (SPCX) reportou resultados robustos para o terceiro trimestre, o segundo após seu IPO em junho, impulsionando suas ações em mais de 9%. A receita atingiu US$ 14,58 bilhões",
+            "motivo_falha": "O texto original estava truncado com apenas 30 palavras, sem pontuação final e desprovido da estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "As ações da SpaceX avançaram 9% após a companhia divulgar receita de US$ 14,58 bilhões no terceiro t..."
+        },
+        {
+            "data": "2026-10-21T14:09:52.640208",
+            "tema": "Macroeconomia",
+            "texto_original": "Três fundos de investimento ligados à gestora norte-americana Bracebridge Capital LLC protocolaram um pedido involuntário de recuperação judicial sob o Chapter 11 contra uma entidade financeira da Braskem nos Estados Unidos. A medida ocorre",
+            "motivo_falha": "O texto original continha apenas 34 palavras, estava truncado sem conclusão e violava as diretrizes de extensão mínima e a estrutura dos três passos do padrão The Economist.",
+            "correcao_aplicada": "Três fundos geridos pela americana Bracebridge Capital protocolaram um pedido de recuperação judicia..."
+        },
+        {
+            "data": "2026-10-21T14:12:57.588612",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos opera com viés de estabilização e tímida recuperação, sustentado por um alívio pontual nas projeções para a política monetária dos Estados Unidos. O Bitcoin (BTC) preserv",
+            "motivo_falha": "O texto original continha apenas 24 palavras, estava truncado sem conclusão e violava o limite mínimo de 60 palavras exigido pelo Quality Gate e o padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin subiu 2,4% nesta sessão, recuperando o patamar de US$ 82.400, impulsionado pela expectativ..."
+        },
+        {
+            "data": "2026-10-21T14:14:27.930643",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos registra uma tentativa de recuperação pontual, com o bitcoin (BTC) cotado na faixa de US$ 81,8 mil, acumulando valorização diária próxima de 2%, embora",
+            "motivo_falha": "O texto original estava truncado com apenas 34 palavras, abaixo do limite mínimo de 60 palavras, e não continha a estrutura analítica completa de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin subiu 1,9% nesta sessão, cotado a US$ 81.800, mas acumula perdas semanais diante da aversã..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-20"
