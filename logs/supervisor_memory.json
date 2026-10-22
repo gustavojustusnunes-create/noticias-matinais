@@ -751,6 +751,34 @@
             "texto_original": "O mercado de criptoativos registra uma tentativa de recuperação pontual, com o bitcoin (BTC) cotado na faixa de US$ 81,8 mil, acumulando valorização diária próxima de 2%, embora",
             "motivo_falha": "O texto original estava truncado com apenas 34 palavras, abaixo do limite mínimo de 60 palavras, e não continha a estrutura analítica completa de três passos do padrão The Economist.",
             "correcao_aplicada": "O Bitcoin subiu 1,9% nesta sessão, cotado a US$ 81.800, mas acumula perdas semanais diante da aversã..."
+        },
+        {
+            "data": "2026-10-22T14:09:03.341907",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A MBRF (MBRF3), controladora das marcas Sadia e Perdigão, comunicou ao mercado que o foco da doença de Newcastle, identificado em uma criação comercial de perus em Nova Itaberaba (SC), não deverá provocar impactos materiais em suas operações, situação econômico-finance",
+            "motivo_falha": "O texto original estava incompleto e truncado, possuía apenas 40 palavras (abaixo do mínimo de 60 palavras), terminava sem pontuação e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A BRF (BRF3) comunicou ao mercado que o foco da doença de Newcastle, identificado em uma criação com..."
+        },
+        {
+            "data": "2026-10-22T14:12:05.609338",
+            "tema": "Macroeconomia",
+            "texto_original": "O Barclays anunciou a eliminação de aproximadamente 5.000 postos de trabalho, montante que representa 5 por cento de sua força de trabalho global, com conclusão prevista para o decorrer deste ano. A medida drástica tem como objetivo central a redução expressiva dos custos operacionais fixos e a consequente melhoria da rentabilidade geral da instituição financeira perante os acionistas. A reestruturação em curso apoia-se de maneira determinante na integração de tecnologias avançadas de automação e inteligência artificial, substituindo processos manuais tradicionais por sistemas digitais de alta eficiência. \n\nEste movimento estratégico reflete uma tendência estrutural mais ampla no setor bancário internacional, onde a pressão por margens de lucro mais elevadas em um ambiente de taxas de juros voláteis e custos crescentes de capital obriga os grandes conglomerados a repensarem seus modelos operacionais. A adoção corporativa de ferramentas de inteligência artificial deixa de ser uma perspectiva futura e passa a atuar como alavanca imediata de corte de despesas com pessoal, afetando principalmente funções administrativas e de suporte de retaguarda. Para os investidores, a reestruturação sinaliza disciplina fiscal e foco na otimização do retorno sobre o patrimônio líquido, embora traga desafios de gestão de mudança e potenciais riscos operacionais de curto prazo na transição tecnológica.",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras permitido pelo padrão Quality Gate, contendo mais de 200 palavras. Foi reescrito para cumprir estritamente a estrutura de três passos do The Economist e a faixa de 60 a 90 palavras.",
+            "correcao_aplicada": "O Barclays anunciou a eliminação de 5.000 postos de trabalho, o equivalente a 5% de sua força global..."
+        },
+        {
+            "data": "2026-10-22T14:13:16.042442",
+            "tema": "Macroeconomia",
+            "texto_original": "O Banco Central do Paraguai e sua atual presidência enfrentam forte pressão política e institucional pela renúncia do dirigente máximo da autarquia, após o avanço de investigações sobre falhas na supervisão de uma fintech de rápido crescimento e com conexões políticas relevantes. O escândalo coloca em evidência a eficácia dos mecanismos de compliance regulatório do sistema financeiro paraguaio, gerando preocupações entre investidores estrangeiros e locais quanto à estabilidade e à transparência das instituições reguladoras do país sul-americano.\n\nA controvérsia em torno do banco digital, cujas operações e expansão acelerada não teriam recebido o escrutínio adequado da autoridade monetária, ameaça deteriorar o clima de negócios e elevar o prêmio de risco soberano dos ativos paraguaios. Analistas de mercado apontam que a falta de rigor na fiscalização de entidades financeiras emergentes pode atrair maior escrutínio de agências internacionais de classificação de risco e de órgãos multilaterais de combate à lavagem de dinheiro, impactando o fluxo de investimentos diretos estrangeiros e a confiança no marco regulatório nacional.",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras. Foi reescrito para cumprir estritamente o padrão The Economist de três passos e o limite de 60 a 90 palavras.",
+            "correcao_aplicada": "Parlamentares do Paraguai exigiram a renúncia do presidente do Banco Central após investigações reve..."
+        },
+        {
+            "data": "2026-10-22T14:14:25.531863",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) recuperou a marca de US$ 82 mil, sendo negociado a US$ 82.428,18 com alta de 0,33% nas últimas",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 19 palavras, abaixo do limite mínimo de 60 palavras exigido pelo Quality Gate e padrão The Economist, além de carecer da estrutura analítica completa de três passos e pontuação final adequada.",
+            "correcao_aplicada": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pelas expectat..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-21"

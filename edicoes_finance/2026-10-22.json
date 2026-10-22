@@ -1,0 +1,67 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Wall Street cai com petróleo e nova liquidação no setor de IA após balanços de Meta e Tesla",
+      "link": "https://www.moneytimes.com.br/wall-street-abertura-22-10-26-lils/",
+      "resumo": "Wall Street registrou queda generalizada nesta quinta-feira, com o índice Nasdaq liderando as perdas em 1,53%, para 26.302,725 pontos, enquanto o S&",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=0_197",
+      "fonte": "Money Times",
+      "data": "2026-10-22"
+    },
+    {
+      "titulo": "MBRF (MBRF3) minimiza risco de foco de doença de Newcastle em SC para seus resultados",
+      "link": "https://www.moneytimes.com.br/mbrf-mbrf3-ve-impacto-nao-material-foco-doenca-de-newcastle-sc-pads/",
+      "resumo": "A BRF (BRF3) comunicou ao mercado que o foco da doença de Newcastle, identificado em uma criação comercial de perus em Nova Itaberaba, Santa Catarina, não provocará perdas materiais em suas operações. A restrição pontual de embargos sanitários locais afeta primariamente exportações regionais secundárias, mas o rigoroso protocolo de biossegurança isolou o vetor de contágio rapidamente. O setor de aves absorve o choque sem grandes perdas na margem Ebitda, embora investidores monitorem eventuais retaliações de parceiros comerciais asiáticos.",
+      "imagem": "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800&sig=1_914",
+      "fonte": "Money Times",
+      "data": "2026-10-22"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "DeepSeek capta US$ 15 bilhões em nova rodada de financiamento e acelera planos de IPO em Xangai",
+      "link": "https://www.moneytimes.com.br/deepseek-capta-us-15-bilhoes-em-nova-rodada-de-financiamento-e-acelera-planos-de-ipo-em-xangai-rens/",
+      "resumo": "A startup chinesa de inteligência artificial DeepSeek concluiu uma captação de recursos privada de 15 bilhões de dólares em sua segunda rodada de financiamento, superando amplamente a meta inicial e elevando sua avaliação de mercado para aproximadamente 74 bilhões de dólares. A operação contou com a participação de pesos pesados industriais e tecnológicos, incluindo a fabricante de baterias CATL, a gigante Tencent, além de aportes de fundos como Monolith Management, Shixiang e Stony Creek Capital. Com o capital garantido, a companhia contratou o banco estatal Citic Securities e nomeou Yan Wentao como diretor financeiro, acelerando os preparativos para uma oferta pública inicial de ações na Bolsa de Xangai já no início do próximo ano, o que poderá posicioná-la à frente de concorrentes globais como a OpenAI na corrida para o mercado acionário.\n\nEste movimento ocorre em um momento de intenso escrutínio por parte do mercado financeiro internacional em relação à sustentabilidade das margens e à conversão dos pesados investimentos em infraestrutura de inteligência artificial em lucros recorrentes. A proposta de valor da DeepSeek, fundamentada no desenvolvimento de modelos de alto desempenho a custos reduzidos, tem desafiado a hegemonia tecnológica norte-americana e atraído o apetite de investidores institucionais que buscam exposição direta ao setor de semicondutores e IA na Ásia. A listagem em Xangai não apenas validará as métricas de faturamento da empresa reportadas por seu fundador, Liang Wenfeng, mas também servirá como termômetro crítico para a liquidez e a precificação de ativos de tecnologia em economias emergentes diante das pressões macroeconômicas globais.",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=0_353",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-22"
+    },
+    {
+      "titulo": "Lojas Renner (LREN3): BlackRock eleva participação na varejista",
+      "link": "https://www.moneytimes.com.br/lojas-renner-lren3-blackrock-eleva-participacao-na-varejista-lmrs/",
+      "resumo": "33 words)\n        Analistas de mercado, a exemplo da equipe da XP Investimentos, apontam que o setor negocia com desconto em relação às médias históricas, projetando que a expansão de rentabilidade",
+      "imagem": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800&sig=1_442",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-22"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Barclays cortará 5.000 empregos com avanço do uso de IA",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/financas/2026/10/barclays-cortara-5000-empregos-com-avanco-do-uso-de-ia.shtml",
+      "resumo": "O Barclays anunciou a eliminação de 5.000 postos de trabalho, o equivalente a 5% de sua força global, para reduzir custos operacionais fixos. Essa reestruturação drástica baseia-se na automação por inteligência artificial para substituir processos manuais tradicionais. A medida reflete a pressão sistêmica por margens elevadas em meio a taxas de juros voláteis. Investidores lucram com a disciplina fiscal imediata, enquanto trabalhadores enfrentam o risco de desemprego estrutural na transição tecnológica.",
+      "imagem": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800&sig=0_869",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-22"
+    },
+    {
+      "titulo": "Parlamentares pedem saída de presidente do BC do Paraguai após investigação sobre fintech",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/mercado/2026/10/parlamentares-pedem-saida-de-presidente-do-bc-do-paraguai-apos-investigacao-sobre-fintech.shtml",
+      "resumo": "Parlamentares do Paraguai exigiram a renúncia do presidente do Banco Central após investigações revelarem falhas na supervisão de uma fintech com conexões políticas. A ausência de escrutínio adequado em instituições emergentes expõe vulnerabilidades estruturais no cumprimento de normas regulatórias locais. O enfraquecimento institucional eleva o prêmio de risco soberano e ameaça afastar investidores estrangeiros, aumentando a pressão por reformas rigorosas no sistema financeiro nacional.",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=1_789",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-22"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin (BTC) sobe com expectativa de alívio nos juros e recobra os US$ 82 mil, mas saídas de ETFs pressionam o apetite por risco",
+      "link": "https://www.moneytimes.com.br/bitcoin-sobe-com-alivio-nos-juros-enquanto-saidas-de-etfs-pressionam-o-apetite-por-risco-rens/",
+      "resumo": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pelas expectativas de alívio na política monetária americana. Esse movimento ocorre enquanto gestores de ativos enfrentam saídas líquidas recorrentes de capital em fundos negociados em bolsa, refletindo a cautela institucional diante da volatilidade macroeconômica global. Os investidores de varejo ganham fôlego no curto prazo, mas mineradores e grandes detentores enfrentam riscos de liquidez caso os juros permaneçam restritivos por mais tempo.",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=1_351",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-22"
+    }
+  ],
+  "data": "2026-10-22"
+}
