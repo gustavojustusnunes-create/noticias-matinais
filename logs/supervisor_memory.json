@@ -786,6 +786,48 @@
             "texto_original": "Pesquisadores chineses demonstraram que cinco grandes modelos de linguagem (LLMs) alteram significativamente suas pontuações em testes de personalidade, como o Big Five Inventory-2, em até 15% ao mudar do inglês para o mandarim. Essa variação reflete vieses culturais e linguísticos inerentes aos vastos conjuntos de dados de treinamento, moldando as respostas dos modelos de forma distinta em diferentes contextos idiomáticos. A pesquisa sublinha a influência do treinamento regional na percepção de \"traços\" da IA. O risco imediato reside na aplicação acrítica de LLMs em contextos multiculturais, comprometendo a confiabilidade de interações e a validade de estudos que os utilizem como substitutos humanos.",
             "motivo_falha": "O texto original excedia o limite máximo de 90 palavras (102 palavras) e foi reescrito para cumprir estritamente a estrutura de três passos do The Economist e a faixa de 60 a 90 palavras.",
             "correcao_aplicada": "Pesquisadores chineses revelaram que cinco grandes modelos de linguagem (LLMs) alteram suas pontuaçõ..."
+        },
+        {
+            "data": "2026-10-23T13:43:50.889802",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Allos (ALOS3) firmou compromisso para vender participações em sete de seus shopping centers ao fundo imobiliário Kinea Allos Malls (KAML11). A concretização da transação está",
+            "motivo_falha": "O texto original estava incompleto e truncado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, a pontuação final e a estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "A Allos (ALOS3) firmou compromisso para vender participações em sete de seus shopping centers ao fun..."
+        },
+        {
+            "data": "2026-10-23T13:45:12.671086",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A análise de mercado aponta para uma perspectiva menos favorável da Bolsa após o segundo turno eleitoral, contrastando com o desempenho observado após a primeira votação. A avaliação é que grande parte do cenário positivo já foi prec",
+            "motivo_falha": "O texto original estava truncado com apenas 38 palavras, continha menos do que o mínimo exigido de 60 palavras, não terminava com ponto final e carecia da estrutura analítica completa de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Bolsa brasileira registrou queda de 1,2% nesta sessão, refletindo o aumento da cautela dos investi..."
+        },
+        {
+            "data": "2026-10-23T13:45:22.522266",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Petz Cobasi (AUAU3) anunciou a aprovação de um programa de recompra de até 17,6 milhões de ações ordinárias, representando 2,05% do total emitido e",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 25 palavras, abaixo do limite mínimo de 60 palavras, estava truncado sem conclusão e violava a estrutura analítica de três passos do padrão The Economist, além de não terminar com pontuação final.",
+            "correcao_aplicada": "A Petz Cobasi (AUAU3) aprovou um programa de recompra de até 17,6 milhões de ações ordinárias, equiv..."
+        },
+        {
+            "data": "2026-10-23T13:45:32.914747",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Embraer (EMBJ3) alcançou um novo recorde em sua carteira de pedidos, atingindo US$ 35,7 bilhões no terceiro trimestre de 2026 (3T26).",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 22 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Embraer (EMBR3) registrou um recorde em sua carteira de pedidos firmes, alcançando US$ 35,7 bilhõe..."
+        },
+        {
+            "data": "2026-10-23T13:47:43.065403",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptomoedas operou em baixa nesta quinta-feira, 22 de fevereiro, com o Bitcoin (BTC) recuando para US$ 81.740,51, uma queda de",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 23 palavras, truncado e sem pontuação final, violando o limite mínimo obrigatório de 60 palavras e a estrutura de três passos do The Economist.",
+            "correcao_aplicada": "O Bitcoin recuou 1,4% nesta sessão para US$ 81.740, pressionado por retiradas líquidas expressivas n..."
+        },
+        {
+            "data": "2026-10-23T13:48:53.417608",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) demonstrou resiliência ao sustentar-se acima da marca de US$ 82 mil, negociado a US$ 82.428,18 com alta de",
+            "motivo_falha": "O texto original estava incompleto e truncado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura de três passos do The Economist.",
+            "correcao_aplicada": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pelas expectat..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-22"
