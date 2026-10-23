@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-10-22T18:51:03.652588-03:00",
-    "data_hoje": "2026-10-22",
+    "timestamp_scan": "2026-10-23T11:20:47.516853-03:00",
+    "data_hoje": "2026-10-23",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -8,38 +8,38 @@
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
-            "detalhe": "Edição publicada com sucesso (4 notícias).",
-            "ultima_edicao": "2026-10-22",
+            "detalhe": "Edição publicada com sucesso (5 notícias).",
+            "ultima_edicao": "2026-10-23",
             "horario_previsto": "05:20 BRT",
-            "total_itens": 4
+            "total_itens": 5
         },
         "finance": {
             "nome": "All News Finance",
             "status": "ONLINE",
             "detalhe": "Edição de mercado publicada (0 análises).",
-            "ultima_edicao": "2026-10-22",
+            "ultima_edicao": "2026-10-23",
             "horario_previsto": "05:25 BRT",
             "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-22 gerados e registrados.",
+            "status": "SCHEDULED",
+            "detalhe": "Aguardando horário agendado (09:15 BRT).",
             "ultima_edicao": "2026-10-22",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 104 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 104,
+            "detalhe": "Auditoria cognitiva ativa. 111 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 111,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-22 18:51 BRT",
+            "ultimo_scan": "2026-10-23 11:20 BRT",
             "incidentes_abertos": 0
         }
     }
