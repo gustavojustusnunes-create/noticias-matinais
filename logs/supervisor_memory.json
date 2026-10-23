@@ -779,6 +779,13 @@
             "texto_original": "O Bitcoin (BTC) recuperou a marca de US$ 82 mil, sendo negociado a US$ 82.428,18 com alta de 0,33% nas últimas",
             "motivo_falha": "O texto original estava subdimensionado com apenas 19 palavras, abaixo do limite mínimo de 60 palavras exigido pelo Quality Gate e padrão The Economist, além de carecer da estrutura analítica completa de três passos e pontuação final adequada.",
             "correcao_aplicada": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pelas expectat..."
+        },
+        {
+            "data": "2026-10-23T13:37:31.455375",
+            "tema": "Fronteira Tecnológica & IA",
+            "texto_original": "Pesquisadores chineses demonstraram que cinco grandes modelos de linguagem (LLMs) alteram significativamente suas pontuações em testes de personalidade, como o Big Five Inventory-2, em até 15% ao mudar do inglês para o mandarim. Essa variação reflete vieses culturais e linguísticos inerentes aos vastos conjuntos de dados de treinamento, moldando as respostas dos modelos de forma distinta em diferentes contextos idiomáticos. A pesquisa sublinha a influência do treinamento regional na percepção de \"traços\" da IA. O risco imediato reside na aplicação acrítica de LLMs em contextos multiculturais, comprometendo a confiabilidade de interações e a validade de estudos que os utilizem como substitutos humanos.",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras (102 palavras) e foi reescrito para cumprir estritamente a estrutura de três passos do The Economist e a faixa de 60 a 90 palavras.",
+            "correcao_aplicada": "Pesquisadores chineses revelaram que cinco grandes modelos de linguagem (LLMs) alteram suas pontuaçõ..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-22"

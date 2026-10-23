@@ -1,0 +1,44 @@
+{
+ "data": "2026-10-23",
+ "data_extenso": "Sexta-feira, 23 de Outubro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "Bradesco: Lucro Cresce, Mas Inadimplência e Qualidade de Ativos Preocupam",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Bradesco: Lucro Cresce, Mas Inadimplência e Qualidade de Ativos Preocupam",
+    "link": "https://www.infomoney.com.br/mercados/bradesco-bbdc4-11-altas-seguidas-no-lucro-mas-inadimplencia-preocupa-mercado-3t26-desempenho-acoes/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2023/11/40802749.135301.jpg",
+    "resumo": "Bradesco registrou lucro recorrente de R$ 7,1 bilhões no 3T26, alta de 15% anual, completando onze trimestres de crescimento. Contudo, a qualidade da carteira de crédito deteriorou-se, com a inadimplência acima de 90 dias subindo para 4,6% e o índice de cobertura caindo para 143%, impulsionada por pequenas empresas e pessoas físicas. A pressão sobre os spreads e o aumento das provisões ofuscaram o controle de custos. Investidores penalizam a composição do resultado, indicando que a rentabilidade futura do banco será desafiada pela gestão do risco de crédito e pela capacidade de reprecificação em um cenário de juros elevados."
+   },
+   {
+    "titulo": "American Express: Lucro Robusto, Cautela no Mercado Persiste",
+    "link": "https://www.infomoney.com.br/business/american-express-tem-lucro-de-us-371-bilhoes-no-3o-trimestre/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/06/american-express-e-american-express-corporate.jpg",
+    "resumo": "American Express registrou lucro líquido de US$ 3,71 bilhões no terceiro trimestre de 2026, superando as expectativas com crescimento de receita de 9%. O resultado foi impulsionado por um aumento nos gastos dos portadores de cartão e custos variáveis de engajamento, refletindo a renovação do modelo do U.S. Platinum Card. A empresa eleva sua projeção anual de lucro por ação, beneficiando investidores, mas a queda pré-mercado sinaliza cautela sobre a sustentabilidade do crescimento ou valuation."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Palantir: IA Militar da OTAN Imune a Desligamento Remoto",
+    "link": "https://olhardigital.com.br/2026/10/22/inteligencia-artificial/palantir-diz-que-eua-nao-podem-desligar-ia-militar-usada-pela-otan/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_x7q0lox7q0lox7q0.jpg",
+    "resumo": "A Palantir declarou que sua plataforma de IA militar Maven, adotada pela OTAN em 2025 e plenamente operacional desde junho de 2026, não pode ser desligada remotamente pelos EUA ou pela empresa. A afirmação busca mitigar a apreensão europeia sobre a dependência tecnológica militar americana, intensificada por restrições ao Starshield na Ucrânia e pela recusa de França e Alemanha em integrar o sistema. A garantia visa tranquilizar aliados, mas o risco imediato é a persistência da desconfiança soberana, impulsionando o desenvolvimento de alternativas europeias e fragmentando a interoperabilidade."
+   },
+   {
+    "titulo": "IAs: Variação Linguística Altera Perfil Comportamental em Testes",
+    "link": "https://olhardigital.com.br/2026/10/23/inteligencia-artificial/chatgpt-e-outras-ias-mudam-resultados-de-testes-de-personalidade-conforme-o-idioma/",
+    "imagem": "https://img.odcdn.com.br/wp-content/uploads/2026/10/shutterstock_2695380781-1.jpg",
+    "resumo": "Pesquisadores chineses revelaram que cinco grandes modelos de linguagem (LLMs) alteram suas pontuações em testes de personalidade em até 15% ao mudar do inglês para o mandarim. Essa variação reflete vieses culturais e linguísticos inerentes aos vastos conjuntos de dados de treinamento, moldando as respostas da IA. O risco imediato reside na aplicação acrítica de LLMs em contextos multiculturais, comprometendo a confiabilidade de interações e a validade de estudos."
+   }
+  ],
+  "Ciência & Inovação": [
+   {
+    "titulo": "Biotecnologia Converte Areia Desértica em Solo Hídrico para Agricultura",
+    "link": "https://www.inovacaotecnologica.com.br/noticias/noticia.php?artigo=areia-viva-agricultura&id=010125261023",
+    "imagem": "https://www.inovacaotecnologica.com.br/noticias/imagens/010125261023-areia-viva.jpg",
+    "resumo": "Cientistas desenvolveram um compósito biotecnológico capaz de aumentar a retenção hídrica da areia do deserto em até 28 vezes. Esta inovação responde à crescente pressão global por segurança alimentar e gestão hídrica em zonas áridas, oferecendo uma solução para a escassez de água, fator limitante crítico para a expansão agrícola. Regiões desérticas ganham potencial agrícola, mas o desafio reside na escalabilidade industrial e na viabilidade econômica do processo, com risco de dependência de insumos e impacto ambiental."
+   }
+  ]
+ }
+}
