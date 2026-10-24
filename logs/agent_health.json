@@ -1,5 +1,5 @@
 {
-    "timestamp_scan": "2026-10-24T13:52:59.632092-03:00",
+    "timestamp_scan": "2026-10-24T18:04:25.327631-03:00",
     "data_hoje": "2026-10-24",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
@@ -38,7 +38,7 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-24 13:52 BRT",
+            "ultimo_scan": "2026-10-24 18:04 BRT",
             "incidentes_abertos": 0
         }
     }
