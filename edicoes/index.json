@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-25",
+  "data_extenso": "Domingo, 25 de Outubro de 2026",
+  "manchete": "Moonshot AI restringe modelo Kimi K3.1 Pro por risco cibernético",
+  "arquivo_html": "2026-10-25.html"
+ },
+ {
   "data": "2026-10-24",
   "data_extenso": "Sábado, 24 de Outubro de 2026",
   "manchete": "BC regula crédito Pix para proteger consumidores",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 13 de Agosto de 2026",
   "manchete": "Por quanto tempo o Irã pode sustentar a guerra com os EUA e Israel?",
   "arquivo_html": "2026-08-13.html"
- },
- {
-  "data": "2026-08-12",
-  "data_extenso": "Quarta-feira, 12 de Agosto de 2026",
-  "manchete": "Socorristas resgatam mulher sob os escombros mais de 30 horas após o terremoto na Colômbia",
-  "arquivo_html": "2026-08-12.html"
  }
 ]

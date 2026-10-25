@@ -1,0 +1,16 @@
+{
+ "data": "2026-10-25",
+ "data_extenso": "Domingo, 25 de Outubro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "Moonshot AI restringe modelo Kimi K3.1 Pro por risco cibernético",
+ "cadernos": {
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Moonshot AI restringe modelo Kimi K3.1 Pro por risco cibernético",
+    "link": "https://olhardigital.com.br/2026/10/25/inteligencia-artificial/moonshot-limita-capacidades-de-seu-modelo-de-ia-mais-avancado-para-evitar-ataques-hackers/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/07/kimi-moonshot-inteligencia-artificial-ia-ai-china-scaled.jpg",
+    "resumo": "A Moonshot AI, startup chinesa, reduziu as capacidades ofensivas de seu modelo Kimi K3.1 Pro, que obteve 81,0% em benchmark de cibersegurança após filtragem, contra 90,5% de uma versão sem restrições. A medida visa mitigar o risco de uso indevido em ataques cibernéticos, refletindo a crescente pressão regulatória, como as propostas chinesas para controlar a exportação de tecnologias de IA geradoras de malware. A decisão equilibra inovação e segurança, mas expõe o desafio contínuo de governar modelos abertos, com o risco de que restrições excessivas limitem o avanço tecnológico."
+   }
+  ]
+ }
+}
