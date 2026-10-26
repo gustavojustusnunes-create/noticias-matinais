@@ -828,6 +828,13 @@
             "texto_original": "O Bitcoin (BTC) demonstrou resiliência ao sustentar-se acima da marca de US$ 82 mil, negociado a US$ 82.428,18 com alta de",
             "motivo_falha": "O texto original estava incompleto e truncado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras e a estrutura de três passos do The Economist.",
             "correcao_aplicada": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pelas expectat..."
+        },
+        {
+            "data": "2026-10-26T15:23:17.242635",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A SpaceX, de Elon Musk, firmou um compromisso de financiamento de US$ 40 bilhões com uma entidade administrada pela Apollo Global Management para o arrendamento de unidades de processamento gráfico (GPUs) e equipamentos de data centers. O acordo, formalizado em 24 de outubro e divulgado à SEC, prevê que a Apollo adquirirá os equipamentos e os alugará à SpaceX, que realizará pagamentos trimestrais ao longo de aproximadamente cinco anos, com entregas e contratos individuais de arrendamento começando no primeiro semestre de 2027. Os pagamentos de principal totalizarão os US$ 40 bilhões, sem incluir juros e custos adicionais, com a taxa de juros ainda a ser definida. A formalização final é esperada antes do fim de 2026.\n\nEste investimento massivo segue um forte desempenho financeiro da SpaceX no terceiro trimestre de 2026, quando registrou lucro líquido de US$",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras (137 palavras) e a frase final estava incompleta. Foi reescrito para cumprir estritamente a estrutura de três passos do The Economist e a faixa de 60 a 90 palavras, além de ter a pontuação final corrigida.",
+            "correcao_aplicada": "A SpaceX firmou um compromisso de financiamento de US$ 40 bilhões com a Apollo Global Management par..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-25"

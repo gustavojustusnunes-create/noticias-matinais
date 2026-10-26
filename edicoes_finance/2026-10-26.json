@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Contágio: mercados argentinos despencam após reeleição de Lula no Brasil",
+      "link": "https://www.moneytimes.com.br/mercados-argentinos-despencam-apos-reeleicao-de-lula-no-brasil/",
+      "resumo": "A reeleição do presidente Luiz Inácio Lula da Silva no Brasil gerou um impacto imediato e substancial nos mercados financeiros, com o Ibovespa despencando mais de 17% e o real enfra",
+      "imagem": "https://images.unsplash.com/photo-1535320903710-d993d3d77d29?auto=format&fit=crop&q=80&w=800&sig=0_730",
+      "fonte": "Money Times",
+      "data": "2026-10-26"
+    },
+    {
+      "titulo": "Anthropic entra com pedido de IPO mesmo com valuation abaixo de US$ 1 trilhão; veja números da empresa",
+      "link": "https://www.moneytimes.com.br/anthropic-entra-com-pedido-de-ipo-mesmo-com-valuation-abaixo-de-us-1-trilhao-veja-numeros-da-empresa-rens/",
+      "resumo": "A Anthropic protocolou junto à SEC o pedido de oferta inicial de ações (IPO) sob o ticker ANT, marcando um passo significativo para a empresa de inteligência artificial. Avaliada em US$ 965 bilhões em maio, após uma rodada de financiamento de US$ 65 bilhões, a companhia chega ao mercado público como uma das mais valiosas do setor, embora abaixo do patamar psicológico de US$ 1 trilhão. O processo de listagem segue as etapas tradicionais, com expectativa de conclusão até o fim de 2026.\n\nOs números apresentados no prospecto revelam uma empresa em intensa expansão e investimento. No primeiro semestre de 2026, a Anthropic registrou receita de US$ 16,3 bilhões, com um crescimento notável de 1.368% na receita no segundo trimestre em base anual. Contudo, o prejuízo líquido disparou para US$ 80,7 bilhões no mesmo período, impulsionado principalmente pela alta no valor justo de títulos de dívida conversíveis, e não por um desembolso operacional equivalente. Os gastos com capacidade computacional e infraestrutura atingiram quase US$ 9 bilhões no semestre, ante US$ 2,3 bilhões um ano antes, refletindo a necessidade de escalar para atender à demanda. A receita do terceiro trimestre alcançou US$ 16,8 bilhões, alta de 45% em relação ao trimestre anterior.\n\nApesar do crescimento acelerado, a empresa alertou para a possibilidade de desaceleração futura. Goldman Sachs e Morgan Stanley foram nomeados bancos líderes do IPO, repetindo a parceria que",
+      "imagem": "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800&sig=1_967",
+      "fonte": "Money Times",
+      "data": "2026-10-26"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "SpaceX firma acordo de US$ 40 bilhões para financiar equipamentos de data centers",
+      "link": "https://www.moneytimes.com.br/spacex-firma-acordo-de-us-40-bi-com-apollo-para-financiar-equipamentos-de-data-centers-mlem/",
+      "resumo": "A SpaceX firmou um compromisso de financiamento de US$ 40 bilhões com a Apollo Global Management para arrendar GPUs e equipamentos de data centers. O acordo prevê que a Apollo adquirirá os equipamentos, alugando-os à SpaceX por cinco anos, com entregas a partir de 2027. Este movimento visa impulsionar a infraestrutura de IA da SpaceX. A SpaceX garante acesso a tecnologia vital sem desembolso imediato, enquanto a Apollo assegura um fluxo de receita estável, com o risco da taxa de juros ainda indefinida.",
+      "imagem": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800&sig=0_795",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-26"
+    },
+    {
+      "titulo": "4 ações do agronegócio que ganham com reeleição de Lula, segundo o BTG Pactual",
+      "link": "https://www.moneytimes.com.br/4-acoes-do-agronegocio-que-ganham-com-reeleicao-de-lula-segundo-o-btg-pactual-pads/",
+      "resumo": "A reeleição de Luiz Inácio Lula da Silva à Presidência da República estabelece um cenário desafiador para a Bolsa brasileira, permeado por incertezas fiscais e a perspectiva de juros elevados por tempo",
+      "imagem": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800&sig=1_936",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-26"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Mesmo após eleição, Goldman Sachs ainda vê oportunidades de investimento no Brasil",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/colunas/painelsa/2026/10/mesmo-apos-eleicao-goldman-sachs-ainda-ve-oportunidades-de-investimento-no-brasil.shtml",
+      "resumo": "**Goldman Sachs Mantém Visão Otimista para Investimentos no Brasil, Apesar de Ceticismo Fiscal Pós-Eleição**\n\nO Goldman Sachs, em relatório divulgado após as eleições presidenciais, reitera sua",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=0_860",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-26"
+    },
+    {
+      "titulo": "Entenda o que é o circuit breaker e quantas vezes o mecanismo já foi acionado na Bolsa",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/mercado/2026/10/entenda-o-que-e-o-circuit-breaker-e-quantas-vezes-o-mecanismo-ja-foi-acionado-na-bolsa.shtml",
+      "resumo": "A B3 acionou o mecanismo de *circuit breaker* nesta segunda-feira, 26 de outubro de 2026, interrompendo temporariamente as negociações após uma queda acentuada do",
+      "imagem": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800&sig=1_760",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-26"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin (BTC) vai a US$ 80 mil com saídas de ETFs e aversão ao risco elevada neste domingo (25)",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-vai-a-us-80-mil-com-saidas-de-etfs-e-aversao-ao-risco-elevada-neste-domingo-25-rens/",
+      "resumo": "O Bitcoin (BTC) registrou um avanço para US$ 80.330,00, com valorização de 1,54% nas últimas 24 horas, enquanto o Ethereum (ETH",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=0_826",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-26"
+    },
+    {
+      "titulo": "Bitcoin (BTC) cai a US$ 81,9 mil e ETFs seguem no radar após saques em ethereum (ETH); veja preços hoje (22)",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-cai-a-us-819-mil-e-etfs-seguem-no-radar-apos-saidas-de-ether-e-fluxo-positivo-em-btc-rens/",
+      "resumo": "O mercado de criptomoedas registrou queda nesta quinta-feira (22), com o Bitcoin (BTC) recuando para US$ 81.740,51, uma desvalorização de",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=1_658",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-26"
+    }
+  ],
+  "data": "2026-10-26"
+}
