@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-26",
+  "data_extenso": "Segunda-feira, 26 de Outubro de 2026",
+  "manchete": "Dólar dispara 9% no primeiro pregão após eleição presidencial",
+  "arquivo_html": "2026-10-26.html"
+ },
+ {
   "data": "2026-10-25",
   "data_extenso": "Domingo, 25 de Outubro de 2026",
   "manchete": "Moonshot AI restringe modelo Kimi K3.1 Pro por risco cibernético",
@@ -352,11 +358,5 @@
   "data_extenso": "Sexta-feira, 14 de Agosto de 2026",
   "manchete": "EUA planejam ataques em terra contra traficantes na América Latina: 'Onde quer que trafiquem drogas'",
   "arquivo_html": "2026-08-14.html"
- },
- {
-  "data": "2026-08-13",
-  "data_extenso": "Quinta-feira, 13 de Agosto de 2026",
-  "manchete": "Por quanto tempo o Irã pode sustentar a guerra com os EUA e Israel?",
-  "arquivo_html": "2026-08-13.html"
  }
 ]
