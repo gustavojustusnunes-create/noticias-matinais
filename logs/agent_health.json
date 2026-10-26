@@ -1,20 +1,17 @@
 {
-    "timestamp_scan": "2026-10-26T13:15:57.854577-03:00",
+    "timestamp_scan": "2026-10-26T19:49:40.210189-03:00",
     "data_hoje": "2026-10-26",
-    "sistema_geral": "WARNING",
-    "incidentes": [
-        "All News Journal não gerou a edição matinal de 2026-10-26."
-    ],
-    "auto_recuperacoes": [
-        "daily.yml disparado para auto-recuperação."
-    ],
+    "sistema_geral": "HEALTHY",
+    "incidentes": [],
+    "auto_recuperacoes": [],
     "agentes": {
         "journal": {
             "nome": "All News Journal (Edição Diária)",
-            "status": "RECOVERING",
-            "detalhe": "Edição de hoje (2026-10-26) não foi gerada até às 13:15 BRT.",
-            "ultima_edicao": "Pendente",
-            "horario_previsto": "05:20 BRT"
+            "status": "ONLINE",
+            "detalhe": "Edição publicada com sucesso (4 notícias).",
+            "ultima_edicao": "2026-10-26",
+            "horario_previsto": "05:20 BRT",
+            "total_itens": 4
         },
         "finance": {
             "nome": "All News Finance",
@@ -26,9 +23,9 @@
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "PENDING",
-            "detalhe": "Ainda não postou a edição de hoje (2026-10-26).",
-            "ultima_edicao": "2026-10-25",
+            "status": "ONLINE",
+            "detalhe": "Posts da edição de 2026-10-26 gerados e registrados.",
+            "ultima_edicao": "2026-10-26",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
@@ -42,8 +39,8 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-26 13:15 BRT",
-            "incidentes_abertos": 1
+            "ultimo_scan": "2026-10-26 19:49 BRT",
+            "incidentes_abertos": 0
         }
     }
 }
