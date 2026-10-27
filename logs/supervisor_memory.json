@@ -842,6 +842,55 @@
             "texto_original": "{ \"status\": \"OK\", \"titulo_limpo\": \"IPO da Anthropic: Teste Crucial para Avaliações da IA\", \"resumo_texto\": \"A Anthropic, criadora do Claude, iniciou seu IPO, registrando US$ 11,56 bilhões em receita no segundo trimestre, com perdas de US$ 80 bilhões no primeiro semestre. A oferta testará as avaliações inflacionadas da IA, num mercado cauteloso com quedas em ações de nuvem e IPOs cancelados. A dependência de gigantes como Microsoft e Amazon para receita e infraestrutura expõe a fragilidade do modelo. Um desempenho aquém do esperado reaj",
             "motivo_falha": "O texto original estava truncado, não terminava com ponto final e a frase final estava incompleta, violando a diretriz de pontuação final e a conclusão do 'desdobramento crítico'.",
             "correcao_aplicada": "A Anthropic, criadora do Claude, iniciou seu IPO, registrando US$ 11,56 bilhões em receita no segund..."
+        },
+        {
+            "data": "2026-10-27T14:53:06.010638",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Wall Street registrou um pregão de direção mista nesta terça-feira (27), refletindo a confluência de fatores macroeconômicos e setoriais que moldam o sentimento dos investidores. Enquanto o Dow",
+            "motivo_falha": "O texto original estava incompleto e truncado, com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, a pontuação final e a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Wall Street registrou um pregão de direção mista nesta terça-feira, refletindo a descompressão nos p..."
+        },
+        {
+            "data": "2026-10-27T14:53:54.031516",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Tesouro Nacional cancelou todos os leilões de títulos públicos previstos para a semana, abrangendo Letras Financeiras do Tesouro (LFTs), papéis prefixados e indexados à inflação. A decisão",
+            "motivo_falha": "O texto original estava incompleto e truncado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, a pontuação final e a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Tesouro Nacional cancelou todos os leilões de títulos públicos previstos para a semana, suspendend..."
+        },
+        {
+            "data": "2026-10-27T14:55:28.046719",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Axia Energia (AXIA3) assinou uma carta-mandato com o IDB Invest, instituição do Grupo Banco Interamericano de Desenvolvimento (BID) focada em operações no setor privado, para a estruturação de um potencial",
+            "motivo_falha": "O texto original estava incompleto e truncado com apenas 33 palavras, violando o limite mínimo obrigatório de 60 palavras, a pontuação final e a estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "A Axia Energia (AXIA3) assinou carta-mandato com o IDB Invest para viabilizar um potencial financiam..."
+        },
+        {
+            "data": "2026-10-27T14:56:13.835951",
+            "tema": "Macroeconomia",
+            "texto_original": "O Ministro da Fazenda, Dario Durigan, autorizou o Tesouro Nacional a realizar uma nova rodada de recompra de títulos da dívida pública, uma medida contingencial destinada a mitigar a turbulência no mercado finance",
+            "motivo_falha": "O texto original estava incompleto e truncado, com apenas 34 palavras, violando o limite mínimo obrigatório de 60 palavras, a pontuação final e a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Ministério da Fazenda, representado pelo secretário-executivo Dario Durigan, autorizou o Tesouro N..."
+        },
+        {
+            "data": "2026-10-27T14:56:58.446470",
+            "tema": "Macroeconomia",
+            "texto_original": "A Novartis, gigante farmacêutica global, registrou uma despesa substancial de US$ 2,2 bilhões (equivalente a R$ 11,88 bilhões) no último mês, decorrente do fracasso",
+            "motivo_falha": "O texto original estava truncado com apenas 26 palavras, abaixo do limite mínimo de 60 palavras, sem pontuação final e sem a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Novartis registrou uma despesa extraordinária de US$ 2,2 bilhões decorrente do fracasso recente de..."
+        },
+        {
+            "data": "2026-10-27T14:57:54.002044",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos opera em tom negativo nesta quinta-feira, refletindo uma combinação de realização de lucros, cautela macroeconômica e comportamento divergente nos fundos negociados em bolsa nos Estados Unidos. O bitcoin (BTC) recua 1,84% nas últimas vinte e quatro horas, cotado a US$ 81.740,51, após perder o fôlego acumulado na véspera. O movimento de baixa também atinge o ethereum (ETH), que registra queda de 2,61%, negociado a US$ 2,407,09. Entre as principais altcoins, a solana recua 1,53 para US$ 104,43, enquanto o XRP desvaloriza 1,64, cotado a US$ 1,33, ao passo que o tether permanece estável em US$ 0,999250.\n\nO cenário nos fundos de índice à vista evidencia uma dicotomia acentuada entre os dois principais ativos digitais. Por um lado, os ETFs de bitcoin nos Estados Unidos retomaram a atração de capital, registrando captação líquida de US$ 528 milhões em uma única sessão e acumulando US$ 1,08 bilhão em três dias, o que reverteu o desempenho mensal para o campo positivo. Por outro lado, os produtos à vista de ether mantêm trajetória de fraqueza, somando saídas líquidas de US$ 1,08 bilhão apenas em outubro, o que intensifica a pressão vendedora sobre o ativo e explica seu desempenho inferior em relação ao bitcoin.\n\nNo âmbito macroeconômico e regulatório, a cautela prevalece entre investidores e executivos devido à sensibilidade contínua em relação aos juros americanos, dados de inflação e ao apetite global por risco. O mercado monitora de perto desdobramentos institucionais, como os avanços da OCC nas diretrizes da GENIUS Act voltadas para stablecoins e as demandas de maior clareza regulatória direcionadas à SEC por grupos de blockchain, mantendo o ambiente de negócios seletivo e defensivo no curto prazo.",
+            "motivo_falha": "O texto original excedia o teto de 90 palavras. Foi reescrito para cumprir estritamente a faixa de 60 a 90 palavras, a estrutura de três passos do The Economist e a pontuação final.",
+            "correcao_aplicada": "O bitcoin recuou 1,84% nas últimas vinte e quatro horas, sendo cotado a US$ 81.740,51, pressionado p..."
+        },
+        {
+            "data": "2026-10-27T14:58:40.278157",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos operou com viés positivo nas últimas vinte e quatro horas, impulsionado por alívios macroeconômicos, mas permaneceu contido devido a fortes saídas institucionais. Por volta das nove horas, o Bitcoin (BTC) registrava alta de zero vírgula trinta e três por cento, negociado a oitenta e dois mil quatrocentos e vinte e oito dólares e dezoito centavos, enquanto o Ethereum (ETH) avançava zero vírgula dez por cento, cotado a dois mil quatrocentos e vinte e dois dólares e noventa e oito centavos, segundo dados do CoinMarketCap. A principal sustentação para a recuperação do patamar de oitenta e dois mil dólares pelo Bitcoin veio do cenário de política monetária nos Estados Unidos, após declarações de um dirigente do Federal Reserve indicarem que o banco central pode não endurecer as taxas de juros no curto prazo, aliviando a pressão sobre ativos de risco.\n\nApesar do suporte macroeconômico, o apetite institucional permaneceu deprimido diante de expressivos resgates nos fundos negociados em bolsa. Os produtos à vista registraram saídas acumuladas de quinhentos e quarenta e nove milhões de dólares em uma semana, com os ETFs de Bitcoin sofrendo saques de oitenta e dois milhões de dólares apenas na última sexta-feira e totalizando perdas de duzentos e vinte e seis milhões no período. O Ethereum apresentou dinâmica semelhante, com a evasão de capital em outubro aproximando-se da marca de um bilhão de dólares. Essa pressão vendedora contínua contrabalança o otimismo com os juros, dividindo a convicção dos investidores e limitando o potencial de valorização a curto prazo.\n\nPara executivos e investidores, o cenário exige cautela. A capacidade do Bitcoin de se manter acima dos oitenta e dois mil dólares demonstra resiliência da demanda diante de fluxos institucionais negativos, mas a ausência de gatilhos agressivos de compra mantém o mercado em compasso de espera, atrelado aos próximos passos da política monetária norte-americana e à volatilidade dos ativos de tecnologia.",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras e continha elementos inadequados. Foi reescrito para cumprir estritamente a estrutura de três passos do The Economist e a faixa de 60 a 90 palavras.",
+            "correcao_aplicada": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pela expectati..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-26"

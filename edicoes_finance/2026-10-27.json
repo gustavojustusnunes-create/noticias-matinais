@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Wall Street tem tom misto com alívio nos preços do petróleo e à espera de Fed",
+      "link": "https://www.moneytimes.com.br/wall-street-abertura-27-10-26-lils/",
+      "resumo": "Wall Street registrou um pregão de direção mista nesta terça-feira, refletindo a descompressão nos preços do petróleo e a cautela prévia à decisão de juros do Federal Reserve. A queda nas cotações da commodity energética aliviou pressões inflacionárias de curto prazo, enquanto o banco central americano pondera sinais divergentes de atividade econômica. Gestores de fundos reduzem a exposição a ativos de risco cíclico, temendo que a manutenção de taxas restritivas prolongue o encarecimento do crédito corporativo.",
+      "imagem": "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800&sig=0_480",
+      "fonte": "Money Times",
+      "data": "2026-10-27"
+    },
+    {
+      "titulo": "Tesouro cancela todos os leilões da semana; Durigan vê ajuste de posições e fala em nova intervenção",
+      "link": "https://www.moneytimes.com.br/tesouro-cancela-todos-os-leiloes-da-semana-durigan-ve-ajuste-de-posicoes-e-fala-em-nova-intervencao-jcav/",
+      "resumo": "O Tesouro Nacional cancelou todos os leilões de títulos públicos previstos para a semana, suspendendo a oferta de Letras Financeiras do Tesouro e papéis indexados à inflação. A medida drástica foi adotada para conter a volatilidade aguda nas taxas de juros de longo prazo e estabilizar o mercado secundário. O secretário executivo Dario Durigan apontou a necessidade de um ajuste técnico de posições e sinalizou novas intervenções estatais, penalizando os investidores institucionais e elevando o risco fiscal imediato.",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=1_171",
+      "fonte": "Money Times",
+      "data": "2026-10-27"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Dólar pode salvar a Suzano (SUZB3)? Citi mantém compra, mas corta preço-alvo; veja o que sustenta a aposta",
+      "link": "https://www.moneytimes.com.br/dolar-pode-salvar-a-suzano-suzb3-citi-mantem-compra-mas-corta-preco-alvo-veja-o-que-sustenta-aposta-pads/",
+      "resumo": "O Citi manteve a recomendação de compra para as ações da Suzano (SUZB3), mas revisou o preço-alvo de R$ 65 para R$ 52, um corte de aproximadamente 20%. A redução reflete perspectivas mais conservadoras para os preços da celulose de fibra curta. Cont",
+      "imagem": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800&sig=0_754",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-27"
+    },
+    {
+      "titulo": "Axia Energia (AXIA3) assina carta-mandato com IDB Invest para potencial financiamento de até R$ 680 milhões",
+      "link": "https://www.moneytimes.com.br/axia-energia-axia3-assina-carta-mandato-com-idb-invest-para-potencial-financiamento-de-ate-r-680-milhoes-lmrs/",
+      "resumo": "A Axia Energia (AXIA3) assinou carta-mandato com o IDB Invest para viabilizar um potencial financiamento de até R$ 680 milhões voltado à expansão de sua infraestrutura operacional. A operação reflete a busca estratégica por linhas de crédito de longo prazo em meio à alta volatilidade das taxas de juros no mercado doméstico. Os credores internacionais reforçam a exigência por rígidos padrões de governança socioambiental, enquanto a companhia assume o risco de diluição de margens caso o cronograma de implantação dos ativos sofra atrasos operacionais.",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=1_969",
+      "fonte": "Money Times Empresas",
+      "data": "2026-10-27"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Durigan autoriza nova recompra de títulos pelo Tesouro após turbulência no mercado",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/mercado/2026/10/durigan-autoriza-nova-recompra-de-titulos-pelo-tesouro-apos-turbulencia-no-mercado.shtml",
+      "resumo": "O Ministério da Fazenda, representado pelo secretário-executivo Dario Durigan, autorizou o Tesouro Nacional a realizar uma nova rodada de recompra de títulos da dívida pública, injetando liquidez para mitigar a volatilidade recente nas taxas de juros de longo prazo. A manobra ocorre em meio à aversão ao risco fiscal e à pressão vinda dos investidores institucionais que exigem prêmios elevados. Pequenas instituições financeiras perdem margem de manobra com o aperto de caixa, enquanto o governo assume o risco imediato de inflacionar o custo total do refinanciamento da dívida soberana.",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=0_206",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-27"
+    },
+    {
+      "titulo": "Novartis tem despesas de US$ 2,2 bilhões após fracassos em testes clínicos",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/negocios/2026/10/novartis-tem-despesas-de-us-22-bilhoes-apos-fracassos-em-testes-clinicos.shtml",
+      "resumo": "A Novartis registrou uma despesa extraordinária de US$ 2,2 bilhões decorrente do fracasso recente de ensaios clínicos em seu pipeline de desenvolvimento. Essa perda reflete a pressão contínua do setor farmacêutico para substituir patentes expiradas por novas moléculas inovadoras, enquanto custos de pesquisa disparam globalmente. Investidores institucionais passam a monitorar com cautela a alocação de capital da companhia, elevando o risco de volatilidade de curto prazo para as ações.",
+      "imagem": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800&sig=1_411",
+      "fonte": "Folha Mercado",
+      "data": "2026-10-27"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin (BTC) cai a US$ 81,9 mil e ETFs seguem no radar após saques em ethereum (ETH); veja preços hoje (22)",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-cai-a-us-819-mil-e-etfs-seguem-no-radar-apos-saidas-de-ether-e-fluxo-positivo-em-btc-rens/",
+      "resumo": "O bitcoin recuou 1,84% nas últimas vinte e quatro horas, sendo cotado a US$ 81.740,51, pressionado por uma forte onda de realização de lucros nos mercados globais. Esse movimento ocorre enquanto os ETFs de bitcoin nos Estados Unidos registraram captação líquida de US$ 528 milhões, contrastando fortemente com os produtos de ether, que acumularam saídas líquidas expressivas. Investidores institucionais agora monitoram a rigidez da política monetária americana e os novos marcos regulatórios para stablecoins, elevando o risco de volatilidade imediata nos ativos.",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=0_370",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-27"
+    },
+    {
+      "titulo": "Bitcoin (BTC) sobe com expectativa de alívio nos juros e recobra os US$ 82 mil, mas saídas de ETFs pressionam o apetite por risco",
+      "link": "https://www.moneytimes.com.br/bitcoin-sobe-com-alivio-nos-juros-enquanto-saidas-de-etfs-pressionam-o-apetite-por-risco-rens/",
+      "resumo": "O Bitcoin subiu 0,33% nesta sessão, recuperando o patamar de US$ 82.428, impulsionado pela expectativa de alívio nos juros pelo Federal Reserve. A alta, contudo, contrasta com saídas líquidas de US$ 82 milhões em ETFs na última sexta-feira e resgates semanais de US$ 549 milhões. Pequenos investidores sustentam a demanda no curto prazo, enquanto fundos institucionais lideram as pressões de venda, elevando o risco de reversão caso a política monetária americana decepcione as apostas do mercado.",
+      "imagem": "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=800&sig=1_636",
+      "fonte": "Money Times Cripto",
+      "data": "2026-10-27"
+    }
+  ],
+  "data": "2026-10-27"
+}
