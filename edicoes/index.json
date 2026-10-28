@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-28",
+  "data_extenso": "Quarta-feira, 28 de Outubro de 2026",
+  "manchete": "Dólar sobe com incerteza política e expectativa do Fed",
+  "arquivo_html": "2026-10-28.html"
+ },
+ {
   "data": "2026-10-27",
   "data_extenso": "Terça-feira, 27 de Outubro de 2026",
   "manchete": "Governo anuncia medidas fiscais para estabilizar mercado e meta fiscal",
@@ -352,11 +358,5 @@
   "data_extenso": "Domingo, 16 de Agosto de 2026",
   "manchete": "O estranho caso da jovem mexicana que fingiu estar grávida e acabou sequestrando uma bebê recém-nascida",
   "arquivo_html": "2026-08-16.html"
- },
- {
-  "data": "2026-08-15",
-  "data_extenso": "Sábado, 15 de Agosto de 2026",
-  "manchete": "Médica americana que matou seus três filhos pesquisou antes sobre alucinações, psicose e efeitos de remédios",
-  "arquivo_html": "2026-08-15.html"
  }
 ]
