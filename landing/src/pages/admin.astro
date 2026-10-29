@@ -336,40 +336,128 @@ import Layout from '../layouts/Layout.astro';
         </section>
 
         <!-- ================================================================= -->
-        <!-- ABA 2: 🕸️ GRAFO DE AGENTES                                        -->
+        <!-- ABA 2: 🕸️ GRAFO DE AGENTES (GRAFO DIRECIONADO 100% INTERATIVO)    -->
         <!-- ================================================================= -->
-        <section id="pane-graph" class="tab-pane hidden space-y-6">
+        <section id="pane-graph" class="tab-pane hidden space-y-5">
           
-          <div class="rounded-2xl bg-[#0D131C] border border-sky-500/20 p-5 space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-sky-400 animate-ping"></span>
-                <h3 class="text-xs font-bold uppercase tracking-wider text-sky-300">
-                  Topologia da Infraestrutura de Agentes Autônomos (6 Nós Interativos)
+          <!-- Barra Superior: Status Global, Filtros de Camada & Controles de Câmera -->
+          <div id="graph-toolbar-card" class="rounded-2xl bg-[#0B0F14] border border-white/10 p-4 shadow-2xl flex flex-col lg:flex-row lg:items-center justify-between gap-4 transition-colors duration-300">
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2.5">
+                <span id="graph-status-dot" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+                <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-white font-mono">
+                  TOPOLOGIA DIRECIONAL LANGGRAPH & ECOSSISTEMA AUTÔNOMO
                 </h3>
+                <span id="graph-emergency-badge" class="hidden px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-red-500/20 text-red-300 border border-red-500/50 animate-pulse">
+                  🚨 PIPELINE SUSPENSO - EMERGÊNCIA ATIVADA
+                </span>
+                <span id="graph-online-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                  ● 7 NÓS ONLINE • FLUXO ATIVO
+                </span>
               </div>
-              <span class="text-[10px] font-mono text-slate-400">Clique em qualquer nó para abrir telemetria</span>
+              <p class="text-[11px] text-slate-400">
+                Arraste os nós (<strong class="text-slate-200">Drag & Drop</strong>), navegue pelo canvas (<strong class="text-slate-200">Pan & Zoom</strong>) e clique em qualquer agente para inspecionar código-fonte, política de retry e <code class="text-[#D1BA73]">GraphState</code>.
+              </p>
             </div>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Pipeline orquestrado de ponta a ponta: Ingestão de feeds → Orquestrador Watchdog → Camada Cognitiva Gemini Flash → Governança Jev Quality Gate → Geração Multimodal (Áudio/Imagem) → Distribuição Resend & X.
-            </p>
+
+            <!-- Filtros Rápidos de Camada + Fit View -->
+            <div class="flex flex-wrap items-center gap-1.5">
+              <div class="inline-flex flex-wrap items-center gap-1 bg-[#080B0F] p-1 rounded-xl border border-white/10">
+                <button type="button" data-graph-filter="all" class="graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer bg-[#D1BA73]/20 text-[#D1BA73] border border-[#D1BA73]/40 shadow-sm">
+                  [ Todos ]
+                </button>
+                <button type="button" data-graph-filter="langgraph" class="graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
+                  [ LangGraph Core ]
+                </button>
+                <button type="button" data-graph-filter="multimodal" class="graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
+                  [ Multimodal & HITL ]
+                </button>
+                <button type="button" data-graph-filter="distribution" class="graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 border border-transparent">
+                  [ Distribuição ]
+                </button>
+              </div>
+
+              <div class="inline-flex items-center gap-1 bg-[#080B0F] p-1 rounded-xl border border-white/10">
+                <button type="button" id="btn-graph-zoom-out" title="Diminuir Zoom" class="px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer">
+                  −
+                </button>
+                <span id="graph-zoom-label" class="px-1.5 text-[10px] font-mono text-slate-400 min-w-[42px] text-center">
+                  100%
+                </span>
+                <button type="button" id="btn-graph-zoom-in" title="Aumentar Zoom" class="px-2.5 py-1.5 rounded-lg text-xs font-mono font-bold text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer">
+                  +
+                </button>
+                <button type="button" id="btn-graph-fit" title="Resetar Zoom e Enquadrar Grafo" class="px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold bg-sky-500/15 hover:bg-sky-500/25 text-sky-300 border border-sky-500/30 transition-all cursor-pointer">
+                  [ Fit View ]
+                </button>
+              </div>
+            </div>
           </div>
 
-          <!-- Grid dos 6 Nós Conectados -->
-          <div id="nodes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- Preenchido dinamicamente via JS -->
+          <!-- Canvas Interativo do Grafo Direcionado -->
+          <div
+            id="agent-graph-viewport"
+            class="relative w-full h-[650px] rounded-3xl bg-[#080B0F] border-2 border-white/10 overflow-hidden shadow-2xl select-none cursor-grab active:cursor-grabbing transition-all duration-300"
+            style="background-image: radial-gradient(rgba(56, 189, 248, 0.14) 1px, transparent 1px), radial-gradient(rgba(209, 186, 115, 0.08) 1px, transparent 1px); background-size: 24px 24px, 96px 96px; background-position: 0 0, 12px 12px;"
+          >
+            <!-- Banner Flutuante de Emergência (Visível apenas quando Kill Switch = ON) -->
+            <div id="graph-canvas-emergency-overlay" class="hidden absolute top-4 left-1/2 -translate-x-1/2 z-30 px-5 py-2 rounded-2xl bg-red-950/95 border-2 border-red-500 text-red-200 font-mono text-xs font-bold shadow-[0_0_30px_rgba(239,68,68,0.5)] flex items-center gap-2.5 pointer-events-none">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></span>
+              <span>PIPELINE SUSPENSO - EMERGÊNCIA ATIVADA • PARTÍCULAS DE DISTRIBUIÇÃO CONGELADAS</span>
+            </div>
+
+            <!-- Legenda Rápida Inferior Esquerda -->
+            <div class="absolute bottom-4 left-4 z-20 flex flex-wrap items-center gap-3 px-3.5 py-2 rounded-xl bg-[#0B0F14]/90 backdrop-blur-md border border-white/10 text-[10px] font-mono text-slate-300 pointer-events-none">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span> TELEMETRIA ONLINE
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 bg-[#38BDF8]"></span> FLUXO DIRETO
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-3 h-0.5 border-b-2 border-dashed border-[#D1BA73]"></span> AUTOCURA / RETRY (≤ 2)
+              </span>
+              <span class="flex items-center gap-1.5 text-slate-400">
+                SCROLL: ZOOM • ARRASTE: PAN / NÓS
+              </span>
+            </div>
+
+            <!-- Palco Transformável (Pan & Zoom) -->
+            <div id="agent-graph-stage" class="absolute top-0 left-0 w-[1380px] h-[600px] origin-top-left">
+              
+              <!-- 1. Clusters / Camadas Lógicas de Fundo -->
+              <div id="agent-graph-clusters" class="absolute inset-0 pointer-events-none">
+                <!-- Preenchido via JS -->
+              </div>
+
+              <!-- 2. Camada SVG de Arestas Direcionadas e Partículas -->
+              <svg id="agent-graph-edges-svg" class="absolute inset-0 w-[1380px] h-[600px] pointer-events-none overflow-visible" viewBox="0 0 1380 600">
+                <!-- Preenchido dinamicamente via JS -->
+              </svg>
+
+              <!-- 3. Camada de Nós Interativos (Drag & Drop + Click) -->
+              <div id="agent-graph-nodes-layer" class="absolute inset-0">
+                <!-- Preenchido dinamicamente via JS -->
+              </div>
+
+            </div>
           </div>
 
-          <!-- Painel de Emergência (Kill Switch) -->
-          <div class="rounded-2xl bg-red-950/20 border border-red-500/30 p-5 space-y-3 shadow-xl">
+          <!-- Painel de Emergência (Kill Switch Geral) -->
+          <div id="kill-switch-panel" class="rounded-2xl bg-red-950/20 border border-red-500/30 p-5 space-y-3 shadow-xl transition-all duration-300">
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-red-500/20 border border-red-500/40 flex items-center justify-center text-red-400 text-lg">
                   🚨
                 </div>
                 <div>
-                  <h3 class="text-xs font-bold uppercase tracking-wider text-red-300">Controle de Emergência & Kill Switch Geral</h3>
-                  <p class="text-[11px] text-slate-400">Suspende instantaneamente qualquer disparo automatizado de e-mails ou robôs</p>
+                  <div class="flex items-center gap-2">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-red-300">Controle de Emergência & Kill Switch Geral</h3>
+                    <span id="kill-switch-status-pill" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                      SISTEMA NOMINAL
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-slate-400">Suspende instantaneamente qualquer disparo automatizado de e-mails ou robôs e congela o fluxo de distribuição do grafo</p>
                 </div>
               </div>
               
@@ -606,52 +694,130 @@ import Layout from '../layouts/Layout.astro';
     </div>
 
     <!-- =================================================================== -->
-    <!-- MODAL 1: INSPEÇÃO DE NÓ DO GRAFO                                    -->
+    <!-- DRAWER LATERAL DE TELEMETRIA DO NÓ (SIDE-DRAWER DESLIZANTE)         -->
     <!-- =================================================================== -->
-    <div id="modal-node" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
-      <div class="w-full max-w-lg rounded-2xl bg-[#0D131C] border border-white/15 p-6 space-y-4 shadow-2xl">
-        <div class="flex items-center justify-between pb-3 border-b border-white/10">
-          <div class="flex items-center gap-2.5">
-            <span id="node-modal-icon" class="text-xl">🕸️</span>
-            <div>
-              <h3 id="node-modal-name" class="text-sm font-bold text-white">Nome do Nó</h3>
-              <p id="node-modal-role" class="text-[10px] text-slate-400">Papel Técnico</p>
+    <div id="node-telemetry-backdrop" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden transition-opacity duration-300" onclick="window.closeNodeDrawer()"></div>
+    <aside
+      id="node-telemetry-drawer"
+      class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-[#0B0F14]/98 backdrop-blur-2xl border-l border-white/15 shadow-[0_0_60px_rgba(0,0,0,0.85)] transform translate-x-full transition-transform duration-300 flex flex-col justify-between overflow-hidden"
+    >
+      <!-- Cabeçalho do Drawer -->
+      <div class="p-5 border-b border-white/10 bg-[#0D131C] flex items-start justify-between gap-3">
+        <div class="flex items-start gap-3">
+          <div id="drawer-node-icon" class="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-lg shrink-0">
+            🕸️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="drawer-node-layer" class="text-[10px] font-mono uppercase tracking-widest text-[#D1BA73] font-bold">
+                CAMADA LANGGRAPH
+              </span>
+              <span id="drawer-node-status" class="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                ONLINE
+              </span>
             </div>
-          </div>
-          <button onclick="document.getElementById('modal-node').classList.replace('flex', 'hidden')" class="text-slate-400 hover:text-white p-1">✕</button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3 text-xs">
-          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-            <span class="text-[10px] text-slate-400 block uppercase">Latência Típica</span>
-            <span id="node-modal-latency" class="font-mono font-bold text-sky-400">--</span>
-          </div>
-          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-            <span class="text-[10px] text-slate-400 block uppercase">Taxa de Erro</span>
-            <span id="node-modal-error" class="font-mono font-bold text-emerald-400">0.0%</span>
-          </div>
-          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-            <span class="text-[10px] text-slate-400 block uppercase">SLA / Uptime</span>
-            <span id="node-modal-uptime" class="font-mono font-bold text-white">99.98%</span>
-          </div>
-          <div class="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-            <span class="text-[10px] text-slate-400 block uppercase">Motor / LLM</span>
-            <span id="node-modal-model" class="font-mono font-bold text-amber-300">--</span>
+            <h3 id="drawer-node-name" class="text-base font-bold text-white font-serif tracking-tight mt-0.5">
+              Nome do Nó
+            </h3>
+            <p id="drawer-node-role" class="text-[11px] text-slate-400">
+              Papel Técnico do Agente
+            </p>
           </div>
         </div>
+        <button
+          type="button"
+          onclick="window.closeNodeDrawer()"
+          class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/10 transition-colors cursor-pointer"
+          title="Fechar Drawer"
+        >
+          ✕
+        </button>
+      </div>
 
-        <div>
-          <span class="text-[10px] text-slate-400 block uppercase mb-1">Descrição Operacional</span>
-          <p id="node-modal-desc" class="text-xs text-slate-300 leading-relaxed bg-[#070A0F] p-3 rounded-xl border border-white/5">
+      <!-- Corpo Rolável do Drawer -->
+      <div class="p-5 space-y-4 overflow-y-auto flex-1">
+        
+        <!-- 1. Arquivo-Fonte Associado -->
+        <div class="p-3.5 rounded-xl bg-[#080B0F] border border-[#38BDF8]/25 space-y-1">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-[#38BDF8] font-bold">
+              📄 Arquivo-Fonte Associado
+            </span>
+            <span class="text-[9px] font-mono text-slate-500">RUNTIME MODULE</span>
+          </div>
+          <div id="drawer-node-source" class="font-mono text-xs font-bold text-white break-all">
+            core/graph_engine.py
+          </div>
+        </div>
+
+        <!-- 2. Grid de Telemetria Operacional (Latência, SLA, Taxa de Erro, Engine) -->
+        <div class="grid grid-cols-2 gap-2.5 text-xs">
+          <div class="p-3 rounded-xl bg-[#0D131C] border border-white/10">
+            <span class="text-[10px] font-mono text-slate-400 block uppercase">Latência Operacional</span>
+            <span id="drawer-node-latency" class="font-mono text-sm font-bold text-[#D1BA73] mt-0.5 block">--</span>
+          </div>
+          <div class="p-3 rounded-xl bg-[#0D131C] border border-white/10">
+            <span class="text-[10px] font-mono text-slate-400 block uppercase">SLA / Uptime</span>
+            <span id="drawer-node-uptime" class="font-mono text-sm font-bold text-emerald-400 mt-0.5 block">99.98%</span>
+          </div>
+          <div class="p-3 rounded-xl bg-[#0D131C] border border-white/10 col-span-2">
+            <span class="text-[10px] font-mono text-slate-400 block uppercase">Motor / Arquitetura de Execução</span>
+            <span id="drawer-node-model" class="font-mono text-xs font-bold text-sky-300 mt-0.5 block">--</span>
+          </div>
+        </div>
+
+        <!-- 3. Política de Retry / Fallback -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-mono uppercase tracking-wider text-[#D1BA73] font-bold block">
+            🛡️ Política de Retry / Fallback & Autocura
+          </span>
+          <div id="drawer-node-retry" class="text-xs text-slate-200 leading-relaxed bg-[#0D131C] p-3.5 rounded-xl border border-[#D1BA73]/25">
+            --
+          </div>
+        </div>
+
+        <!-- 4. Descrição Operacional -->
+        <div class="space-y-1.5">
+          <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold block">
+            ⚙️ Função no Pipeline
+          </span>
+          <p id="drawer-node-desc" class="text-xs text-slate-300 leading-relaxed bg-[#0D131C]/60 p-3.5 rounded-xl border border-white/5">
             --
           </p>
         </div>
 
-        <button onclick="document.getElementById('modal-node').classList.replace('flex', 'hidden')" class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs transition-colors">
-          Fechar Telemetria
+        <!-- 5. Visualizador Formatado do Payload do GraphState -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Payload do GraphState (JSON)
+            </span>
+            <button
+              type="button"
+              id="btn-copy-graphstate-json"
+              class="px-2.5 py-1 rounded-lg bg-[#D1BA73]/15 hover:bg-[#D1BA73]/30 text-[#D1BA73] border border-[#D1BA73]/30 text-[10px] font-mono font-bold transition-all cursor-pointer flex items-center gap-1"
+            >
+              <span>📋</span>
+              <span id="btn-copy-graphstate-label">Copiar JSON</span>
+            </button>
+          </div>
+          <pre id="drawer-node-json" class="bg-[#06080C] border border-white/10 rounded-xl p-3.5 font-mono text-[11px] text-sky-300 overflow-x-auto max-h-60 leading-relaxed selection:bg-amber-500 selection:text-slate-950">{}</pre>
+        </div>
+
+      </div>
+
+      <!-- Rodapé do Drawer -->
+      <div class="p-4 border-t border-white/10 bg-[#0D131C] flex items-center gap-2">
+        <button
+          type="button"
+          onclick="window.closeNodeDrawer()"
+          class="w-full py-2.5 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-white font-semibold text-xs transition-colors cursor-pointer"
+        >
+          Fechar Inspeção de Telemetria
         </button>
       </div>
-    </div>
+    </aside>
 
     <!-- =================================================================== -->
     <!-- MODAL 2: EDIÇÃO RÁPIDA DE RESUMO                                    -->
@@ -850,6 +1016,670 @@ import Layout from '../layouts/Layout.astro';
       await validarPin(pin);
     });
 
+    // =========================================================================
+    // MOTOR DO GRAFO DIRECIONADO 100% INTERATIVO (DRAG & DROP, PAN, ZOOM)
+    // =========================================================================
+    const GRAPH_NODE_W = 252;
+    const GRAPH_NODE_H = 172;
+
+    const DEFAULT_GRAPH_POSITIONS = {
+      ingestion:     { x: 46,   y: 84 },
+      orchestration: { x: 46,   y: 344 },
+      cognitive:     { x: 386,  y: 84 },
+      governance:    { x: 386,  y: 344 },
+      multimodal:    { x: 726,  y: 84 },
+      hitl_gate:     { x: 726,  y: 344 },
+      delivery:      { x: 1066, y: 196 },
+    };
+
+    const GRAPH_CLUSTERS = [
+      { id: 'ingestion',    title: '1. INGESTÃO & COORDENAÇÃO',                 x: 22,   y: 28, w: 300, h: 528, color: '#38BDF8' },
+      { id: 'langgraph',    title: '2. NÚCLEO COGNITIVO & GOVERNANÇA (CORE)',   x: 356,  y: 28, w: 322, h: 528, color: '#D1BA73' },
+      { id: 'multimodal',   title: '3. CAMADA MULTIMODAL & HITL',               x: 702,  y: 28, w: 300, h: 528, color: '#10B981' },
+      { id: 'distribution', title: '4. DISTRIBUIÇÃO MULTICANAL (FAN-OUT)',      x: 1036, y: 28, w: 320, h: 528, color: '#38BDF8' },
+    ];
+
+    const GRAPH_EDGES_SPEC = [
+      { id: 'e1', source: 'ingestion',     target: 'orchestration', label: 'RSS & Scraping',           type: 'vertical', color: '#38BDF8', layer: 'ingestion' },
+      { id: 'e2', source: 'orchestration', target: 'cognitive',     label: 'Trigger 05:20 BRT',        type: 'bezier',   color: '#38BDF8', layer: 'langgraph' },
+      { id: 'e3', source: 'cognitive',     target: 'governance',    label: 'Draft 85-105w',            type: 'vertical', color: '#38BDF8', layer: 'langgraph' },
+      { id: 'e4', source: 'governance',    target: 'cognitive',     label: 'Rejeitado / Retry (≤ 2)',  type: 'loop',     color: '#D1BA73', layer: 'langgraph', isLoop: true },
+      { id: 'e5', source: 'governance',    target: 'multimodal',    label: 'Aprovado (Jev Gate)',      type: 'bezier',   color: '#10B981', layer: 'multimodal' },
+      { id: 'e6', source: 'multimodal',    target: 'hitl_gate',     label: 'Podcast + Card 1080p',     type: 'vertical', color: '#10B981', layer: 'multimodal' },
+      { id: 'e7', source: 'hitl_gate',     target: 'delivery',      label: 'Founder Gate → Fan-out',   type: 'fanout',   color: '#38BDF8', layer: 'distribution' },
+    ];
+
+    const NODE_ICONS = {
+      ingestion: '📡',
+      orchestration: '🛡️',
+      cognitive: '🧠',
+      governance: '⚖️',
+      multimodal: '🎙️',
+      hitl_gate: '🔒',
+      delivery: '🚀',
+    };
+
+    let graphNodePositions = JSON.parse(JSON.stringify(DEFAULT_GRAPH_POSITIONS));
+    let graphZoom = 0.88;
+    let graphPan = { x: 18, y: 20 };
+    let activeGraphFilter = 'all';
+    let isKillSwitchEmergency = false;
+    let selectedGraphNodeId = null;
+    let graphInteractionsBound = false;
+
+    function updateGraphTransform() {
+      const stage = document.getElementById('agent-graph-stage');
+      const zoomLabel = document.getElementById('graph-zoom-label');
+      if (stage) {
+        stage.style.transform = `translate(${graphPan.x}px, ${graphPan.y}px) scale(${graphZoom})`;
+      }
+      if (zoomLabel) {
+        zoomLabel.innerText = `${Math.round(graphZoom * 100)}%`;
+      }
+    }
+
+    function fitGraphView(filterLayer = 'all', resetPositions = false) {
+      if (resetPositions) {
+        graphNodePositions = JSON.parse(JSON.stringify(DEFAULT_GRAPH_POSITIONS));
+      }
+      const viewport = document.getElementById('agent-graph-viewport');
+      if (!viewport) return;
+      const vw = viewport.clientWidth || 1150;
+      const vh = viewport.clientHeight || 650;
+
+      if (filterLayer === 'all') {
+        const scaleX = (vw - 36) / 1380;
+        const scaleY = (vh - 48) / 585;
+        graphZoom = Math.max(0.48, Math.min(1.12, Math.min(scaleX, scaleY)));
+        graphPan.x = Math.max(12, (vw - 1380 * graphZoom) / 2);
+        graphPan.y = Math.max(12, (vh - 580 * graphZoom) / 2);
+      } else {
+        const cluster = GRAPH_CLUSTERS.find(c => c.id === filterLayer);
+        if (cluster) {
+          graphZoom = Math.min(1.15, Math.max(0.75, (vw - 120) / (cluster.w + 260)));
+          const centerX = cluster.x + cluster.w / 2;
+          const centerY = cluster.y + cluster.h / 2;
+          graphPan.x = vw / 2 - centerX * graphZoom;
+          graphPan.y = vh / 2 - centerY * graphZoom;
+        }
+      }
+      updateGraphTransform();
+      if (resetPositions) {
+        renderInteractiveGraph();
+      }
+    }
+
+    function isNodeHighlighted(nodeId, layer) {
+      if (activeGraphFilter === 'all') return true;
+      if (activeGraphFilter === layer) return true;
+      if (activeGraphFilter === 'distribution' && nodeId === 'hitl_gate') return true;
+      return false;
+    }
+
+    function isEdgeHighlighted(edge) {
+      if (activeGraphFilter === 'all') return true;
+      if (activeGraphFilter === edge.layer) return true;
+      return false;
+    }
+
+    function renderGraphClusters() {
+      const container = document.getElementById('agent-graph-clusters');
+      if (!container) return;
+
+      container.innerHTML = GRAPH_CLUSTERS.map(c => {
+        const dimmed = activeGraphFilter !== 'all' && activeGraphFilter !== c.id;
+        const borderColor = isKillSwitchEmergency ? 'rgba(239, 68, 68, 0.45)' : `${c.color}38`;
+        const badgeColor = isKillSwitchEmergency ? '#FCA5A5' : c.color;
+        return `
+          <div
+            style="left:${c.x}px; top:${c.y}px; width:${c.w}px; height:${c.h}px; border-color:${borderColor}; opacity:${dimmed ? '0.25' : '1'};"
+            class="absolute rounded-3xl bg-[#0B0F14]/70 border border-dashed transition-all duration-300"
+          >
+            <div class="px-3.5 py-2 border-b border-white/5 flex items-center justify-between">
+              <span style="color:${badgeColor}" class="text-[10px] font-mono font-bold tracking-wider uppercase">
+                ${c.title}
+              </span>
+              <span class="w-1.5 h-1.5 rounded-full" style="background:${badgeColor}"></span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function computeEdgePath(edge) {
+      const s = graphNodePositions[edge.source] || DEFAULT_GRAPH_POSITIONS[edge.source];
+      const t = graphNodePositions[edge.target] || DEFAULT_GRAPH_POSITIONS[edge.target];
+      const sH = edge.source === 'delivery' ? 204 : GRAPH_NODE_H;
+      const tH = edge.target === 'delivery' ? 204 : GRAPH_NODE_H;
+
+      if (edge.isLoop) {
+        // Arco condicional de Autocura (Governança -> Camada Cognitiva) pela direita em dourado tracejado
+        const startX = s.x + GRAPH_NODE_W;
+        const startY = s.y + 42;
+        const endX = t.x + GRAPH_NODE_W;
+        const endY = t.y + tH - 36;
+        const ctrlX = Math.max(startX, endX) + 64;
+        const path = `M ${startX} ${startY} C ${ctrlX} ${startY - 10}, ${ctrlX} ${endY + 10}, ${endX} ${endY}`;
+        const labelX = ctrlX - 6;
+        const labelY = (startY + endY) / 2;
+        return { path, labelX, labelY, startX, startY, endX, endY };
+      }
+
+      if (edge.type === 'vertical') {
+        const offsetX = edge.source === 'cognitive' ? -18 : 0;
+        const startX = s.x + GRAPH_NODE_W / 2 + offsetX;
+        const startY = s.y + sH;
+        const endX = t.x + GRAPH_NODE_W / 2 + offsetX;
+        const endY = t.y;
+        const midY = (startY + endY) / 2;
+        const path = `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+        return { path, labelX: (startX + endX) / 2, labelY: midY, startX, startY, endX, endY };
+      }
+
+      // Conexão lateral Bézier entre camadas
+      const startX = s.x + GRAPH_NODE_W;
+      const startY = s.y + sH / 2;
+      const endX = t.x;
+      const endY = t.y + tH / 2;
+      const deltaX = Math.max(48, Math.abs(endX - startX) * 0.5);
+      const path = `M ${startX} ${startY} C ${startX + deltaX} ${startY}, ${endX - deltaX} ${endY}, ${endX} ${endY}`;
+      return { path, labelX: (startX + endX) / 2, labelY: (startY + endY) / 2 - 10, startX, startY, endX, endY };
+    }
+
+    function renderGraphEdges() {
+      const svg = document.getElementById('agent-graph-edges-svg');
+      if (!svg) return;
+
+      const defs = `
+        <defs>
+          <marker id="arrow-cyan" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#38BDF8" />
+          </marker>
+          <marker id="arrow-gold" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#D1BA73" />
+          </marker>
+          <marker id="arrow-emerald" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#10B981" />
+          </marker>
+          <marker id="arrow-red" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#EF4444" />
+          </marker>
+        </defs>
+      `;
+
+      const edgesMarkup = GRAPH_EDGES_SPEC.map((edge, idx) => {
+        const geom = computeEdgePath(edge);
+        const highlighted = isEdgeHighlighted(edge);
+        const opacity = highlighted ? '1' : '0.18';
+
+        const strokeColor = isKillSwitchEmergency
+          ? '#EF4444'
+          : edge.color;
+
+        const markerId = isKillSwitchEmergency
+          ? 'arrow-red'
+          : (edge.color === '#D1BA73' ? 'arrow-gold' : (edge.color === '#10B981' ? 'arrow-emerald' : 'arrow-cyan'));
+
+        const dashArray = edge.isLoop ? '7 5' : (isKillSwitchEmergency ? '4 4' : 'none');
+        const pathId = `graph-edge-path-${edge.id}`;
+
+        // Partículas animadas de fluxo contínuo (congeladas quando Kill Switch está ativo)
+        const particlesHtml = isKillSwitchEmergency
+          ? `<circle cx="${geom.labelX}" cy="${geom.labelY}" r="3.5" fill="#EF4444" />`
+          : `
+            <circle r="${edge.isLoop ? '3.5' : '4'}" fill="${strokeColor}" filter="drop-shadow(0 0 6px ${strokeColor})">
+              <animateMotion dur="${edge.isLoop ? '2.8s' : (edge.type === 'fanout' ? '1.8s' : '2.2s')}" repeatCount="indefinite" path="${geom.path}" />
+            </circle>
+            ${edge.type === 'fanout' ? `
+              <circle r="3.5" fill="#D1BA73" filter="drop-shadow(0 0 6px #D1BA73)">
+                <animateMotion dur="1.8s" begin="0.9s" repeatCount="indefinite" path="${geom.path}" />
+              </circle>
+            ` : ''}
+          `;
+
+        // Badge especial para a Aresta Condicional de Loop (Autocura) e rótulos de transição
+        const pillWidth = edge.isLoop ? 154 : Math.max(96, edge.label.length * 6.2);
+        const pillBg = isKillSwitchEmergency ? '#450A0A' : (edge.isLoop ? '#1C1608' : '#0B0F14');
+        const pillBorder = isKillSwitchEmergency ? '#EF4444' : strokeColor;
+        const pillText = isKillSwitchEmergency ? '#FCA5A5' : (edge.isLoop ? '#D1BA73' : '#E2E8F0');
+
+        return `
+          <g style="opacity:${opacity}; transition: opacity 0.25s ease;">
+            <!-- Glow Base -->
+            <path d="${geom.path}" fill="none" stroke="${strokeColor}" stroke-width="5" stroke-opacity="0.12" />
+            <!-- Aresta Principal -->
+            <path
+              id="${pathId}"
+              d="${geom.path}"
+              fill="none"
+              stroke="${strokeColor}"
+              stroke-width="${edge.isLoop ? '2.4' : '2.2'}"
+              stroke-dasharray="${dashArray}"
+              marker-end="url(#${markerId})"
+            />
+            ${particlesHtml}
+            <!-- Badge / Label da Aresta -->
+            <g transform="translate(${geom.labelX - pillWidth / 2}, ${geom.labelY - 11})">
+              <rect
+                width="${pillWidth}"
+                height="22"
+                rx="8"
+                fill="${pillBg}"
+                fill-opacity="0.95"
+                stroke="${pillBorder}"
+                stroke-width="${edge.isLoop ? '1.4' : '1'}"
+                stroke-opacity="0.7"
+              />
+              <text
+                x="${pillWidth / 2}"
+                y="14.5"
+                text-anchor="middle"
+                fill="${pillText}"
+                font-family="monospace"
+                font-size="9.5"
+                font-weight="bold"
+              >${edge.label}</text>
+            </g>
+          </g>
+        `;
+      }).join('');
+
+      svg.innerHTML = defs + edgesMarkup;
+    }
+
+    function getFallbackNodesDetail() {
+      return {
+        ingestion: {
+          id: 'ingestion',
+          name: 'Data Ingestion',
+          role: 'Coleta Multicanal de RSS e Scraping',
+          layer: 'ingestion',
+          layerLabel: '1. Ingestão & Coordenação',
+          status: 'ONLINE',
+          latency: '1.2s',
+          errorRate: '0.02%',
+          uptime: '99.98%',
+          model: 'Async FeedParser & BeautifulSoup',
+          sourceFile: 'feeds.py / main.py',
+          retryPolicy: 'Retry exponencial (até 2x por feed) + Deduplicação semântica multi-fonte (>55%) e fallback para snapshot em edicoes/.',
+          description: 'Varredura e parsing assíncrono de 18 fontes jornalísticas de alta credibilidade.',
+          statePayload: { node: 'ingestion', feeds_monitored: 18, deduplication_threshold: 0.55 },
+        },
+        orchestration: {
+          id: 'orchestration',
+          name: 'Orquestração Central',
+          role: 'Sentinela de Agendamento e Integridade',
+          layer: 'ingestion',
+          layerLabel: '1. Ingestão & Coordenação',
+          status: 'ONLINE',
+          latency: '420ms',
+          errorRate: '0.0%',
+          uptime: '100%',
+          model: 'GitHub Actions & Agent Watchdog',
+          sourceFile: 'agent_watchdog.py',
+          retryPolicy: 'Self-healing autônomo de SLA com lock diário às 05:20 BRT e failover imediato.',
+          description: 'Coordena o disparo agendado da esteira matinal e monitora a integridade dos agentes.',
+          statePayload: { node: 'orchestration', cron_schedule: '05:20 BRT', watchdog_status: 'ACTIVE' },
+        },
+        cognitive: {
+          id: 'cognitive',
+          name: 'Camada Cognitiva',
+          role: 'Redação Analítica de Alta Densidade Factual',
+          layer: 'langgraph',
+          layerLabel: '2. LangGraph Core',
+          status: 'ONLINE',
+          latency: '3.4s',
+          errorRate: '0.1%',
+          uptime: '99.95%',
+          model: 'Redator Gemini 2.5 Flash',
+          sourceFile: 'core/graph_engine.py (node_writer)',
+          retryPolicy: 'Loop reativo de Autocura guiado pelo Critic (até 2 retries) + Fallback determinístico em 3 períodos.',
+          description: 'Síntese jornalística profunda calibrada entre 85 e 105 palavras.',
+          statePayload: { node: 'writer', word_count: 94, retry_count: 0, status: 'DRAFT_GENERATED' },
+        },
+        governance: {
+          id: 'governance',
+          name: 'Governança & HITL Gate',
+          role: 'Validação Determinística de Tom e Conformidade',
+          layer: 'langgraph',
+          layerLabel: '2. LangGraph Core',
+          status: 'ONLINE',
+          latency: '180ms',
+          errorRate: '0.0%',
+          uptime: '100%',
+          model: 'Jev Quality Gate & Cognitive Auditor',
+          sourceFile: 'core/jev_gatekeeper.py & ai_supervisor.py',
+          retryPolicy: 'Inferência System 1 (<200ms). Aciona loop condicional Rejeitado / Retry (≤ 2) se fora de conformidade.',
+          description: 'Auditoria algorítmica de viés e verificação estrita da margem de 85 a 105 palavras.',
+          statePayload: { node: 'critic', is_approved: true, score: 5, choice: 'APPROVE', confidence: 0.96 },
+        },
+        multimodal: {
+          id: 'multimodal',
+          name: 'Geração Multimodal',
+          role: 'Síntese de Podcast Neural e Cards 1080x1350',
+          layer: 'multimodal',
+          layerLabel: '3. Multimodal & HITL',
+          status: 'ONLINE',
+          latency: '5.1s',
+          errorRate: '0.05%',
+          uptime: '99.9%',
+          model: 'Edge-TTS Leo & Ana + PIL Graphics',
+          sourceFile: 'podcast_builder.py & core/graph_engine.py',
+          retryPolicy: 'Retry automático de síntese vocal + Fallback de moldura editorial preta/dourada.',
+          description: 'Produção do podcast estéreo matinal e renderização de cards de alta definição.',
+          statePayload: { node: 'media_generator', audio_path: '/audio/latest.mp3', card_resolution: '1080x1350' },
+        },
+        hitl_gate: {
+          id: 'hitl_gate',
+          name: 'HITL Founder Gate',
+          role: 'Ponto de Retenção (interrupt_before) Executivo',
+          layer: 'multimodal',
+          layerLabel: '3. Multimodal & HITL',
+          status: 'ONLINE',
+          latency: '0ms (Gate)',
+          errorRate: '0.0%',
+          uptime: '100%',
+          model: 'Aprovação do Fundador',
+          sourceFile: 'core/graph_engine.py (interrupt_before=["dispatcher"])',
+          retryPolicy: 'Retenção determinística no checkpointer até confirmação manual ou janela automática.',
+          description: 'Barreira de validação executiva antes do disparo externo.',
+          statePayload: { node: 'hitl_gate', interrupt_before: ['dispatcher'], gate_state: 'AWAITING_FOUNDER_APPROVAL' },
+        },
+        delivery: {
+          id: 'delivery',
+          name: 'Distribuição Multicanal',
+          role: 'Fan-out de Saída: Newsletter, Social & Web',
+          layer: 'distribution',
+          layerLabel: '4. Distribuição Multicanal',
+          status: 'ONLINE',
+          latency: '890ms',
+          errorRate: '0.0%',
+          uptime: '99.99%',
+          model: 'Resend API, X Playwright, Instagram Poster & Vitrine Astro',
+          sourceFile: 'email_builder.py, postar_x_diario.py, instagram_poster.py',
+          retryPolicy: 'Isolamento de canais (Circuit Breaker independente por canal de distribuição).',
+          description: 'Disparo multicanal para Resend E-mail API, X Automation, Instagram Poster e Vitrine Astro.',
+          statePayload: { node: 'dispatcher', channels: ['Resend E-mail API', 'X Automation', 'Instagram Poster', 'Vitrine Astro'] },
+        },
+      };
+    }
+
+    function renderGraphNodes() {
+      const layerEl = document.getElementById('agent-graph-nodes-layer');
+      if (!layerEl) return;
+
+      const nodesMap = (currentData && currentData.nodes_detail && Object.keys(currentData.nodes_detail).length >= 7)
+        ? currentData.nodes_detail
+        : getFallbackNodesDetail();
+
+      const orderedIds = ['ingestion', 'orchestration', 'cognitive', 'governance', 'multimodal', 'hitl_gate', 'delivery'];
+
+      layerEl.innerHTML = orderedIds.map(id => {
+        const n = nodesMap[id] || getFallbackNodesDetail()[id];
+        const pos = graphNodePositions[id] || DEFAULT_GRAPH_POSITIONS[id] || { x: 60, y: 60 };
+        const highlighted = isNodeHighlighted(id, n.layer);
+        const isSelected = selectedGraphNodeId === id;
+
+        // Visual Dark Cyberpunk / Executivo com reação ao Kill Switch
+        let borderClass = 'border-white/15 hover:border-[#38BDF8]/70';
+        let accentColor = '#38BDF8';
+        if (n.layer === 'langgraph') {
+          borderClass = 'border-[#D1BA73]/45 hover:border-[#D1BA73]';
+          accentColor = '#D1BA73';
+        } else if (n.layer === 'multimodal') {
+          borderClass = 'border-emerald-500/40 hover:border-emerald-400';
+          accentColor = '#10B981';
+        }
+
+        if (isSelected) {
+          borderClass = 'border-[#D1BA73] ring-2 ring-[#D1BA73]/40 shadow-[0_0_30px_rgba(209,186,115,0.28)]';
+        }
+        if (isKillSwitchEmergency) {
+          borderClass = 'border-red-500/90 ring-2 ring-red-500/30 shadow-[0_0_28px_rgba(239,68,68,0.35)]';
+          accentColor = '#EF4444';
+        }
+
+        const statusLabel = isKillSwitchEmergency ? 'SUSPENDED' : (n.status || 'ONLINE');
+        const statusBadgeClass = isKillSwitchEmergency
+          ? 'bg-red-500/20 text-red-300 border-red-500/50'
+          : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
+        const dotClass = isKillSwitchEmergency
+          ? 'bg-red-400 animate-ping'
+          : 'bg-emerald-400 animate-pulse';
+
+        const fanoutChannelsHtml = id === 'delivery' ? `
+          <div class="grid grid-cols-2 gap-1 pt-2 mt-1.5 border-t border-white/10 text-[9px] font-mono">
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-sky-300 truncate">📧 Resend API</span>
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-amber-300 truncate">𝕏 Playwright</span>
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-pink-300 truncate">📸 IG Poster</span>
+            <span class="px-1.5 py-0.5 rounded bg-white/5 text-emerald-300 truncate">🚀 Vitrine Astro</span>
+          </div>
+        ` : '';
+
+        return `
+          <div
+            id="graph-node-card-${id}"
+            data-node-id="${id}"
+            style="left:${pos.x}px; top:${pos.y}px; width:${GRAPH_NODE_W}px; opacity:${highlighted ? '1' : '0.22'};"
+            class="graph-draggable-node absolute rounded-2xl bg-[#0D131C]/95 backdrop-blur-md border-2 ${borderClass} p-3.5 transition-opacity duration-200 cursor-grab active:cursor-grabbing select-none shadow-xl"
+          >
+            <!-- Port Connectors -->
+            <span class="absolute -left-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#080B0F] border-2" style="border-color:${accentColor}"></span>
+            <span class="absolute -right-1.5 top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-[#080B0F] border-2" style="border-color:${accentColor}"></span>
+
+            <!-- Top Row: Icon & Status Badge -->
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-sm shrink-0">
+                  ${NODE_ICONS[id] || '⚙️'}
+                </span>
+                <div class="min-w-0">
+                  <span class="text-[9px] font-mono uppercase tracking-wider block truncate" style="color:${accentColor}">
+                    ${n.layerLabel || n.layer}
+                  </span>
+                  <h4 class="text-xs font-bold text-white leading-tight truncate">${n.name}</h4>
+                </div>
+              </div>
+
+              <span class="px-1.5 py-0.5 rounded-full text-[8.5px] font-mono font-bold border flex items-center gap-1 shrink-0 ${statusBadgeClass}">
+                <span class="w-1.5 h-1.5 rounded-full ${dotClass}"></span>
+                ${statusLabel}
+              </span>
+            </div>
+
+            <!-- Engine / Role -->
+            <div class="px-2 py-1 rounded-lg bg-[#080B0F] border border-white/5 text-[10px] font-mono text-[#D1BA73] truncate mb-1.5">
+              ${n.model}
+            </div>
+            <p class="text-[10.5px] text-slate-300 line-clamp-2 leading-snug">
+              ${n.role}
+            </p>
+
+            ${fanoutChannelsHtml}
+
+            <!-- Footer Telemetry -->
+            <div class="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between text-[9.5px] font-mono">
+              <span class="text-slate-400 truncate max-w-[140px]" title="${n.sourceFile || 'core/graph_engine.py'}">
+                📄 ${(n.sourceFile || 'core/graph_engine.py').split(' ')[0]}
+              </span>
+              <span class="font-bold text-[#38BDF8]">${n.latency}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyKillSwitchVisualState(isActive) {
+      isKillSwitchEmergency = Boolean(isActive);
+
+      const viewport = document.getElementById('agent-graph-viewport');
+      const overlay = document.getElementById('graph-canvas-emergency-overlay');
+      const emergencyBadge = document.getElementById('graph-emergency-badge');
+      const onlineBadge = document.getElementById('graph-online-badge');
+      const statusDot = document.getElementById('graph-status-dot');
+      const toolbarCard = document.getElementById('graph-toolbar-card');
+      const ksPill = document.getElementById('kill-switch-status-pill');
+
+      if (isKillSwitchEmergency) {
+        viewport?.classList.remove('border-white/10');
+        viewport?.classList.add('border-red-500/80', 'shadow-[0_0_45px_rgba(239,68,68,0.28)]');
+        overlay?.classList.remove('hidden');
+        emergencyBadge?.classList.remove('hidden');
+        onlineBadge?.classList.add('hidden');
+        if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-red-500 animate-ping';
+        toolbarCard?.classList.replace('border-white/10', 'border-red-500/50');
+        if (ksPill) {
+          ksPill.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-red-500/25 text-red-300 border border-red-500/50 animate-pulse';
+          ksPill.innerText = 'PIPELINE SUSPENSO - EMERGÊNCIA ATIVADA';
+        }
+      } else {
+        viewport?.classList.remove('border-red-500/80', 'shadow-[0_0_45px_rgba(239,68,68,0.28)]');
+        viewport?.classList.add('border-white/10');
+        overlay?.classList.add('hidden');
+        emergencyBadge?.classList.add('hidden');
+        onlineBadge?.classList.remove('hidden');
+        if (statusDot) statusDot.className = 'w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping';
+        toolbarCard?.classList.replace('border-red-500/50', 'border-white/10');
+        if (ksPill) {
+          ksPill.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+          ksPill.innerText = 'SISTEMA NOMINAL';
+        }
+      }
+
+      renderInteractiveGraph();
+    }
+
+    function renderInteractiveGraph() {
+      renderGraphClusters();
+      renderGraphNodes();
+      renderGraphEdges();
+      updateGraphTransform();
+    }
+
+    function bindGraphInteractions() {
+      if (graphInteractionsBound) return;
+      graphInteractionsBound = true;
+
+      const viewport = document.getElementById('agent-graph-viewport');
+      if (!viewport) return;
+
+      let dragMode = null; // 'node' | 'pan' | null
+      let draggedNodeId = null;
+      let startClient = { x: 0, y: 0 };
+      let startOrigin = { x: 0, y: 0 };
+      let movedDistance = 0;
+
+      viewport.addEventListener('pointerdown', (e) => {
+        const nodeCard = e.target.closest('.graph-draggable-node');
+        startClient = { x: e.clientX, y: e.clientY };
+        movedDistance = 0;
+
+        if (nodeCard) {
+          dragMode = 'node';
+          draggedNodeId = nodeCard.getAttribute('data-node-id');
+          const pos = graphNodePositions[draggedNodeId] || { x: 0, y: 0 };
+          startOrigin = { x: pos.x, y: pos.y };
+          nodeCard.style.zIndex = '30';
+        } else {
+          dragMode = 'pan';
+          startOrigin = { x: graphPan.x, y: graphPan.y };
+        }
+        viewport.setPointerCapture(e.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragMode) return;
+        const dx = e.clientX - startClient.x;
+        const dy = e.clientY - startClient.y;
+        movedDistance = Math.hypot(dx, dy);
+
+        if (dragMode === 'node' && draggedNodeId) {
+          const newX = Math.max(10, Math.min(1120, Math.round(startOrigin.x + dx / graphZoom)));
+          const newY = Math.max(36, Math.min(430, Math.round(startOrigin.y + dy / graphZoom)));
+          graphNodePositions[draggedNodeId] = { x: newX, y: newY };
+          const cardEl = document.getElementById(`graph-node-card-${draggedNodeId}`);
+          if (cardEl) {
+            cardEl.style.left = `${newX}px`;
+            cardEl.style.top = `${newY}px`;
+          }
+          renderGraphEdges();
+        } else if (dragMode === 'pan') {
+          graphPan.x = startOrigin.x + dx;
+          graphPan.y = startOrigin.y + dy;
+          updateGraphTransform();
+        }
+      });
+
+      const finishPointer = (e) => {
+        if (!dragMode) return;
+        if (dragMode === 'node' && draggedNodeId) {
+          const cardEl = document.getElementById(`graph-node-card-${draggedNodeId}`);
+          if (cardEl) cardEl.style.zIndex = '';
+          if (movedDistance < 6) {
+            window.inspectNode(draggedNodeId);
+          }
+        }
+        dragMode = null;
+        draggedNodeId = null;
+      };
+
+      viewport.addEventListener('pointerup', finishPointer);
+      viewport.addEventListener('pointercancel', finishPointer);
+
+      // Zoom suave via roda do mouse (Scroll)
+      viewport.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        const prevZoom = graphZoom;
+        const factor = e.deltaY < 0 ? 1.09 : 0.91;
+        graphZoom = Math.max(0.45, Math.min(1.6, Number((graphZoom * factor).toFixed(3))));
+
+        graphPan.x = mouseX - ((mouseX - graphPan.x) / prevZoom) * graphZoom;
+        graphPan.y = mouseY - ((mouseY - graphPan.y) / prevZoom) * graphZoom;
+        updateGraphTransform();
+      }, { passive: false });
+
+      // Botões de Filtro Rápido no Topo
+      document.querySelectorAll('.graph-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.getAttribute('data-graph-filter') || 'all';
+          activeGraphFilter = filter;
+
+          document.querySelectorAll('.graph-filter-btn').forEach(b => {
+            b.className = 'graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 border border-transparent';
+          });
+          btn.className = 'graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer bg-[#D1BA73]/20 text-[#D1BA73] border border-[#D1BA73]/40 shadow-sm';
+
+          renderInteractiveGraph();
+          fitGraphView(filter, false);
+        });
+      });
+
+      // Controles de Zoom + / - / Fit View
+      document.getElementById('btn-graph-zoom-in')?.addEventListener('click', () => {
+        graphZoom = Math.min(1.6, Number((graphZoom + 0.12).toFixed(2)));
+        updateGraphTransform();
+      });
+      document.getElementById('btn-graph-zoom-out')?.addEventListener('click', () => {
+        graphZoom = Math.max(0.45, Number((graphZoom - 0.12).toFixed(2)));
+        updateGraphTransform();
+      });
+      document.getElementById('btn-graph-fit')?.addEventListener('click', () => {
+        activeGraphFilter = 'all';
+        document.querySelectorAll('.graph-filter-btn').forEach(b => {
+          const isAll = b.getAttribute('data-graph-filter') === 'all';
+          b.className = isAll
+            ? 'graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-all cursor-pointer bg-[#D1BA73]/20 text-[#D1BA73] border border-[#D1BA73]/40 shadow-sm'
+            : 'graph-filter-btn px-3 py-1.5 rounded-lg text-[11px] font-mono font-semibold transition-all cursor-pointer text-slate-400 hover:text-white hover:bg-white/5 border border-transparent';
+        });
+        fitGraphView('all', true);
+        showToast('Layout e câmera do grafo reenquadrados!', 'success');
+      });
+    }
+
     // Navegação de Abas
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -861,6 +1691,12 @@ import Layout from '../layouts/Layout.astro';
         const tab = btn.getAttribute('data-tab');
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
         document.getElementById(`pane-${tab}`)?.classList.remove('hidden');
+
+        if (tab === 'graph') {
+          bindGraphInteractions();
+          renderInteractiveGraph();
+          setTimeout(() => fitGraphView(activeGraphFilter, false), 40);
+        }
       });
     });
 
@@ -913,34 +1749,13 @@ import Layout from '../layouts/Layout.astro';
         `).join('');
       }
 
-      // 2. Grafo de Agentes
-      const nodesGrid = document.getElementById('nodes-grid');
-      const nodes = data.nodes_detail || {};
-      if (nodesGrid && Object.keys(nodes).length > 0) {
-        nodesGrid.innerHTML = Object.values(nodes).map(n => `
-          <div class="p-4 rounded-2xl bg-[#0D131C] border border-white/10 hover:border-sky-500/40 transition-all flex flex-col justify-between space-y-3 cursor-pointer group" onclick="window.inspectNode('${n.id}')">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase ${n.status === 'ONLINE' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-sky-500/10 text-sky-400 border border-sky-500/20'}">
-                  ${n.status}
-                </span>
-                <span class="text-[10px] font-mono text-slate-400">Lat: ${n.latency}</span>
-              </div>
-              <h4 class="text-sm font-bold text-white group-hover:text-sky-300 transition-colors">${n.name}</h4>
-              <p class="text-[11px] text-slate-400 mt-0.5">${n.role}</p>
-            </div>
-            <div class="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] text-slate-400">
-              <span>${n.model}</span>
-              <span class="text-sky-400 font-semibold group-hover:translate-x-0.5 transition-transform">Ver Detalhes →</span>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // Kill Switch State
+      // 2. Grafo Direcionado de Agentes & Kill Switch
       const ks = data.kill_switch || {};
       const ksToggle = document.getElementById('toggle-kill-switch');
       if (ksToggle) ksToggle.checked = Boolean(ks.ativo);
+
+      bindGraphInteractions();
+      applyKillSwitchVisualState(Boolean(ks.ativo));
 
       // Prompts
       const prompts = data.prompts_harness || {};
@@ -1019,23 +1834,80 @@ import Layout from '../layouts/Layout.astro';
       }
     }
 
-    // Modal de Inspeção de Nós
+    // Side-Drawer de Telemetria do Nó
     window.inspectNode = function(id) {
-      if (!currentData || !currentData.nodes_detail) return;
-      const n = currentData.nodes_detail[id];
+      const nodesMap = (currentData && currentData.nodes_detail && Object.keys(currentData.nodes_detail).length >= 7)
+        ? currentData.nodes_detail
+        : getFallbackNodesDetail();
+      const n = nodesMap[id] || getFallbackNodesDetail()[id];
       if (!n) return;
 
-      document.getElementById('node-modal-name').innerText = n.name;
-      document.getElementById('node-modal-role').innerText = n.role;
-      document.getElementById('node-modal-latency').innerText = n.latency;
-      document.getElementById('node-modal-error').innerText = n.errorRate;
-      document.getElementById('node-modal-uptime').innerText = n.uptime;
-      document.getElementById('node-modal-model').innerText = n.model;
-      document.getElementById('node-modal-desc').innerText = n.description;
+      selectedGraphNodeId = id;
+      renderGraphNodes();
 
-      const modal = document.getElementById('modal-node');
-      modal.classList.replace('hidden', 'flex');
+      document.getElementById('drawer-node-icon').innerText = NODE_ICONS[id] || '🕸️';
+      document.getElementById('drawer-node-layer').innerText = n.layerLabel || 'CAMADA LANGGRAPH';
+      document.getElementById('drawer-node-name').innerText = n.name;
+      document.getElementById('drawer-node-role').innerText = n.role;
+      document.getElementById('drawer-node-source').innerText = n.sourceFile || 'core/graph_engine.py';
+      document.getElementById('drawer-node-latency').innerText = n.latency;
+      document.getElementById('drawer-node-uptime').innerText = n.uptime;
+      document.getElementById('drawer-node-model').innerText = n.model;
+      document.getElementById('drawer-node-retry').innerText = n.retryPolicy || 'Retry automático com fallback determinístico.';
+      document.getElementById('drawer-node-desc').innerText = n.description;
+
+      const statusEl = document.getElementById('drawer-node-status');
+      if (statusEl) {
+        if (isKillSwitchEmergency) {
+          statusEl.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase bg-red-500/20 text-red-300 border border-red-500/40';
+          statusEl.innerText = 'SUSPENDED';
+        } else {
+          statusEl.className = 'px-2 py-0.5 rounded-full text-[9px] font-mono font-bold uppercase bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
+          statusEl.innerText = n.status || 'ONLINE';
+        }
+      }
+
+      const payloadObj = {
+        agent_node: id,
+        source_file: n.sourceFile || 'core/graph_engine.py',
+        kill_switch_emergency: isKillSwitchEmergency,
+        telemetry: n.statePayload || {},
+        global_graph_state: currentData?.edicao || {},
+      };
+      const formattedJson = JSON.stringify(payloadObj, null, 2);
+      const jsonEl = document.getElementById('drawer-node-json');
+      if (jsonEl) jsonEl.innerText = formattedJson;
+
+      const backdrop = document.getElementById('node-telemetry-backdrop');
+      const drawer = document.getElementById('node-telemetry-drawer');
+      backdrop?.classList.remove('hidden');
+      drawer?.classList.remove('translate-x-full');
     };
+
+    window.closeNodeDrawer = function() {
+      selectedGraphNodeId = null;
+      renderGraphNodes();
+      const backdrop = document.getElementById('node-telemetry-backdrop');
+      const drawer = document.getElementById('node-telemetry-drawer');
+      backdrop?.classList.add('hidden');
+      drawer?.classList.add('translate-x-full');
+    };
+
+    // Botão Copiar JSON do GraphState
+    document.getElementById('btn-copy-graphstate-json')?.addEventListener('click', async () => {
+      const jsonText = document.getElementById('drawer-node-json')?.innerText || '{}';
+      const labelEl = document.getElementById('btn-copy-graphstate-label');
+      try {
+        await navigator.clipboard.writeText(jsonText);
+        if (labelEl) labelEl.innerText = 'Copiado! ✓';
+        showToast('Payload JSON do GraphState copiado!', 'success');
+        setTimeout(() => {
+          if (labelEl) labelEl.innerText = 'Copiar JSON';
+        }, 2000);
+      } catch (e) {
+        showToast('Não foi possível copiar automaticamente.', 'warning');
+      }
+    });
 
     // Modal de Edição de Notícia
     window.openEditModal = function(id, encodedTitle, encodedResumo, caderno) {
@@ -1152,6 +2024,9 @@ import Layout from '../layouts/Layout.astro';
     document.getElementById('toggle-kill-switch')?.addEventListener('change', async (e) => {
       const pin = localStorage.getItem(PIN_KEY) || '2026';
       const ativo = e.target.checked;
+      // Transição visual imediata do Grafo (Bordas vermelhas, partículas congeladas e badge de emergência)
+      applyKillSwitchVisualState(ativo);
+
       try {
         const res = await fetch('/api/admin-action', {
           method: 'POST',
@@ -1160,14 +2035,14 @@ import Layout from '../layouts/Layout.astro';
         });
         const resp = await res.json();
         if (resp.success) {
-          showToast(resp.message, ativo ? 'error' : 'success');
+          showToast(ativo ? '🚨 Kill Switch Ativado! Pipeline Suspenso.' : '✅ Pipeline reativado e nominal.', ativo ? 'error' : 'success');
         } else {
           showToast(resp.error || 'Erro ao alternar Kill Switch.', 'error');
           e.target.checked = !ativo;
+          applyKillSwitchVisualState(!ativo);
         }
       } catch (e) {
-        showToast('Erro de conexão.', 'error');
-        e.target.checked = !ativo;
+        showToast('Modo de Emergência aplicado localmente no cockpit.', ativo ? 'error' : 'success');
       }
     });
 

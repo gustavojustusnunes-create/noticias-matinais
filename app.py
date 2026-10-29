@@ -1134,12 +1134,13 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ondemand = st.tabs([
+aba_inicio, aba_edicao, aba_finance, aba_podcast, aba_ondemand, aba_carrossel = st.tabs([
     "🌐 Edição do Dia",
     "📰 Arquivo de Edições",
     "📈 All News Finance",
     "🎧 Podcast Executivo",
-    "⚡ Pauta Express"
+    "⚡ Pauta Express",
+    "🔬 Gerador de Carrosséis (Ciência & Negócios)"
 ])
 
 with aba_ondemand:
@@ -1148,6 +1149,13 @@ with aba_ondemand:
         render_ondemand_tab()
     except Exception as e_ondemand:
         st.error(f"⚠️ Erro ao carregar aba Pauta Express: {e_ondemand}")
+
+with aba_carrossel:
+    try:
+        from carousel_engine.ui import render_carousel_generator_tab
+        render_carousel_generator_tab()
+    except Exception as e_carrossel:
+        st.error(f"⚠️ Erro ao carregar Gerador de Carrosséis: {e_carrossel}")
 
 with aba_inicio:
     # ── EXTRAÇÃO DAS MANCHETES E FOTOS PARA O HERO ──

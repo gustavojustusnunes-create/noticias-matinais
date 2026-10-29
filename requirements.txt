@@ -44,3 +44,10 @@ Pillow>=10.0.0
 # ── Grafo Agêntico (LangGraph & Core) ───────────────────────────
 langgraph>=1.2.0
 langchain-core>=1.6.0
+
+# ── Motor de Carrosséis Científicos & Negócios (carousel_engine) ─
+google-genai>=1.0.0
+pydantic>=2.7.0
+Jinja2>=3.1.4
+pypdf>=4.2.0
+
