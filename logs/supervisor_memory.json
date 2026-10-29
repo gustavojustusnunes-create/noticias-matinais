@@ -940,6 +940,55 @@
             "texto_original": "O mercado cripto registra forte correção nesta quinta-feira, pressionado por um ambiente macroeconômico adverso, cautela em relação às taxas de juros americanas e realização de lucros após altas recentes. Por volta das 8h45, o bitcoin recuava 1,84% nas últimas 24 horas, cotado a US$ 81.740,51, enquanto o ethereum registrava baixa de 2,61%, negociado a US$ 2,407,09. O movimento de retração também atingiu outros principais ativos do setor, com perdas de 1,53% para a solana e de 1,64% para o XRP, refletindo uma postura generalizada de aversão ao risco por parte dos investidores institucionais e de varejo.\n\nA dinâmica dos fundos negociados em bolsa nos Estados Unidos evidencia uma clara divergência de fluxo entre os dois principais criptoativos do mercado. Os ETFs à vista de bitcoin recuperaram tração ao captar US$ 528 milhões em uma única sessão e somar US$ 1,08 bilhão em três dias, revertendo o acumulado de outubro para o campo positivo. Em contrapartida, os produtos vinculados ao ethereum acumulam saídas líquidas de US$ 1,08 bilhão no mês, o que explica o desempenho comparativamente inferior do ETH e amplia a pressão vendedora sobre o ativo diante da preferência institucional pela criptomoeda líder.\n\nNo cenário regulatório e macro, o mercado monitora desdobramentos como as discussões da OCC sobre as regras da GENIUS Act para stablecoins e as demandas de clareza normativa direcionadas à SEC. Embora essas sinalizações institucionais mantenham o setor sob escrutínio, a cautela prevalece no curto prazo. Analistas apontam que a sensibilidade aos dados de inflação nos Estados Unidos continua ditando o ritmo do apetite global por risco, limitando o potencial de valorização imediata mesmo diante de fluxos positivos pontuais em veículos de investimento regulados.",
             "motivo_falha": "O texto original excedia o limite máximo de 90 palavras (277 palavras). Foi reescrito para cumprir estritamente a faixa de 60 a 90 palavras, a estrutura de três passos do The Economist e a pontuação final.",
             "correcao_aplicada": "O bitcoin recuou 1,84% nesta quinta-feira, sendo cotado a US$ 81.740, enquanto o ethereum registrou ..."
+        },
+        {
+            "data": "2026-10-29T15:23:27.571162",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A recente carta de Flávio Bolsonaro (PL), publicada de Miami com teor golpista e a alegação de ser o \"verdadeiro presidente eleito\", provocou uma rápida e unificada reação de partidos centrist",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 31 palavras, violando o limite mínimo obrigatório de 60 palavras. Não seguia a estrutura analítica de três passos do padrão The Economist e não terminava com pontuação final.",
+            "correcao_aplicada": "A carta de Flávio Bolsonaro (PL), divulgada de Miami com alegações golpistas sobre a eleição, gerou ..."
+        },
+        {
+            "data": "2026-10-29T15:23:57.051793",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O Itaú BBA rebaixou o preço-alvo das ações do Nubank (ROXO34) negociadas nos EUA de US$ 18 para US$ 15 até o fim de 202",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 25 palavras, violando o limite mínimo obrigatório de 60 palavras. Não apresentava a estrutura analítica de três passos do padrão The Economist e a frase final estava truncada, sem pontuação.",
+            "correcao_aplicada": "O Itaú BBA rebaixou o preço-alvo das ações do Nubank (ROXO34) negociadas nos EUA de US$ 18 para US$ ..."
+        },
+        {
+            "data": "2026-10-29T15:24:07.592632",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Fundos de investimento vinculados à família Muffato, controladora do Grupo Muffato, elevaram sua participação acionária no Assaí (ASAI3) para 15,02% do total de ações ordinárias",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 25 palavras, violando o limite mínimo obrigatório de 60 palavras, e não apresentava a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Fundos de investimento ligados à família Muffato, controladora do Grupo Muffato, elevaram sua partic..."
+        },
+        {
+            "data": "2026-10-29T15:25:08.762888",
+            "tema": "Macroeconomia",
+            "texto_original": "A família Muffato, controladora do Grupo Muffato, uma das maiores redes supermercadistas do Brasil e concorrente direta do Assaí no segmento de atacarejo e varejo alimentar, elevou sua participação",
+            "motivo_falha": "O texto original estava truncado com apenas 29 palavras, sem pontuação final e desprovido da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Fundos de investimento ligados à família Muffato elevaram sua participação acionária no Assaí para 1..."
+        },
+        {
+            "data": "2026-10-29T15:26:18.419736",
+            "tema": "Macroeconomia",
+            "texto_original": "O setor elétrico brasileiro, reconhecido globalmente por sua matriz predominantemente limpa, projeta um aumento substancial de 66% nas emissões de gases poluentes até 2036. Este incremento,",
+            "motivo_falha": "O texto original estava truncado em 26 palavras, sem pontuação final e desprovido da estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "As emissões de gases de efeito estufa do setor elétrico brasileiro devem crescer 66% até 2036, impul..."
+        },
+        {
+            "data": "2026-10-29T15:26:39.741459",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "Courtney Guimarães, diretor da área de ativos digitais da Bradesco Asset Management, delineou uma distinção crucial entre Bitcoin e ativos tokenizados, enfatizando que a tecnologia blockchain, embora comum a ambos, não os torna",
+            "motivo_falha": "O texto original estava subdimensionado com 33 palavras, violando o limite mínimo de 60 palavras. Não seguia a estrutura analítica de três passos do padrão The Economist e terminava abruptamente sem pontuação final.",
+            "correcao_aplicada": "Courtney Guimarães, diretor de ativos digitais da Bradesco Asset Management, delineou uma distinção ..."
+        },
+        {
+            "data": "2026-10-29T15:28:30.355343",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) atingiu a marca de US$ 80.330,00, registrando um avanço de 1,54% nas últimas 24 horas, impulsionado por um movimento",
+            "motivo_falha": "O texto original estava truncado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, sem pontuação final e sem a estrutura analítica de três passos.",
+            "correcao_aplicada": "O Bitcoin recuou para a faixa de US$ 80.330 neste domingo, pressionado por saídas líquidas recordes ..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-28"
