@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-10-29T19:54:29.208779-03:00",
-    "data_hoje": "2026-10-29",
+    "timestamp_scan": "2026-10-30T13:09:18.428988-03:00",
+    "data_hoje": "2026-10-30",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -8,38 +8,38 @@
         "journal": {
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
-            "detalhe": "Edição publicada com sucesso (3 notícias).",
-            "ultima_edicao": "2026-10-29",
+            "detalhe": "Edição publicada com sucesso (5 notícias).",
+            "ultima_edicao": "2026-10-30",
             "horario_previsto": "05:20 BRT",
-            "total_itens": 3
+            "total_itens": 5
         },
         "finance": {
             "nome": "All News Finance",
             "status": "ONLINE",
             "detalhe": "Edição de mercado publicada (0 análises).",
-            "ultima_edicao": "2026-10-29",
+            "ultima_edicao": "2026-10-30",
             "horario_previsto": "05:25 BRT",
             "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "ONLINE",
-            "detalhe": "Posts da edição de 2026-10-29 gerados e registrados.",
+            "status": "PENDING",
+            "detalhe": "Ainda não postou a edição de hoje (2026-10-30).",
             "ultima_edicao": "2026-10-29",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 134 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 134,
+            "detalhe": "Auditoria cognitiva ativa. 135 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 135,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-10-29 19:54 BRT",
+            "ultimo_scan": "2026-10-30 13:09 BRT",
             "incidentes_abertos": 0
         }
     }
