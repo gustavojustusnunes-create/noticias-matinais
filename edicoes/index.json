@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-10-30",
+  "data_extenso": "Sexta-feira, 30 de Outubro de 2026",
+  "manchete": "Mercado Precifica Risco Fiscal Pós-Eleição, Elevando Juros Futuros",
+  "arquivo_html": "2026-10-30.html"
+ },
+ {
   "data": "2026-10-29",
   "data_extenso": "Quinta-feira, 29 de Outubro de 2026",
   "manchete": "Mercado Brasileiro: Reprecificação Pós-Eleição e Riscos de Volatilidade",
@@ -352,11 +358,5 @@
   "data_extenso": "Terça-feira, 18 de Agosto de 2026",
   "manchete": "EUA trocam chefe de escritório responsável pelas relações com Brasil e América Latina",
   "arquivo_html": "2026-08-18.html"
- },
- {
-  "data": "2026-08-17",
-  "data_extenso": "Segunda-feira, 17 de Agosto de 2026",
-  "manchete": "A vida em El Salvador 4 anos sob Bukele: 'O medo agora é outro'",
-  "arquivo_html": "2026-08-17.html"
  }
 ]
