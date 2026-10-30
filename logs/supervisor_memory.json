@@ -1,8 +1,5 @@
 {
     "imagens_recentes": [
-        "https://s2-g1.glbimg.com/-RYC3kOhBAsjbgbqIb_i_8ygbYE=/3500x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/P/I/AfCMzFTBmN6Yym7rbtfw/2026-02-27t003234z-1-lynxmpem1q018-rtroptp-4-empresas-netflix-warner-bros-dis.jpg",
-        "https://s2-g1.glbimg.com/JpsdTRKWIP2Lu1OnDxdQmgAaxjY=/1500x0/filters:format(jpeg)/https://i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2026/B/1/tXwAkDRrG51Xhhg24qXA/fotojet-2-.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/09/inteligencia-artificial-geral.jpg",
         "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/back-view-portrait-fitness-woman-earphones-stretching.jpg?quality=95&strip=info&resize=1200,630&crop=1",
         "https://www.infomoney.com.br/wp-content/uploads/2026/03/2026-03-29T060934Z_964769431_RC25EKAJLMU1_RTRMADP_3_USA-MARKETS-IRAN-TRADING.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-1.jpg",
@@ -49,7 +46,10 @@
         "https://www.infomoney.com.br/wp-content/uploads/2026/04/2026-04-23T223943Z_1_LYNXMPEM3M1IY_RTROPTP_4_IRAN-ECONOMY.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/Contraste-financeiro-em-Brasilia.jpg",
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/1c05/live/8c8e8880-d2de-11f1-b441-2b33b063138f.png",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/chatgpt-2.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/chatgpt-2.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/10/daniel-dan-wQRGG_RTsLI-unsplash.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/mistral.jpg",
+        "https://www.inovacaotecnologica.com.br/noticias/imagens/010150261030-computacao-organoides-1.jpg"
     ],
     "erros": [
         {
@@ -998,5 +998,5 @@
             "correcao_aplicada": "A Raízen comunicou a conversão de 1,23 bilhão de ações ordinárias detidas pela Shell em papéis prefe..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-29"
+    "ultima_edicao_instagram": "2026-10-30"
 }
