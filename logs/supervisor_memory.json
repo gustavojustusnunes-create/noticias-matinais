@@ -989,6 +989,13 @@
             "texto_original": "O Bitcoin (BTC) atingiu a marca de US$ 80.330,00, registrando um avanço de 1,54% nas últimas 24 horas, impulsionado por um movimento",
             "motivo_falha": "O texto original estava truncado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, sem pontuação final e sem a estrutura analítica de três passos.",
             "correcao_aplicada": "O Bitcoin recuou para a faixa de US$ 80.330 neste domingo, pressionado por saídas líquidas recordes ..."
+        },
+        {
+            "data": "2026-10-30T15:21:52.099335",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Raízen (RAIZ4) comunicou, em 29 de outubro de 2026, a conversão de 1,23 bilhão de ações ordinárias detidas pela Shell em igual",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e pontuação final.",
+            "correcao_aplicada": "A Raízen comunicou a conversão de 1,23 bilhão de ações ordinárias detidas pela Shell em papéis prefe..."
         }
     ],
     "ultima_edicao_instagram": "2026-10-29"
