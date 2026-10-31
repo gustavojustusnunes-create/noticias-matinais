@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://boaforma.abril.com.br/wp-content/uploads/sites/2/2026/10/back-view-portrait-fitness-woman-earphones-stretching.jpg?quality=95&strip=info&resize=1200,630&crop=1",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/03/2026-03-29T060934Z_964769431_RC25EKAJLMU1_RTRMADP_3_USA-MARKETS-IRAN-TRADING.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/09/2026-09-25T223900Z_154552893_RC2MQNA2LIRJ_RTRMADP_3_BRAZIL-ELECTION-LULA.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/02/claude-chatgpt-scaled-e1772626568145.jpg",
@@ -49,7 +47,9 @@
         "https://olhardigital.com.br/wp-content/uploads/2026/10/chatgpt-2.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/daniel-dan-wQRGG_RTsLI-unsplash.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/mistral.jpg",
-        "https://www.inovacaotecnologica.com.br/noticias/imagens/010150261030-computacao-organoides-1.jpg"
+        "https://www.inovacaotecnologica.com.br/noticias/imagens/010150261030-computacao-organoides-1.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2019/06/eduardo-braga-1.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/10/papa-leao-xiv.jpeg"
     ],
     "erros": [
         {
@@ -998,5 +998,5 @@
             "correcao_aplicada": "A Raízen comunicou a conversão de 1,23 bilhão de ações ordinárias detidas pela Shell em papéis prefe..."
         }
     ],
-    "ultima_edicao_instagram": "2026-10-30"
+    "ultima_edicao_instagram": "2026-10-31"
 }
