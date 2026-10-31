@@ -1,0 +1,30 @@
+{
+ "data": "2026-10-31",
+ "data_extenso": "Sábado, 31 de Outubro de 2026",
+ "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
+ "manchete": "Senado debate alíquota da CBS: impacto fiscal e empresarial",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Senado debate alíquota da CBS: impacto fiscal e empresarial",
+    "link": "https://www.infomoney.com.br/mercados/eduardo-braga-relator-aliquota-cbs-senado/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/06/eduardo-braga-1.jpg",
+    "resumo": "O Senado iniciará o debate sobre a alíquota da Contribuição sobre Bens e Serviços (CBS), com o TCU propondo 11,3% e expectativa de arrecadação de R$ 636 bilhões em 2027. A definição é crucial para a transição ao novo IVA, substituindo PIS/Cofins e buscando estabilidade fiscal, enquanto empresas aguardam clareza sobre o impacto nos custos operacionais. O governo federal ganha previsibilidade orçamentária, mas a incerteza sobre a alíquota final representa um risco direto à competitividade empresarial e ao poder de compra do consumidor."
+   },
+   {
+    "titulo": "Kassab condiciona apoio do PSD a medidas econômicas fiscais",
+    "link": "https://www.infomoney.com.br/politica/kassab-psd-governo-lula-aproximacao-medidas-economicas/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/11/gilberto-kassab-e1772221777351.jpg",
+    "resumo": "Gilberto Kassab, presidente do PSD, confirmou a aproximação do governo Lula com a legenda, condicionando um apoio mais profundo à adoção de medidas econômicas que visem equilíbrio fiscal. A busca por maior base parlamentar reflete a necessidade governamental de solidificar a governabilidade e aprovar pautas econômicas, enquanto o PSD busca influência em troca de estabilidade fiscal percebida. A concretização dessa aliança dependerá da sinalização de nomes e políticas econômicas críveis, com o risco de instabilidade política e fiscal caso as expectativas de mercado não sejam atendidas."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Vaticano Pressiona por Desarmamento Ético da IA",
+    "link": "https://olhardigital.com.br/2026/10/30/inteligencia-artificial/papa-leao-xiv-defende-o-desarmamento-de-sistemas-de-ia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/papa-leao-xiv.jpeg",
+    "resumo": "O Papa Leão XIV defendeu publicamente o 'desarmamento' de sistemas de inteligência artificial, instando a proibição de armas autônomas letais e a manutenção da supervisão humana em decisões críticas. Esta posição reflete a crescente preocupação global com a autonomia algorítmica e a ausência de marcos regulatórios éticos robustos, pressionando por uma governança que priorize a responsabilidade humana sobre a capacidade computacional. A intervenção papal amplifica o debate sobre a regulação da IA, favorecendo defensores da ética e expondo o risco de delegação irrestrita de poder decisório a máquinas."
+   }
+  ]
+ }
+}
