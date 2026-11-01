@@ -1,0 +1,24 @@
+{
+ "data": "2026-11-01",
+ "data_extenso": "Domingo, 1 de Novembro de 2026",
+ "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
+ "manchete": "Fonteles no Piauí: Dívida Reduzida, Desafio Fiscal Persiste",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Fonteles no Piauí: Dívida Reduzida, Desafio Fiscal Persiste",
+    "link": "https://www.infomoney.com.br/politica/na-fazenda-do-piaui-fonteles-reduziu-divida-mas-teve-deficit-em-metade-dos-anos/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/SaveClip.App_719565411_18090106907526939_3345738196886058584_n.jpg",
+    "resumo": "Rafael Fonteles, ex-secretário de Fazenda do Piauí, reduziu a dívida estadual de 57% para 37% da Receita Corrente Líquida, mas registrou déficits primários em quatro dos oito anos de gestão. A melhora da Capacidade de Pagamento (Capag) para 'B' facilitou o acesso a crédito, mas a volatilidade das receitas ditou resultados fiscais mistos. Essa ambivalência questiona a consistência orçamentária, fator crítico para a credibilidade de Fonteles em uma eventual indicação federal."
+   }
+  ],
+  "Geopolítica & Assuntos Globais": [
+   {
+    "titulo": "Tarifas EUA Fecham Fábrica Canadense, Aprofundando Tensão Comercial",
+    "link": "https://www.bbc.com/portuguese/articles/ckn8wq7jeg7yo?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/b7be/live/dab6afd0-d223-11f1-93e1-3b657b665bcf.jpg",
+    "resumo": "A fábrica de papel centenária em Témiscaming, Quebec, fechou por tempo indeterminado, resultando em centenas de desempregados após os EUA imporem tarifas de 50% sobre seus produtos. A medida reflete uma escalada protecionista americana, utilizando barreiras comerciais como ferramenta de pressão econômica contra o Canadá. A cidade de Témiscaming e seus trabalhadores perdem diretamente, enquanto o risco imediato é a intensificação de disputas comerciais transfronteiriças e a precarização de setores dependentes de exportação."
+   }
+  ]
+ }
+}

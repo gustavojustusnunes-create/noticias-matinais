@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-01",
+  "data_extenso": "Domingo, 1 de Novembro de 2026",
+  "manchete": "Fonteles no Piauí: Dívida Reduzida, Desafio Fiscal Persiste",
+  "arquivo_html": "2026-11-01.html"
+ },
+ {
   "data": "2026-10-31",
   "data_extenso": "Sábado, 31 de Outubro de 2026",
   "manchete": "Senado debate alíquota da CBS: impacto fiscal e empresarial",
@@ -352,11 +358,5 @@
   "data_extenso": "Segunda-feira, 24 de Agosto de 2026",
   "manchete": "ESPECIAL ELEIÇÕES: o que esperar das nossas relações com o mundo? - O Assunto #1789",
   "arquivo_html": "2026-08-24.html"
- },
- {
-  "data": "2026-08-23",
-  "data_extenso": "Domingo, 23 de Agosto de 2026",
-  "manchete": "Chefe de segurança do Irã ameaça retaliar vizinhos que apoiarem Trump: 'nem uma gota de petróleo sairá pelo Estreito de ",
-  "arquivo_html": "2026-08-23.html"
  }
 ]
