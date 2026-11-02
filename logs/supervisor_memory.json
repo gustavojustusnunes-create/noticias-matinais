@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://olhardigital.com.br/wp-content/uploads/2026/02/claude-chatgpt-scaled-e1772626568145.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/09/52631336512-eef0b98938-o.webp",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/windows-11-e1769444845950.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-11T133451Z_158209492_RC211OAHP5D3_RTRMADP_3_IRAN-CRISIS-SAUDI-AIRPORT.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/anthropic-2.jpg",
@@ -49,7 +47,9 @@
         "https://www.infomoney.com.br/wp-content/uploads/2019/06/eduardo-braga-1.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/papa-leao-xiv.jpeg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/SaveClip.App_719565411_18090106907526939_3345738196886058584_n.jpg",
-        "https://ichef.bbci.co.uk/news/1200/branded_portuguese/b7be/live/dab6afd0-d223-11f1-93e1-3b657b665bcf.jpg"
+        "https://ichef.bbci.co.uk/news/1200/branded_portuguese/b7be/live/dab6afd0-d223-11f1-93e1-3b657b665bcf.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/10/b3.webp",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/ChatGPT-com-Escudo-de-Segurana-copiar.jpg"
     ],
     "erros": [
         {
@@ -1012,5 +1012,5 @@
             "correcao_aplicada": "Rogério Xavier, sócio-fundador da SPX Capital, alertou que a política econômica do governo Lula, com..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-01"
+    "ultima_edicao_instagram": "2026-11-02"
 }
