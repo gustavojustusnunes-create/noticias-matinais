@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Investidores poderão comprar um pedaço da Islândia: dona da Blue Lagoon prepara IPO",
+      "link": "https://www.moneytimes.com.br/investidores-poderao-comprar-um-pedaco-da-islandia-dona-da-blue-lagoon-prepara-ipo-sama/",
+      "resumo": "Bláa Lónid hf., controladora do complexo Blue Lagoon na Islândia, prepara uma oferta pública inicial (IPO) na Nasdaq Iceland para captar 100 milhões de euros, visando uma avaliação",
+      "imagem": "https://images.unsplash.com/photo-1535320903710-d993d3d77d29?auto=format&fit=crop&q=80&w=800&sig=0_655",
+      "fonte": "Money Times",
+      "data": "2026-11-02"
+    },
+    {
+      "titulo": "O que Wall Street espera das eleições nos EUA? O histórico do S&P 500 dá pistas",
+      "link": "https://www.moneytimes.com.br/o-que-wall-street-espera-das-eleicoes-nos-eua-o-historico-do-sp-500-da-pistas/",
+      "resumo": "Historicamente, o S&P 500 registra um desempenho positivo de 15% em média nos 12 meses seguintes às eleições de meio de mandato nos EUA, conforme dados da CNBC desde 1980. Este padrão decorre da redução da incerteza política após o pleito, permitindo que os investidores se concentrem nos fundamentos corporativos. Contudo, a volatilidade inicial persiste, e a capacidade do mercado de sustentar ganhos dependerá da clareza das políticas fiscais e regulatórias futuras.",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=1_644",
+      "fonte": "Money Times",
+      "data": "2026-11-02"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Embraer (EMBJ3) fecha acordo para fornecer até seis aviões para Força Aérea da Grécia",
+      "link": "https://www.moneytimes.com.br/embraer-embj3-fecha-acordo-para-fornecer-ate-seis-avioes-para-forca-aerea-da-grecia/",
+      "resumo": "A Embraer (EMBJ3) formalizou um acordo com a Grécia para o fornecimento de três aeronaves de transporte militar KC-390 Millennium, com a opção de compra para mais três unidades adicionais.",
+      "imagem": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=800&sig=0_750",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-02"
+    },
+    {
+      "titulo": "Lula 4 ou ‘Dilma 3’? Rogério Xavier, da SPX Capital, alerta para riscos da política econômica",
+      "link": "https://www.moneytimes.com.br/lula-4-ou-dilma-3-rogerio-xavier-da-spx-capital-alerta-para-riscos-da-politica-economica-lmrs/",
+      "resumo": "Rogério Xavier, sócio-fundador da SPX Capital, alertou que a política econômica do governo Lula, com foco em expansão de gastos, arrisca replicar o cenário de instabilidade fiscal do mandato de Dilma Rousseff. A preocupação reside na crescente intervenção estatal e na pressão sobre as contas públicas, que podem minar a credibilidade fiscal. Investidores monitoram o risco de descontrole orçamentário, que pode desvalorizar ativos e afastar capital estrangeiro, impactando diretamente a confiança do mercado.",
+      "imagem": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800&sig=1_891",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-02"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Petróleo despenca quase 8% com expectativa de retomada de negociações entre EUA e Irã",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/mercado/2026/11/petroleo-despenca-quase-8-com-expectativa-de-retomada-de-negociacoes-entre-eua-e-ira.shtml",
+      "resumo": "Os preços do petróleo bruto registraram uma queda expressiva de quase 8% nesta segunda-feira, 2 de fevereiro de 2026, em resposta direta à declaração do presidente iraniano, Masoud Pez",
+      "imagem": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800&sig=0_523",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-02"
+    },
+    {
+      "titulo": "Reservas de Airbnb em Paris despencam após onda de tumultos afastar turistas",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/negocios/2026/11/reservas-de-airbnb-em-paris-despencam-apos-onda-de-tumultos-afastar-turistas.shtml",
+      "resumo": "As reservas em plataformas de hospedagem como Airbnb e serviços similares em Paris registraram uma queda acentuada, conforme reportado, em decorrência dos recentes tumultos e saques que assolaram a capital francesa no mês passado",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=1_991",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-02"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Clientes da Binance retiram quase R$ 5 bilhões após ataque cibernético",
+      "link": "https://www.moneytimes.com.br/clientes-da-binance-retiram-quase-r-5-bilhoes-apos-ataque-cibernetico/",
+      "resumo": "A Binance, maior corretora de criptomoedas do mundo, registrou saques de US$ 4,72 bilhões desde a reabertura de suas operações, após um ataque cibernético que resultou no roubo",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=0_248",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-02"
+    },
+    {
+      "titulo": "Ataque hacker: Mercado Bitcoin (MB) sofre incidente de US$ 40 milhões",
+      "link": "https://www.moneytimes.com.br/ataque-hacker-mercado-bitcoin-mb-sofre-incidente-de-us-40-milhoes-rens/",
+      "resumo": "O Mercado Bitcoin (MB) comunicou um incidente de segurança em seus sistemas na manhã desta segunda-feira (2), resultando na suspensão preventiva de depósitos, saques e acesso ao aplicativo. A corretora afirmou ter cont",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=1_978",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-02"
+    }
+  ],
+  "data": "2026-11-02"
+}

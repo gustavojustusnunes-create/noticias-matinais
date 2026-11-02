@@ -996,6 +996,20 @@
             "texto_original": "A Raízen (RAIZ4) comunicou, em 29 de outubro de 2026, a conversão de 1,23 bilhão de ações ordinárias detidas pela Shell em igual",
             "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e pontuação final.",
             "correcao_aplicada": "A Raízen comunicou a conversão de 1,23 bilhão de ações ordinárias detidas pela Shell em papéis prefe..."
+        },
+        {
+            "data": "2026-11-02T18:41:11.696979",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "As eleições de meio de mandato nos Estados Unidos historicamente sinalizam um período de desempenho positivo para o S&P 500, apesar da apreensão inicial do mercado. Dados da CNBC, abrangendo de 1980",
+            "motivo_falha": "O texto original estava subdimensionado com 25 palavras, violando o limite mínimo obrigatório de 60 palavras. Não seguia a estrutura analítica de três passos do padrão The Economist e não terminava com pontuação final.",
+            "correcao_aplicada": "Historicamente, o S&P 500 registra um desempenho positivo de 15% em média nos 12 meses seguintes às ..."
+        },
+        {
+            "data": "2026-11-02T18:41:33.161525",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Rogério Xavier, sócio-fundador da SPX Capital, emite um alerta sobre os riscos da política econômica para o potencial quarto mandato do presidente Lula, questionando se o país se encaminha para um \"Lula",
+            "motivo_falha": "O texto original estava subdimensionado com 32 palavras, violando o limite mínimo obrigatório de 60 palavras. Não seguia a estrutura analítica de três passos do padrão The Economist e terminava abruptamente sem pontuação final.",
+            "correcao_aplicada": "Rogério Xavier, sócio-fundador da SPX Capital, alertou que a política econômica do governo Lula, com..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-01"
