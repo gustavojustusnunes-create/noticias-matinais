@@ -1,8 +1,5 @@
 {
     "imagens_recentes": [
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/windows-11-e1769444845950.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-11T133451Z_158209492_RC211OAHP5D3_RTRMADP_3_IRAN-CRISIS-SAUDI-AIRPORT.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/anthropic-2.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2025/11/2025-11-04T150523Z_788084831_RC2PPHA66QD7_RTRMADP_3_EUROPE-STOCKS.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon_logo-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2025/06/EspacoB3_02.jpg",
@@ -49,7 +46,10 @@
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/SaveClip.App_719565411_18090106907526939_3345738196886058584_n.jpg",
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/b7be/live/dab6afd0-d223-11f1-93e1-3b657b665bcf.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/b3.webp",
-        "https://olhardigital.com.br/wp-content/uploads/2026/11/ChatGPT-com-Escudo-de-Segurana-copiar.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/ChatGPT-com-Escudo-de-Segurana-copiar.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2019/11/shutterstock_1401574850-1.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/claude-mythus.jpg",
+        "https://www.inovacaotecnologica.com.br/noticias/imagens/010110261103-transistor-formatado.jpg"
     ],
     "erros": [
         {
@@ -1040,5 +1040,5 @@
             "correcao_aplicada": "O Mercado Bitcoin sofreu um incidente de segurança que resultou na movimentação não autorizada de US..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-02"
+    "ultima_edicao_instagram": "2026-11-03"
 }
