@@ -1010,6 +1010,34 @@
             "texto_original": "Rogério Xavier, sócio-fundador da SPX Capital, emite um alerta sobre os riscos da política econômica para o potencial quarto mandato do presidente Lula, questionando se o país se encaminha para um \"Lula",
             "motivo_falha": "O texto original estava subdimensionado com 32 palavras, violando o limite mínimo obrigatório de 60 palavras. Não seguia a estrutura analítica de três passos do padrão The Economist e terminava abruptamente sem pontuação final.",
             "correcao_aplicada": "Rogério Xavier, sócio-fundador da SPX Capital, alertou que a política econômica do governo Lula, com..."
+        },
+        {
+            "data": "2026-11-03T16:30:16.785361",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A vitória de Lula nas eleições de 2026 levou o Itaú Unibanco a revisar sua perspectiva para a Bolsa brasileira, passando de uma visão positiva (+1) para neutra (0) em sua escala de recomendação, que varia de -3 (muito pessimista",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 34 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e terminar sem pontuação final.",
+            "correcao_aplicada": "A vitória de Luiz Inácio Lula da Silva nas eleições de 2026 levou o Itaú Unibanco a rebaixar sua rec..."
+        },
+        {
+            "data": "2026-11-03T16:33:07.363212",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Raízen comunicou ao mercado uma alteração relevante no ticker de suas ações preferenciais classe A (PNA), que passarão a ser negociadas na B3 sob o código RAIZ55 a partir desta terça",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
+            "correcao_aplicada": "A Raízen comunicou ao mercado a alteração do ticker de suas ações preferenciais classe A, que passam..."
+        },
+        {
+            "data": "2026-11-03T16:33:51.892607",
+            "tema": "Macroeconomia",
+            "texto_original": "A Nvidia (NVDA) está intensificando as restrições comerciais ao exigir que seus parceiros de data centers reduzam significativamente a exposição a clientes chineses. Esta diretriz representa um aprofundamento na disputa tecnológica",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 31 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e terminar sem pontuação final.",
+            "correcao_aplicada": "A fabricante de semicondutores Nvidia exigiu nesta semana que seus principais parceiros globais de i..."
+        },
+        {
+            "data": "2026-11-03T16:36:13.496699",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Mercado Bitcoin (MB), uma das principais exchanges de criptoativos do Brasil, comunicou um incidente de segurança em seus sistemas na manhã desta segunda-feira, 2 de novembro. Como medida preventiva, a plataforma suspendeu temporariamente os depósitos, saques e o acesso ao aplicativo. Embora o MB afirme que o incidente foi rapidamente contido, sem prejuízo aos clientes ou vazamento de dados, trackers autônomos on-chain apontam para a movimentação de aproximadamente US$ 40 milhões de endereços supostamente ligados à corretora, um valor não confirmado oficialmente pela empresa. A equipe do MB está mobilizada para investigar a origem do ataque, rastrear os ativos e",
+            "motivo_falha": "O texto original estava incompleto na última frase, sem pontuação final, além de ultrapassar o limite ou precisar de ajuste estrito na contagem de palavras para o padrão The Economist.",
+            "correcao_aplicada": "O Mercado Bitcoin sofreu um incidente de segurança que resultou na movimentação não autorizada de US..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-02"
