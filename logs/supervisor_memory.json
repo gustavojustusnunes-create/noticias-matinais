@@ -1038,6 +1038,34 @@
             "texto_original": "O Mercado Bitcoin (MB), uma das principais exchanges de criptoativos do Brasil, comunicou um incidente de segurança em seus sistemas na manhã desta segunda-feira, 2 de novembro. Como medida preventiva, a plataforma suspendeu temporariamente os depósitos, saques e o acesso ao aplicativo. Embora o MB afirme que o incidente foi rapidamente contido, sem prejuízo aos clientes ou vazamento de dados, trackers autônomos on-chain apontam para a movimentação de aproximadamente US$ 40 milhões de endereços supostamente ligados à corretora, um valor não confirmado oficialmente pela empresa. A equipe do MB está mobilizada para investigar a origem do ataque, rastrear os ativos e",
             "motivo_falha": "O texto original estava incompleto na última frase, sem pontuação final, além de ultrapassar o limite ou precisar de ajuste estrito na contagem de palavras para o padrão The Economist.",
             "correcao_aplicada": "O Mercado Bitcoin sofreu um incidente de segurança que resultou na movimentação não autorizada de US..."
+        },
+        {
+            "data": "2026-11-04T16:33:33.304096",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Banco Daycoval optou por manter inalterada sua carteira recomendada de dividendos para o mês de novembro, refletindo uma postura defensiva diante de um cenário adverso para os ativos brasileiros. O portfólio",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 32 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e terminar sem pontuação final.",
+            "correcao_aplicada": "O Banco Daycoval manteve inalterada sua carteira recomendada de dividendos para o mês de novembro, p..."
+        },
+        {
+            "data": "2026-11-04T16:35:12.973254",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Revolut, fintech britânica, anunciou a conclusão de uma nova rodada de captação de recursos, que impulsionou seu valuation para US$ 115 bilhões. Este valor representa um aumento de 53%",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
+            "correcao_aplicada": "A fintech britânica Revolut concluiu uma nova rodada de captação que elevou seu valuation global par..."
+        },
+        {
+            "data": "2026-11-04T16:37:46.404436",
+            "tema": "Macroeconomia",
+            "texto_original": "A Apple iniciou em 4 de abril de 2026 a fase de testes de suas ferramentas de inteligência artificial (IA) para usuários na China, um movimento estratégico e tardio para a gigante de tecnologia. A",
+            "motivo_falha": "O texto original estava subdimensionado com 35 palavras, violando o limite mínimo de 60 palavras, além de estar incompleto e sem a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Apple iniciou em 4 de abril de 2026 a fase de testes de suas ferramentas de inteligência artificia..."
+        },
+        {
+            "data": "2026-11-04T16:43:05.711089",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A Binance, maior corretora de criptomoedas do mundo, revelou que o roubo de US$ 6,3 bilhões em criptoativos, o maior da história, foi resultado de uma operação sofisticada que explorou vulnerabilidades internas e engenharia social. O ataque, atribuído pelo FBI a um grupo de hackers norte-coreano, iniciou-se em junho com o download de uma ferramenta de inteligência artificial adulterada por um funcionário da equipe de desenvolvimento de carteiras. Embora a Binance tenha detectado e corrigido a falha inicial, a exposição de credenciais persistiu.\n\nA infiltração aprofundou-se em setembro, quando um segundo engenheiro de software, buscando emprego, baixou um repositório de código malicioso após uma entrevista para uma vaga fictícia, incluindo uma reunião com um CEO falso. Este computador comprometido, juntamente com uma ferramenta interna de IA, foi então utilizado pelo invasor em 20 de outubro para obter controle dos sistemas de desenvolvimento de carteiras. Em 29 de outubro, o hacker usou credenciais roubadas do primeiro desenvolvedor através do computador do segundo para executar um script malicioso e concretizar o roubo.\n\nEm resposta ao incidente, a Binance comprometeu-se a reembolsar integralmente todos os clientes afetados, um movimento crucial para a manutenção da confiança no mercado de criptoativos. A corretora também anunciou um aumento significativo no investimento em detecção baseada em IA, a criação de um fundo de pesquisa em segurança e parcerias estratégicas com empresas líderes em IA. Este evento sublinha a crescente sofisticação das ameaças cibernéticas e a necessidade premente de defesas robustas e contínuas no setor financeiro digital.",
+            "motivo_falha": "O texto original excedia o limite de palavras e não seguia a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Binance sofreu um roubo de US$ 6,3 bilhões após hackers norte-coreanos explorarem engenharia socia..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-03"
