@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://www.infomoney.com.br/wp-content/uploads/2025/11/2025-11-04T150523Z_788084831_RC2PPHA66QD7_RTRMADP_3_EUROPE-STOCKS.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon_logo-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2025/06/EspacoB3_02.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Muse-Wonder-em-Azul-Vibrante.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/b3-cotacoes-bolsa-e1791318107252.jpg",
@@ -49,7 +47,9 @@
         "https://olhardigital.com.br/wp-content/uploads/2026/11/ChatGPT-com-Escudo-de-Segurana-copiar.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2019/11/shutterstock_1401574850-1.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/claude-mythus.jpg",
-        "https://www.inovacaotecnologica.com.br/noticias/imagens/010110261103-transistor-formatado.jpg"
+        "https://www.inovacaotecnologica.com.br/noticias/imagens/010110261103-transistor-formatado.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2025/04/2025-04-01T191238Z_1_LYNXNPEL3025K_RTROPTP_4_PARAGUAY-BRASIL-ITAIPU.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/shutterstock_2283462895.jpg"
     ],
     "erros": [
         {
@@ -1068,5 +1068,5 @@
             "correcao_aplicada": "A Binance sofreu um roubo de US$ 6,3 bilhões após hackers norte-coreanos explorarem engenharia socia..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-03"
+    "ultima_edicao_instagram": "2026-11-04"
 }
