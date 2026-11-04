@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-04",
+  "data_extenso": "Quarta-feira, 4 de Novembro de 2026",
+  "manchete": "Demanda Paraguaia por Itaipu Eleva Custos de Energia no Brasil",
+  "arquivo_html": "2026-11-04.html"
+ },
+ {
   "data": "2026-11-03",
   "data_extenso": "Terça-feira, 3 de Novembro de 2026",
   "manchete": "Lara Resende propõe Selic a 7,5% para ajuste fiscal e dívida",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 27 de Agosto de 2026",
   "manchete": "Brasileira relata ofensa em restaurante na Itália, e dono debocha do caso nas redes sociais",
   "arquivo_html": "2026-08-27.html"
- },
- {
-  "data": "2026-08-26",
-  "data_extenso": "Quarta-feira, 26 de Agosto de 2026",
-  "manchete": "Governo Trump suspende agendamento de entrevistas para vistos de imigrantes em todo o mundo, incluindo o Brasil",
-  "arquivo_html": "2026-08-26.html"
  }
 ]

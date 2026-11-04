@@ -1,0 +1,36 @@
+{
+ "data": "2026-11-04",
+ "data_extenso": "Quarta-feira, 4 de Novembro de 2026",
+ "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
+ "manchete": "Demanda Paraguaia por Itaipu Eleva Custos de Energia no Brasil",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Demanda Paraguaia por Itaipu Eleva Custos de Energia no Brasil",
+    "link": "https://www.infomoney.com.br/economia/alta-do-consumo-de-energia-de-itaipu-pelo-paraguai-deve-pressionar-precos-no-brasil/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/04/2025-04-01T191238Z_1_LYNXNPEL3025K_RTROPTP_4_PARAGUAY-BRASIL-ITAIPU.jpg",
+    "resumo": "O consumo paraguaio de energia de Itaipu, impulsionado por data centers e criptomineração, cresceu 12-18% anualmente, projetando 4.7 GW no pico até 2029. Essa expansão, com picos coincidentes aos do Brasil, reduz a oferta hidrelétrica, forçando maior geração termelétrica e elevando o preço marginal de R$40 para R$59/MWh. A previsão do ONS, desatualizada, agrava o desequilíbrio. Geradores térmicos e hidrelétricos com energia descontratada lucram, enquanto consumidores e distribuidoras brasileiras enfrentam custos maiores e risco de subcontratação a partir de 2027."
+   },
+   {
+    "titulo": "Citi Revisa Varejo: Juros Elevados Rebaixam Magalu, Elevam Alpargatas",
+    "link": "https://www.infomoney.com.br/mercados/citi-rebaixa-magalu-mglu3-por-juros-altos-e-destaca-4-acoes-favoritas-do-varejo/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/10/shutterstock_1526766692-1.png",
+    "resumo": "O Citi rebaixou Magazine Luiza (MGLU3) para neutra e elevou Alpargatas (ALPA4) para compra, cortando o preço-alvo de MGLU3 de R$14 para R$6. A taxa DI 2035 saltou de 12,7% para 15,5% pós-eleição, refletindo incerteza fiscal e forçando uma postura defensiva. Empresas alavancadas, como Magazine Luiza, sofrem com custos de financiamento, enquanto exportadoras como Alpargatas se beneficiam. A ausência de um plano fiscal crível limita a recuperação do varejo, favorecendo empresas com balanços robustos e menor dependência doméstica."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "OpenAI: Falhas de Segurança Internas e o Dilema da Velocidade vs. Proteção",
+    "link": "https://olhardigital.com.br/2026/11/04/inteligencia-artificial/funcionarios-da-openai-alertaram-por-anos-sobre-falhas-de-seguranca-nos-sistemas-da-empresa/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/shutterstock_2283462895.jpg",
+    "resumo": "OpenAI enfrentou alertas internos por anos sobre falhas de segurança em seus sistemas, com funcionários apontando vulnerabilidades que poderiam expor informações estratégicas de IA. A priorização da velocidade no desenvolvimento, aliada a uma arquitetura de código centralizada e revisões de segurança insuficientes, criou um ambiente propício a riscos de espionagem e roubo de propriedade intelectual. A fragilidade expõe a OpenAI a perdas de vantagem competitiva e intensifica o debate sobre a compatibilidade entre a cultura de pesquisa aberta e a proteção de tecnologias de fronteira, com riscos geopolíticos crescentes."
+   },
+   {
+    "titulo": "ChatGPT: OpenAI reivindica 20% do volume de buscas do Google",
+    "link": "https://olhardigital.com.br/2026/11/03/inteligencia-artificial/chatgpt-ja-alcanca-20-do-volume-de-buscas-do-google-diz-openai/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/chatgpt-2.jpg",
+    "resumo": "A OpenAI declara que o ChatGPT processa um volume de consultas equivalente a 20% das buscas do Google. Esta afirmação, sem validação externa, visa posicionar o chatbot como um competidor viável, enquanto a OpenAI desenvolve interfaces visuais e monetiza via publicidade, antecipando um IPO em 2027. O Google enfrenta crescente pressão para defender sua hegemonia, e a sustentabilidade do modelo de anúncios da OpenAI, junto à veracidade de seus dados, são pontos críticos a observar."
+   }
+  ]
+ }
+}
