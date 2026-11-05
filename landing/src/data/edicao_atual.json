@@ -1,35 +1,35 @@
 {
- "data": "2026-11-04",
- "data_extenso": "Quarta-feira, 4 de Novembro de 2026",
+ "data": "2026-11-05",
+ "data_extenso": "Quinta-feira, 5 de Novembro de 2026",
  "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
- "manchete": "Demanda Paraguaia por Itaipu Eleva Custos de Energia no Brasil",
+ "manchete": "Dívida Pública e Juros: Mercado Reage a Sinais Fiscais",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Demanda Paraguaia por Itaipu Eleva Custos de Energia no Brasil",
-    "link": "https://www.infomoney.com.br/economia/alta-do-consumo-de-energia-de-itaipu-pelo-paraguai-deve-pressionar-precos-no-brasil/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/04/2025-04-01T191238Z_1_LYNXNPEL3025K_RTROPTP_4_PARAGUAY-BRASIL-ITAIPU.jpg",
-    "resumo": "O consumo paraguaio de energia de Itaipu, impulsionado por data centers e criptomineração, cresceu 12-18% anualmente, projetando 4.7 GW no pico até 2029. Essa expansão, com picos coincidentes aos do Brasil, reduz a oferta hidrelétrica, forçando maior geração termelétrica e elevando o preço marginal de R$40 para R$59/MWh. A previsão do ONS, desatualizada, agrava o desequilíbrio. Geradores térmicos e hidrelétricos com energia descontratada lucram, enquanto consumidores e distribuidoras brasileiras enfrentam custos maiores e risco de subcontratação a partir de 2027."
+    "titulo": "Dívida Pública e Juros: Mercado Reage a Sinais Fiscais",
+    "link": "https://www.infomoney.com.br/onde-investir/tesouro-direto-abertura-fechamento-05112026/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-27T214619Z_1_LYNXNPEM9Q22W_RTROPTP_4_BRAZIL-ELECTION-LULA-SUPPORTERS.jpg",
+    "resumo": "As taxas dos títulos do Tesouro Direto, como o Prefixado 2029 que caiu 5 pontos-base para 14,84%, recuaram após a notícia de uma reunião presidencial focada na dívida pública. Este movimento reflete a tensão entre a política monetária restritiva do Banco Central, que manteve a Selic em 13,75% e elevou projeções de inflação, e a busca por maior rigor fiscal via propostas de bloqueios orçamentários permanentes. A volatilidade dos juros persiste, com investidores monitorando a capacidade do governo de implementar reformas fiscais críveis e conter a dívida pública."
    },
    {
-    "titulo": "Citi Revisa Varejo: Juros Elevados Rebaixam Magalu, Elevam Alpargatas",
-    "link": "https://www.infomoney.com.br/mercados/citi-rebaixa-magalu-mglu3-por-juros-altos-e-destaca-4-acoes-favoritas-do-varejo/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/10/shutterstock_1526766692-1.png",
-    "resumo": "O Citi rebaixou Magazine Luiza (MGLU3) para neutra e elevou Alpargatas (ALPA4) para compra, cortando o preço-alvo de MGLU3 de R$14 para R$6. A taxa DI 2035 saltou de 12,7% para 15,5% pós-eleição, refletindo incerteza fiscal e forçando uma postura defensiva. Empresas alavancadas, como Magazine Luiza, sofrem com custos de financiamento, enquanto exportadoras como Alpargatas se beneficiam. A ausência de um plano fiscal crível limita a recuperação do varejo, favorecendo empresas com balanços robustos e menor dependência doméstica."
+    "titulo": "BC e Governo: Ausência de Galípolo expõe atrito pós-decisão da Selic",
+    "link": "https://www.infomoney.com.br/politica/auxiliares-atribuem-ausencia-de-galipolo-em-reuniao-com-lula-a-silencio-do-copom/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/pint9846.jpg",
+    "resumo": "O presidente do Banco Central, Gabriel Galípolo, ausentou-se de uma reunião econômica estratégica com o presidente Lula, um dia após o Copom manter a Selic em 13,75%. A ausência, atribuída ao período de silêncio regulatório do Copom, sublinha a tensão entre a autonomia da política monetária e a busca do executivo por consenso sobre a agenda econômica. Este distanciamento eleva a percepção de desalinhamento entre as esferas, gerando incerteza sobre a coordenação macroeconômica e o risco de atrito institucional."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "OpenAI: Falhas de Segurança Internas e o Dilema da Velocidade vs. Proteção",
-    "link": "https://olhardigital.com.br/2026/11/04/inteligencia-artificial/funcionarios-da-openai-alertaram-por-anos-sobre-falhas-de-seguranca-nos-sistemas-da-empresa/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/shutterstock_2283462895.jpg",
-    "resumo": "OpenAI enfrentou alertas internos por anos sobre falhas de segurança em seus sistemas, com funcionários apontando vulnerabilidades que poderiam expor informações estratégicas de IA. A priorização da velocidade no desenvolvimento, aliada a uma arquitetura de código centralizada e revisões de segurança insuficientes, criou um ambiente propício a riscos de espionagem e roubo de propriedade intelectual. A fragilidade expõe a OpenAI a perdas de vantagem competitiva e intensifica o debate sobre a compatibilidade entre a cultura de pesquisa aberta e a proteção de tecnologias de fronteira, com riscos geopolíticos crescentes."
+    "titulo": "Pioneiro da IA Alerta para Riscos Sistêmicos e Falha Regulatória",
+    "link": "https://olhardigital.com.br/2026/11/04/inteligencia-artificial/pioneiro-da-ia-diz-que-mundo-estaria-melhor-sem-inteligencia-artificial/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/Geoffrey-Hinton.jpg",
+    "resumo": "Geoffrey Hinton, pioneiro da IA, projeta incidentes sistêmicos graves até 2027, como ataques cibernéticos à infraestrutura elétrica ou paralisação financeira. A corrida geopolítica por supremacia em modelos de fronteira, aliada à priorização de lucros por grandes empresas, acelera o desenvolvimento sem governança adequada. A resistência política à regulação global expõe infraestruturas críticas a riscos sistêmicos, beneficiando desenvolvedores ágeis e acentuando a polarização regulatória."
    },
    {
-    "titulo": "ChatGPT: OpenAI reivindica 20% do volume de buscas do Google",
-    "link": "https://olhardigital.com.br/2026/11/03/inteligencia-artificial/chatgpt-ja-alcanca-20-do-volume-de-buscas-do-google-diz-openai/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/10/chatgpt-2.jpg",
-    "resumo": "A OpenAI declara que o ChatGPT processa um volume de consultas equivalente a 20% das buscas do Google. Esta afirmação, sem validação externa, visa posicionar o chatbot como um competidor viável, enquanto a OpenAI desenvolve interfaces visuais e monetiza via publicidade, antecipando um IPO em 2027. O Google enfrenta crescente pressão para defender sua hegemonia, e a sustentabilidade do modelo de anúncios da OpenAI, junto à veracidade de seus dados, são pontos críticos a observar."
+    "titulo": "Google impõe IA em escolas: monopólio da busca e autonomia pedagógica em xeque",
+    "link": "https://olhardigital.com.br/2026/11/04/internet-e-redes-sociais/escolas-que-bloquearem-ia-poderao-perder-acesso-ao-google-search/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/google-search.jpg",
+    "resumo": "Google impôs que escolas, que atendem 150 milhões de estudantes e professores globais, aceitem recursos de IA em suas buscas para manter acesso ao Google Search a partir de 2027. A medida capitaliza a dominância do buscador para forçar a adoção de seu ecossistema de IA, superando resistências anteriores ao Gemini e integrando profundamente suas ferramentas educacionais. A pressão visa consolidar a infraestrutura de IA da empresa no setor. Google ganha controle sobre dados e adoção de IA, enquanto escolas perdem autonomia pedagógica, enfrentando riscos de dependência tecnológica e críticas regulatórias por monopólio."
    }
   ]
  }
