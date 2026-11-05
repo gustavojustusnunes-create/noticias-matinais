@@ -1066,6 +1066,34 @@
             "texto_original": "A Binance, maior corretora de criptomoedas do mundo, revelou que o roubo de US$ 6,3 bilhões em criptoativos, o maior da história, foi resultado de uma operação sofisticada que explorou vulnerabilidades internas e engenharia social. O ataque, atribuído pelo FBI a um grupo de hackers norte-coreano, iniciou-se em junho com o download de uma ferramenta de inteligência artificial adulterada por um funcionário da equipe de desenvolvimento de carteiras. Embora a Binance tenha detectado e corrigido a falha inicial, a exposição de credenciais persistiu.\n\nA infiltração aprofundou-se em setembro, quando um segundo engenheiro de software, buscando emprego, baixou um repositório de código malicioso após uma entrevista para uma vaga fictícia, incluindo uma reunião com um CEO falso. Este computador comprometido, juntamente com uma ferramenta interna de IA, foi então utilizado pelo invasor em 20 de outubro para obter controle dos sistemas de desenvolvimento de carteiras. Em 29 de outubro, o hacker usou credenciais roubadas do primeiro desenvolvedor através do computador do segundo para executar um script malicioso e concretizar o roubo.\n\nEm resposta ao incidente, a Binance comprometeu-se a reembolsar integralmente todos os clientes afetados, um movimento crucial para a manutenção da confiança no mercado de criptoativos. A corretora também anunciou um aumento significativo no investimento em detecção baseada em IA, a criação de um fundo de pesquisa em segurança e parcerias estratégicas com empresas líderes em IA. Este evento sublinha a crescente sofisticação das ameaças cibernéticas e a necessidade premente de defesas robustas e contínuas no setor financeiro digital.",
             "motivo_falha": "O texto original excedia o limite de palavras e não seguia a estrutura de três passos do padrão The Economist.",
             "correcao_aplicada": "A Binance sofreu um roubo de US$ 6,3 bilhões após hackers norte-coreanos explorarem engenharia socia..."
+        },
+        {
+            "data": "2026-11-05T16:49:01.315183",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Itaú BBA e o Goldman Sachs revisaram significativamente para cima suas projeções para os preços do petróleo Brent, citando a escalada das tensões geopolíticas no Oriente Médio e o prolongamento dos conflitos como",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 34 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e terminar sem pontuação final.",
+            "correcao_aplicada": "O Itaú BBA e o Goldman Sachs elevaram para US$ 100 por barril a projeção média do petróleo Brent par..."
+        },
+        {
+            "data": "2026-11-05T16:55:09.278105",
+            "tema": "Empresas & Negócios",
+            "texto_original": "As ações do Mercado Livre (MELI) registraram uma queda acentuada de 13% na Nasdaq, atingindo o patamar de US$ 1.512,25, o menor nível desde me",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 25 palavras, violando o limite mínimo de 60 palavras e carecendo da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "As ações do Mercado Livre registraram uma queda abrupta de 13% na Nasdaq, despencando para o patamar..."
+        },
+        {
+            "data": "2026-11-05T16:58:43.585445",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A Binance revelou detalhes sobre o roubo de US$ 6,3 bilhões em criptomoedas, o maior da história, ocorrido em 29 de outubro, atribuindo-o a uma sofisticada operação que explorou vulnerabilidades humanas e tecnológicas. O ataque teve início em junho, quando um funcionário da equipe de desenvolvimento de carteiras baixou uma ferramenta de inteligência artificial adulterada. Embora a corretora tenha detectado e substituído o dispositivo, as funções do colaborador permaneceram expostas. Em setembro, um segundo engenheiro de software foi enganado por uma entrevista de emprego falsa, baixando um repositório de código malicioso após interagir com uma empresa fictícia, incluindo uma reunião com um suposto CEO.\n\nEm 20 de outubro, o invasor utilizou o computador comprometido e uma ferramenta interna de IA para obter controle sobre os sistemas de desenvolvimento de carteiras. O ataque culminou em 29 de outubro, quando credenciais roubadas do primeiro desenvolvedor foram usadas no computador do segundo para acionar um script malicioso. O FBI atribui a autoria a um grupo de hackers norte-coreano, alegação que a Coreia do Norte nega. A Binance assegurou o reembolso integral a todos os clientes afetados, buscando mitigar o impacto financeiro e de confiança.\n\nEm resposta ao incidente, a Binance anunciou um aumento significativo no investimento em detecção baseada em IA, além da criação de um fundo de pesquisa em segurança e iniciativas específicas em parceria com empresas líderes em inteligência artificial. Este evento sublinha a crescente sofisticação das ameaças cibernéticas no setor de criptoativos e a imperatividade de defesas robustas, combinando tecnologia avançada com treinamento de segurança para funcionários, a fim de proteger ativos e a integridade do mercado.",
+            "motivo_falha": "O texto original excedia o teto de 90 palavras. Foi reescrito para cumprir a extensão de 60 a 90 palavras e a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Binance sofreu um roubo de 6,3 bilhões de dólares em criptomoedas em 29 de outubro, após hackers n..."
+        },
+        {
+            "data": "2026-11-05T17:00:23.308060",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A Binance, maior corretora de criptomoedas do mundo, foi alvo do que pode ser o maior roubo financeiro da história, com hackers, supostamente da Coreia do Norte, subtraindo US$",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 29 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e terminar sem pontuação final.",
+            "correcao_aplicada": "A Binance, maior corretora de criptomoedas do mundo, sofreu um ataque cibernético que resultou na re..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-04"
