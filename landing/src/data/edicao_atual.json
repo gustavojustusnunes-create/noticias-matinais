@@ -1,35 +1,35 @@
 {
- "data": "2026-11-05",
- "data_extenso": "Quinta-feira, 5 de Novembro de 2026",
- "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
- "manchete": "Dívida Pública e Juros: Mercado Reage a Sinais Fiscais",
+ "data": "2026-11-06",
+ "data_extenso": "Sexta-feira, 6 de Novembro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "PIB Brasileiro Cresce 3,4% em 2024: Desafios Fiscais Persistem",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Dívida Pública e Juros: Mercado Reage a Sinais Fiscais",
-    "link": "https://www.infomoney.com.br/onde-investir/tesouro-direto-abertura-fechamento-05112026/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-27T214619Z_1_LYNXNPEM9Q22W_RTROPTP_4_BRAZIL-ELECTION-LULA-SUPPORTERS.jpg",
-    "resumo": "As taxas dos títulos do Tesouro Direto, como o Prefixado 2029 que caiu 5 pontos-base para 14,84%, recuaram após a notícia de uma reunião presidencial focada na dívida pública. Este movimento reflete a tensão entre a política monetária restritiva do Banco Central, que manteve a Selic em 13,75% e elevou projeções de inflação, e a busca por maior rigor fiscal via propostas de bloqueios orçamentários permanentes. A volatilidade dos juros persiste, com investidores monitorando a capacidade do governo de implementar reformas fiscais críveis e conter a dívida pública."
+    "titulo": "PIB Brasileiro Cresce 3,4% em 2024: Desafios Fiscais Persistem",
+    "link": "https://www.infomoney.com.br/mercados/ibge-divulga-dados-definitivos-e-confirma-que-pib-de-2024-cresceu-34/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/12/PIB.jpg",
+    "resumo": "O PIB brasileiro expandiu 3,4% em 2024, totalizando R$ 11,7 trilhões, conforme dados definitivos do IBGE. O crescimento foi impulsionado pelo consumo das famílias (5,1%) e pela Formação Bruta de Capital Fixo (6,9%), compensando a retração da agropecuária. A taxa de investimento atingiu 16,9%. Este desempenho, embora robusto, sinaliza dependência do consumo interno e exige monitoramento da sustentabilidade fiscal para evitar pressões inflacionárias futuras."
    },
    {
-    "titulo": "BC e Governo: Ausência de Galípolo expõe atrito pós-decisão da Selic",
-    "link": "https://www.infomoney.com.br/politica/auxiliares-atribuem-ausencia-de-galipolo-em-reuniao-com-lula-a-silencio-do-copom/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/pint9846.jpg",
-    "resumo": "O presidente do Banco Central, Gabriel Galípolo, ausentou-se de uma reunião econômica estratégica com o presidente Lula, um dia após o Copom manter a Selic em 13,75%. A ausência, atribuída ao período de silêncio regulatório do Copom, sublinha a tensão entre a autonomia da política monetária e a busca do executivo por consenso sobre a agenda econômica. Este distanciamento eleva a percepção de desalinhamento entre as esferas, gerando incerteza sobre a coordenação macroeconômica e o risco de atrito institucional."
+    "titulo": "Ibovespa avança 1,56% em ajuste técnico apesar de payroll forte nos EUA",
+    "link": "https://www.infomoney.com.br/mercados/por-que-o-ibovespa-sobe-mais-de-1-mesmo-com-dados-fortes-do-payroll-nos-eua/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/06/Bolsa-pregao-def.jpg",
+    "resumo": "O Ibovespa avançou 1,56% aos 168.782 pontos, impulsionado por ações cíclicas e pelo setor bancário em um movimento de correção técnica. A alta ocorreu a reboque da recuperação das bolsas de Nova York e de expectativas fiscais domésticas, ignorando o payroll norte-americano que registrou 165 mil vagas em outubro e desemprego a 4,1%. O desdobramento crítico revela que a persistência de juros altos nos Estados Unidos mantém o risco cambial elevado, subordinando a sustentabilidade da alta brasileira às próximas diretrizes fiscais de Brasília e decisões do Copom."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "Pioneiro da IA Alerta para Riscos Sistêmicos e Falha Regulatória",
-    "link": "https://olhardigital.com.br/2026/11/04/inteligencia-artificial/pioneiro-da-ia-diz-que-mundo-estaria-melhor-sem-inteligencia-artificial/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/Geoffrey-Hinton.jpg",
-    "resumo": "Geoffrey Hinton, pioneiro da IA, projeta incidentes sistêmicos graves até 2027, como ataques cibernéticos à infraestrutura elétrica ou paralisação financeira. A corrida geopolítica por supremacia em modelos de fronteira, aliada à priorização de lucros por grandes empresas, acelera o desenvolvimento sem governança adequada. A resistência política à regulação global expõe infraestruturas críticas a riscos sistêmicos, beneficiando desenvolvedores ágeis e acentuando a polarização regulatória."
+    "titulo": "China contorna sanções dos EUA por chips Nvidia via nuvem europeia",
+    "link": "https://olhardigital.com.br/2026/11/05/inteligencia-artificial/startup-chinesa-tenta-contornar-restricoes-dos-eua-para-acessar-chips-da-nvidia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/moonshot-ai.jpg",
+    "resumo": "A chinesa Moonshot AI negociou o aluguel de capacidade computacional em data centers europeus, visando clusters com mais de 8 mil GPUs Blackwell, para contornar as restrições de exportação dos EUA. Essa estratégia explora uma lacuna regulatória americana sobre acesso remoto a hardware em nuvem, impulsionada pela demanda agressiva da Moonshot por poder computacional para seus modelos de IA. A pressão de custos se reflete em pagamentos antecipados 30% a 50% mais caros. A manobra beneficia desenvolvedores chineses e provedores de nuvem europeus, mas expõe a fragilidade das sanções americanas, exigindo uma reavaliação urgente das políticas de controle de exportação."
    },
    {
-    "titulo": "Google impõe IA em escolas: monopólio da busca e autonomia pedagógica em xeque",
-    "link": "https://olhardigital.com.br/2026/11/04/internet-e-redes-sociais/escolas-que-bloquearem-ia-poderao-perder-acesso-ao-google-search/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/google-search.jpg",
-    "resumo": "Google impôs que escolas, que atendem 150 milhões de estudantes e professores globais, aceitem recursos de IA em suas buscas para manter acesso ao Google Search a partir de 2027. A medida capitaliza a dominância do buscador para forçar a adoção de seu ecossistema de IA, superando resistências anteriores ao Gemini e integrando profundamente suas ferramentas educacionais. A pressão visa consolidar a infraestrutura de IA da empresa no setor. Google ganha controle sobre dados e adoção de IA, enquanto escolas perdem autonomia pedagógica, enfrentando riscos de dependência tecnológica e críticas regulatórias por monopólio."
+    "titulo": "OpenAI lança IA para cibersegurança, elevando detecção de falhas",
+    "link": "https://olhardigital.com.br/2026/11/06/seguranca/novo-modelo-da-openai-identifica-centenas-de-falhas-de-seguranca/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/deteccao-de-ameacas.jpg",
+    "resumo": "OpenAI lançou o GPT-6 Cyber, um modelo de IA que reproduziu 1.724 vulnerabilidades no Linux e identificou 81 falhas inéditas de alta gravidade no Firefox. A crescente complexidade do software e a escassez de especialistas em cibersegurança impulsionam a demanda por automação avançada na detecção e exploração de brechas. O acesso restrito visa mitigar riscos de uso malicioso. Desenvolvedores de software ganham ferramenta poderosa, enquanto atacantes enfrentam um adversário mais sofisticado. O risco imediato é a potencial proliferação de explorações antes das correções."
    }
   ]
  }
