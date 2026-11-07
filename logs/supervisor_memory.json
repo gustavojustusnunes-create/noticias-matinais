@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://olhardigital.com.br/wp-content/uploads/2026/09/gemini.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2024/10/2024-10-29T143820Z_1_LYNXMPEK9S0MC_RTROPTP_3_USA-ECONOMY.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/08/Alibaba-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/03/blogging-guide-K5DY18hy5JQ-unsplash_red.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_5600lm5600lm5600.jpg",
@@ -49,7 +47,9 @@
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-27T214619Z_1_LYNXNPEM9Q22W_RTROPTP_4_BRAZIL-ELECTION-LULA-SUPPORTERS.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/Geoffrey-Hinton.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2024/12/PIB.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/11/moonshot-ai.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/moonshot-ai.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/09/ChatGPT-Image-25-de-set.-de-2026-09_58_24.jpg?fit=1672%2C941&quality=70&strip=all",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia.jpg"
     ],
     "erros": [
         {
@@ -1145,5 +1145,5 @@
             "correcao_aplicada": "A Binance registrou saídas líquidas de US$ 4,72 bilhões após retomar suas operações após um ataque c..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-06"
+    "ultima_edicao_instagram": "2026-11-07"
 }
