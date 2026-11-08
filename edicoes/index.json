@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-08",
+  "data_extenso": "Domingo, 8 de Novembro de 2026",
+  "manchete": "Pix e TIPS: Integração de Pagamentos Transfronteiriços Avança para Análise Detalhada",
+  "arquivo_html": "2026-11-08.html"
+ },
+ {
   "data": "2026-11-07",
   "data_extenso": "Sábado, 7 de Novembro de 2026",
   "manchete": "Taxa de Exportação de Petróleo: PRIO Contesta e Alerta para Risco de Investimento",
@@ -352,11 +358,5 @@
   "data_extenso": "Segunda-feira, 31 de Agosto de 2026",
   "manchete": "Trump diz que EUA vão atacar o Irã 'com força'; Teerã manda sinais contraditórios",
   "arquivo_html": "2026-08-31.html"
- },
- {
-  "data": "2026-08-30",
-  "data_extenso": "Domingo, 30 de Agosto de 2026",
-  "manchete": "Por que Trump quer limitar o voto pelo correio se ele próprio usa o recurso? Entenda o que está em jogo",
-  "arquivo_html": "2026-08-30.html"
  }
 ]

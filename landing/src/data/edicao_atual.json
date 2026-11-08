@@ -1,35 +1,15 @@
 {
- "data": "2026-11-07",
- "data_extenso": "Sábado, 7 de Novembro de 2026",
- "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
- "manchete": "Taxa de Exportação de Petróleo: PRIO Contesta e Alerta para Risco de Investimento",
+ "data": "2026-11-08",
+ "data_extenso": "Domingo, 8 de Novembro de 2026",
+ "editorial": "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
+ "manchete": "Pix e TIPS: Integração de Pagamentos Transfronteiriços Avança para Análise Detalhada",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Taxa de Exportação de Petróleo: PRIO Contesta e Alerta para Risco de Investimento",
-    "link": "https://www.infomoney.com.br/mercados/diretor-da-prio-critica-imposto-sobre-petroleo-mas-ainda-ve-oportunidades-no-brasil/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/09/ChatGPT-Image-25-de-set.-de-2026-09_58_24.jpg?fit=1672%2C941&quality=70&strip=all",
-    "resumo": "O governo brasileiro prorrogou a alíquota de 12% sobre a exportação de petróleo até o final de 2026, gerando contestação judicial da PRIO. Essa imprevisibilidade regulatória, somada à morosidade no licenciamento ambiental, eleva a pressão de custos e desincentiva investimentos em um setor estratégico. O risco imediato é a redução do capital alocado e o atraso no desenvolvimento de novas fronteiras, comprometendo a relevância energética do país e a geração de empregos."
-   },
-   {
-    "titulo": "Congresso Democrata: Fim do Apoio Político Privilegiado às Criptomoedas",
-    "link": "https://www.infomoney.com.br/onde-investir/criptomoedas-trump-vitoria-democrata-congresso-eua/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/trump-cripto.jpg",
-    "resumo": "A vitória democrata nas eleições de meio de mandato nos EUA encerra o apoio político privilegiado do setor cripto. Essa mudança reverte dois anos de alinhamento pró-cripto com a Casa Branca e o Congresso republicano, que priorizava a expansão com menor supervisão. A nova maioria democrata sinaliza maior rigor regulatório, proteção ao consumidor e fiscalização da SEC. O setor cripto perde influência política e enfrenta escrutínio intensificado, com risco de investigações sobre laços com a administração anterior e atraso na legislação favorável."
-   }
-  ],
-  "Fronteira Tecnológica & IA": [
-   {
-    "titulo": "China retém chips Nvidia, freando avanço em IA",
-    "link": "https://olhardigital.com.br/2026/11/06/inteligencia-artificial/china-mantem-600-mil-chips-da-nvidia-parados-a-espera-de-autorizacao/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia.jpg",
-    "resumo": "Pequim retém 600 mil chips H200 da Nvidia em Hong Kong, liberando apenas cerca de 10 mil unidades para grandes empresas chinesas. A medida reflete a estratégia chinesa de reduzir a dependência tecnológica dos EUA, incentivando soluções domésticas, enquanto os controles de exportação americanos limitam o acesso a semicondutores avançados. Empresas chinesas enfrentam escassez e preços inflacionados no mercado paralelo, com servidores H200 custando 6 milhões de yuans, arriscando o avanço da capacidade computacional de IA."
-   },
-   {
-    "titulo": "Apoio de Trump à IA confronta custos e regulação estadual",
-    "link": "https://olhardigital.com.br/2026/11/06/inteligencia-artificial/trump-promete-apoiar-estados-que-investirem-em-inteligencia-artificial/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/shutterstock_2798636567-scaled.jpg",
-    "resumo": "Donald Trump prometeu apoio a estados que investirem em inteligência artificial, enquanto mercados asiáticos como o Nikkei (-5,96%) e o Kospi (-6,02%) registravam quedas acentuadas em ações de tecnologia e semicondutores. A declaração surge em meio à apreensão de investidores com o elevado Capex para data centers e a crescente pressão regulatória, especialmente após a vitória democrata, que intensifica o escrutínio sobre o consumo de recursos e licenciamento. O risco imediato reside na volatilidade do setor de semicondutores e na incerteza sobre a capacidade de expansão da infraestrutura de IA, com estados tornando-se o campo de batalha para a regulação e licenciamento."
+    "titulo": "Pix e TIPS: Integração de Pagamentos Transfronteiriços Avança para Análise Detalhada",
+    "link": "https://www.infomoney.com.br/economia/integracao-entre-pix-e-sistema-europeu-de-pagamentos-avanca-para-nova-etapa/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/09/pix-antifraude.jpg",
+    "resumo": "A integração do Pix brasileiro com o sistema europeu TIPS progrediu para a fase de \"investigação\", após a etapa inicial não identificar impedimentos críticos. Este avanço sinaliza a busca por maior eficiência e redução de custos em pagamentos transfronteiriços, impulsionado pela harmonização regulatória e pela demanda por liquidez global. A viabilidade técnica e jurídica foi preliminarmente confirmada. Bancos e usuários de ambos os blocos podem ganhar com transações mais rápidas e baratas, mas a complexidade da interoperabilidade e a segurança cibernética permanecem como riscos a monitorar."
    }
   ]
  }
