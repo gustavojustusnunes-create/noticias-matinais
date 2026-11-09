@@ -1,0 +1,38 @@
+{
+ "data": "2026-11-09",
+ "data_extenso": "Segunda-feira, 9 de Novembro de 2026",
+ "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
+ "manchete": "Mercado financeiro brasileiro reavalia bancos em cenário macroeconômico adverso",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Mercado financeiro brasileiro reavalia bancos em cenário macroeconômico adverso",
+    "link": "https://www.infomoney.com.br/mercados/mercado-reduz-exposicao-a-bancos-apos-eleicao-e-ve-2027-mais-dificil-veja-preferidos/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/09/ChatGPT-Image-17-de-set.-de-2026-15_37_31.jpg?fit=1672%2C941&quality=70&strip=all",
+    "resumo": "Investidores brasileiros reduziram significativamente a exposição a bancos, com relatórios do JPMorgan e Morgan Stanley indicando pessimismo generalizado e projeções de crescimento próximo de zero em 2027. A mudança reflete incertezas fiscais, juros elevados persistentes e o temor de deterioração do ciclo de crédito, impulsionando a busca por ativos mais defensivos. Itaú e BTG Pactual emergem como refúgios, enquanto Bradesco e Nubank enfrentam ceticismo, elevando o risco de volatilidade setorial e pressão sobre balanços menos robustos."
+   }
+  ],
+  "Geopolítica & Assuntos Globais": [
+   {
+    "titulo": "COP31 Inicia Sob Alerta de Recorde Térmico, Exigindo Ação Urgente",
+    "link": "https://www.bbc.com/portuguese/articles/cwgkvk10rpk3o?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/d3d7/live/1adcf6d0-db63-11f1-adda-c54f54e3ce6a.jpg",
+    "resumo": "Cientistas alertam na abertura da COP31 que 2026 pode se tornar o ano mais quente já registrado. A projeção reflete a persistência de emissões antropogênicas e a ineficácia das políticas climáticas atuais, elevando a pressão sobre os negociadores para metas de descarbonização mais ambiciosas. O risco imediato reside na incapacidade de forjar acordos vinculativos, perpetuando a inação e expondo economias vulneráveis a custos climáticos crescentes."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Google avança em chips de IA para dados confidenciais e alta capacidade",
+    "link": "https://olhardigital.com.br/2026/11/09/inteligencia-artificial/google-lanca-chips-de-ia-para-proteger-dados-e-ampliar-memoria/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/TPU-8i-Max.width_.jpg",
+    "resumo": "O Google lançou dois novos chips de IA, TPU 8tx e 8i Max, expandindo sua oitava geração de processadores e totalizando quatro sistemas TPU em um ano. A iniciativa responde à crescente demanda por computação confidencial em IA e à necessidade de processar volumes massivos de dados para agentes avançados, visando consolidar a infraestrutura de nuvem da empresa. Google fortalece sua posição em infraestrutura de IA, atraindo clientes corporativos e governamentais, enquanto intensifica a concorrência no mercado de semicondutores dedicados."
+   },
+   {
+    "titulo": "DeepSeek Harness: Expansão Acelerada em Agentes de IA e Desafios de Escala",
+    "link": "https://olhardigital.com.br/2026/11/09/inteligencia-artificial/deepseek-harness-cresce-545-e-alcanca-154-milhao-de-usuarios/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/deepseek.jpg",
+    "resumo": "A plataforma chinesa DeepSeek Harness atingiu 1,54 milhão de usuários diários e processa 92,1 trilhões de tokens a cada 24 horas, um crescimento de 545% em usuários. Este avanço é impulsionado por sua arquitetura de código aberto para agentes autônomos e pelo lançamento da versão desktop, fomentando um ecossistema com 35 mil plugins e incentivos via \"token grants\". A DeepSeek consolida-se como player relevante em agentes de IA, mas a sustentabilidade do crescimento e a infraestrutura computacional para 92,1 trilhões de tokens diários exigem monitoramento."
+   }
+  ]
+ }
+}
