@@ -1143,6 +1143,48 @@
             "texto_original": "A Binance registrou saídas líquidas de US$ 4,72 bilhões, o equivalente a quase R$ 5 bilhões, após retomar suas operações na manhã de domingo. A suspensão dos saques durou cerca de 48 horas, período necessário para conter os reflexos de um ataque cibernético que resultou no furto de US$ 6,3 bilhões em criptoativos, valor atribuído pelo FBI a hackers patrocinados pelo governo da Coreia do Norte. O montante sacado representou aproximadamente 3% do total de ativos custodiados na plataforma, com predominância de resgates na stablecoin USDT da Tether, movimento que se estabilizou rapidamente diante de entradas de US$ 2,7 bilhões registradas desde a reabertura.\n\nPara mitigar o risco sistêmico e conter uma fuga em massa de capital, a liderança da corretora assegurou que o prejuízo será integralmente absorvido pelo caixa corporativo. A empresa mobilizou US$ 6 bilhões provenientes de seu tesouro, de reservas de segurança e de fundos de proteção patrimonial para garantir o reembolso aos usuários. Analistas do mercado financeiro apontam que a proporção das retiradas permaneceu em patamares controlados, inferiores aos US$ 6 bilhões sacados em 72 horas durante a quebra da FTX em 2022, evidenciando resiliência operacional e manutenção parcial da confiança dos clientes.\n\nO episódio corrobora o alerta de entidades de análise de blockchain, como a TRM Labs, sobre a escalada das operações cibernéticas ilícitas originadas na Coreia do Norte, cujos furtos acumulados atingem US$ 7,4 bilhões em 2026. Apesar da gravidade do maior incidente financeiro da história dos criptoativos e da maior integração entre o ecossistema digital e o sistema financeiro tradicional, as repercussões sistêmicas mantêm-se contidas. A ausência de pânico generalizado reforça a percepção de que a solidez de balanço das principais plataformas de ativos digitais tem capacidade de absorver choques severos de liquidez sem contaminar os mercados globais.",
             "motivo_falha": "O texto original excedia o limite máximo de 90 palavras. Foi reescrito para cumprir estritamente a faixa de 60 a 90 palavras, mantendo a estrutura de três passos do padrão The Economist e a pontuação final.",
             "correcao_aplicada": "A Binance registrou saídas líquidas de US$ 4,72 bilhões após retomar suas operações após um ataque c..."
+        },
+        {
+            "data": "2026-11-09T19:05:26.788809",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O investidor estrangeiro aguarda sinais claros do governo Lula para retomar as compras na B3, segundo André Moor, head de investment banking do Bradesco BBI. Em um cenário de reação negativa do Ibovespa à ele",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 35 palavras, violando o limite mínimo de 60 palavras e carecendo da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O investidor estrangeiro reduziu drasticamente sua exposição à B3 e aguarda sinais fiscais concretos..."
+        },
+        {
+            "data": "2026-11-09T19:06:49.368026",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Jensen Huang, CEO da Nvidia, está sob escrutínio após confirmar um relacionamento com uma empresária chinesa investigada por suposta espionagem. Este desenvolvimento levanta sérias questões sobre a gestão e a segurança de",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 34 palavras, violando o limite mínimo de 60 palavras, além de estar cortado no final sem pontuação e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Jensen Huang, CEO da Nvidia, confirmou um relacionamento com uma empresária chinesa investigada por ..."
+        },
+        {
+            "data": "2026-11-09T19:08:11.905124",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Alphabet (GOOGL) lançou novas versões de suas Unidades de Processamento Tensorial (TPUs), o 8tx e 8i Max, intensificando sua competição com a Nvidia no mercado de chips de",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, cortado abruptamente, violando o limite mínimo de 60 palavras e carecendo da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Alphabet lançou as novas Unidades de Processamento Tensorial 8tx e 8i Max para acirrar a disputa c..."
+        },
+        {
+            "data": "2026-11-09T19:11:39.459927",
+            "tema": "Macroeconomia",
+            "texto_original": "A presidência do Banco Central do Paraguai (BCP) passa a ser ocupada pelo economista Jorge Schreiner, nomeado nesta segunda-feira (9) pelo presidente Pedro Alliana. A mudança ocorre em um momento crítico,",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura de três passos e terminar sem pontuação final.",
+            "correcao_aplicada": "O presidente do Paraguai nomeou o economista Jorge Schreiner como o novo chefe do Banco Central nest..."
+        },
+        {
+            "data": "2026-11-09T19:13:02.275412",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos enfrenta um momento de alta volatilidade após uma sequência de eventos negativos que pressionaram as cotações globais. A principal corretora de ativos digitais do mundo sofreu um ataque cibernético com perdas estimadas em 6,3 bilhões de dólares, seguido por uma invasão ao Mercado Bitcoin que resultou no extravio de 49 milhões de dólares. Paralelamente, o resultado das eleições de meio de mandato nos Estados Unidos, com a consolidação da maioria democrata no Legislativo, impôs novos obstáculos regulatórios ao setor, ameaçando a tramitação de projetos como o Clarity Act e forçando uma revisão estratégica das empresas do segmento em Washington.\n\nComo resultado direto desse cenário adverso, o Bitcoin, que operava no patamar de 81 mil dólares, sofreu forte pressão vendedora e retiradas expressivas em fundos negociados em bolsa, recuando para a faixa dos 76 mil dólares. Analistas apontam que a instabilidade deve persistir no curto prazo tanto para a principal criptomoeda quanto para os ativos menores. Contudo, especialistas avaliam que a manutenção do suporte técnico em 76 mil dólares preserva a tendência de alta estrutural, abrindo espaço para estratégias de construção de posição e alocação tática para investidores com perfil adequado ao risco.\n\nDiante do ambiente complexo de segurança cibernética e incerteza regulatória, recomenda-se cautela redobrada e gestão rigorosa de capital. Investidores, especialmente os iniciantes, devem evitar a exposição isolada a ativos altamente especulativos e buscar suporte em ferramentas analíticas e operacionais automatizadas para mitigar riscos sistêmicos e otimizar a tomada de decisão no mercado digital.",
+            "motivo_falha": "O texto original excedia o limite de 90 palavras. Foi reescrito para cumprir estritamente entre 60 e 90 palavras, seguindo o padrão The Economist de três passos.",
+            "correcao_aplicada": "O Bitcoin recuou para a faixa de 76 mil dólares após sofrer intensa pressão vendedora decorrente de ..."
+        },
+        {
+            "data": "2026-11-09T19:13:46.823351",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A Binance, maior corretora de criptomoedas do mundo em volume de negociações, confirmou a saída de seu diretor financeiro, Kaiser Ng, após mais de cinco anos na instituição. A transição ocorre em um momento de extrema vulnerabilidade para a companhia, apenas dias após um ataque hacker cibernético sofisticado resultar no roubo de 6,3 bilhões de dólares em ativos digitais da plataforma. A violação, datada de 29 de outubro, teve origem no comprometimento de estações de trabalho de engenheiros por meio de malware oculto e falsas ofertas de emprego. Para o lugar de Ng, a diretoria executiva escalou Justin Yek, ex-vice-presidente de finanças da Airwallex, que assume a pasta em meio à crise reputacional e operacional.\n\nO impacto financeiro e regulatório do incidente é agravado pelo envolvimento de autoridades internacionais. O FBI atribuiu formalmente a autoria do ataque cibernético a um grupo de hackers vinculado ao governo da Coreia do Norte, acusação negada pelo regime de Pyongyang. Apesar de a Binance ter declarado publicamente que efetuará o reembolso integral aos clientes diretamente afetados pelo rombo bilionário, a saída do CFO levanta questionamentos sobre a governança de risco e a estabilidade interna da empresa. A transição de liderança financeira, planejada ao longo do último semestre segundo a cofundadora Yi He, coincide com o escrutínio regulatório intensificado sobre os protocolos de segurança da exchange e a capacidade de absorção de perdas sistêmicas no mercado cripto.",
+            "motivo_falha": "O texto original excedia o limite máximo de 90 palavras. Foi reescrito para cumprir rigorosamente a extensão entre 60 e 90 palavras, mantendo a estrutura de três passos do padrão The Economist e terminando com pontuação final.",
+            "correcao_aplicada": "A Binance confirmou a saída de seu diretor financeiro, Kaiser Ng, apenas dias após um ataque ciberné..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-08"
