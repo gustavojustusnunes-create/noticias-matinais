@@ -1,8 +1,5 @@
 {
     "imagens_recentes": [
-        "https://www.infomoney.com.br/wp-content/uploads/2026/03/blogging-guide-K5DY18hy5JQ-unsplash_red.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_5600lm5600lm5600.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/10/FMI_Tailandia.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_ifnc7aifnc7aifnc.jpg",
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/4f59/live/79b69bc0-ca24-11f1-a718-8f4bc8d2cdf5.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/Meta-AI-eleioes-no-Brasil.jpg",
@@ -49,7 +46,10 @@
         "https://olhardigital.com.br/wp-content/uploads/2026/11/moonshot-ai.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/09/ChatGPT-Image-25-de-set.-de-2026-09_58_24.jpg?fit=1672%2C941&quality=70&strip=all",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/09/pix-antifraude.jpg"
+        "https://www.infomoney.com.br/wp-content/uploads/2026/09/pix-antifraude.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/09/ChatGPT-Image-17-de-set.-de-2026-15_37_31.jpg?fit=1672%2C941&quality=70&strip=all",
+        "https://ichef.bbci.co.uk/news/1200/branded_portuguese/d3d7/live/1adcf6d0-db63-11f1-adda-c54f54e3ce6a.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/TPU-8i-Max.width_.jpg"
     ],
     "erros": [
         {
@@ -1187,5 +1187,5 @@
             "correcao_aplicada": "A Binance confirmou a saída de seu diretor financeiro, Kaiser Ng, apenas dias após um ataque ciberné..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-08"
+    "ultima_edicao_instagram": "2026-11-09"
 }
