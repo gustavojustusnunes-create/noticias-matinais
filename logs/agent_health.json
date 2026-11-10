@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-11-09T16:57:32.930033-03:00",
-    "data_hoje": "2026-11-09",
+    "timestamp_scan": "2026-11-10T14:13:14.218767-03:00",
+    "data_hoje": "2026-11-10",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -9,7 +9,7 @@
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (4 notícias).",
-            "ultima_edicao": "2026-11-09",
+            "ultima_edicao": "2026-11-10",
             "horario_previsto": "05:20 BRT",
             "total_itens": 4
         },
@@ -17,29 +17,29 @@
             "nome": "All News Finance",
             "status": "ONLINE",
             "detalhe": "Edição de mercado publicada (0 análises).",
-            "ultima_edicao": "2026-11-09",
+            "ultima_edicao": "2026-11-10",
             "horario_previsto": "05:25 BRT",
             "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
             "status": "PENDING",
-            "detalhe": "Ainda não postou a edição de hoje (2026-11-09).",
-            "ultima_edicao": "2026-11-08",
+            "detalhe": "Ainda não postou a edição de hoje (2026-11-10).",
+            "ultima_edicao": "2026-11-09",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 162 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 162,
+            "detalhe": "Auditoria cognitiva ativa. 166 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 166,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-11-09 16:57 BRT",
+            "ultimo_scan": "2026-11-10 14:13 BRT",
             "incidentes_abertos": 0
         }
     }
