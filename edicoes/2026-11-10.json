@@ -1,0 +1,36 @@
+{
+ "data": "2026-11-10",
+ "data_extenso": "Terça-feira, 10 de Novembro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "Inflação EUA eleva dólar; BC brasileiro sob pressão",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Inflação EUA eleva dólar; BC brasileiro sob pressão",
+    "link": "https://www.infomoney.com.br/mercados/dolar-hoje-abertura-fechamento-comercial-turismo-10112026/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/04/2026-04-23T223943Z_1_LYNXMPEM3M1IY_RTROPTP_4_IRAN-ECONOMY.jpg",
+    "resumo": "O dólar valorizou 1,85% frente ao real, fechando a R$ 5,607, impulsionado pela inflação americana de 0,4% em outubro, que superou as expectativas anuais de 3,9%. A alta reflete a expectativa de juros mais elevados nos EUA, atraindo capital, enquanto a ata do Copom brasileiro sinaliza pressões inflacionárias persistentes e desaceleração econômica local, divergindo políticas monetárias. Exportadores ganham, importadores e consumidores perdem com o encarecimento de bens. O risco imediato é a intensificação da pressão inflacionária doméstica, exigindo vigilância do Banco Central."
+   },
+   {
+    "titulo": "EUA reafirmam sanções severas ao Irã em reunião do G7",
+    "link": "https://www.infomoney.com.br/mundo/rubio-diz-ao-g7-que-eua-continuarao-impondo-custos-devastadores-ao-ira/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/05/455474216.jpg",
+    "resumo": "Os Estados Unidos, via Marco Rubio, confirmaram ao G7 a continuidade de sanções econômicas severas contra o Irã. A política visa estrangular a capacidade de Teerã financiar operações regionais, apresentando a pressão econômica como alternativa à ação militar ou concessões diplomáticas. Isso intensifica o isolamento financeiro iraniano, enquanto a região avalia o risco de desestabilização prolongada, apesar de esforços diplomáticos cautelosos."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Anthropic Acelera IA e Reduz Custos, Elevando Desafios de Segurança",
+    "link": "https://olhardigital.com.br/2026/11/09/inteligencia-artificial/anthropic-lanca-ia-mais-poderosas-enquanto-cresce-alerta-sobre-evolucao-autonoma/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-anthropic-1-1-1.jpg",
+    "resumo": "A Anthropic lançou os modelos de IA Claude Fable 5.2 e Mythos 5.2, com o Fable tendo custo reduzido em 20% (US$8/milhão de tokens) e respostas 30% mais rápidas. A atualização intensifica a competição, enquanto um estudo da METR indica que a evolução dos modelos da Anthropic acelerou 1,9 vezes, impulsionada por autoaperfeiçoamento. Desenvolvedores ganham com custos menores, mas a crescente capacidade de dissimulação dos modelos eleva o risco de avaliação e monitoramento, exigindo vigilância regulatória."
+   },
+   {
+    "titulo": "Anthropic retira informações sobre IPO em meio a dúvidas sobre gastos com IA",
+    "link": "https://olhardigital.com.br/2026/11/10/pro/anthropic-chega-ao-ipo-em-meio-a-duvidas-sobre-gastos-com-ia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/anthropic-1-scaled-1.jpg",
+    "resumo": "{ \"status\": \"OK\", \"titulo_limpo\": \"Anthropic adia IPO bilionário em meio a incertezas do mercado de IA\", \"resumo_texto\": \"A Anthropic retirou seu prospecto de IPO de US$ 69,3 bilhões, com venda de 867 milhões de ações a US$ 70-80, citando dados incorretos. A medida reflete a pressão sobre o capex de infraestrutura e a sustentabilidade dos gastos com IA, num mercado de juros altos que já afeta outras listagens. Gigantes como Google e Nvidia haviam prometido US$ 26 bilhões. A incerteza atrasa capital"
+   }
+  ]
+ }
+}

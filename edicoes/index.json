@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-10",
+  "data_extenso": "Terça-feira, 10 de Novembro de 2026",
+  "manchete": "Inflação EUA eleva dólar; BC brasileiro sob pressão",
+  "arquivo_html": "2026-11-10.html"
+ },
+ {
   "data": "2026-11-09",
   "data_extenso": "Segunda-feira, 9 de Novembro de 2026",
   "manchete": "Mercado financeiro brasileiro reavalia bancos em cenário macroeconômico adverso",
@@ -352,11 +358,5 @@
   "data_extenso": "Sábado, 5 de Setembro de 2026",
   "manchete": "Rússia ataca aeroportos de Kiev antes de visita de enviados dos EUA, diz Zelensky",
   "arquivo_html": "2026-09-05.html"
- },
- {
-  "data": "2026-09-04",
-  "data_extenso": "Sexta-feira, 4 de Setembro de 2026",
-  "manchete": "Governo critica início do veto à venda de carne brasileira para União Europeia e cita possibilidade de 'medidas de recip",
-  "arquivo_html": "2026-09-04.html"
  }
 ]
