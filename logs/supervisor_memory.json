@@ -1185,6 +1185,34 @@
             "texto_original": "A Binance, maior corretora de criptomoedas do mundo em volume de negociações, confirmou a saída de seu diretor financeiro, Kaiser Ng, após mais de cinco anos na instituição. A transição ocorre em um momento de extrema vulnerabilidade para a companhia, apenas dias após um ataque hacker cibernético sofisticado resultar no roubo de 6,3 bilhões de dólares em ativos digitais da plataforma. A violação, datada de 29 de outubro, teve origem no comprometimento de estações de trabalho de engenheiros por meio de malware oculto e falsas ofertas de emprego. Para o lugar de Ng, a diretoria executiva escalou Justin Yek, ex-vice-presidente de finanças da Airwallex, que assume a pasta em meio à crise reputacional e operacional.\n\nO impacto financeiro e regulatório do incidente é agravado pelo envolvimento de autoridades internacionais. O FBI atribuiu formalmente a autoria do ataque cibernético a um grupo de hackers vinculado ao governo da Coreia do Norte, acusação negada pelo regime de Pyongyang. Apesar de a Binance ter declarado publicamente que efetuará o reembolso integral aos clientes diretamente afetados pelo rombo bilionário, a saída do CFO levanta questionamentos sobre a governança de risco e a estabilidade interna da empresa. A transição de liderança financeira, planejada ao longo do último semestre segundo a cofundadora Yi He, coincide com o escrutínio regulatório intensificado sobre os protocolos de segurança da exchange e a capacidade de absorção de perdas sistêmicas no mercado cripto.",
             "motivo_falha": "O texto original excedia o limite máximo de 90 palavras. Foi reescrito para cumprir rigorosamente a extensão entre 60 e 90 palavras, mantendo a estrutura de três passos do padrão The Economist e terminando com pontuação final.",
             "correcao_aplicada": "A Binance confirmou a saída de seu diretor financeiro, Kaiser Ng, apenas dias após um ataque ciberné..."
+        },
+        {
+            "data": "2026-11-10T16:39:19.176685",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Magazine Luiza (MGLU3) registrou forte valorização de até 12% na terça-feira (10), impulsionada pela elevação da recomendação do Bank of America de \"underperform",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 23 palavras, violando o limite mínimo de 60 palavras e carecendo da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "As ações do Magazine Luiza registraram alta expressiva de doze por cento na bolsa brasileira, impuls..."
+        },
+        {
+            "data": "2026-11-10T16:40:45.410276",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Embraer (EMBJ3) reportou lucro líquido ajustado de R$ 379,8 milhões no terceiro trimestre de 2026, uma queda de 15,6% em relação ao mesmo",
+            "motivo_falha": "Subdimensionado: 24 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Embraer (EMBJ3) registrou lucro líquido ajustado de R$ 379,8 milhões no terceiro trimestre de 2026..."
+        },
+        {
+            "data": "2026-11-10T16:43:40.121295",
+            "tema": "Macroeconomia",
+            "texto_original": "O Morgan Stanley rebaixou a recomendação para as ações da Meituan (3690.HK), gigante chinesa de serviços de entrega e e-commerce, de \"overweight\" (acima da média) para",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, violando o limite mínimo de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
+            "correcao_aplicada": "O Morgan Stanley rebaixou a recomendação das ações da Meituan, gigante chinesa de entrega e e-commer..."
+        },
+        {
+            "data": "2026-11-10T16:45:25.821105",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos atravessa um momento de elevada volatilidade, pressionado simultaneamente por eventos de segurança cibernética e desdobramentos políticos nos Estados Unidos. A principal ocorrência recente envolveu ataques hackers a duas grandes corretoras do setor, com o extravio de US$ 6,3 bilhões na Binance e de US$ 49 milhões no Mercado Bitcoin. O impacto imediato dessas invasões refletiu-se em retiradas expressivas de capital dos fundos negociados em bolsa, conhecidos como ETFs americanos, gerando intensa pressão vendedora. Como resultado direto dessa conjuntura, o bitcoin,\n principal referência do segmento e bússola para os demais ativos digitais, recuou da faixa de US$ 81 mil para testar o patamar de suporte técnico em torno de US$ 76 mil.\n\nParalelamente, o cenário macroeconômico foi influenciado pelo resultado das eleições de meio de mandato no legislativo norte-americano. A vitória democrata, embora parcialmente precificada pelos agentes financeiros, traz consequências regulatórias relevantes ao dificultar o avanço do projeto conhecido como Clarity Act. Especialistas avaliam que a nova configuração do Congresso americano obriga o ecossistema cripto a reformular sua estratégia de lobby em Washington, prolongando a incerteza jurídica que afeta diretamente o apetite institucional ao risco no curto prazo.\n\nDo ponto de vista analítico, a manutenção do suporte de US$ 76 mil é considerada fundamental para a preservação da tendência de alta estrutural do bitcoin. Analistas apontam que a descompressão de preços decorrente dos recentes episódios pode configurar uma janela oportuna para a construção gradual de posições por investidores institucionais e qualificados, desde que observadas rigorosas práticas de gestão de risco e segurança operacional. A recomendação predominante para o momento é a cautela, priorizando a alocação em ativos consolidados e o uso de ferramentas automatizadas para mitigar a exposição à volatilidade aguda que caracteriza o atual ciclo do mercado de criptomoedas.",
+            "motivo_falha": "O texto original excedia o limite de 90 palavras. Foi reescrito para cumprir rigorosamente entre 60 e 90 palavras, mantendo a estrutura de três passos do padrão The Economist e terminando com pontuação final.",
+            "correcao_aplicada": "O Bitcoin recuou para a faixa de 76 mil dólares após sofrer intensa pressão vendedora decorrente de ..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-09"
