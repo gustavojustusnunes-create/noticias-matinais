@@ -1213,6 +1213,48 @@
             "texto_original": "O mercado de criptoativos atravessa um momento de elevada volatilidade, pressionado simultaneamente por eventos de segurança cibernética e desdobramentos políticos nos Estados Unidos. A principal ocorrência recente envolveu ataques hackers a duas grandes corretoras do setor, com o extravio de US$ 6,3 bilhões na Binance e de US$ 49 milhões no Mercado Bitcoin. O impacto imediato dessas invasões refletiu-se em retiradas expressivas de capital dos fundos negociados em bolsa, conhecidos como ETFs americanos, gerando intensa pressão vendedora. Como resultado direto dessa conjuntura, o bitcoin,\n principal referência do segmento e bússola para os demais ativos digitais, recuou da faixa de US$ 81 mil para testar o patamar de suporte técnico em torno de US$ 76 mil.\n\nParalelamente, o cenário macroeconômico foi influenciado pelo resultado das eleições de meio de mandato no legislativo norte-americano. A vitória democrata, embora parcialmente precificada pelos agentes financeiros, traz consequências regulatórias relevantes ao dificultar o avanço do projeto conhecido como Clarity Act. Especialistas avaliam que a nova configuração do Congresso americano obriga o ecossistema cripto a reformular sua estratégia de lobby em Washington, prolongando a incerteza jurídica que afeta diretamente o apetite institucional ao risco no curto prazo.\n\nDo ponto de vista analítico, a manutenção do suporte de US$ 76 mil é considerada fundamental para a preservação da tendência de alta estrutural do bitcoin. Analistas apontam que a descompressão de preços decorrente dos recentes episódios pode configurar uma janela oportuna para a construção gradual de posições por investidores institucionais e qualificados, desde que observadas rigorosas práticas de gestão de risco e segurança operacional. A recomendação predominante para o momento é a cautela, priorizando a alocação em ativos consolidados e o uso de ferramentas automatizadas para mitigar a exposição à volatilidade aguda que caracteriza o atual ciclo do mercado de criptomoedas.",
             "motivo_falha": "O texto original excedia o limite de 90 palavras. Foi reescrito para cumprir rigorosamente entre 60 e 90 palavras, mantendo a estrutura de três passos do padrão The Economist e terminando com pontuação final.",
             "correcao_aplicada": "O Bitcoin recuou para a faixa de 76 mil dólares após sofrer intensa pressão vendedora decorrente de ..."
+        },
+        {
+            "data": "2026-11-11T16:28:33.202107",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Taesa (TAEE11), historicamente percebida como um ativo seguro na bolsa, enfrenta um cenário de crescente ceticismo do mercado, impulsionado pela elevação de sua alavancagem.",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 25 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Investidores vendidos aumentaram significativamente suas posições na Taesa (TAEE11) antes da divulga..."
+        },
+        {
+            "data": "2026-11-11T16:28:42.155988",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Brasil não escapará da crescente rivalidade entre Estados Unidos e China, mas está estrategicamente posicionado para navegar um cenário global mais fragmentado. Essa é a avaliação do cientista político Oliver Stuenkel, que aponta a",
+            "motivo_falha": "Subdimensionado: 35 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "O cientista político Oliver Stuenkel afirma que o Brasil não escapará da crescente rivalidade entre ..."
+        },
+        {
+            "data": "2026-11-11T16:28:53.438924",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Dasa (DASA3) está reorientando sua estratégia para capitalizar a crescente demanda por bem-estar e longevidade no Brasil, expandindo seus serviços de medicina diagnóstica para além do tratamento de patologias",
+            "motivo_falha": "Subdimensionado: 30 palavras (mínimo obrigatório: 60 palavras). O texto original não seguia a estrutura de três passos do padrão The Economist e carecia de contexto e desdobramento crítico.",
+            "correcao_aplicada": "A Dasa (DASA3) reorientou sua estratégia para capitalizar a crescente demanda por bem-estar e longev..."
+        },
+        {
+            "data": "2026-11-11T16:29:04.425265",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O BTG Pactual manteve a recomendação de compra para as ações da JBS (JBSS32), apesar da reação negativa do mercado aos resultados do terceiro trimestre de 2026 e ao anúncio das",
+            "motivo_falha": "Subdimensionado: 31 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "O BTG Pactual manteve a recomendação de compra para as ações da JBS (JBSS32), apesar da reação negat..."
+        },
+        {
+            "data": "2026-11-11T16:29:15.081023",
+            "tema": "Macroeconomia",
+            "texto_original": "A valorização das ações do Magazine Luiza (MGLU3) em mais de 20% nos últimos dois dias reflete uma reação do mercado à percepção de ganho de participação em meio à crise enfrentada pela",
+            "motivo_falha": "Subdimensionado: 33 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "As ações do Magazine Luiza (MGLU3) valorizaram mais de 20% nos últimos dois dias, impulsionadas pela..."
+        },
+        {
+            "data": "2026-11-11T16:29:45.273398",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptomoedas vivenciou uma semana de significativa volatilidade, impulsionada por ataques cibernéticos de grande escala e desdobramentos políticos nos Estados Unidos. A Binance, uma das maiores exchanges globais,",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 30 palavras, violando o limite mínimo de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O mercado de criptomoedas registrou forte volatilidade, com o Bitcoin caindo 8% na última semana, im..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-10"
