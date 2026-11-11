@@ -1,8 +1,5 @@
 {
     "imagens_recentes": [
-        "https://ichef.bbci.co.uk/news/1200/branded_portuguese/4f59/live/79b69bc0-ca24-11f1-a718-8f4bc8d2cdf5.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/Meta-AI-eleioes-no-Brasil.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/06/NASDAQ_stock_market_display.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-19T004434Z_475095858_RC206OACRIDP_RTRMADP_3_BRAZIL-ELECTION-DEBATE.jpg",
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3f09/live/65ad9dc0-c346-11f1-9a39-31b474234113.jpg",
@@ -49,7 +46,10 @@
         "https://www.infomoney.com.br/wp-content/uploads/2026/09/ChatGPT-Image-17-de-set.-de-2026-15_37_31.jpg?fit=1672%2C941&quality=70&strip=all",
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/d3d7/live/1adcf6d0-db63-11f1-adda-c54f54e3ce6a.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/TPU-8i-Max.width_.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-anthropic-1-1-1.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-anthropic-1-1-1.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/02/brava-_energia.png",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/estados-unidos-china-1024x598.png",
+        "https://agencia.fapesp.br/files/post/59590.jpeg"
     ],
     "erros": [
         {
@@ -1257,5 +1257,5 @@
             "correcao_aplicada": "O mercado de criptomoedas registrou forte volatilidade, com o Bitcoin caindo 8% na última semana, im..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-10"
+    "ultima_edicao_instagram": "2026-11-11"
 }
