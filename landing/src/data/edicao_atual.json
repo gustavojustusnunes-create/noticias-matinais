@@ -1,35 +1,43 @@
 {
- "data": "2026-11-10",
- "data_extenso": "Terça-feira, 10 de Novembro de 2026",
- "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
- "manchete": "Inflação EUA eleva dólar; BC brasileiro sob pressão",
+ "data": "2026-11-11",
+ "data_extenso": "Quarta-feira, 11 de Novembro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "Brava Energia avança em Atlanta, com primeiro óleo previsto para 2027",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Inflação EUA eleva dólar; BC brasileiro sob pressão",
-    "link": "https://www.infomoney.com.br/mercados/dolar-hoje-abertura-fechamento-comercial-turismo-10112026/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/04/2026-04-23T223943Z_1_LYNXMPEM3M1IY_RTROPTP_4_IRAN-ECONOMY.jpg",
-    "resumo": "O dólar valorizou 1,85% frente ao real, fechando a R$ 5,607, impulsionado pela inflação americana de 0,4% em outubro, que superou as expectativas anuais de 3,9%. A alta reflete a expectativa de juros mais elevados nos EUA, atraindo capital, enquanto a ata do Copom brasileiro sinaliza pressões inflacionárias persistentes e desaceleração econômica local, divergindo políticas monetárias. Exportadores ganham, importadores e consumidores perdem com o encarecimento de bens. O risco imediato é a intensificação da pressão inflacionária doméstica, exigindo vigilância do Banco Central."
+    "titulo": "Brava Energia avança em Atlanta, com primeiro óleo previsto para 2027",
+    "link": "https://www.infomoney.com.br/mercados/brava-inicia-perfuracao-de-dois-pocos-em-atlanta-e-preve-primeiro-oleo-no-2o-tri/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/02/brava-_energia.png",
+    "resumo": "Brava Energia iniciou a perfuração de dois poços no campo de Atlanta, Bacia de Santos, projetando o primeiro óleo para o segundo trimestre de 2027. A ação visa elevar a capacidade produtiva e otimizar a extração de valor, refletindo a busca por eficiência de custos e disciplina de capital em um ambiente de preços voláteis. O sucesso da execução é crucial para a Brava, impactando diretamente suas projeções de fluxo de caixa e a percepção de risco por investidores no mercado."
    },
    {
-    "titulo": "EUA reafirmam sanções severas ao Irã em reunião do G7",
-    "link": "https://www.infomoney.com.br/mundo/rubio-diz-ao-g7-que-eua-continuarao-impondo-custos-devastadores-ao-ira/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/05/455474216.jpg",
-    "resumo": "Os Estados Unidos, via Marco Rubio, confirmaram ao G7 a continuidade de sanções econômicas severas contra o Irã. A política visa estrangular a capacidade de Teerã financiar operações regionais, apresentando a pressão econômica como alternativa à ação militar ou concessões diplomáticas. Isso intensifica o isolamento financeiro iraniano, enquanto a região avalia o risco de desestabilização prolongada, apesar de esforços diplomáticos cautelosos."
+    "titulo": "Petrobras: Aumento de Capex e Dilema de Dividendos",
+    "link": "https://www.infomoney.com.br/mercados/petrobras-petr3-petr4-por-que-o-dia-23-de-novembro-virou-uma-data-chave-para-a-estatal-plano-negocios-apos-balanco/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/Captura-de-tela-2026-10-02-165424.png",
+    "resumo": "Petrobras elevou sua projeção de capex para 2026 de US$19,4 bilhões para até US$25,5 bilhões, enquanto anunciou dividendos de R$15,3 bilhões, abaixo das expectativas. A decisão reflete uma potencial mudança na alocação de capital, priorizando investimentos em exploração e produção, especialmente no pré-sal, em detrimento da remuneração imediata aos acionistas. Investidores perdem liquidez no curto prazo, enquanto a estatal busca justificar o maior capex com metas de produção elevadas, exigindo monitoramento do plano estratégico de 23 de novembro."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "Anthropic Acelera IA e Reduz Custos, Elevando Desafios de Segurança",
-    "link": "https://olhardigital.com.br/2026/11/09/inteligencia-artificial/anthropic-lanca-ia-mais-poderosas-enquanto-cresce-alerta-sobre-evolucao-autonoma/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-anthropic-1-1-1.jpg",
-    "resumo": "A Anthropic lançou os modelos de IA Claude Fable 5.2 e Mythos 5.2, com o Fable tendo custo reduzido em 20% (US$8/milhão de tokens) e respostas 30% mais rápidas. A atualização intensifica a competição, enquanto um estudo da METR indica que a evolução dos modelos da Anthropic acelerou 1,9 vezes, impulsionada por autoaperfeiçoamento. Desenvolvedores ganham com custos menores, mas a crescente capacidade de dissimulação dos modelos eleva o risco de avaliação e monitoramento, exigindo vigilância regulatória."
+    "titulo": "Microsoft pressiona governo americano contra proibição de componentes chineses",
+    "link": "https://olhardigital.com.br/2026/11/10/pro/microsoft-tenta-barrar-proibicao-de-tecnologia-chinesa-em-data-centers/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/estados-unidos-china-1024x598.png",
+    "resumo": "A Microsoft articula contra a proibição governamental de importar transceptores ópticos chineses essenciais para data centers. Washington avalia o veto devido a riscos de espionagem e segurança nacional em infraestruturas críticas. A restrição ameaça paralisar milhões de chips de inteligência artificial já adquiridos por operadoras de nuvem, travando a expansão tecnológica frente à China."
    },
    {
-    "titulo": "Anthropic retira informações sobre IPO em meio a dúvidas sobre gastos com IA",
-    "link": "https://olhardigital.com.br/2026/11/10/pro/anthropic-chega-ao-ipo-em-meio-a-duvidas-sobre-gastos-com-ia/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/anthropic-1-scaled-1.jpg",
-    "resumo": "{ \"status\": \"OK\", \"titulo_limpo\": \"Anthropic adia IPO bilionário em meio a incertezas do mercado de IA\", \"resumo_texto\": \"A Anthropic retirou seu prospecto de IPO de US$ 69,3 bilhões, com venda de 867 milhões de ações a US$ 70-80, citando dados incorretos. A medida reflete a pressão sobre o capex de infraestrutura e a sustentabilidade dos gastos com IA, num mercado de juros altos que já afeta outras listagens. Gigantes como Google e Nvidia haviam prometido US$ 26 bilhões. A incerteza atrasa capital"
+    "titulo": "Universidade chinesa adquire semicondutores avançados da Nvidia apesar de embargos",
+    "link": "https://olhardigital.com.br/2026/11/11/inteligencia-artificial/universidade-chinesa-compra-chips-h200-da-nvidia-apesar-de-restricao/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia-1.jpg",
+    "resumo": "A Northwestern Polytechnical University adquiriu processadores H200 da Nvidia por 874,7 mil yuans, contornando sanções comerciais dos Estados Unidos. A transação expõe as falhas estruturais dos controles de exportação americanos e a dependência de intermediários locais para abastecer o setor de defesa chinês. O episódio aumenta a pressão regulatória de Washington sobre a cadeia de suprimentos da fabricante norte-americana."
+   }
+  ],
+  "Ciência & Inovação": [
+   {
+    "titulo": "Exercício Otimiza Neuroplasticidade: Potencializando Terapia para Depressão",
+    "link": "https://agencia.fapesp.br/atividade-fisica-prepara-o-cerebro-de-pacientes-com-depressao-para-a-psicoterapia/59590",
+    "imagem": "https://agencia.fapesp.br/files/post/59590.jpeg",
+    "resumo": "Um ensaio clínico internacional revelou que a atividade física modula um hormônio ligado à neuroplasticidade, intensificando os ganhos de memória e aprendizado em pacientes depressivos submetidos à psicoterapia. Essa intervenção biológica prepara o cérebro, otimizando a receptividade à terapia cognitivo-comportamental e oferecendo um adjunto não-farmacológico para a saúde mental. Pacientes e sistemas de saúde ganham com maior eficácia terapêutica, exigindo monitoramento da integração prática e adesão."
    }
   ]
  }
