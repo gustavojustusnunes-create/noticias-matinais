@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-12",
+  "data_extenso": "Quinta-feira, 12 de Novembro de 2026",
+  "manchete": "Crédito de R$ 149 bi para benefícios sociais: implicações fiscais",
+  "arquivo_html": "2026-11-12.html"
+ },
+ {
   "data": "2026-11-11",
   "data_extenso": "Quarta-feira, 11 de Novembro de 2026",
   "manchete": "Brava Energia avança em Atlanta, com primeiro óleo previsto para 2027",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 10 de Setembro de 2026",
   "manchete": "Israel explode estrutura do Hezbollah e causa terremoto de 4,1 no Líbano",
   "arquivo_html": "2026-09-10.html"
- },
- {
-  "data": "2026-09-06",
-  "data_extenso": "Domingo, 6 de Setembro de 2026",
-  "manchete": "Vulcão 'filhote do Krakatoa' entra em erupção na Indonésia, afeta voos na Ásia e deixa 150 mil passageiros retidos",
-  "arquivo_html": "2026-09-06.html"
  }
 ]
