@@ -1255,6 +1255,62 @@
             "texto_original": "O mercado de criptomoedas vivenciou uma semana de significativa volatilidade, impulsionada por ataques cibernéticos de grande escala e desdobramentos políticos nos Estados Unidos. A Binance, uma das maiores exchanges globais,",
             "motivo_falha": "O texto original estava subdimensionado com apenas 30 palavras, violando o limite mínimo de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "O mercado de criptomoedas registrou forte volatilidade, com o Bitcoin caindo 8% na última semana, im..."
+        },
+        {
+            "data": "2026-11-12T16:59:26.041997",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Americanas (AMER3) está em ritmo acelerado de redução do consumo de caixa, conforme afirmou seu diretor Financeiro e de Relações com Investidores, Sébastien Durchon. A varejista, que saiu",
+            "motivo_falha": "Subdimensionado: 29 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Americanas (AMER3) acelerou a redução do consumo de caixa, conforme afirmou seu diretor Financeiro..."
+        },
+        {
+            "data": "2026-11-12T16:59:45.102009",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Petrobras está avaliando internamente ajustes conjunturais em sua estratégia comercial de preços de combustíveis, impulsionada pelo cenário geopolítico volátil que tem gerado oscilações no mercado de petróleo. A diretora Ang",
+            "motivo_falha": "Subdimensionado: 31 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Petrobras está revisando sua política de preços de combustíveis, buscando alinhar-se às diretrizes..."
+        },
+        {
+            "data": "2026-11-12T16:59:54.594779",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O Banco do Brasil (BBAS3) projeta um lucro líquido de R$ 1 bilhão a R$ 2 bilhões para o quarto trimestre, patamar similar ao do trimestre anterior, devido à persistência da inadimpl",
+            "motivo_falha": "Subdimensionado: 32 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Banco do Brasil (BBAS3) projeta um lucro líquido entre R$ 1 bilhão e R$ 2 bilhões para o quarto tr..."
+        },
+        {
+            "data": "2026-11-12T17:00:48.839803",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Raízen (RAIZ55) apresentou resultados mistos no segundo trimestre da safra 2026/27, com a ação registrando queda de 4% a R$ 20,",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 22 palavras, terminando sem pontuação final e carecendo da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Raízen registrou queda de 4% em suas ações após reportar resultados mistos no segundo trimestre da..."
+        },
+        {
+            "data": "2026-11-12T17:02:19.929272",
+            "tema": "Macroeconomia",
+            "texto_original": "A sugestão do ex-presidente dos EUA, Donald Trump, de que Tim Cook, ex-CEO da Apple (AAPL), assuma a liderança da Nvidia (NVDA), substituindo Jensen Huang, introduz um",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O presidente eleito Donald Trump sugeriu publicamente que Tim Cook, atual executivo-chefe da Apple, ..."
+        },
+        {
+            "data": "2026-11-12T17:04:39.590633",
+            "tema": "Macroeconomia",
+            "texto_original": "O Congresso Nacional aprovou, nesta quinta-feira (12), a abertura de um crédito de R$ 149,4 bilhões, autorizando o governo Lula (PT) a destinar esses recursos para o pagamento",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, violando o limite mínimo de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
+            "correcao_aplicada": "O Congresso Nacional aprovou a abertura de um crédito suplementar de R$ 149,4 bilhões para garantir ..."
+        },
+        {
+            "data": "2026-11-12T17:06:20.429852",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A Strategy, empresa com significativa exposição a bitcoin, posicionou-se sobre a proposta da MSCI de excluir companhias \"não operacionais\" de seus índices Global Investable Market Indexes (GIMI). Embora a Strategy se enquad",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 32 palavras, terminando de forma incompleta sem pontuação final, além de violar a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A MicroStrategy manifestou-se contrária à proposta da MSCI de excluir empresas sem operações tradici..."
+        },
+        {
+            "data": "2026-11-12T17:06:36.799740",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Banco Central (BC) iniciou nesta segunda-feira (9) a divulgação de uma lista de instituições aptas a operar com serviços de ativos virtuais, incluindo criptomoedas, em seu site oficial. A medida visa",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 32 palavras, violando o limite mínimo de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
+            "correcao_aplicada": "O Banco Central (BC) iniciou a divulgação de uma lista de instituições aptas a operar com serviços d..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-11"
