@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/agentes-de-IA.jpg",
-        "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-19T004434Z_475095858_RC206OACRIDP_RTRMADP_3_BRAZIL-ELECTION-DEBATE.jpg",
         "https://ichef.bbci.co.uk/news/1200/branded_portuguese/3f09/live/65ad9dc0-c346-11f1-9a39-31b474234113.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/deepseek.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2024/06/chart-1905224_1280.jpg",
@@ -49,7 +47,9 @@
         "https://olhardigital.com.br/wp-content/uploads/2026/09/claude-anthropic-1-1-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/02/brava-_energia.png",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/estados-unidos-china-1024x598.png",
-        "https://agencia.fapesp.br/files/post/59590.jpeg"
+        "https://agencia.fapesp.br/files/post/59590.jpeg",
+        "https://www.infomoney.com.br/wp-content/uploads/2025/07/53627831838_2fa74e7364_o.webp",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia-2.jpg"
     ],
     "erros": [
         {
@@ -1313,5 +1313,5 @@
             "correcao_aplicada": "O Banco Central (BC) iniciou a divulgação de uma lista de instituições aptas a operar com serviços d..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-11"
+    "ultima_edicao_instagram": "2026-11-12"
 }
