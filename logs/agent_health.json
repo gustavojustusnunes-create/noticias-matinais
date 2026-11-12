@@ -1,5 +1,5 @@
 {
-    "timestamp_scan": "2026-11-12T14:41:51.405148-03:00",
+    "timestamp_scan": "2026-11-12T20:53:00.622340-03:00",
     "data_hoje": "2026-11-12",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
@@ -23,9 +23,9 @@
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
-            "status": "PENDING",
-            "detalhe": "Ainda não postou a edição de hoje (2026-11-12).",
-            "ultima_edicao": "2026-11-11",
+            "status": "ONLINE",
+            "detalhe": "Posts da edição de 2026-11-12 gerados e registrados.",
+            "ultima_edicao": "2026-11-12",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
@@ -39,7 +39,7 @@
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-11-12 14:41 BRT",
+            "ultimo_scan": "2026-11-12 20:53 BRT",
             "incidentes_abertos": 0
         }
     }
