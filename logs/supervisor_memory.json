@@ -1311,6 +1311,48 @@
             "texto_original": "O Banco Central (BC) iniciou nesta segunda-feira (9) a divulgação de uma lista de instituições aptas a operar com serviços de ativos virtuais, incluindo criptomoedas, em seu site oficial. A medida visa",
             "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 32 palavras, violando o limite mínimo de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
             "correcao_aplicada": "O Banco Central (BC) iniciou a divulgação de uma lista de instituições aptas a operar com serviços d..."
+        },
+        {
+            "data": "2026-11-13T16:43:20.982505",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Santander revisou suas projeções macroeconômicas para o Brasil, indicando um cenário de crescimento mais fraco e inflação mais persistente até 2027. O banco cortou a estimativa de expans",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Santander reduziu sua projeção de crescimento do PIB brasileiro e elevou a estimativa para a infla..."
+        },
+        {
+            "data": "2026-11-13T16:44:44.822137",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A presidente do Banco do Brasil (BBAS3), Tarciana Medeiros, detalhou o avanço da não pontualidade nos pagamentos de dívidas do agronegócio, sinalizando um aumento da inadimplência",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 30 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A presidente do Banco do Brasil (BBAS3), Tarciana Medeiros, detalhou o avanço da inadimplência no ag..."
+        },
+        {
+            "data": "2026-11-13T16:46:07.091817",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A 3tentos (TTEN3) registrou avanço de 3,6% em suas ações para R$ 11,09 após a divulgação dos resultados do terceiro trimestre de 2026",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist e da pontuação final.",
+            "correcao_aplicada": "A 3tentos (TTEN3) registrou avanço de 3,6% em suas ações para R$ 11,09 após reportar resultados oper..."
+        },
+        {
+            "data": "2026-11-13T16:46:18.115576",
+            "tema": "Empresas & Negócios",
+            "texto_original": "As ações do Banco Inter (INTR) registraram forte alta de 8,83% em Wall Street, negociadas a US$ 4,31, após a divulgação dos resultados do terceiro trimestre. O lucro líquido de",
+            "motivo_falha": "Subdimensionado: 29 palavras (mínimo obrigatório: 60 palavras). A frase final não termina com ponto final. O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "As ações do Banco Inter (INTR) dispararam 8,83% em Wall Street, negociadas a US$ 4,31, após a divulg..."
+        },
+        {
+            "data": "2026-11-13T16:46:47.903877",
+            "tema": "Macroeconomia",
+            "texto_original": "O Supremo Tribunal Federal (STF) avança na análise do fim da escala de trabalho 6x1, com os ministros Alexandre de Moraes e Flávio Dino já proferindo votos favoráveis à mudança.",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 29 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Supremo Tribunal Federal (STF) registra dois votos favoráveis, dos ministros Alexandre de Moraes e..."
+        },
+        {
+            "data": "2026-11-13T16:47:20.397356",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A Strategy, detentora de bitcoin, minimizou o impacto da proposta da MSCI de excluir empresas “não operacionais” de seus índices Global Investable Market Indexes (GIMI). Embora a Strategy se enquadre na categoria,",
+            "motivo_falha": "Subdimensionado: 29 palavras (mínimo obrigatório: 60 palavras). | A frase final não termina com ponto final. | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A MicroStrategy, detentora de 200.000 Bitcoins, minimizou o impacto da proposta da MSCI de excluir e..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-12"
