@@ -1,29 +1,29 @@
 {
- "data": "2026-11-12",
- "data_extenso": "Quinta-feira, 12 de Novembro de 2026",
- "editorial": "Fique por dentro do que está movimentando o mercado com nossa seleção diária.",
- "manchete": "Crédito de R$ 149 bi para benefícios sociais: implicações fiscais",
+ "data": "2026-11-13",
+ "data_extenso": "Sexta-feira, 13 de Novembro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "Senado aprova ajuste fiscal; impacto primário e limites de gastos",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Crédito de R$ 149 bi para benefícios sociais: implicações fiscais",
-    "link": "https://www.infomoney.com.br/politica/congresso-aprova-credito-de-r-149-bi-para-bolsa-familia-bpc-e-previdencia/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/07/53627831838_2fa74e7364_o.webp",
-    "resumo": "O Congresso brasileiro aprovou R$ 149,4 bilhões em crédito suplementar para financiar benefícios sociais como Previdência, Bolsa Família e BPC. A medida contorna restrições orçamentárias ao permitir financiamento via mercado, utilizando a exceção da Regra de Ouro para cobrir despesas essenciais. Embora garanta pagamentos, a operação eleva a dívida pública, sinalizando pressão fiscal contínua e risco de maior custo de captação para o Tesouro."
-   },
-   {
-    "titulo": "Juros e Dólar Elevados Freiam Crédito e Investimento no Brasil",
-    "link": "https://www.infomoney.com.br/mercados/alem-da-bolsa-como-dolar-juros-altos-podem-ameacar-investimentos-empregos/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/Dolar-Juros-e-Bolsa-Casa-Clear-2026-1-Imagem-gerada-com-uso-de-Inteligencia-Artificial-Bruno-Nadai.jpeg",
-    "resumo": "O crédito ao consumidor no Brasil atingiu 62,4% ao ano em setembro, com 29% da renda familiar comprometida, enquanto a Selic permanece em 13,75%. Essa pressão reflete uma política monetária restritiva do Banco Central para conter a inflação, elevando o custo de capital para pessoas físicas e jurídicas (24,4% para empresas). A valorização do dólar agrava o cenário, encarecendo insumos. O risco imediato é a desaceleração do investimento privado e do consumo, impactando o crescimento econômico e a geração de empregos, com maior ônus sobre famílias de menor renda."
+    "titulo": "Senado aprova ajuste fiscal; impacto primário e limites de gastos",
+    "link": "https://www.infomoney.com.br/politica/veja-os-pontos-principais-do-projeto-de-ajuste-fiscal-aprovado-pelo-senado/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/senado-federal.jpg",
+    "resumo": "O Senado aprovou o projeto de ajuste fiscal (PLP 299/2026) por 45 votos a 31, projetando melhora de R$ 45,1 bilhões a R$ 56,1 bilhões no resultado primário até 2027. A iniciativa visa reequilibrar contas públicas, cortando benefícios fiscais e limitando o crescimento de gastos a 2% acima da inflação, permitindo contingenciamento para atingir o centro da meta fiscal. Concedendo flexibilidade fiscal ao governo, a proposta onera setores que perdem incentivos; sua eficácia depende da aprovação final e implementação, com o mercado já cauteloso."
    }
   ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "China adquire chips Nvidia H200, desafiando sanções dos EUA",
-    "link": "https://olhardigital.com.br/2026/11/12/inteligencia-artificial/universidade-chinesa-fura-sancoes-e-compra-chips-h200-da-nvidia/",
-    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia-2.jpg",
-    "resumo": "A Universidade Politécnica do Noroeste, ligada à defesa chinesa, adquiriu dois chips Nvidia H200 por 874,7 mil yuans, contornando sanções de exportação dos EUA. A compra evidencia a pressão regulatória americana sobre semicondutores avançados, impelindo entidades chinesas a buscar rotas alternativas e capacidade computacional externa. O incidente expõe a porosidade das sanções e eleva o risco de Washington intensificar restrições, como o Remote Access Security Act, impactando o acesso remoto a chips e a competitividade das empresas chinesas de IA."
+    "titulo": "Restrições a Chips Nvidia Impactam Bilhões em IA na China",
+    "link": "https://olhardigital.com.br/2026/11/13/inteligencia-artificial/projetos-de-ia-na-china-ainda-dependem-de-processadores-nvidia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/nvidia-china-eua-1-1.jpg",
+    "resumo": "Mais de US$ 3.2 bilhões em projetos chineses de IA dependem de processadores Nvidia H100, H200 e H800, sujeitos a restrições. Essa dependência persiste apesar dos controles de exportação dos EUA, que visam limitar o acesso da China a semicondutores avançados, forçando Pequim a buscar alternativas domésticas. A saída do CEO da Nvidia, Jensen Huang, pode agravar a pressão regulatória. Projetos chineses enfrentam atrasos e reformulações dispendiosas, enquanto a Nvidia perde mercado e a disputa tecnológica entre EUA e China se intensifica, com risco de fragmentação da cadeia de suprimentos."
+   },
+   {
+    "titulo": "Financiamento de IA: CoreWeave e o Custo do Capital",
+    "link": "https://olhardigital.com.br/2026/11/12/pro/quem-e-a-coreweave-e-por-que-sua-infraestrutura-importa-para-a-ia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/coreweave.jpg",
+    "resumo": "A CoreWeave, provedora de infraestrutura para IA, registrou queda de 6,3% em suas ações e viu o rendimento de seus títulos de dívida de alto risco disparar para 15%. Essa desvalorização reflete a crescente pressão sobre o financiamento de capital intensivo para data centers e chips, crucial para a expansão da capacidade computacional exigida pela inteligência artificial. O custo elevado do crédito ameaça a viabilidade de crescimento de neoclouds, expondo a fragilidade do modelo de financiamento do boom da IA e beneficiando provedores com balanços mais robustos."
    }
   ]
  }

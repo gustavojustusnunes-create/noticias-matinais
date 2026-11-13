@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-13",
+  "data_extenso": "Sexta-feira, 13 de Novembro de 2026",
+  "manchete": "Senado aprova ajuste fiscal; impacto primário e limites de gastos",
+  "arquivo_html": "2026-11-13.html"
+ },
+ {
   "data": "2026-11-12",
   "data_extenso": "Quinta-feira, 12 de Novembro de 2026",
   "manchete": "Crédito de R$ 149 bi para benefícios sociais: implicações fiscais",
@@ -352,11 +358,5 @@
   "data_extenso": "Sexta-feira, 11 de Setembro de 2026",
   "manchete": "Grupo no Iêmen usou Claude, IA da Anthropic, para desenvolver armas teleguiadas",
   "arquivo_html": "2026-09-11.html"
- },
- {
-  "data": "2026-09-10",
-  "data_extenso": "Quinta-feira, 10 de Setembro de 2026",
-  "manchete": "Israel explode estrutura do Hezbollah e causa terremoto de 4,1 no Líbano",
-  "arquivo_html": "2026-09-10.html"
  }
 ]
