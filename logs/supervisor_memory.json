@@ -1,6 +1,5 @@
 {
     "imagens_recentes": [
-        "https://www.infomoney.com.br/wp-content/uploads/2024/06/chart-1905224_1280.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/amazon-1-scaled.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/montagem-infomoney-lula-flavio-bolsonaro-eleicoes-2026.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/meta_logo.jpg",
@@ -49,7 +48,8 @@
         "https://www.infomoney.com.br/wp-content/uploads/2025/07/53627831838_2fa74e7364_o.webp",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-nvidia-2.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/10/senado-federal.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/11/nvidia-china-eua-1-1.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/nvidia-china-eua-1-1.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/chatgpt.jpg"
     ],
     "erros": [
         {
@@ -1355,5 +1355,5 @@
             "correcao_aplicada": "A MicroStrategy, detentora de 200.000 Bitcoins, minimizou o impacto da proposta da MSCI de excluir e..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-13"
+    "ultima_edicao_instagram": "2026-11-14"
 }
