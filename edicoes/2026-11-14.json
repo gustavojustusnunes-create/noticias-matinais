@@ -1,0 +1,16 @@
+{
+ "data": "2026-11-14",
+ "data_extenso": "Sábado, 14 de Novembro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "OpenAI Lança Carteira IA: Tokenização Redefine Pagamentos Digitais",
+ "cadernos": {
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "OpenAI Lança Carteira IA: Tokenização Redefine Pagamentos Digitais",
+    "link": "https://olhardigital.com.br/2026/11/13/inteligencia-artificial/voce-confia-agente-de-ia-da-openai-chatgpt-wallet-fara-compras-pelo-usuario-e-promete-seguranca/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/chatgpt.jpg",
+    "resumo": "OpenAI lançou a ChatGPT Wallet nos EUA para assinantes Pro, permitindo que agentes de IA realizem compras via tokenização e verificação biométrica. A iniciativa visa mitigar riscos de segurança e impulsionar a integração de IA em transações comerciais, utilizando parcerias com grandes redes de pagamento para validação. OpenAI busca consolidar a utilidade de seus agentes, mas a aceitação dependerá da confiança na segurança do sistema e da capacidade de escalar a delegação de compras sem incidentes."
+   }
+  ]
+ }
+}
