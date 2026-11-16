@@ -1353,6 +1353,34 @@
             "texto_original": "A Strategy, detentora de bitcoin, minimizou o impacto da proposta da MSCI de excluir empresas “não operacionais” de seus índices Global Investable Market Indexes (GIMI). Embora a Strategy se enquadre na categoria,",
             "motivo_falha": "Subdimensionado: 29 palavras (mínimo obrigatório: 60 palavras). | A frase final não termina com ponto final. | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
             "correcao_aplicada": "A MicroStrategy, detentora de 200.000 Bitcoins, minimizou o impacto da proposta da MSCI de excluir e..."
+        },
+        {
+            "data": "2026-11-16T18:47:50.736562",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Empresas do setor de biodiesel, como 3tentos (TTEN3) e Caramuru Alimentos, estão implementando estratégias para diversificar a oferta de matérias-primas e otimizar",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A 3tentos e a Caramuru Alimentos intensificaram a diversificação de matérias-primas agrícolas, apost..."
+        },
+        {
+            "data": "2026-11-16T18:52:35.678595",
+            "tema": "Macroeconomia",
+            "texto_original": "A Invepar, holding de infraestrutura que detém a concessão do Aeroporto Internacional de Guarulhos (GRU), submeteu ao Conselho Administrativo de Defesa Econômica (Cade) a proposta",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Invepar submeteu formalmente ao Conselho Administrativo de Defesa Econômica a transferência do con..."
+        },
+        {
+            "data": "2026-11-16T18:55:24.158943",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "As principais criptomoedas registraram perdas significativas neste domingo, estendendo um desempenho negativo acumulado ao longo da semana. O Bitcoin (BTC) recuou 2,52% nas últimas 24 horas",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, terminando de forma incompleta sem pontuação final, além de violar a estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin recuou 2,52% nas últimas vinte e quatro horas deste domingo, cotado a patamares inferiores..."
+        },
+        {
+            "data": "2026-11-16T18:56:13.042003",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) negocia atualmente em torno de US$ 70 mil, representando uma queda superior a 40% em relação à sua máxima histórica de US$ 126 mil, alcançada em",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin negocia atualmente em torno de US$ 70.000, registrando uma retração superior a 40% em rela..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-15"
