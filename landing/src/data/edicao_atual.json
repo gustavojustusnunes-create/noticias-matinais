@@ -1,15 +1,35 @@
 {
- "data": "2026-11-15",
- "data_extenso": "Domingo, 15 de Novembro de 2026",
+ "data": "2026-11-16",
+ "data_extenso": "Segunda-feira, 16 de Novembro de 2026",
  "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
- "manchete": "Fusão Tesla-SpaceX: Acesso ao S&P 500 e Capital Garantido",
+ "manchete": "Dólar Salta 2,45% com Incertezas Fiscais e Pressão Externa",
  "cadernos": {
   "Macroeconomia & Mercados": [
    {
-    "titulo": "Fusão Tesla-SpaceX: Acesso ao S&P 500 e Capital Garantido",
-    "link": "https://www.infomoney.com.br/mercados/fusao-com-a-tesla-pode-ser-o-atalho-da-spacex-para-entrar-no-sp-500/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/06/telao-spaceX.png",
-    "resumo": "Elon Musk articula uma potencial fusão entre Tesla e SpaceX, avaliada em US$ 3,5 trilhões, visando a entrada da SpaceX no S&P 500 após sua recusa inicial. A estratégia capitaliza os US$ 16 trilhões em fundos passivos que replicam o índice, garantindo fluxo de capital para empreendimentos especulativos e consolidando o império de Musk sob uma única estrutura. Isso geraria US$ 100 bilhões em demanda forçada, beneficiando a nova entidade, mas expondo investidores passivos a ativos de alta volatilidade e valuations questionáveis, distorcendo a alocação de capital."
+    "titulo": "Dólar Salta 2,45% com Incertezas Fiscais e Pressão Externa",
+    "link": "https://www.infomoney.com.br/mercados/dolar-hoje-avanca-com-dados-domesticos-e-politica-fiscal-em-foco/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/03/blogging-guide-K5DY18hy5JQ-unsplash_red.jpg",
+    "resumo": "O dólar à vista valorizou 2,45% frente ao real, atingindo R$ 5,794, impulsionado por incertezas fiscais domésticas. A valorização reflete a indefinição sobre o pacote fiscal de R$60 bilhões no Senado e a composição da equipe econômica. Soma-se a isso a retração do IBC-Br e a elevação das projeções de inflação e juros para 2027, além da força global do dólar. A volatilidade cambial persistirá, penalizando importadores e pressionando a inflação, enquanto o Banco Central enfrenta maior desafio na gestão da política monetária."
+   },
+   {
+    "titulo": "Desconfiança Fiscal Derruba Ativos Brasileiros Pós-Lula",
+    "link": "https://www.infomoney.com.br/mercados/preocupacoes-com-governo-lula-derrubam-mercados-brasileiros-do-real-a-titulos/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/475236747.jpg",
+    "resumo": "Ativos brasileiros, incluindo o real (queda de 2% em um dia e 14% pós-eleição) e o índice acionário (recuo de 1,8%), despencaram devido à desconfiança fiscal. Investidores questionam a suficiência do pacote governamental focado em receita, não em corte de gastos, elevando prêmios de risco e a expectativa de juros altos prolongados. Empresas endividadas e detentores de ativos perdem valor, enquanto o risco de intervenção cambial e a necessidade de consolidação fiscal urgente se intensificam."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Geopolítica dos Semicondutores: Restrições de IA no Diálogo Trump-Xi",
+    "link": "https://olhardigital.com.br/2026/11/16/inteligencia-artificial/bloqueio-de-chips-de-ia-deve-marcar-reuniao-entre-trump-e-xi-na-china/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-de-ia.jpg",
+    "resumo": "A iminente ampliação das restrições americanas sobre chips de IA avançados dominará o encontro entre Trump e Xi Jinping em Shenzhen. A pressão de parlamentares americanos, intensificada por relatos de espionagem envolvendo a Nvidia, impulsiona Washington a conter o avanço tecnológico chinês. Pequim teme uma política de contenção mais ampla, além da estabilidade estratégica. A China enfrenta um risco imediato de desaceleração em sua capacidade de IA, enquanto os EUA buscam consolidar sua liderança tecnológica, elevando a tensão geopolítica e o monitoramento da cadeia de semicondutores."
+   },
+   {
+    "titulo": "IA: FMI e ONU alertam para bolha financeira e custo ambiental",
+    "link": "https://olhardigital.com.br/2026/11/16/inteligencia-artificial/fmi-e-onu-alertam-para-riscos-financeiros-e-ambientais-da-ia/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/financial-ai-market-editorial-copy.jpg",
+    "resumo": "O FMI alertou que o financiamento circular em IA ultrapassou US$ 1 trilhão, com dois terços via dívida, enquanto a ONU destacou o consumo ambiental massivo de centros de dados. Essa dinâmica, impulsionada por expectativas de mercado elevadas e juros crescentes, cria vulnerabilidades financeiras e sobrecarrega recursos hídricos e energéticos. O risco imediato é uma correção de mercado de até 20% nas ações americanas e pressão regulatória sobre a sustentabilidade da infraestrutura de IA."
    }
   ]
  }
