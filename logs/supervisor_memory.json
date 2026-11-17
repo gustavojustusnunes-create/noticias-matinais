@@ -1381,6 +1381,41 @@
             "texto_original": "O Bitcoin (BTC) negocia atualmente em torno de US$ 70 mil, representando uma queda superior a 40% em relação à sua máxima histórica de US$ 126 mil, alcançada em",
             "motivo_falha": "O texto original estava subdimensionado com apenas 23 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "O Bitcoin negocia atualmente em torno de US$ 70.000, registrando uma retração superior a 40% em rela..."
+        },
+        {
+            "data": "2026-11-17T17:52:23.632318",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Ministro da Fazenda, Dario Durigan, reafirmou a posição do governo contra o adiamento da reforma tributária para 2028, defendendo o início da transição em 2027",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O secretário-executivo do Ministério da Fazenda, Dario Durigan, descartou qualquer adiamento da refo..."
+        },
+        {
+            "data": "2026-11-17T17:53:10.402617",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O Itaú BBA elevou a recomendação da TIM (TIMS3) de neutra para Outperform (compra), estabelecendo um novo preço-alvo de R$ 25 por ação, ante R",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Itaú BBA elevou a recomendação da TIM (TIMS3) de neutra para compra, estipulando um preço-alvo de ..."
+        },
+        {
+            "data": "2026-11-17T17:53:54.284821",
+            "tema": "Empresas & Negócios",
+            "texto_original": "Os Estados Unidos, através dos Departamentos de Comércio e Justiça, investigam desde 2024 a empresa singapuriana Megaspeed por possíveis violações dos controles de exportação de semicondutores, especific",
+            "motivo_falha": "Subdimensionado: 27 palavras (mínimo obrigatório: 60 palavras). | A frase final não termina com ponto final. | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "Os Estados Unidos, através dos Departamentos de Comércio e Justiça, investigam desde 2024 a empresa ..."
+        },
+        {
+            "data": "2026-11-17T17:54:50.381680",
+            "tema": "Macroeconomia",
+            "texto_original": "A Nvidia (NVDA) enfrenta um momento crucial em sua governança corporativa após a confirmação de que Jensen Huang, seu ex-presidente e CEO, não retornará aos cargos de liderança. Cinco dias após sua renúncia,",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 33 palavras, incompleto sem pontuação final e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Nvidia (NVDA) descartou o retorno de Jensen Huang ao comando executivo após sua renúncia inesperad..."
+        },
+        {
+            "data": "2026-11-17T17:56:41.960502",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) opera atualmente em torno de US$ 70 mil, representando uma desvalorização superior a 40% em relação à sua máxima histórica de US$ 126 mil, registrada em",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin negocia atualmente em torno de US$ 70 mil, registrando uma retração superior a 40% em rela..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-16"
