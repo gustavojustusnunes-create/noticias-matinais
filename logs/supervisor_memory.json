@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://www.infomoney.com.br/wp-content/uploads/2023/11/40802749.135301.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/10/Gemini_Generated_Image_x7q0lox7q0lox7q0.jpg",
         "https://www.inovacaotecnologica.com.br/noticias/imagens/010125261023-areia-viva.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/09/varejo-juros-divida.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/claude-mythus.jpg",
@@ -49,7 +47,9 @@
         "https://olhardigital.com.br/wp-content/uploads/2026/11/chatgpt.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/06/telao-spaceX.png",
         "https://www.infomoney.com.br/wp-content/uploads/2026/03/blogging-guide-K5DY18hy5JQ-unsplash_red.jpg",
-        "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-de-ia.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/chip-de-ia.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/01/2026-01-29T110725Z_1_LYNXMPEM0S0OA_RTROPTP_3_PICPAY-IPO.jpg",
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/otan.jpg"
     ],
     "erros": [
         {
@@ -1418,5 +1418,5 @@
             "correcao_aplicada": "O Bitcoin negocia atualmente em torno de US$ 70 mil, registrando uma retração superior a 40% em rela..."
         }
     ],
-    "ultima_edicao_instagram": "2026-11-16"
+    "ultima_edicao_instagram": "2026-11-17"
 }
