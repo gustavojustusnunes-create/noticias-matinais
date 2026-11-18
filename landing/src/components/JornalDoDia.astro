@@ -1,183 +1,374 @@
 ---
 import edicao from "../data/edicao_atual.json";
-import SubscribeForm from "./SubscribeForm.astro";
 
-const cadernosConfig: Record<string, { label: string; cor: string; bg: string; border: string }> = {
-  "Macroeconomia & Mercados": { label: "Macroeconomia & Mercados", cor: "#34D399", bg: "rgba(16, 185, 129, 0.15)", border: "rgba(16, 185, 129, 0.3)" },
-  "Geopolítica & Assuntos Globais": { label: "Geopolítica & Assuntos Globais", cor: "#60A5FA", bg: "rgba(59, 130, 246, 0.15)", border: "rgba(59, 130, 246, 0.3)" },
-  "Estratégia Corporativa & M&A": { label: "Estratégia Corporativa & M&A", cor: "#FBBF24", bg: "rgba(245, 158, 11, 0.15)", border: "rgba(245, 158, 11, 0.3)" },
-  "Fronteira Tecnológica & IA": { label: "Fronteira Tecnológica & IA", cor: "#A78BFA", bg: "rgba(139, 92, 246, 0.15)", border: "rgba(139, 92, 246, 0.3)" },
-  "Ciência & Inovação": { label: "Ciência & Inovação", cor: "#22D3EE", bg: "rgba(6, 182, 212, 0.15)", border: "rgba(6, 182, 212, 0.3)" },
-  // Compatibilidade com arquivos históricos legados
-  "Economia": { label: "Macroeconomia & Mercados", cor: "#34D399", bg: "rgba(16, 185, 129, 0.15)", border: "rgba(16, 185, 129, 0.3)" },
-  "Mundo": { label: "Geopolítica & Assuntos Globais", cor: "#60A5FA", bg: "rgba(59, 130, 246, 0.15)", border: "rgba(59, 130, 246, 0.3)" },
-  "IA": { label: "Fronteira Tecnológica & IA", cor: "#A78BFA", bg: "rgba(139, 92, 246, 0.15)", border: "rgba(139, 92, 246, 0.3)" },
-  "Ciencia": { label: "Ciência & Inovação", cor: "#22D3EE", bg: "rgba(6, 182, 212, 0.15)", border: "rgba(6, 182, 212, 0.3)" },
-  "Politica": { label: "Geopolítica Institucional", cor: "#F472B6", bg: "rgba(236, 72, 153, 0.15)", border: "rgba(236, 72, 153, 0.3)" },
-  "Wellness": { label: "Performance & Wellness", cor: "#2DD4BF", bg: "rgba(20, 184, 166, 0.15)", border: "rgba(20, 184, 166, 0.3)" },
+interface EditoriaMeta {
+  badge: string;
+  icone: string;
+  cor: string;
+}
+
+const editoriasMap: Record<string, EditoriaMeta> = {
+  "Macroeconomia & Mercados": { badge: "Economia de Bolso", icone: "📊", cor: "#c9a84c" },
+  "Geopolítica & Assuntos Globais": { badge: "Geopolítica & Mundo", icone: "🌍", cor: "#d1ba73" },
+  "Estratégia Corporativa & M&A": { badge: "Negócios & M&A", icone: "💼", cor: "#c9a84c" },
+  "Fronteira Tecnológica & IA": { badge: "Tecnologia & IA", icone: "⚡", cor: "#d1ba73" },
+  "Ciência & Inovação": { badge: "Ciência & Futuro", icone: "🔬", cor: "#c9a84c" },
+  // Compatibilidade com chaves legadas
+  Economia: { badge: "Economia de Bolso", icone: "📊", cor: "#c9a84c" },
+  Mundo: { badge: "Geopolítica & Mundo", icone: "🌍", cor: "#d1ba73" },
+  IA: { badge: "Tecnologia & IA", icone: "⚡", cor: "#d1ba73" },
+  Ciencia: { badge: "Ciência & Futuro", icone: "🔬", cor: "#c9a84c" },
+  Politica: { badge: "Política & Poder", icone: "🏛️", cor: "#d1ba73" },
+  Wellness: { badge: "Performance & Saúde", icone: "🧬", cor: "#c9a84c" },
 };
 
+interface Materia4Blocos {
+  titulo: string;
+  link: string;
+  imagem: string;
+  score: string;
+  tempoLeitura: string;
+  gancho: string;
+  fatoHtml: string;
+  eDai: string;
+  pergunta: string;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function destacarTermosEmDourado(texto: string): string {
+  const escaped = escapeHtml(texto);
+  // Destaca cifras, percentuais, siglas em caixa alta (2+ letras) e termos financeiros/tech chave
+  return escaped.replace(
+    /((?:US\$|R\$|€)?\s?\d+(?:[.,]\d+)?%?(?:\s?(?:milhões|bilhões|trilhões|dias|anos))?|\b(?:IA|CBS|TCU|PIB|Fed|Copom|BCE|Otan|IBOV|BTC|USD|IPO|M&A|OpenAI|Daybreak)\b)/g,
+    '<span class="border-b border-[#c9a84c]/70 text-[#fdfbf7] font-medium">$1</span>'
+  );
+}
+
+function parseMateria4Blocos(item: any, nomeCaderno: string): Materia4Blocos {
+  const titulo = String(item?.titulo || "Nota Editorial").trim();
+  const link = String(item?.link || "#").trim();
+  const imagem = String(item?.imagem || "").trim();
+  const score = String(item?.score || "9/10").trim();
+  const tempoLeitura = String(item?.tempo_leitura || item?.tempoLeitura || "45s").trim();
+
+  // Caso o JSON já possua as chaves separadas dos 4 blocos
+  if (item?.gancho && item?.fato && (item?.e_dai || item?.impacto)) {
+    return {
+      titulo,
+      link,
+      imagem,
+      score,
+      tempoLeitura,
+      gancho: String(item.gancho).trim(),
+      fatoHtml: destacarTermosEmDourado(String(item.fato).trim()),
+      eDai: String(item.e_dai || item.impacto).trim(),
+      pergunta: String(item.pergunta || `Como esse movimento em ${nomeCaderno} impacta sua estratégia?`).trim(),
+    };
+  }
+
+  // Fallback de compatibilidade: divide o resumo em parágrafo único automaticamente
+  const resumoBruto = String(item?.resumo || "").replace(/\s+/g, " ").trim();
+  const frases = resumoBruto
+    .split(/(?<=[.!?])\s+/)
+    .map((f) => f.trim())
+    .filter(Boolean);
+
+  let gancho = "Fato estratégico selecionado pela curadoria executiva.";
+  let fato = resumoBruto;
+  let eDai = "Acompanhe os desdobramentos diretos sobre custos, liquidez e posicionamento setorial.";
+
+  if (frases.length >= 3) {
+    gancho = frases[0];
+    eDai = frases[frases.length - 1];
+    fato = frases.slice(1, frases.length - 1).join(" ");
+  } else if (frases.length === 2) {
+    gancho = frases[0];
+    fato = frases[0];
+    eDai = frases[1];
+  } else if (frases.length === 1) {
+    gancho = frases[0];
+    fato = frases[0];
+  }
+
+  const palavras = resumoBruto ? resumoBruto.split(/\s+/).length : 60;
+  const segundosEstimados = Math.max(30, Math.min(75, Math.round((palavras / 150) * 60)));
+
+  return {
+    titulo,
+    link,
+    imagem,
+    score: item?.score ? String(item.score) : "9/10",
+    tempoLeitura: item?.tempo_leitura ? String(item.tempo_leitura) : `${segundosEstimados}s`,
+    gancho,
+    fatoHtml: destacarTermosEmDourado(fato),
+    eDai,
+    pergunta: `Qual sua leitura sobre "${titulo.split(":")[0].slice(0, 48)}"?`,
+  };
+}
+
 const cadernos = edicao.cadernos || {};
+const entradasCadernos = Object.entries(cadernos).filter(([, lista]) => Array.isArray(lista) && lista.length > 0);
+const primeiraMateria = entradasCadernos[0]?.[1]?.[0] as any;
+const imagemCapaLead = primeiraMateria?.imagem || "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80";
 ---
 
-<section class="py-16 sm:py-24 border-t border-white/[0.08]" id="jornal">
+<section class="py-16 sm:py-24 bg-[#061413] border-t border-[#c9a84c]/20" id="jornal">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    
+
     <!-- Cabeçalho da Edição Digital -->
     <div class="mb-12 text-center max-w-3xl mx-auto">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#131B26] border border-white/[0.1] text-xs font-semibold text-[#60A5FA] uppercase tracking-wider mb-3">
-        <span class="w-2 h-2 rounded-full bg-[#2563EB] animate-pulse"></span>
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0b2220] border border-[#c9a84c]/35 text-[11px] font-semibold text-[#d1ba73] uppercase tracking-[0.2em] mb-4">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#c9a84c] animate-pulse"></span>
         Edição Digital de Hoje
       </div>
-      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight leading-tight">
+      <h2 class="font-playfair text-3xl sm:text-4xl lg:text-5xl font-bold text-[#fdfbf7] tracking-tight leading-tight">
         O Jornal Matinal Completo
       </h2>
-      <p class="text-xs sm:text-sm text-[#94A3B8] mt-2.5">
-        {edicao.data_extenso || "Edição Executiva Diária"} • Curadoria autônoma dos fatos de maior relevância
+      <p class="font-lora italic text-xs sm:text-sm text-[#e5e3de]/75 mt-2.5">
+        {edicao.data_extenso || "Edição Executiva Diária"} • Curadoria de alta densidade em 4 blocos objetivos
       </p>
     </div>
 
-    <!-- Manchete Principal Nobre do Dia (Lead Story Hero) -->
+    <!-- Manchete Principal do Dia (Lead Story Hero Editorial) -->
     {edicao.manchete && (
-      <div class="mb-14 rounded-2xl bg-gradient-to-br from-[#131B26] to-[#0E1520] border border-white/[0.12] shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0">
-        <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between">
+      <div class="editorial-card group relative mb-14 rounded-2xl bg-[#0b2220] border border-[#c9a84c]/30 shadow-2xl shadow-black/60 overflow-hidden grid grid-cols-1 lg:grid-cols-12 gap-0 transition-transform duration-150 ease-out">
+        <!-- Lanterna Dourada -->
+        <div
+          class="card-spotlight pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+          style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(201, 168, 76, 0.14), transparent 40%);"
+        ></div>
+
+        <div class="lg:col-span-7 p-6 sm:p-10 flex flex-col justify-between relative z-20">
           <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2563EB]/20 border border-[#2563EB]/40 text-[#60A5FA] text-[11px] font-bold uppercase tracking-wider mb-4">
-              <span>⭐</span> Destaque Editorial da Edição
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0a5c5a]/50 border border-[#c9a84c]/40 text-[#d1ba73] text-[10px] font-bold uppercase tracking-[0.2em] mb-4">
+              <span>◆</span> Destaque Editorial da Edição
             </div>
-            <h3 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight mb-4">
+            <h3 class="font-playfair text-2xl sm:text-3xl lg:text-4xl font-bold text-[#fdfbf7] tracking-tight leading-tight mb-4">
               {edicao.manchete}
             </h3>
-            <p class="text-sm text-[#94A3B8] leading-relaxed mb-6">
+            <p class="font-lora text-sm sm:text-base text-[#e5e3de]/85 leading-relaxed mb-6">
               {edicao.editorial || "Análise sintética dos principais acontecimentos das últimas 24 horas preparados para sua leitura matinal."}
             </p>
           </div>
-          <div class="flex items-center gap-4 text-xs text-[#64748B] pt-4 border-t border-white/[0.06]">
-            <span class="inline-flex items-center gap-1.5 text-emerald-400 font-semibold">
-              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              {Object.keys(cadernos).length} Cadernos Curados
+          <div class="flex flex-wrap items-center gap-4 text-xs text-[#e5e3de]/70 pt-4 border-t border-[#c9a84c]/20 font-mono-ticker">
+            <span class="inline-flex items-center gap-1.5 text-[#d1ba73] font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#c9a84c] animate-pulse"></span>
+              {entradasCadernos.length} Cadernos Curados
             </span>
-            <span>•</span>
-            <span>Leitura estimada: 4 minutos</span>
+            <span class="text-[#c9a84c]/40">•</span>
+            <span>Leitura estimada: 3 minutos</span>
           </div>
         </div>
-        <div class="lg:col-span-5 relative min-h-[260px] lg:min-h-full overflow-hidden bg-[#0A0E17]">
+
+        <div class="lg:col-span-5 relative min-h-[260px] lg:min-h-full overflow-hidden bg-[#061413]">
           <img
-            src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80"
+            src={imagemCapaLead}
             alt={edicao.manchete}
-            class="w-full h-full object-cover filter brightness-95 hover:scale-105 transition-transform duration-700"
+            class="w-full h-full object-cover transition-all duration-500 ease-out grayscale contrast-[1.15] sepia-[0.15] brightness-90 group-hover:grayscale-0 group-hover:contrast-100 group-hover:sepia-0 group-hover:brightness-100 group-hover:scale-[1.04]"
             loading="eager"
           />
-          <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#131B26] via-transparent to-transparent opacity-90 pointer-events-none"></div>
+          <div class="absolute inset-0 bg-[#0a5c5a]/35 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-500 pointer-events-none"></div>
+          <div class="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0b2220] via-transparent to-transparent opacity-90 pointer-events-none"></div>
         </div>
       </div>
     )}
 
     <!-- Seções por Caderno Temático -->
     <div class="space-y-16">
-      {Object.entries(cadernos).map(([nomeCaderno, noticias]) => {
-        const config = cadernosConfig[nomeCaderno] || {
-          label: nomeCaderno,
-          cor: "#93C5FD",
-          bg: "rgba(255,255,255,0.08)",
-          border: "rgba(255,255,255,0.15)"
+      {entradasCadernos.map(([nomeCaderno, noticias]) => {
+        const meta = editoriasMap[nomeCaderno] || {
+          badge: nomeCaderno,
+          icone: "📰",
+          cor: "#c9a84c",
         };
         const items = Array.isArray(noticias) ? noticias : [];
-        if (items.length === 0) return null;
 
         return (
-          <div class="space-y-6" id={`caderno-${nomeCaderno.toLowerCase()}`}>
-            <!-- Título do Caderno -->
-            <div class="flex items-center justify-between pb-3 border-b border-white/[0.08]">
-              <div class="flex items-center gap-2.5">
-                <span 
-                  class="text-xs font-bold px-3 py-1 rounded-full border uppercase tracking-wider"
-                  style={`color: ${config.cor}; background-color: ${config.bg}; border-color: ${config.border};`}
-                >
-                  {config.label}
+          <div class="space-y-6" id={`caderno-${nomeCaderno.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>
+            <!-- Cabeçalho do Caderno -->
+            <div class="flex items-center justify-between pb-3 border-b border-[#c9a84c]/25">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-[#0b2220] border border-[#c9a84c]/45 text-[#d1ba73] uppercase tracking-wider">
+                  <span>{meta.icone}</span>
+                  <span>{nomeCaderno}</span>
                 </span>
-                <span class="text-xs text-[#64748B] hidden sm:inline">• {items.length} reportagens selecionadas</span>
+                <span class="text-xs text-[#e5e3de]/60 hidden sm:inline font-mono-ticker">
+                  • {items.length} reportagens
+                </span>
               </div>
-              <a href="#assinar" class="text-xs text-[#94A3B8] hover:text-white transition-colors">
-                Receber por e-mail &rarr;
+              <a href="#assinar-jornal" class="text-xs text-[#d1ba73] hover:text-[#fdfbf7] transition-colors font-medium">
+                Receber por e-mail →
               </a>
             </div>
 
-            <!-- Grid de Notícias deste Caderno -->
+            <!-- Grid de Cards de Notícias com Anatomia de 4 Blocos -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {items.map((item: any) => (
-                <article class="group rounded-xl bg-[#131B26] border border-white/[0.08] hover:border-[#2563EB]/50 hover:bg-[#162030] transition-all duration-200 overflow-hidden flex flex-col justify-between shadow-xl shadow-black/30 transform hover:-translate-y-1">
-                  <div>
-                    <!-- Imagem da Matéria -->
-                    {item.imagem ? (
-                      <div class="w-full h-48 overflow-hidden relative bg-[#0B0F14]">
-                        <img 
-                          src={item.imagem} 
-                          alt={item.titulo} 
-                          loading="lazy"
-                          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 filter brightness-90 group-hover:brightness-100"
-                          onerror="this.style.display='none'"
+              {items.map((item: any) => {
+                const m = parseMateria4Blocos(item, nomeCaderno);
+                const shareText = encodeURIComponent(`${m.titulo} — via All News Journal`);
+                const shareUrl = encodeURIComponent(m.link !== "#" ? m.link : "https://noticias-matinais.vercel.app");
+
+                return (
+                  <article class="editorial-card group relative rounded-2xl bg-[#0b2220] border border-[#c9a84c]/20 hover:border-[#c9a84c]/55 transition-all duration-300 overflow-hidden flex flex-col justify-between shadow-2xl shadow-black/50">
+                    <!-- Lanterna Dourada Dinâmica -->
+                    <div
+                      class="card-spotlight pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                      style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(201, 168, 76, 0.14), transparent 40%);"
+                    ></div>
+
+                    <div class="relative z-20 flex-1 flex flex-col">
+                      <!-- Foto Jornalística com Contraste Editorial (Anti-Slop) -->
+                      {m.imagem ? (
+                        <div class="w-full h-52 overflow-hidden relative bg-[#061413] border-b border-[#c9a84c]/15">
+                          <img
+                            src={m.imagem}
+                            alt={m.titulo}
+                            loading="lazy"
+                            class="w-full h-full object-cover transition-all duration-500 ease-out grayscale contrast-[1.15] sepia-[0.15] brightness-90 group-hover:grayscale-0 group-hover:contrast-100 group-hover:sepia-0 group-hover:brightness-100 group-hover:scale-[1.04]"
+                            onerror="this.style.display='none'"
+                          />
+                          <div class="absolute inset-0 bg-[#0a5c5a]/35 mix-blend-multiply group-hover:opacity-0 transition-opacity duration-500 pointer-events-none"></div>
+                          <div class="absolute inset-0 bg-gradient-to-t from-[#0b2220] via-transparent to-transparent opacity-85 pointer-events-none"></div>
+                        </div>
+                      ) : (
+                        <div class="w-full h-24 bg-[#084c4a]/25 flex items-center justify-center text-[#d1ba73]/70 text-xs font-lora italic border-b border-[#c9a84c]/15">
+                          All News Journal • {meta.badge}
+                        </div>
+                      )}
+
+                      <!-- Corpo Editorial do Card -->
+                      <div class="p-5 sm:p-6 flex-1 flex flex-col">
+                        <!-- Cabeçalho do Card: Editoria + Score + Tempo de Leitura -->
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5 text-[11px]">
+                          <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0a5c5a]/45 border border-[#c9a84c]/35 text-[#d1ba73] font-semibold">
+                            <span>{meta.icone}</span>
+                            <span>{meta.badge}</span>
+                          </span>
+                          <div class="flex items-center gap-2 font-mono-ticker text-[10px] text-[#e5e3de]/80">
+                            <span class="px-2 py-0.5 rounded-full bg-[#061413]/70 border border-[#c9a84c]/25 text-[#c9a84c]">
+                              🔥 Score {m.score}
+                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-[#061413]/70 border border-[#c9a84c]/20 text-[#e5e3de]/75">
+                              ⏱️ {m.tempoLeitura}
+                            </span>
+                          </div>
+                        </div>
+
+                        <!-- Manchete -->
+                        <h4 class="font-playfair text-xl sm:text-2xl font-bold text-[#fdfbf7] group-hover:text-[#d1ba73] transition-colors leading-snug mb-2.5">
+                          <a href={m.link} target="_blank" rel="noopener noreferrer">
+                            {m.titulo}
+                          </a>
+                        </h4>
+
+                        <!-- 1. O Gancho -->
+                        <p class="font-lora italic text-sm text-[#d1ba73] leading-relaxed mb-3.5">
+                          {m.gancho}
+                        </p>
+
+                        <!-- 2. O Fato Limpo -->
+                        <p
+                          class="text-xs sm:text-sm text-[#e5e3de]/85 leading-relaxed mb-4"
+                          set:html={m.fatoHtml}
                         />
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#131B26] via-transparent to-transparent opacity-80 pointer-events-none"></div>
-                      </div>
-                    ) : (
-                      <div class="w-full h-24 bg-[#0E1520] flex items-center justify-center text-[#64748B] text-xs font-serif italic border-b border-white/[0.04]">
-                        All News Journal • {nomeCaderno}
-                      </div>
-                    )}
 
-                    <!-- Conteúdo Textual -->
-                    <div class="p-5 sm:p-6">
-                      <h4 class="font-serif text-lg sm:text-xl font-bold text-white group-hover:text-[#93C5FD] transition-colors leading-snug mb-3">
-                        <a href={item.link || "#"} target="_blank" rel="noopener noreferrer">
-                          {item.titulo}
-                        </a>
-                      </h4>
-                      <p class="text-xs sm:text-sm text-[#94A3B8] leading-relaxed line-clamp-4">
-                        {item.resumo}
-                      </p>
+                        <!-- 3. Caixa "💰 E daí? (Como afeta você)" -->
+                        <div class="mt-auto p-3.5 rounded-r-lg bg-[#0a5c5a]/35 border-l-2 border-[#c9a84c] text-xs leading-relaxed">
+                          <p class="font-bold text-[#d1ba73] uppercase tracking-wider text-[10px] mb-1">
+                            💰 E daí? (Como afeta você)
+                          </p>
+                          <p class="text-[#fdfbf7]/90">
+                            {m.eDai}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- Rodapé do Card com Link Externo -->
-                  <div class="px-5 sm:px-6 py-3 border-t border-white/[0.06] bg-[#0E141E]/50 flex items-center justify-between text-xs">
-                    <span class="text-[11px] text-[#64748B] uppercase tracking-wider font-semibold">
-                      {nomeCaderno}
-                    </span>
-                    {item.link && (
-                      <a 
-                        href={item.link} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        class="inline-flex items-center gap-1.5 text-[#38BDF8] hover:text-[#60A5FA] font-medium transition-colors"
-                      >
-                        Ler na íntegra
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                          <polyline points="15 3 21 3 21 9"></polyline>
-                          <line x1="10" y1="14" x2="21" y2="3"></line>
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </article>
-              ))}
+                    <!-- 4. Fechamento Interativo -->
+                    <div class="relative z-20 px-5 sm:px-6 py-3.5 border-t border-[#c9a84c]/20 bg-[#061413]/70 flex flex-col gap-2.5">
+                      <p class="text-[11px] font-lora italic text-[#e5e3de]/80">
+                        💬 {m.pergunta}
+                      </p>
+                      <div class="flex flex-wrap items-center justify-between gap-2 text-[11px]">
+                        <div class="flex items-center gap-2">
+                          <a
+                            href={`https://wa.me/?text=${shareText}%20${shareUrl}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b2220] border border-[#c9a84c]/30 text-[#d1ba73] hover:bg-[#c9a84c] hover:text-[#061413] font-medium transition-colors"
+                          >
+                            WhatsApp
+                          </a>
+                          <a
+                            href={`https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#0b2220] border border-[#c9a84c]/30 text-[#d1ba73] hover:bg-[#c9a84c] hover:text-[#061413] font-medium transition-colors"
+                          >
+                            Compartilhar no X
+                          </a>
+                        </div>
+
+                        {m.link !== "#" && (
+                          <a
+                            href={m.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="inline-flex items-center gap-1 text-[#fdfbf7]/80 hover:text-[#d1ba73] font-medium transition-colors"
+                          >
+                            Ler na íntegra ↗
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </div>
         );
       })}
     </div>
 
-    <!-- Banner Final de Assinatura dentro de #jornal -->
-    <div class="mt-16 p-8 rounded-2xl bg-gradient-to-r from-[#1E3A8A]/30 via-[#131B26] to-[#0E1520] border border-[#2563EB]/40 text-center">
-      <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white mb-2">
-        Gostou da curadoria de hoje?
-      </h3>
-      <p class="text-xs sm:text-sm text-[#94A3B8] max-w-xl mx-auto mb-6">
-        Receba a edição completa e o podcast matinal diretamente no seu e-mail todos os dias às 06:15.
-      </p>
-      <SubscribeForm containerId="assinar-jornal" />
-    </div>
-
   </div>
 </section>
+
+<script>
+  // Golden Spotlight + 3D Parallax Tilt (±4 graus) para todos os .editorial-card
+  function bindEditorialCards() {
+    const cards = document.querySelectorAll(".editorial-card");
+    cards.forEach((cardEl) => {
+      const card = cardEl as HTMLElement;
+      if (card.dataset.tiltBound === "true") return;
+      card.dataset.tiltBound = "true";
+
+      card.addEventListener("mousemove", (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const relX = x / rect.width;
+        const relY = y / rect.height;
+
+        card.style.setProperty("--mouse-x", `${x}px`);
+        card.style.setProperty("--mouse-y", `${y}px`);
+
+        const rotateY = (relX - 0.5) * 6; // até ±3deg (dentro do teto de 4deg)
+        const rotateX = (0.5 - relY) * 6;
+        card.style.transform = `perspective(1200px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg)`;
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "perspective(1200px) rotateX(0deg) rotateY(0deg)";
+      });
+    });
+  }
+
+  bindEditorialCards();
+</script>

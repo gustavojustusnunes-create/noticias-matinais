@@ -1,56 +1,488 @@
 ---
-import SubscribeForm from "./SubscribeForm.astro";
+const hoje = new Date();
+const dataFormatada = hoje.toLocaleDateString("pt-BR", {
+  weekday: "long",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+});
+const dataCapitalizada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.slice(1);
 ---
 
-<section class="relative pt-12 pb-20 sm:pt-20 sm:pb-28 overflow-hidden">
-  <!-- Efeitos de iluminação de fundo (Glow sutil) -->
-  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-[#2563EB]/15 blur-[120px] rounded-full pointer-events-none -z-10"></div>
-  <div class="absolute top-1/3 left-1/3 w-[300px] h-[250px] bg-[#10B981]/10 blur-[100px] rounded-full pointer-events-none -z-10"></div>
-
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <!-- Kicker Editorial -->
-    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#131B26] border border-white/[0.1] text-white/80 text-[11px] font-semibold tracking-wider uppercase mb-6 shadow-inner">
-      <span class="w-2 h-2 rounded-full bg-[#EAB308]"></span>
-      Informação de Alta Densidade • Sem Ruído
+<!-- Barra de Navegação Minimalista em Vidro Fosco -->
+<header
+  id="editorial-navbar"
+  class="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#0a5c5a]/80 border-b border-[#c9a84c]/25 transition-colors duration-300"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-3">
+    <!-- Esquerda: Badge + Data Dinâmica -->
+    <div class="flex items-center gap-3 min-w-0">
+      <a href="#hero-portal" class="flex items-center gap-2 shrink-0 group">
+        <img
+          src="/anj-logo.png"
+          alt="All News Journal"
+          class="w-8 h-8 rounded-full object-cover border border-[#c9a84c]/60 group-hover:border-[#d1ba73] transition-colors shadow-sm"
+        />
+      </a>
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#061413]/45 border border-[#c9a84c]/35 text-[11px] font-medium text-[#d1ba73] shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-[#c9a84c] animate-pulse"></span>
+        Edição de hoje no ar
+      </span>
+      <span class="hidden lg:inline text-[#c9a84c]/40 text-xs">•</span>
+      <span class="hidden lg:inline text-xs text-[#e5e3de]/90 truncate font-lora italic">
+        {dataCapitalizada}
+      </span>
     </div>
 
-    <!-- Manchete Principal Nobre (Serif) -->
-    <h1 class="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-[1.15] mb-6">
-      O mundo, tecnologia e economia explicados em <span class="italic text-transparent bg-clip-text bg-gradient-to-r from-white via-[#93C5FD] to-[#3B82F6]">4 minutos matinais.</span>
-    </h1>
+    <!-- Direita: Ações Editoriais -->
+    <nav class="flex items-center gap-1.5 sm:gap-3 shrink-0">
+      <a
+        href="#jornal"
+        class="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium text-[#fdfbf7]/85 hover:text-[#d1ba73] transition-colors px-2.5 py-1.5 rounded-md hover:bg-[#061413]/30"
+      >
+        Ler Edição
+      </a>
 
-    <!-- Subtítulo -->
-    <p class="max-w-2xl mx-auto text-sm sm:text-lg text-[#94A3B8] font-normal leading-relaxed mb-10">
-      Receba diariamente às 06:15 um resumo analítico direto ao ponto, acompanhado do nosso podcast sintético para ouvir durante o café ou no trânsito.
-    </p>
+      <button
+        type="button"
+        id="nav-btn-audio"
+        class="inline-flex items-center gap-1.5 text-xs font-medium text-[#fdfbf7]/90 hover:text-[#d1ba73] transition-colors px-2.5 py-1.5 rounded-md hover:bg-[#061413]/35 border border-[#c9a84c]/20 bg-[#061413]/25 cursor-pointer"
+      >
+        <span>🎧</span>
+        <span class="hidden xs:inline sm:inline">Ouvir Áudio</span>
+      </button>
 
-    <!-- Formulário de Captura -->
-    <div class="mb-8">
-      <SubscribeForm />
+      <a
+        href="/grafo"
+        class="hidden md:inline-flex items-center gap-1.5 text-xs font-medium text-[#e5e3de]/80 hover:text-[#d1ba73] transition-colors px-2.5 py-1.5 rounded-md hover:bg-[#061413]/30"
+      >
+        Grafo de Agentes
+      </a>
+
+      <a
+        href="#assinar"
+        id="nav-cta-assinar"
+        class="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-md bg-[#c9a84c] hover:bg-[#d1ba73] text-[#061413] shadow-lg shadow-black/25 transition-all"
+      >
+        Assinar Grátis
+      </a>
+    </nav>
+  </div>
+</header>
+
+<!-- Seção Portal Editorial 3D (100vh fixo no topo + pin via GSAP ScrollTrigger) -->
+<section
+  id="hero-portal"
+  class="relative w-full h-screen overflow-hidden flex items-center justify-center select-none"
+  style="background-color: #0a5c5a; perspective: 1400px;"
+>
+  <!-- Camada de Fundo para Transição Suave (#0a5c5a -> #061413) -->
+  <div
+    id="portal-bg-transition"
+    class="absolute inset-0 pointer-events-none"
+    style="background: radial-gradient(circle at 50% 45%, #0a5c5a 0%, #084c4a 65%, #061413 100%);"
+  ></div>
+
+  <!-- Lanterna Dourada Dinâmica (Golden Spotlight rastreado pelo mouse) -->
+  <div
+    id="portal-spotlight"
+    class="absolute inset-0 pointer-events-none transition-opacity duration-300"
+    style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(201, 168, 76, 0.14), transparent 40%);"
+  ></div>
+
+  <!-- Textura sutil editorial (linhas de papel / grão mínimo) -->
+  <div
+    class="absolute inset-0 pointer-events-none opacity-[0.04]"
+    style="background-image: radial-gradient(#fdfbf7 0.75px, transparent 0.75px); background-size: 24px 24px;"
+  ></div>
+
+  <!-- ===================================================================== -->
+  <!-- CAMADA 1: CAPA CONCEITO (ZOOM 3D PARA FORA NA DIREÇÃO DO LEITOR)       -->
+  <!-- ===================================================================== -->
+  <div
+    id="portal-cover-stage"
+    class="relative z-20 w-full h-full flex items-center justify-center px-4 sm:px-8 pt-14 pb-6"
+    style="transform-style: preserve-3d;"
+  >
+    <!-- Moldura Dupla Fina em Dourado (#c9a84c) com Parallax 3D -->
+    <div
+      id="portal-cover-frame"
+      class="relative w-full max-w-4xl h-[78vh] max-h-[680px] min-h-[480px] border border-[#c9a84c]/75 p-2 sm:p-3 transition-transform duration-150 ease-out"
+      style="box-shadow: 0 30px 90px rgba(6, 20, 19, 0.55), inset 0 0 60px rgba(201, 168, 76, 0.06); transform-style: preserve-3d;"
+    >
+      <!-- Spotlight na borda da moldura -->
+      <div
+        class="absolute inset-0 pointer-events-none"
+        style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(209, 186, 115, 0.14), transparent 40%);"
+      ></div>
+
+      <!-- Segunda Moldura Interna -->
+      <div class="relative w-full h-full border border-[#c9a84c]/45 flex flex-col items-center justify-between px-6 sm:px-12 py-8 sm:py-12 text-center bg-[#084c4a]/35 backdrop-blur-[2px]">
+        <!-- Cantos Ornamentais Dourados -->
+        <span class="absolute top-2 left-2 w-2.5 h-2.5 border-t border-l border-[#c9a84c]"></span>
+        <span class="absolute top-2 right-2 w-2.5 h-2.5 border-t border-r border-[#c9a84c]"></span>
+        <span class="absolute bottom-2 left-2 w-2.5 h-2.5 border-b border-l border-[#c9a84c]"></span>
+        <span class="absolute bottom-2 right-2 w-2.5 h-2.5 border-b border-r border-[#c9a84c]"></span>
+
+        <!-- Subtítulo Superior -->
+        <p class="text-[10px] sm:text-xs font-medium tracking-[0.35em] uppercase text-[#d1ba73]">
+          EDIÇÃO PREMIUM · DIGITAL
+        </p>
+
+        <!-- Bloco Central Monumental -->
+        <div class="my-auto flex flex-col items-center max-w-3xl">
+          <h1
+            class="font-playfair font-semibold uppercase text-[#fdfbf7] text-4xl sm:text-6xl md:text-7xl leading-[1.05] drop-shadow-sm"
+            style="letter-spacing: 0.15em;"
+          >
+            ALL NEWS<br class="sm:hidden" /> JOURNAL
+          </h1>
+
+          <!-- Divisor Dourado com Losango Central -->
+          <div class="flex items-center justify-center gap-3 w-48 sm:w-64 my-6 sm:my-7">
+            <span class="h-px flex-1 bg-gradient-to-r from-transparent to-[#c9a84c]"></span>
+            <span class="text-[#c9a84c] text-xs leading-none">◆</span>
+            <span class="h-px flex-1 bg-gradient-to-l from-transparent to-[#c9a84c]"></span>
+          </div>
+
+          <!-- Lema em Itálico -->
+          <p class="font-lora italic text-base sm:text-xl md:text-2xl text-[#e5e3de] tracking-wide">
+            "Tudo o que importa, todos os dias."
+          </p>
+        </div>
+
+        <!-- Rodapé da Capa + Dica de Scroll -->
+        <div class="flex flex-col items-center gap-3">
+          <p class="text-[9px] sm:text-[11px] tracking-[0.25em] uppercase text-[#d1ba73]/90 font-medium">
+            JORNALISMO CURADO · ENTREGUE TODA MANHÃ — FUNDADO EM 2026
+          </p>
+          <div class="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-[#fdfbf7]/60 animate-bounce mt-1">
+            <span>Role para abrir a edição</span>
+            <span class="text-[#c9a84c]">↓</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Prova de Valor / Selo de Confiança -->
-    <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-xs text-[#64748B]">
-      <div class="flex items-center gap-1.5">
-        <svg class="text-[#10B981]" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>100% Gratuito</span>
+  <!-- ===================================================================== -->
+  <!-- CAMADA 2: PRIMEIRA PÁGINA INTERNA (EMERGE DO CENTRO DO PORTAL)         -->
+  <!-- ===================================================================== -->
+  <div
+    id="portal-inner-page"
+    class="absolute inset-0 z-10 flex items-center justify-center px-4 sm:px-6 lg:px-8 pt-14 opacity-0 pointer-events-none"
+    style="transform: scale(0.82);"
+  >
+    <div class="w-full max-w-4xl mx-auto text-center">
+      <!-- Ticker Financeiro ao Vivo (USD, BTC, IBOV) -->
+      <div class="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-5 px-4 sm:px-6 py-2 rounded-full bg-[#0b2220]/90 border border-[#c9a84c]/35 shadow-xl shadow-black/40 mb-7 font-mono-ticker text-[11px] sm:text-xs">
+        <div class="flex items-center gap-1.5">
+          <span class="text-[#d1ba73] font-semibold">USD/BRL</span>
+          <span id="ticker-usd-val" class="text-[#fdfbf7]">R$ 5,74</span>
+          <span id="ticker-usd-var" class="text-emerald-400">+0.18%</span>
+        </div>
+        <span class="text-[#c9a84c]/30">|</span>
+        <div class="flex items-center gap-1.5">
+          <span class="text-[#d1ba73] font-semibold">BTC</span>
+          <span id="ticker-btc-val" class="text-[#fdfbf7]">US$ 91.420</span>
+          <span id="ticker-btc-var" class="text-emerald-400">+1.42%</span>
+        </div>
+        <span class="text-[#c9a84c]/30">|</span>
+        <div class="flex items-center gap-1.5">
+          <span class="text-[#d1ba73] font-semibold">IBOV</span>
+          <span id="ticker-ibov-val" class="text-[#fdfbf7]">128.450 pts</span>
+          <span id="ticker-ibov-var" class="text-emerald-400">+0.64%</span>
+        </div>
       </div>
-      <span class="text-white/10 hidden sm:inline">•</span>
-      <div class="flex items-center gap-1.5">
-        <svg class="text-[#10B981]" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>8 Cadernos Temáticos</span>
+
+      <!-- Kicker Interno -->
+      <div class="mb-3">
+        <span class="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-[#c9a84c] font-semibold">
+          PRIMEIRA PÁGINA · SÍNTESE EXECUTIVA
+        </span>
       </div>
-      <span class="text-white/10 hidden sm:inline">•</span>
-      <div class="flex items-center gap-1.5">
-        <svg class="text-[#10B981]" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>Cancele em 1 clique</span>
+
+      <!-- Título de Impacto -->
+      <h2 class="font-playfair font-bold text-3xl sm:text-5xl lg:text-[3.4rem] text-[#fdfbf7] tracking-tight leading-[1.12] mb-5 max-w-3xl mx-auto">
+        O mundo, tecnologia e economia traduzidos em{" "}
+        <span class="italic text-[#d1ba73]">3 minutos</span>
+      </h2>
+
+      <!-- Subtítulo Editorial -->
+      <p class="font-lora text-sm sm:text-lg text-[#e5e3de]/85 max-w-2xl mx-auto leading-relaxed mb-8">
+        Sem ruído, sem sensacionalismo. Receba diariamente às 06:15 a curadoria analítica e o podcast matinal para ler e ouvir com seu café.
+      </p>
+
+      <!-- Caixa de Captura de E-mail com Borda Dourada (integrada a /api/subscribe) -->
+      <div class="w-full max-w-xl mx-auto subscribe-widget" id="assinar">
+        <form class="form-inscricao flex flex-col sm:flex-row gap-2.5 p-1.5 rounded-xl bg-[#0b2220]/95 border border-[#c9a84c]/50 shadow-2xl shadow-black/70 focus-within:border-[#d1ba73] focus-within:ring-2 focus-within:ring-[#c9a84c]/25 transition-all">
+          <div class="relative flex-grow flex items-center">
+            <div class="absolute left-3.5 text-[#c9a84c] pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+            </div>
+            <input
+              type="email"
+              name="email"
+              required
+              placeholder="Seu melhor e-mail profissional..."
+              class="email-input w-full pl-10 pr-4 py-3 bg-transparent text-[#fdfbf7] placeholder-[#e5e3de]/45 text-sm focus:outline-none"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="submit-btn inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#c9a84c] hover:bg-[#d1ba73] text-[#061413] text-sm font-bold whitespace-nowrap shadow-lg shadow-black/40 transition-all transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <span class="btn-text">Quero Receber às 06:15 →</span>
+            <span class="btn-spinner hidden w-4 h-4 border-2 border-[#061413]/30 border-t-[#061413] rounded-full animate-spin"></span>
+          </button>
+        </form>
+
+        <!-- Feedback de Sucesso -->
+        <div class="msg-sucesso hidden mt-3.5 p-4 rounded-lg bg-[#0b2220] border border-[#c9a84c]/50 text-[#fdfbf7] text-xs sm:text-sm flex items-start gap-3 text-left shadow-xl">
+          <div class="text-[#c9a84c] mt-0.5 font-bold text-base">✓</div>
+          <div>
+            <p class="msg-sucesso-titulo font-semibold text-[#fdfbf7]">Inscrição confirmada com sucesso!</p>
+            <p class="text-[#e5e3de]/75 text-xs mt-0.5">Sua primeira edição executiva chegará amanhã pontualmente às 06:15.</p>
+          </div>
+        </div>
+
+        <!-- Feedback de Erro -->
+        <div class="msg-erro hidden mt-3.5 p-3 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/40 text-[#FCA5A5] text-xs text-center">
+          Ocorreu um erro ao processar seu cadastro. Por favor, tente novamente.
+        </div>
+      </div>
+
+      <!-- Selos Editoriais -->
+      <div class="mt-6 flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs text-[#e5e3de]/65">
+        <span>◆ 100% Gratuito</span>
+        <span>◆ 5 Cadernos Estratégicos</span>
+        <span>◆ Cancelamento em 1 clique</span>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const portal = document.getElementById("hero-portal");
+  const bgTransition = document.getElementById("portal-bg-transition");
+  const coverStage = document.getElementById("portal-cover-stage");
+  const coverFrame = document.getElementById("portal-cover-frame");
+  const innerPage = document.getElementById("portal-inner-page");
+  const navbar = document.getElementById("editorial-navbar");
+
+  // 1. Efeito Duplo de Mouse: Lanterna Dourada + Parallax 3D suave (±4°)
+  if (portal && coverFrame) {
+    let mouseRaf = 0;
+    let targetX = 50;
+    let targetY = 50;
+    let tiltX = 0;
+    let tiltY = 0;
+
+    const applyMouseEffects = () => {
+      portal.style.setProperty("--mouse-x", `${targetX}%`);
+      portal.style.setProperty("--mouse-y", `${targetY}%`);
+      coverFrame.style.transform = `perspective(1200px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg)`;
+      mouseRaf = 0;
+    };
+
+    portal.addEventListener("mousemove", (e: MouseEvent) => {
+      const rect = portal.getBoundingClientRect();
+      const relX = (e.clientX - rect.left) / rect.width;
+      const relY = (e.clientY - rect.top) / rect.height;
+
+      targetX = relX * 100;
+      targetY = relY * 100;
+      // Limite estrito de 4 graus conforme editorial-scrollytelling/SKILL.md
+      tiltY = (relX - 0.5) * 8; // -4deg a +4deg
+      tiltX = (0.5 - relY) * 8; // -4deg a +4deg
+
+      if (!mouseRaf) {
+        mouseRaf = requestAnimationFrame(applyMouseEffects);
+      }
+    });
+
+    portal.addEventListener("mouseleave", () => {
+      targetX = 50;
+      targetY = 50;
+      tiltX = 0;
+      tiltY = 0;
+      if (!mouseRaf) {
+        mouseRaf = requestAnimationFrame(applyMouseEffects);
+      }
+    });
+  }
+
+  // 2. Timeline GSAP ScrollTrigger: "Entrando no Jornal"
+  if (portal && coverStage && innerPage && bgTransition) {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#hero-portal",
+        start: "top top",
+        end: "+=140%",
+        pin: true,
+        scrub: 1,
+        onUpdate: (self) => {
+          const p = self.progress;
+          // Ativa interatividade da Primeira Página Interna quando ela emerge
+          if (p >= 0.45) {
+            innerPage.classList.remove("pointer-events-none");
+            innerPage.classList.add("pointer-events-auto");
+            coverStage.classList.add("pointer-events-none");
+          } else {
+            innerPage.classList.add("pointer-events-none");
+            innerPage.classList.remove("pointer-events-auto");
+            coverStage.classList.remove("pointer-events-none");
+          }
+
+          // Navbar acompanha transição de fundo (#0a5c5a -> #061413)
+          if (navbar) {
+            if (p > 0.45) {
+              navbar.style.backgroundColor = "rgba(6, 20, 19, 0.88)";
+            } else {
+              navbar.style.backgroundColor = "rgba(10, 92, 90, 0.80)";
+            }
+          }
+        },
+      },
+    });
+
+    // Passo A: Zoom 3D da capa em direção ao leitor + fade out gradual no final
+    tl.to(
+      coverStage,
+      {
+        scale: 2.8,
+        z: 300,
+        opacity: 0,
+        ease: "power2.inOut",
+        duration: 0.75,
+      },
+      0
+    );
+
+    // Passo B: Transição suave do fundo Verde Petróleo (#0a5c5a) para Interior Noturno (#061413)
+    tl.to(
+      portal,
+      {
+        backgroundColor: "#061413",
+        duration: 0.7,
+        ease: "none",
+      },
+      0.1
+    );
+    tl.to(
+      bgTransition,
+      {
+        opacity: 0,
+        duration: 0.7,
+        ease: "none",
+      },
+      0.1
+    );
+
+    // Passo C: Emergência da Primeira Página Interna do centro do portal
+    tl.fromTo(
+      innerPage,
+      {
+        opacity: 0,
+        scale: 0.82,
+        y: 28,
+      },
+      {
+        opacity: 1,
+        scale: 1,
+        y: 0,
+        ease: "power2.out",
+        duration: 0.65,
+      },
+      0.32
+    );
+  }
+
+  // 3. Botão "🎧 Ouvir Áudio" -> rola até o player global (#podcast) e inicia reprodução
+  const navAudioBtn = document.getElementById("nav-btn-audio");
+  if (navAudioBtn) {
+    navAudioBtn.addEventListener("click", () => {
+      const podcastSection = document.getElementById("podcast");
+      const audioEl = podcastSection?.querySelector("audio") as HTMLAudioElement | null;
+      const lenis = (window as any).__anjLenis;
+
+      if (podcastSection) {
+        if (lenis && typeof lenis.scrollTo === "function") {
+          lenis.scrollTo(podcastSection, { offset: -64 });
+        } else {
+          podcastSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+      if (audioEl) {
+        audioEl.play().catch(() => {
+          // Navegador pode exigir interação direta no controle se bloqueado por política
+        });
+      }
+    });
+  }
+
+  // 4. CTA "Assinar Grátis" -> rola suavemente até o final do portal (ou #assinar-jornal)
+  const navAssinarBtn = document.getElementById("nav-cta-assinar");
+  if (navAssinarBtn) {
+    navAssinarBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      const lenis = (window as any).__anjLenis;
+      const portalEl = document.getElementById("hero-portal");
+      if (portalEl) {
+        const targetScroll = portalEl.offsetTop + window.innerHeight * 1.35;
+        if (lenis && typeof lenis.scrollTo === "function") {
+          lenis.scrollTo(targetScroll);
+        } else {
+          window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        }
+      }
+    });
+  }
+
+  // 5. Atualização ao vivo leve do Ticker Financeiro (USD e BTC via API pública sem chave)
+  async function atualizarTickerAoVivo() {
+    try {
+      const res = await fetch("https://economia.awesomeapi.com.br/last/USD-BRL,BTC-USD");
+      if (!res.ok) return;
+      const data = await res.json();
+
+      if (data.USDBRL) {
+        const bid = Number(data.USDBRL.bid);
+        const pct = Number(data.USDBRL.pctChange);
+        const valEl = document.getElementById("ticker-usd-val");
+        const varEl = document.getElementById("ticker-usd-var");
+        if (valEl && !Number.isNaN(bid)) valEl.textContent = `R$ ${bid.toFixed(2).replace(".", ",")}`;
+        if (varEl && !Number.isNaN(pct)) {
+          varEl.textContent = `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`;
+          varEl.className = pct >= 0 ? "text-emerald-400" : "text-rose-400";
+        }
+      }
+
+      if (data.BTCUSD) {
+        const bid = Number(data.BTCUSD.bid);
+        const pct = Number(data.BTCUSD.pctChange);
+        const valEl = document.getElementById("ticker-btc-val");
+        const varEl = document.getElementById("ticker-btc-var");
+        if (valEl && !Number.isNaN(bid)) {
+          valEl.textContent = `US$ ${Math.round(bid).toLocaleString("pt-BR")}`;
+        }
+        if (varEl && !Number.isNaN(pct)) {
+          varEl.textContent = `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`;
+          varEl.className = pct >= 0 ? "text-emerald-400" : "text-rose-400";
+        }
+      }
+    } catch {
+      // Mantém valores de fallback discretos se offline
+    }
+  }
+  atualizarTickerAoVivo();
+</script>
