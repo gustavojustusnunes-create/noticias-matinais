@@ -1,6 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero.astro";
 import AudioPlayer from "../components/AudioPlayer.astro";
 import JornalDoDia from "../components/JornalDoDia.astro";
@@ -8,9 +7,62 @@ import CadernosGrid from "../components/CadernosGrid.astro";
 import Footer from "../components/Footer.astro";
 ---
 
-<Layout>
-  <Navbar />
-  <main class="flex-grow">
+<Layout
+  title="All News Journal — Edição Premium Digital"
+  description="Tudo o que importa, todos os dias. O mundo, tecnologia e economia traduzidos em 3 minutos matinais às 06:15."
+>
+  <Fragment>
+    <!-- Fontes Institucionais da Skill editorial-scrollytelling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Playfair+Display:ital,wght@0,500..800;1,400..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style is:global>
+      :root {
+        --anj-green-primary: #0a5c5a;
+        --anj-green-secondary: #084c4a;
+        --anj-night-deep: #061413;
+        --anj-night-card: #0b2220;
+        --anj-gold: #c9a84c;
+        --anj-gold-light: #d1ba73;
+        --anj-cream: #fdfbf7;
+        --anj-cream-muted: #e5e3de;
+      }
+
+      html {
+        scroll-behavior: auto !important;
+      }
+
+      body {
+        background-color: #061413 !important;
+        color: #fdfbf7 !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        overflow-x: hidden;
+      }
+
+      ::selection {
+        background-color: #c9a84c;
+        color: #061413;
+      }
+
+      .font-playfair {
+        font-family: 'Playfair Display', Georgia, serif;
+      }
+
+      .font-lora {
+        font-family: 'Lora', Georgia, serif;
+      }
+
+      .font-mono-ticker {
+        font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+      }
+    </style>
+  </Fragment>
+
+  <main class="flex-grow bg-[#061413] text-[#fdfbf7]">
     <Hero />
     <AudioPlayer />
     <JornalDoDia />
@@ -18,3 +70,41 @@ import Footer from "../components/Footer.astro";
   </main>
   <Footer />
 </Layout>
+
+<script>
+  import Lenis from "lenis";
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Inicializa Lenis para rolagem suave cinematográfica sincronizada com GSAP ScrollTrigger
+  const lenis = new Lenis({
+    duration: 1.25,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    touchMultiplier: 1.5,
+  });
+
+  (window as any).__anjLenis = lenis;
+
+  lenis.on("scroll", ScrollTrigger.update);
+
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+  gsap.ticker.lagSmoothing(0);
+
+  // Ancoras internas suaves via Lenis
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener("click", (e) => {
+      const href = anchor.getAttribute("href");
+      if (!href || href === "#") return;
+      const target = document.querySelector(href);
+      if (target) {
+        e.preventDefault();
+        lenis.scrollTo(target as HTMLElement, { offset: -64 });
+      }
+    });
+  });
+</script>

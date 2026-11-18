@@ -1,96 +1,151 @@
 ---
-const cadernos = [
+import edicao from "../data/edicao_atual.json";
+
+const cadernosReais = (edicao.cadernos || {}) as Record<string, any[]>;
+
+const cadernosConfig = [
   {
     id: "macroeconomia",
+    chaveJson: "Macroeconomia & Mercados",
     nome: "Macroeconomia & Mercados",
-    badge: "Política Monetária & Capital",
-    corBadge: "bg-[#10B981]/15 text-[#34D399] border-[#10B981]/30",
-    descricao: "Decisões do Fed, Copom e BCE, treasury yields, liquidez global, câmbio e sustentabilidade fiscal que afetam alocações estratégicas.",
-    exemplo: "Rendimento dos Treasuries americanos de 10 anos sobe com recalibragem de juros e pressiona fluxos de capital em mercados emergentes."
+    badge: "📊 Economia de Bolso",
+    score: "🔥 Score 9.5/10",
+    gancho: "Política monetária, juros e câmbio que mexem diretamente no seu poder de compra e carteira.",
+    fato: "Decisões de Fed, Copom e BCE, treasury yields e liquidez global explicados sem economês.",
+    eDai: "Entenda antes da abertura do pregão onde estão os riscos de inflação, dólar e crédito.",
   },
   {
     id: "geopolitica",
+    chaveJson: "Geopolítica & Assuntos Globais",
     nome: "Geopolítica & Assuntos Globais",
-    badge: "Relações Internacionais & Comércio",
-    corBadge: "bg-[#3B82F6]/15 text-[#60A5FA] border-[#3B82F6]/30",
-    descricao: "Diplomacia de alto nível, cúpulas multilaterais, disputas comerciais, rotas de energia e o equilíbrio de segurança e defesa soberana.",
-    exemplo: "Realinhamento estratégico de blocos econômicos redefine cadeias de suprimento globais e impacta acordos tarifários multilaterais."
+    badge: "🌍 Geopolítica & Mundo",
+    score: "🔥 Score 9/10",
+    gancho: "As alianças, rotas de energia e disputas comerciais que redesenham o tabuleiro global.",
+    fato: "Diplomacia de alto nível, cúpulas multilaterais e cadeias de suprimento sob pressão estratégica.",
+    eDai: "Antecipe choques de oferta, tarifas e movimentos soberanos antes que virem consenso.",
   },
   {
     id: "estrategia",
+    chaveJson: "Estratégia Corporativa & M&A",
     nome: "Estratégia Corporativa & M&A",
-    badge: "Alocação de Capital & Governança",
-    corBadge: "bg-[#F59E0B]/15 text-[#FBBF24] border-[#F59E0B]/30",
-    descricao: "Grandes fusões e aquisições, reestruturações patrimoniais, governança executiva, teses de investimento e dinâmica competitiva setorial.",
-    exemplo: "Consolidação transfronteiriça no setor industrial atinge US$ 12 bilhões e reconfigura o equilíbrio de poder antitruste na Europa e Ásia."
+    badge: "💼 Negócios & M&A",
+    score: "🔥 Score 9/10",
+    gancho: "Fusão bilionária, governança executiva e realocação de capital no setor produtivo.",
+    fato: "Grandes aquisições, reestruturações patrimoniais e teses de liderança competitiva.",
+    eDai: "Identifique quais setores estão consolidando margem e onde surge vantagem competitiva.",
   },
   {
     id: "fronteira-ia",
+    chaveJson: "Fronteira Tecnológica & IA",
     nome: "Fronteira Tecnológica & IA",
-    badge: "Infraestrutura & Semicondutores",
-    corBadge: "bg-[#8B5CF6]/15 text-[#A78BFA] border-[#8B5CF6]/30",
-    descricao: "Modelos de fronteira, gargalos na cadeia de semicondutores, data centers de alta densidade e ecossistemas regulatórios de IA.",
-    exemplo: "Aceleração de Capex em clusters computacionais de IA pressiona a matriz energética e redefine contratos de infraestrutura física."
+    badge: "⚡ Tecnologia & IA",
+    score: "🔥 Score 9.8/10",
+    gancho: "Modelos de fronteira, gargalos de semicondutores e corrida global por infraestrutura de IA.",
+    fato: "Capex em data centers, regulação digital e adoção corporativa de agentes autônomos.",
+    eDai: "Saiba quais ferramentas, chips e modelos estão redefinindo produtividade e carreira.",
   },
   {
     id: "ciencia",
+    chaveJson: "Ciência & Inovação",
     nome: "Ciência & Inovação",
-    badge: "Deeptech & Transição Energética",
-    corBadge: "bg-[#06B6D4]/15 text-[#22D3EE] border-[#06B6D4]/30",
-    descricao: "Materiais avançados, biotecnologia escalável, transição energética industrial e avanços com revisão por pares que alteram mercados.",
-    exemplo: "Testes controlados validam nova classe de supercondutores com potencial de reduzir perdas em transmissão de energia em larga escala."
+    badge: "🔬 Ciência & Futuro",
+    score: "🔥 Score 9/10",
+    gancho: "Descobertas com revisão por pares que saem dos laboratórios para transformar indústrias.",
+    fato: "Materiais avançados, biotecnologia escalável e transição energética industrial.",
+    eDai: "Monitore inovações de longo ciclo antes que se tornem o próximo padrão de mercado.",
   },
   {
     id: "finance",
+    chaveJson: "All News Finance",
     nome: "All News Finance",
-    badge: "Edição Especial • Pré-Market",
-    corBadge: "bg-[#EAB308]/15 text-[#FACC15] border-[#EAB308]/30",
-    descricao: "Radar diário pré-abertura entregue pontualmente às 06:15 com fechamento de Nova York, Ásia, futuros do Ibovespa e curva de juros.",
-    exemplo: "Boletim executivo condensado com os indicadores de liquidez que direcionam as mesas de operação no início do pregão."
-  }
+    badge: "📈 Pré-Market 06:15",
+    score: "🔥 Edição Especial",
+    gancho: "O pulso das bolsas asiáticas, europeias e futuros americanos antes do café.",
+    fato: "Fechamento de Nova York, curva de juros e indicadores de liquidez condensados.",
+    eDai: "Comece o dia com clareza absoluta sobre o humor dos mercados em menos de 60 segundos.",
+  },
 ];
 ---
 
-<section class="py-16 sm:py-24" id="cadernos">
+<section class="py-16 sm:py-24 bg-[#061413] border-t border-[#c9a84c]/20" id="cadernos">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto mb-14">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#131B26] border border-white/[0.08] text-xs font-semibold text-[#94A3B8] uppercase tracking-wider mb-3">
-        Rigor Editorial • Padrão Reuters & The Economist
+      <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#0b2220] border border-[#c9a84c]/35 text-[11px] font-semibold text-[#d1ba73] uppercase tracking-[0.2em] mb-3">
+        Rigor Editorial • Padrão Reuters &amp; The Economist
       </div>
-      <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white tracking-tight">
+      <h2 class="font-playfair text-3xl sm:text-4xl font-bold text-[#fdfbf7] tracking-tight">
         5 Cadernos Estratégicos Essenciais
       </h2>
-      <p class="text-sm sm:text-base text-[#94A3B8] mt-2">
-        Eliminação total de ruído e fofocas. Cada nota cumpre a <strong>Fórmula 3-Steps</strong> (O Fato, Mecânica e Desdobramento Crítico) com densidade factual e inteligência acionável.
+      <p class="font-lora text-sm sm:text-base text-[#e5e3de]/80 mt-2.5">
+        Eliminação total de ruído. Cada nota segue a anatomia editorial de 4 blocos com densidade factual e inteligência acionável.
       </p>
     </div>
 
-    <!-- Grid de Cards dos 5 Cadernos Oficiais + Finance -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-      {cadernos.map((c) => (
-        <div class="group p-6 rounded-xl bg-[#131B26] border border-white/[0.08] hover:border-[#2563EB]/50 hover:bg-[#162030] transition-all duration-200 transform hover:-translate-y-1 flex flex-col justify-between shadow-lg shadow-black/40">
-          <div>
-            <div class="flex items-center justify-between mb-3.5">
-              <span class={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${c.corBadge}`}>
-                {c.badge}
-              </span>
-            </div>
-            <h3 class="font-serif text-xl font-bold text-white group-hover:text-[#93C5FD] transition-colors mb-2.5">
-              {c.nome}
-            </h3>
-            <p class="text-xs sm:text-sm text-[#94A3B8] leading-relaxed mb-5">
-              {c.descricao}
-            </p>
-          </div>
+    <!-- Grid de Cards dos Cadernos no Design System Verde/Dourado -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {cadernosConfig.map((c) => {
+        const materiasReais = cadernosReais[c.chaveJson];
+        const destaqueReal = Array.isArray(materiasReais) && materiasReais.length > 0 ? materiasReais[0] : null;
+        const anchorCaderno = `#caderno-${c.chaveJson.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
 
-          <div class="pt-3.5 border-t border-white/[0.06]">
-            <p class="text-[10px] font-semibold uppercase tracking-wider text-[#64748B] mb-1.5">Destaque Analítico Típico</p>
-            <p class="text-xs text-[#CBD5E1] italic leading-relaxed">
-              "{c.exemplo}"
-            </p>
+        return (
+          <div class="editorial-card group relative p-6 rounded-2xl bg-[#0b2220] border border-[#c9a84c]/20 hover:border-[#c9a84c]/55 transition-all duration-300 flex flex-col justify-between shadow-2xl shadow-black/50 overflow-hidden">
+            <!-- Lanterna Dourada -->
+            <div
+              class="card-spotlight pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(201, 168, 76, 0.14), transparent 40%);"
+            ></div>
+
+            <div class="relative z-10 flex flex-col flex-1">
+              <!-- Cabeçalho: Badge Editoria + Score -->
+              <div class="flex items-center justify-between gap-2 mb-4">
+                <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-[#0a5c5a]/45 border border-[#c9a84c]/35 text-[#d1ba73]">
+                  {c.badge}
+                </span>
+                <span class="font-mono-ticker text-[10px] px-2 py-0.5 rounded-full bg-[#061413]/70 border border-[#c9a84c]/25 text-[#c9a84c]">
+                  {c.score}
+                </span>
+              </div>
+
+              <!-- Título do Caderno -->
+              <h3 class="font-playfair text-xl font-bold text-[#fdfbf7] group-hover:text-[#d1ba73] transition-colors mb-2">
+                {c.nome}
+              </h3>
+
+              <!-- 1. O Gancho -->
+              <p class="font-lora italic text-xs sm:text-sm text-[#d1ba73]/90 leading-relaxed mb-3">
+                {destaqueReal ? destaqueReal.titulo : c.gancho}
+              </p>
+
+              <!-- 2. O Fato Limpo -->
+              <p class="text-xs text-[#e5e3de]/80 leading-relaxed mb-4">
+                {c.fato}
+              </p>
+
+              <!-- 3. Caixa "💰 E daí?" -->
+              <div class="mt-auto p-3 rounded-r-lg bg-[#0a5c5a]/35 border-l-2 border-[#c9a84c] text-xs leading-relaxed">
+                <p class="font-bold text-[#d1ba73] uppercase tracking-wider text-[10px] mb-0.5">
+                  💰 E daí?
+                </p>
+                <p class="text-[#fdfbf7]/90">
+                  {c.eDai}
+                </p>
+              </div>
+            </div>
+
+            <!-- 4. Fechamento Interativo -->
+            <div class="relative z-10 mt-4 pt-3 border-t border-[#c9a84c]/20 flex items-center justify-between text-[11px]">
+              <span class="font-mono-ticker text-[#e5e3de]/65">⏱️ Leitura 45s</span>
+              <a
+                href={destaqueReal ? anchorCaderno : "#assinar-jornal"}
+                class="text-[#d1ba73] hover:text-[#fdfbf7] font-semibold transition-colors"
+              >
+                {destaqueReal ? "Ver na edição de hoje →" : "Assinar caderno →"}
+              </a>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   </div>
 </section>
