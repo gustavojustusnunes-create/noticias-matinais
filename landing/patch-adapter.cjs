@@ -14,7 +14,8 @@ if (fs.existsSync(target)) {
     26: { status: 'default' },
 };`
   );
-  content = content.replace(/return 'nodejs18\.x';/g, "return 'nodejs20.x';");
+  content = content.replace(/return 'nodejs18\.x';/g, "return 'nodejs24.x';");
+  content = content.replace(/return 'nodejs20\.x';/g, "return 'nodejs24.x';");
   fs.writeFileSync(target, content, 'utf8');
   console.log('Successfully patched @astrojs/vercel adapter for Node 20/22/24 support!');
 }
