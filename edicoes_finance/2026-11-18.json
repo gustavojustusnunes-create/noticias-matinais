@@ -1,0 +1,67 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Bolsas da Europa caem com alta do dólar e de olho no Fed",
+      "link": "https://www.moneytimes.com.br/bolsas-da-europa-caem-com-alta-do-dolar-e-de-olho-no-fed-davs/",
+      "resumo": "As bolsas europeias encerraram a sessão desta quarta-feira em queda generalizada, com o índice STOXX Europe 600 recuando 0,98%, para 644,35 pontos. A desvalorização refletiu a valorização do dólar e a crescente expectativa por uma postura mais agressiva do Federal Reserve na política monetária, visando conter a inflação persistente. Isso eleva o custo de capital global e pressiona ativos de risco. Investidores agora monitoram os próximos passos do banco central americano, pois juros mais altos nos EUA podem drenar liquidez dos mercados europeus, ameaçando o crescimento econômico regional.",
+      "imagem": "https://images.unsplash.com/photo-1535320903710-d993d3d77d29?auto=format&fit=crop&q=80&w=800&sig=0_520",
+      "fonte": "Money Times",
+      "data": "2026-11-18"
+    },
+    {
+      "titulo": "CVM multa em R$ 1,5 mi envolvidos em irregularidades em registros contábeis da Blue Tech",
+      "link": "https://www.moneytimes.com.br/cvm-multa-em-r-15-mi-envolvidos-em-irregularidades-em-registros-contabeis-da-blue-tech-mlem/",
+      "resumo": "A Comissão de Valores Mobiliários (CVM) impôs multas que totalizam R$ 1,532 milhão a quatro ex-administradores da Blue Tech Solutions EQI S.A. por irregularidades graves e persistentes em registros contábeis e societários entre 2019 e 2021. Edison Cordaro, diretor de Relações com Invest",
+      "imagem": "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=800&sig=1_256",
+      "fonte": "Money Times",
+      "data": "2026-11-18"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Não é só a Caixa: CEO da Direcional (DIRR3) aponta outro motivo por trás da aceleração dos distratos nas construtoras do Minha Casa Minha Vida",
+      "link": "https://www.moneytimes.com.br/nao-e-so-a-caixa-ceo-da-direcional-aponta-outro-motivo-por-tras-da-aceleracao-dos-distratos-nas-construtoras-do-minha-casa-minha-vida-bdap/",
+      "resumo": "O aumento dos distratos em empreendimentos do programa Minha Casa Minha Vida (MCMV) tem gerado preocupação no mercado. Enquanto analistas atribuem a escalada dos cancelamentos, que ganhou força no terceiro",
+      "imagem": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800&sig=0_121",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-18"
+    },
+    {
+      "titulo": "Tencent diz que novas restrições dos EUA não afetarão receita de nuvem, mas podem desacelerar treinamento de modelos",
+      "link": "https://www.moneytimes.com.br/tencent-diz-que-novas-restricoes-dos-eua-nao-afetarao-receita-de-nuvem-mas-podem-desacelerar-treinamento-de-modelos-rens/",
+      "resumo": "A Tencent Holdings afirmou que as recentes restrições dos Estados Unidos ao acesso remoto a chips avançados de inteligência artificial (IA) não impactarão substancialmente sua receita de nuvem, embora possam desacelerar",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=1_355",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-18"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Safra de soja vive melhor momento com preço elevado pelo dólar, diz consultoria",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/agro/2026/11/safra-de-soja-vive-melhor-momento-com-preco-elevado-pelo-dolar-diz-consultoria.shtml",
+      "resumo": "As projeções para a safra de soja brasileira de 2026/27 indicam patamares recordes, conforme avaliação da consultoria AgRural. Este cenário otimista é sustentado pelas recentes",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=0_110",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-18"
+    },
+    {
+      "titulo": "Caso Master e pandemia desafiam atuação de procurador-geral mais longevo da história do BC",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/financas/2026/11/caso-master-e-pandemia-desafiam-atuacao-de-procurador-geral-mais-longevo-da-historia-do-bc.shtml",
+      "resumo": "A atuação de Cristiano Cozer, Procurador-Geral do Banco Central, foi central nas investigações que culminaram na liquidação do Banco Master, conglomerado financeiro de Daniel Vorcaro. Sua posição como o procurador-geral mais longevo do BC conferiu-lhe autoridade decisiva em um cenário de crescente escrutínio regulatório, exacerbado pelas pressões econômicas da pandemia. O caso sinaliza um endurecimento da supervisão sobre a governança bancária, aumentando o risco de intervenções para instituições com fragilidades operacionais.",
+      "imagem": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800&sig=1_679",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-18"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Com bitcoin (BTC) abaixo dos US$ 65 mil, liquidações superam US$ 1 bilhão em 24h; criptomoedas aceleram perdas",
+      "link": "https://www.moneytimes.com.br/com-bitcoin-btc-abaixo-dos-us-65-mil-liquidacoes-superam-us-1-bilhao-em-24h-criptomoedas-aceleram-perdas-rens/",
+      "resumo": "O Bitcoin (BTC) opera na casa dos US$ 64 mil, acumulando uma desvalorização de 13% nos últimos sete dias e 26,6% no ano. Este movimento reflete uma tendência de perdas generalizadas no mercado de criptoativos, com as principais altcoins registrando qued",
+      "imagem": "https://www.moneytimes.com.br/uploads/2026/11/image-17-1024x536.png",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-18"
+    }
+  ],
+  "data": "2026-11-18"
+}

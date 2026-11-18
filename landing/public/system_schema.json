@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-11-17T14:56:45.365211-03:00",
+  "last_updated": "2026-11-18T14:28:35.753973-03:00",
   "active_run_state": {
     "status": "IDLE",
     "current_active_node": "planner",
@@ -8,7 +8,7 @@
     "word_count": 0,
     "retry_count": 0,
     "hitl_approved": false,
-    "last_updated": "2026-11-17T14:56:45.365178-03:00",
+    "last_updated": "2026-11-18T14:28:35.753948-03:00",
     "selected_story_title": null
   },
   "clusters": [
@@ -83,7 +83,7 @@
       "id": "__start__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true
     },
     {
@@ -114,7 +114,7 @@
       "id": "planner",
       "is_hitl_gate": false,
       "is_active": true,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true
     },
     {
@@ -148,7 +148,7 @@
       "id": "writer",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true,
       "runtime_retry_count": 0
     },
@@ -184,42 +184,35 @@
       "id": "critic",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true,
       "runtime_word_count": 0,
       "runtime_is_approved": false
     },
     {
-      "label": "Media Generator",
-      "sublabel": "node_media_gen",
-      "category": "Mídia & Design",
+      "label": "Multichannel Fanout",
+      "sublabel": "multichannel_fanout",
+      "category": "Orquestração",
       "cluster": "langgraph",
       "cluster_label": "1. Orquestração LangGraph Core",
-      "icon": "🎨",
-      "color": "#10B981",
+      "icon": "⚙️",
+      "color": "#2563EB",
       "type": "executor",
       "file": "core/graph_engine.py",
-      "func": "node_media_generator(state: GraphState)",
-      "model": "Edge-TTS (pt-BR-AntonioNeural) + Pillow Renderer",
-      "desc": "Sintetiza áudio neural do podcast em landing/public/audio/latest.mp3 e renderiza a Capa Editorial Clássica Slide 1 (1080x1350) em tons preto e dourado.",
-      "inputs": [
-        "draft_text: str",
-        "selected_story: Dict"
-      ],
-      "outputs": [
-        "audio_path: str",
-        "image_path: str",
-        "status: 'AWAITING_FOUNDER_APPROVAL'"
-      ],
-      "resilience": "Fallback para gradiente e moldura pura se o download da foto da notícia falhar.",
+      "func": "multichannel_fanout()",
+      "model": "LangGraph Runnable",
+      "desc": "Nó executor 'multichannel_fanout' do StateGraph.",
+      "inputs": [],
+      "outputs": [],
+      "resilience": "Tratamento padrão do StateGraph.",
       "pos": {
-        "x": 170,
-        "y": 390
+        "x": 200,
+        "y": 200
       },
-      "id": "media_generator",
+      "id": "multichannel_fanout",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true
     },
     {
@@ -252,7 +245,7 @@
       "id": "dispatcher",
       "is_hitl_gate": true,
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true
     },
     {
@@ -282,7 +275,7 @@
       "id": "__end__",
       "is_hitl_gate": false,
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true
     },
     {
@@ -312,7 +305,7 @@
       },
       "id": "hitl_gate",
       "is_active": false,
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true,
       "runtime_hitl_approved": false,
       "is_locked": true
@@ -344,7 +337,7 @@
         "x": 890,
         "y": 380
       },
-      "file_mtime": "2026-11-17T14:44:00.328525-03:00",
+      "file_mtime": "2026-11-18T14:25:22.849960-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -373,7 +366,7 @@
         "x": 890,
         "y": 185
       },
-      "file_mtime": "2026-11-17T14:44:00.250473-03:00",
+      "file_mtime": "2026-11-18T14:25:22.770517-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -403,7 +396,7 @@
         "x": 1150,
         "y": 185
       },
-      "file_mtime": "2026-11-17T14:56:41.962943-03:00",
+      "file_mtime": "2026-11-18T14:28:32.939515-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -432,7 +425,7 @@
         "x": 1360,
         "y": 185
       },
-      "file_mtime": "2026-11-17T14:44:00.250473-03:00",
+      "file_mtime": "2026-11-18T14:25:22.770517-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -490,7 +483,7 @@
         "x": 70,
         "y": 710
       },
-      "file_mtime": "2026-11-17T14:44:00.749194-03:00",
+      "file_mtime": "2026-11-18T14:25:23.261326-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -519,7 +512,7 @@
         "x": 290,
         "y": 710
       },
-      "file_mtime": "2026-11-17T14:44:00.666908-03:00",
+      "file_mtime": "2026-11-18T14:25:23.187775-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -548,7 +541,7 @@
         "x": 510,
         "y": 710
       },
-      "file_mtime": "2026-11-17T14:44:00.651194-03:00",
+      "file_mtime": "2026-11-18T14:25:23.175326-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -577,7 +570,7 @@
         "x": 730,
         "y": 710
       },
-      "file_mtime": "2026-11-17T14:44:00.746882-03:00",
+      "file_mtime": "2026-11-18T14:25:23.259326-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -606,7 +599,7 @@
         "x": 950,
         "y": 710
       },
-      "file_mtime": "2026-11-17T14:44:00.749194-03:00",
+      "file_mtime": "2026-11-18T14:25:23.262326-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -636,7 +629,7 @@
         "x": 1215,
         "y": 715
       },
-      "file_mtime": "2026-11-17T14:44:00.746251-03:00",
+      "file_mtime": "2026-11-18T14:25:23.258850-03:00",
       "file_exists": true,
       "is_active": false
     },
@@ -667,7 +660,7 @@
         "x": 1460,
         "y": 715
       },
-      "file_mtime": "2026-11-17T14:44:00.250473-03:00",
+      "file_mtime": "2026-11-18T14:25:22.770517-03:00",
       "file_exists": true,
       "is_active": false
     }
@@ -682,12 +675,12 @@
       "color": "#38BDF8"
     },
     {
-      "id": "edge_critic_media_generator",
+      "id": "edge_critic_multichannel_fanout",
       "source": "critic",
-      "target": "media_generator",
+      "target": "multichannel_fanout",
       "conditional": true,
-      "label": "APPROVED (85-105w)",
-      "color": "#10B981"
+      "label": "CONDITIONAL",
+      "color": "#A855F7"
     },
     {
       "id": "edge_critic_writer",
@@ -698,21 +691,12 @@
       "color": "#F59E0B"
     },
     {
-      "id": "edge_media_to_hitl",
-      "source": "media_generator",
-      "target": "hitl_gate",
-      "conditional": false,
-      "label": "Mídias Prontas",
-      "color": "#F59E0B"
-    },
-    {
-      "id": "edge_hitl_to_dispatcher",
-      "source": "hitl_gate",
+      "id": "edge_multichannel_fanout_dispatcher",
+      "source": "multichannel_fanout",
       "target": "dispatcher",
-      "conditional": true,
-      "label": "APPROVED_BY_FOUNDER",
-      "color": "#F43F5E",
-      "is_hitl_edge": true
+      "conditional": false,
+      "label": "",
+      "color": "#38BDF8"
     },
     {
       "id": "edge_planner_writer",
@@ -848,7 +832,7 @@
     "total_nodes": 20,
     "langgraph_nodes": 8,
     "infrastructure_nodes": 12,
-    "total_edges": 21,
+    "total_edges": 20,
     "current_status": "IDLE",
     "current_active_node": "planner"
   }
