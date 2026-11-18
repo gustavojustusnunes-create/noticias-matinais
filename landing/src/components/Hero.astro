@@ -485,4 +485,63 @@ const dataCapitalizada = dataFormatada.charAt(0).toUpperCase() + dataFormatada.s
     }
   }
   atualizarTickerAoVivo();
+
+  // 6. Integração do Formulário de Assinatura (#assinar) -> /api/subscribe -> Google Sheets (noticias_db)
+  function bindSubscribeWidgets() {
+    const widgets = document.querySelectorAll(".subscribe-widget");
+    widgets.forEach((widget) => {
+      const form = widget.querySelector(".form-inscricao") as HTMLFormElement | null;
+      const input = widget.querySelector(".email-input") as HTMLInputElement | null;
+      const btn = widget.querySelector(".submit-btn") as HTMLButtonElement | null;
+      const btnText = widget.querySelector(".btn-text");
+      const btnSpinner = widget.querySelector(".btn-spinner");
+      const msgSucesso = widget.querySelector(".msg-sucesso");
+      const msgSucessoTitulo = widget.querySelector(".msg-sucesso-titulo");
+      const msgErro = widget.querySelector(".msg-erro");
+
+      if (!form || !input || !btn) return;
+      if (form.dataset.bound === "true") return;
+      form.dataset.bound = "true";
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = input.value.trim();
+        if (!email) return;
+
+        btn.disabled = true;
+        if (btnText) btnText.textContent = "Cadastrando...";
+        if (btnSpinner) btnSpinner.classList.remove("hidden");
+        if (msgSucesso) msgSucesso.classList.add("hidden");
+        if (msgErro) msgErro.classList.add("hidden");
+
+        try {
+          const resp = await fetch("/api/subscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+          const data = await resp.json().catch(() => ({}));
+
+          if (resp.ok && data.success !== false) {
+            form.classList.add("hidden");
+            if (msgSucessoTitulo && data.message) {
+              msgSucessoTitulo.textContent = data.message;
+            }
+            if (msgSucesso) msgSucesso.classList.remove("hidden");
+          } else {
+            throw new Error(data.error || "Falha ao registrar assinatura na planilha.");
+          }
+        } catch (err: any) {
+          if (msgErro) {
+            msgErro.textContent = err?.message || "Ocorreu um erro ao processar seu cadastro. Por favor, tente novamente.";
+            msgErro.classList.remove("hidden");
+          }
+          btn.disabled = false;
+          if (btnText) btnText.textContent = "Quero Receber às 06:15 →";
+          if (btnSpinner) btnSpinner.classList.add("hidden");
+        }
+      });
+    });
+  }
+  bindSubscribeWidgets();
 </script>
