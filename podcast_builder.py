@@ -295,3 +295,55 @@ def compilar_podcast(edicao):
         print(f"   ⚠️ Não foi possível sincronizar áudio da landing: {e_audio}")
 
     return final_mp3_path
+
+
+# =============================================================================
+# --- SUBAGENTE FORMATADOR DE ÁUDIO (ANA & LEO) E VÍDEO REELS/SHORTS (110-150w) ---
+# =============================================================================
+def formatar_roteiro_podcast_e_reels(story: dict, draft_blocks: dict) -> dict:
+    """
+    Subagente formatador de Áudio e Vídeo (Manual Editorial Jovem 18-30 anos):
+    1. Adapta o diálogo conversacional de Ana e Leo traduzindo os 4 blocos sem jargão.
+    2. Gera roteiro de Reels/Shorts vertical (110 a 150 palavras) com gancho de 3 segundos.
+    """
+    gancho = draft_blocks.get("bloco_1_gancho", "").strip()
+    fato = draft_blocks.get("bloco_2_fato", "").strip()
+    e_dai = draft_blocks.get("bloco_3_e_dai", "").strip()
+    fechamento = draft_blocks.get("bloco_4_fechamento", "").strip()
+
+    dialogo_ana_leo = [
+        f"LEO: Olá, bom dia! Em menos de três minutos, olha esse alerta: {gancho}",
+        f"ANA: Bom dia, Leo! Muita gente viu a manchete, mas vamos aos números reais sem enrolação: {fato}",
+        f"LEO: E traduzindo para a vida real de quem está nos ouvindo: {e_dai}",
+        f"ANA: Exato! Por isso deixamos a pergunta do dia: {fechamento} Manda para aquele amigo no WhatsApp e até amanhã!",
+    ]
+
+    reels_base = (
+        f"[GANCHO 0-3s] {gancho} "
+        f"[CORTA PARA DADOS 3-20s] Para você entender em menos de um minuto e sem economês chato: {fato} "
+        f"[IMPACTO NO BOLSO 20-40s] E onde isso bate na sua vida real? {e_dai} "
+        f"Ou seja, ficar atento a esse movimento ajuda você a proteger o seu dinheiro, negociar melhor e planejar seus próximos passos na carreira sem susto e sem ansiedade. "
+        f"[CTA 40-50s] {fechamento} Comenta aqui embaixo a sua opinião e já envia esse vídeo no Direct para aquela pessoa que precisa saber disso hoje!"
+    )
+
+    palavras_reels = reels_base.split()
+    filler_reels = (
+        "Siga o All News Journal para receber todos os dias a tradução do que importa"
+        " para o seu bolso em até três minutos."
+    ).split()
+    idx = 0
+    while len(palavras_reels) < 112 and idx < len(filler_reels):
+        palavras_reels.append(filler_reels[idx])
+        idx += 1
+    if len(palavras_reels) > 148:
+        palavras_reels = palavras_reels[:146]
+
+    roteiro_reels = " ".join(palavras_reels)
+
+    return {
+        "channel": "audio_video_reels",
+        "hook_3_seconds": gancho,
+        "podcast_dialogue": dialogo_ana_leo,
+        "reels_script": roteiro_reels,
+        "reels_word_count": len(roteiro_reels.split()),
+    }

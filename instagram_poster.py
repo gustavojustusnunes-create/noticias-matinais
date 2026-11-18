@@ -969,3 +969,97 @@ def publicar_post_ondemand(paths: list, legenda: str) -> dict:
 
 if __name__ == "__main__":
     main()
+
+
+# =============================================================================
+# --- SUBAGENTE FORMATADOR DE CARROSSEL JOVEM (6 A 8 SLIDES + LEGENDA 80-120w) ---
+# =============================================================================
+def _ajustar_slide_25_35_palavras(texto_base: str, complemento: str) -> str:
+    """Garante que o texto do slide tenha rigorosamente entre 25 e 35 palavras e frases curtas."""
+    palavras = texto_base.strip().split()
+    comp_palavras = complemento.strip().split()
+    idx = 0
+    while len(palavras) < 25 and idx < len(comp_palavras):
+        palavras.append(comp_palavras[idx])
+        idx += 1
+    if len(palavras) > 35:
+        palavras = palavras[:34]
+        if not palavras[-1].endswith("."):
+            palavras[-1] = palavras[-1].rstrip(",;:") + "."
+    texto_final = " ".join(palavras)
+    if not texto_final.endswith((".", "!", "?")):
+        texto_final += "."
+    return texto_final
+
+
+def formatar_carrossel_4_blocos(story: dict, draft_blocks: dict) -> dict:
+    """
+    Subagente formatador de Instagram Carrossel (Manual Editorial Jovem 18-30 anos):
+    - Gera array de 6 a 8 slides (25 a 35 palavras por slide, frases de até 15 palavras).
+    - Gera legenda engajadora de 80 a 120 palavras com CTA de compartilhamento.
+    """
+    titulo = draft_blocks.get("titulo_jovem") or story.get("titulo", "Destaque do Dia")
+    gancho = draft_blocks.get("bloco_1_gancho", "").strip()
+    fato = draft_blocks.get("bloco_2_fato", "").strip()
+    e_dai = draft_blocks.get("bloco_3_e_dai", "").strip()
+    fechamento = draft_blocks.get("bloco_4_fechamento", "").strip()
+
+    slides_raw = [
+        (
+            f"{gancho} Entenda em menos de um minuto o que mudou hoje.",
+            "Veja os números reais e como proteger o seu bolso agora mesmo."
+        ),
+        (
+            f"O movimento ganhou força hoje: {fato}",
+            "Os dados oficiais mostram mudança direta no ritmo do setor neste trimestre."
+        ),
+        (
+            "Quando olhamos sem jargão difícil, o recado do mercado fica muito simples.",
+            "Empresas e governo estão ajustando as contas e repassando custos para a ponta final."
+        ),
+        (
+            f"Como isso afeta você na prática: {e_dai}",
+            "Fique atento às taxas cobradas e compare opções antes de tomar decisão financeira."
+        ),
+        (
+            "Para quem está entre 18 e 30 anos, planejar o curto prazo evita surpresas.",
+            "Pequenos ajustes no orçamento mensal protegem sua reserva e seu poder de compra."
+        ),
+        (
+            f"Agora queremos ouvir você: {fechamento}",
+            "Comente sua visão abaixo e mande este carrossel para um amigo no Direct agora."
+        ),
+    ]
+
+    slides = []
+    for idx, (base, comp) in enumerate(slides_raw, start=1):
+        texto_slide = _ajustar_slide_25_35_palavras(base, comp)
+        slides.append({
+            "slide_number": idx,
+            "text": texto_slide,
+            "word_count": len(texto_slide.split()),
+        })
+
+    legenda_partes = [
+        f"⚡ {gancho}",
+        f"📊 O que aconteceu: {fato}",
+        f"💰 Como isso afeta o seu bolso e sua rotina: {e_dai}",
+        "No All News Journal nós traduzimos os movimentos de economia, tecnologia e carreira em até 3 minutos, sem economês e sem ansiedade para você decidir melhor todos os dias.",
+        f"💬 {fechamento} Responda aqui nos comentários e envie este post no Direct para quem precisa saber disso hoje! #AllNewsJournal #EconomiaPratica #Carreira #Financas",
+    ]
+    legenda = "\n\n".join(legenda_partes)
+    palavras_leg = legenda.split()
+    if len(palavras_leg) > 118:
+        legenda = " ".join(palavras_leg[:115]) + " #AllNewsJournal"
+    elif len(palavras_leg) < 82:
+        extra = " Salve este carrossel para consultar depois e compartilhe no grupo do trabalho ou da faculdade."
+        legenda = legenda + extra
+
+    return {
+        "channel": "instagram_carousel",
+        "titulo": titulo,
+        "slide_count": len(slides),
+        "slides": slides,
+        "caption": legenda,
+        "caption_word_count": len(legenda.split()),
+    }

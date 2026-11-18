@@ -1,7 +1,8 @@
 """
 email_builder.py — Geração do HTML e envio de email do All News Journal
-Inclui: painel financeiro, preheader, sumário, editorial, tempo de leitura,
-        subject dinâmico e retry com backoff.
+Inclui: painel financeiro, preheader, sumário, editorial, tempo de leitura (2-3 min),
+        renderização visual das pílulas dos 4 Blocos Universais (Gancho, O Fato,
+        Caixa '💰 Como isso afeta você' e Pergunta do Dia), subject dinâmico e retry com backoff.
 """
 import base64
 import smtplib
@@ -86,6 +87,136 @@ def obter_indicadores():
 
 
 # =============================================================================
+# --- RENDERIZADOR DOS 4 BLOCOS UNIVERSAIS (MANUAL EDITORIAL JOVEM) ---
+# =============================================================================
+def extrair_4_blocos_de_item(n: dict) -> dict:
+    """
+    Extrai ou converte uma notícia em estrutura de 4 blocos universais:
+    - bloco_1_gancho
+    - bloco_2_fato
+    - bloco_3_e_dai
+    - bloco_4_fechamento
+    """
+    blocos_src = n.get("draft_blocks") if isinstance(n.get("draft_blocks"), dict) else n
+    g = (blocos_src.get("bloco_1_gancho") or "").strip()
+    f = (blocos_src.get("bloco_2_fato") or "").strip()
+    e = (blocos_src.get("bloco_3_e_dai") or "").strip()
+    c = (blocos_src.get("bloco_4_fechamento") or "").strip()
+
+    if g and f and e and c:
+        return {
+            "bloco_1_gancho": g,
+            "bloco_2_fato": f,
+            "bloco_3_e_dai": e,
+            "bloco_4_fechamento": c,
+        }
+
+    resumo_raw = (n.get("resumo") or "").strip()
+    partes = [p.strip() for p in resumo_raw.replace("\n", " ").split(". ") if p.strip()]
+    gancho_fb = (partes[0] + ".") if partes else n.get("titulo", "Destaque do dia.")
+    fato_fb = ". ".join(partes[1:3]) + "." if len(partes) > 1 else resumo_raw
+    edai_fb = (
+        partes[3] + "."
+        if len(partes) > 3
+        else "Isso impacta diretamente os custos, investimentos e decisões práticas do seu dia a dia."
+    )
+    fechamento_fb = "Como você enxerga esse movimento na sua rotina e no seu bolso?"
+    return {
+        "bloco_1_gancho": g or gancho_fb,
+        "bloco_2_fato": f or fato_fb,
+        "bloco_3_e_dai": e or edai_fb,
+        "bloco_4_fechamento": c or fechamento_fb,
+    }
+
+
+def renderizar_blocos_noticia_html(n: dict, cor: str = "0a5c5a") -> str:
+    """
+    Renderiza visualmente as pílulas dos 4 Blocos Universais no HTML do e-mail:
+    1. Gancho em destaque
+    2. O Fato
+    3. Caixa '💰 Como isso afeta você'
+    4. Pergunta do Dia
+    """
+    blocos = extrair_4_blocos_de_item(n)
+    return f"""
+        <!-- BLOCO 1: GANCHO EM DESTAQUE -->
+        <div style="margin:0 0 12px;padding:10px 14px;background-color:#{cor}12;border-left:4px solid #{cor};border-radius:0 6px 6px 0;">
+          <span style="display:inline-block;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:1.2px;color:#{cor};font-family:sans-serif;margin-bottom:3px;">
+            ⚡ Gancho em Destaque
+          </span>
+          <p style="margin:0;font-size:15px;font-weight:bold;color:#111;line-height:1.45;font-family:'Lora','Times New Roman',serif;">
+            {blocos['bloco_1_gancho']}
+          </p>
+        </div>
+
+        <!-- BLOCO 2: O FATO -->
+        <div style="margin:0 0 14px;">
+          <span style="display:inline-block;background-color:#e5e3de;color:#333;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;font-family:sans-serif;margin-bottom:6px;">
+            📊 O Fato
+          </span>
+          <p style="margin:0;font-size:15px;color:#2c2c2c;line-height:1.7;font-family:'Lora','Times New Roman',serif;">
+            {blocos['bloco_2_fato']}
+          </p>
+        </div>
+
+        <!-- BLOCO 3: CAIXA '💰 COMO ISSO AFETA VOCÊ' -->
+        <div style="margin:0 0 14px;padding:14px 16px;background-color:#f0f7f6;border:1px solid #{cor}44;border-radius:8px;">
+          <p style="margin:0 0 5px;font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;color:#0a5c5a;font-family:sans-serif;">
+            💰 Como isso afeta você
+          </p>
+          <p style="margin:0;font-size:14px;color:#1f2937;line-height:1.6;font-family:'Lora','Times New Roman',serif;">
+            {blocos['bloco_3_e_dai']}
+          </p>
+        </div>
+
+        <!-- BLOCO 4: PERGUNTA DO DIA -->
+        <div style="margin:0 0 16px;padding:10px 14px;background-color:#faf6eb;border:1px dashed #c9a84c;border-radius:8px;">
+          <span style="font-size:11px;font-weight:bold;color:#926c15;text-transform:uppercase;letter-spacing:1px;font-family:sans-serif;">
+            💬 Pergunta do Dia:
+          </span>
+          <span style="font-size:14px;color:#333;font-style:italic;font-family:'Lora','Times New Roman',serif;">
+            {blocos['bloco_4_fechamento']}
+          </span>
+        </div>
+    """
+
+
+def formatar_newsletter_4_blocos(story: dict, draft_blocks: dict) -> dict:
+    """
+    Subagente formatador de E-mail HTML para o node_multichannel_fanout.
+    Constrói o item enriquecido com os 4 blocos e retorna o HTML completo da newsletter
+    com tempo de leitura de 2-3 minutos.
+    """
+    tema = story.get("caderno") or story.get("tema") or "Economia"
+    item_enriquecido = {
+        "titulo": draft_blocks.get("titulo_jovem") or story.get("titulo", "Destaque do Dia"),
+        "link": story.get("link", "https://noticias-matinais.vercel.app"),
+        "imagem": story.get("imagem") or story.get("url_imagem") or "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200",
+        "resumo": " ".join([
+            draft_blocks.get("bloco_1_gancho", ""),
+            draft_blocks.get("bloco_2_fato", ""),
+            draft_blocks.get("bloco_3_e_dai", ""),
+            draft_blocks.get("bloco_4_fechamento", ""),
+        ]).strip(),
+        "draft_blocks": draft_blocks,
+        "bloco_1_gancho": draft_blocks.get("bloco_1_gancho", ""),
+        "bloco_2_fato": draft_blocks.get("bloco_2_fato", ""),
+        "bloco_3_e_dai": draft_blocks.get("bloco_3_e_dai", ""),
+        "bloco_4_fechamento": draft_blocks.get("bloco_4_fechamento", ""),
+    }
+    dados_edicao = {tema: [item_enriquecido]}
+    html_completo = gerar_html_final("Leitor(a)", dados_edicao, painel="")
+    card_html = renderizar_blocos_noticia_html(item_enriquecido)
+    return {
+        "channel": "email_newsletter",
+        "reading_time_minutes": 2,
+        "subject": montar_subject(dados_edicao),
+        "card_4_blocks_html": card_html,
+        "full_html": html_completo,
+    }
+
+
+# =============================================================================
 # --- GERAÇÃO DO HTML DO EMAIL ---
 # =============================================================================
 def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
@@ -95,7 +226,8 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
     - Editorial do dia (se fornecido)
     - Coluna do Autor (se fornecido)
     - Sumário/índice clicável
-    - Tempo de leitura estimado
+    - Pílulas visuais dos 4 Blocos Universais (Gancho, O Fato, 💰 Como isso afeta você, Pergunta do Dia)
+    - Tempo de leitura estimado (2-3 min)
     - Fallback de imagem com gradiente colorido
     """
     TURQUESA = "0a5c5a"
@@ -116,7 +248,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
             manchete_principal = items[0].get("titulo", "")
             break
 
-    # ── Tempo de leitura ────────────────────────────────────────────────────
+    # ── Tempo de leitura (calibrado para 2-3 min conforme JTBD) ──────────────
     total_palavras = sum(
         len(n.get("resumo", "").split())
         for items in dados.values() if items
@@ -124,7 +256,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
     )
     if coluna_autor:
         total_palavras += len(coluna_autor.get("texto", "").split())
-    tempo_leitura = max(1, round(total_palavras / 200))
+    tempo_leitura = min(3, max(2, round(total_palavras / 200))) if total_palavras > 0 else 2
 
     # ── Sumário ──────────────────────────────────────────────────────────────
     linhas_sumario = ""
@@ -145,7 +277,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
     # ── Preheader ────────────────────────────────────────────────────────────
     preheader = (
         f"<div style='display:none;max-height:0;overflow:hidden;mso-hide:all;'>"
-        f"{manchete_principal} — Sua curadoria premium do All News Journal"
+        f"{manchete_principal} — Sua curadoria matinal em até 3 minutos no All News Journal"
         f"</div>"
     )
 
@@ -158,7 +290,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
   <!-- CABEÇALHO -->
   <div style="padding:30px 20px 20px;text-align:center;border-bottom:3px solid #{TURQUESA};">
     <p style="margin:0 0 12px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#999;">
-      Edição Premium Digital
+      Edição Digital Matinal • 18–30 Anos
     </p>
     <img src="cid:{LOGO_CID}" alt="All News Journal"
          width="90" height="90"
@@ -168,7 +300,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
       ALL NEWS JOURNAL
     </h1>
     <p style="margin:10px 0 4px;font-size:12px;color:#777;font-style:italic;">{data_ptbr}</p>
-    <p style="margin:0;font-size:11px;color:#999;">⏱️ Leitura estimada: {tempo_leitura} min</p>
+    <p style="margin:0;font-size:11px;color:#999;">⏱️ Leitura rápida: {tempo_leitura} min (sem ansiedade)</p>
   </div>
 
   <!-- PAINEL FINANCEIRO -->
@@ -178,7 +310,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
   <div style="padding:30px 30px 10px;">
     <p style="color:#555;font-size:15px;text-align:center;margin-bottom:{'20px' if editorial else '35px'};
               font-style:italic;border-bottom:{'none' if editorial else '1px solid #e5e3de'};padding-bottom:{'10px' if editorial else '25px'};">
-      Bom dia, <b style="color:#{TURQUESA};">{nome}</b>. A sua curadoria premium de hoje está pronta.
+      Bom dia, <b style="color:#{TURQUESA};">{nome}</b>. O que realmente importa para o seu bolso, carreira e rotina hoje.
     </p>
 """
 
@@ -245,7 +377,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
     </div>
 """
 
-    # ── Cadernos ─────────────────────────────────────────────────────────────
+    # ── Cadernos (com Pílulas Visuais dos 4 Blocos) ──────────────────────────
     for tema, items in dados.items():
         if not items:
             continue
@@ -263,7 +395,6 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
 
         for n in items:
             titulo_safe = n["titulo"].replace('"', '&quot;').replace("'", "&#39;")
-            # Fallback de imagem com gradiente colorido do caderno
             onerror_script = (
                 f"this.onerror=null;"
                 f"this.style.background='linear-gradient(135deg, #{cor}22, #{cor}55)';"
@@ -273,11 +404,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
                 f"PHRleHQgeT0iLjllbSIgZm9udC1zaXplPSI1MCI+e2ljb25lX2I2NH08L3RleHQ+PC9zdmc+"
                 f"';"
             )
-            paragrafos = [p.strip() for p in n.get('resumo', '').split('\n') if p.strip()]
-            resumo_html = "".join(
-                f'<p style="margin:0 0 14px;font-size:15px;color:#3a3a3a;line-height:1.75;font-family:\'Lora\',\'Times New Roman\',serif;">{p}</p>'
-                for p in paragrafos
-            ) if paragrafos else f'<p style="margin:0 0 14px;font-size:15px;color:#3a3a3a;line-height:1.75;font-family:\'Lora\',\'Times New Roman\',serif;">{n.get("resumo", "")}</p>'
+            blocos_html = renderizar_blocos_noticia_html(n, cor=cor)
 
             html += f"""
     <div style="margin-bottom:40px;padding-bottom:30px;border-bottom:1px solid #ede9e3;">
@@ -296,7 +423,7 @@ def gerar_html_final(nome, dados, painel, editorial="", coluna_autor=None):
             {n['titulo']}
           </h3>
         </a>
-        {resumo_html}
+        {blocos_html}
         <a href="{n['link']}" target="_blank"
            style="font-size:12px;color:#{cor};font-weight:bold;text-decoration:none;
                   text-transform:uppercase;letter-spacing:1px;
@@ -388,8 +515,6 @@ def enviar_email_resend(dest, html, subject=None):
 
     resend.api_key = RESEND_API_KEY
 
-    # Embute a logo inline (Content-ID) — referenciada como cid:LOGO_CID no HTML.
-    # Funciona mesmo com o repositório privado (a raw URL daria 404 no Gmail).
     attachments = []
     try:
         with open(LOGO_PATH, "rb") as fh:
@@ -417,16 +542,12 @@ def enviar_email_resend(dest, html, subject=None):
     for tentativa in range(1, max_tentativas + 1):
         try:
             resp = resend.Emails.send(payload)
-            # SDK retorna dict com 'id' em sucesso
             if isinstance(resp, dict) and resp.get("id"):
                 return True
-            # Resposta inesperada — trata como falha desta tentativa
             raise RuntimeError(f"resposta inesperada do Resend: {resp!r}")
 
         except Exception as e:
             msg_err = str(e).lower()
-            # Rede de segurança: se o anexo (logo inline) for o problema, reenvia
-            # SEM o anexo. A edição sair sem logo é melhor do que não sair.
             if "attachments" in payload and any(
                 t in msg_err for t in ("attachment", "content_id", "validation_error")
             ):
@@ -434,7 +555,6 @@ def enviar_email_resend(dest, html, subject=None):
                 payload.pop("attachments", None)
                 continue
 
-            # Erros permanentes: não vale a pena retentar
             if any(t in msg_err for t in ("invalid api key", "unauthorized", "validation_error", "invalid_to")):
                 print(f"      ❌ Resend rejeitou definitivamente ({dest}): {e}")
                 return False
@@ -483,10 +603,10 @@ def enviar_email_smtp(dest, html, subject=None):
 
         except smtplib.SMTPAuthenticationError:
             print(f"      ❌ Falha de autenticação SMTP — verifique EMAIL_USER/EMAIL_PASSWORD")
-            return False  # Não adianta tentar novamente
+            return False
         except smtplib.SMTPRecipientsRefused:
             print(f"      ❌ Destinatário recusado: {dest}")
-            return False  # Não adianta tentar novamente
+            return False
         except Exception as e:
             if tentativa < max_tentativas:
                 espera = 15 * tentativa

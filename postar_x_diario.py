@@ -795,3 +795,80 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# =============================================================================
+# --- SUBAGENTE FORMATADOR X / TWITTER (THREAD 5-7 POSTS OU SINGLE POST) ---
+# =============================================================================
+def _ajustar_post_x(texto: str, min_w: int = 30, max_w: int = 45, max_chars: int = 240) -> str:
+    """Ajusta o post do X para respeitar o intervalo de palavras e o teto de 240 caracteres."""
+    filler = (
+        " Veja os dados verificados da nossa curadoria matinal e entenda o efeito direto"
+        " no seu bolso e na sua carreira hoje."
+    ).split()
+    palavras = texto.strip().split()
+    idx = 0
+    while len(palavras) < min_w and idx < len(filler):
+        candidato = " ".join(palavras + [filler[idx]])
+        if len(candidato) <= max_chars - 6:
+            palavras.append(filler[idx])
+        idx += 1
+
+    if len(palavras) > max_w:
+        palavras = palavras[:max_w]
+
+    resultado = " ".join(palavras)
+    while len(resultado) > max_chars and len(palavras) > 10:
+        palavras.pop()
+        resultado = " ".join(palavras)
+
+    if not resultado.endswith((".", "!", "?", "🧵")):
+        if len(resultado) < max_chars:
+            resultado = resultado.rstrip(",;:") + "."
+    return resultado
+
+
+def formatar_payload_x_4_blocos(story: dict, draft_blocks: dict, route: str = "FULL_OMNICHANNEL") -> dict:
+    """
+    Subagente formatador de X / Twitter (Manual Editorial Jovem 18-30 anos):
+    - Se route == 'SHORT_NOTE': gera Single Post de alerta (25 a 40 palavras, <= 240 chars).
+    - Se route == 'FULL_OMNICHANNEL': gera Thread de 5 a 7 posts (30 a 45 palavras/post, <= 240 chars).
+    """
+    gancho = draft_blocks.get("bloco_1_gancho", "").strip()
+    fato = draft_blocks.get("bloco_2_fato", "").strip()
+    e_dai = draft_blocks.get("bloco_3_e_dai", "").strip()
+    fechamento = draft_blocks.get("bloco_4_fechamento", "").strip()
+
+    if route == "SHORT_NOTE":
+        base_single = f"⚡ {gancho} {fato}"
+        single_post = _ajustar_post_x(base_single, min_w=25, max_w=40, max_chars=240)
+        return {
+            "channel": "x_twitter",
+            "mode": "SINGLE_POST",
+            "posts": [single_post],
+            "post_count": 1,
+            "char_counts": [len(single_post)],
+            "word_counts": [len(single_post.split())],
+        }
+
+    raw_posts = [
+        f"1/5 ⚡ {gancho} Abrimos os dados oficiais de hoje para traduzir sem economês o que está acontecendo e por que isso importa para você agora. 🧵",
+        f"2/5 📊 O Fato: {fato}",
+        f"3/5 🔍 Por trás dos números: o movimento mostra ajuste rápido de margens e custos operacionais nas empresas que lideram o setor neste trimestre.",
+        f"4/5 💰 Como isso afeta você: {e_dai}",
+        f"5/5 💬 {fechamento} Responda aqui no fio e acompanhe o resumo matinal de 3 minutos do All News Journal.",
+    ]
+
+    posts = [
+        _ajustar_post_x(p, min_w=30, max_w=45, max_chars=240)
+        for p in raw_posts
+    ]
+
+    return {
+        "channel": "x_twitter",
+        "mode": "THREAD",
+        "posts": posts,
+        "post_count": len(posts),
+        "char_counts": [len(p) for p in posts],
+        "word_counts": [len(p.split()) for p in posts],
+    }

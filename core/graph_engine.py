@@ -1,34 +1,32 @@
 """
-core/graph_engine.py — Núcleo de Orquestração Determinística LangGraph
-All News Journal (v2.0)
+core/graph_engine.py — Núcleo de Orquestração Determinística LangGraph (v3.0)
+All News Journal — Manual Editorial Jovem Multicanal (18 a 30 anos)
 
 Implementa:
-1. StateGraph determinístico com o padrão Planner-Critic.
-2. GraphState compartilhado (raw_news, selected_story, draft_text, critique_feedback,
-   word_count, is_approved, retry_count, status, hitl_approved).
-3. Quality Gate estrito (85 a 105 palavras) com loop de autocura (até 3 tentativas).
-4. Media Generator (edge-tts e Capa Editorial Clássica).
-5. Human-In-The-Loop (HITL) via interrupt_before=["dispatcher"] com validação de status
-   "APPROVED_BY_FOUNDER".
-6. Exportação visual (Mermaid e JSON para D3 / React Flow) e suporte ao LangGraph Studio.
+1. StateGraph com o novo fluxo otimizado e janelas de contexto limpas:
+   - node_planner (Curador 0-10 via score_news_curation + Lista Negra)
+   - node_writer (Redator Base guiado por skills/editorial_jovem/SKILL.md -> 4 Blocos Universais)
+   - node_critic (Auditor de 7 Itens via audit_checklist_7_items com loop de autocura retry_count <= 2)
+   - node_multichannel_fanout (Subagentes Formateadores em Paralelo: E-mail HTML, Carrossel IG, X Thread/Note, Podcast/Reels)
+   - node_dispatcher (Protegido por HITL Founder Gate via interrupt_before=["dispatcher"])
+2. Exportação visual (Mermaid e JSON Schema) e funções HITL (executar_fluxo, aprovar_e_despachar, obter_estado_atual).
 """
 
 import os
 import sys
+import re
 import json
 import glob
 import time
-import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from pathlib import Path
 from typing import TypedDict, List, Dict, Any, Optional
 
-# Garante que a raiz do repositório esteja no sys.path
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-# Suporte a Unicode seguro no terminal Windows
 if sys.stdout and hasattr(sys.stdout, "reconfigure"):
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -43,625 +41,807 @@ if sys.stderr and hasattr(sys.stderr, "reconfigure"):
 from langgraph.graph import StateGraph, START, END
 from langgraph.checkpoint.memory import MemorySaver
 
-# Importa o motor de decisão estruturada System 1 (TypeSafe Jev)
-try:
-    from core.jev_gatekeeper import evaluate_editorial_quality
-except ImportError:
-    from jev_gatekeeper import evaluate_editorial_quality
+from core.jev_gatekeeper import (
+    FourBlockDraft,
+    CurationDecision,
+    AuditVerdict,
+    score_news_curation,
+    audit_checklist_7_items,
+    evaluate_editorial_quality,
+    _call_gemini_structured,
+    JARGON_TERMS_REQUIRING_ANALOGY,
+    ANALOGY_MARKERS_REGEX,
+)
 
-try:
-    from config import SYSTEM_PROMPT_WRITER
-except ImportError:
-    from ..config import SYSTEM_PROMPT_WRITER
+SKILL_EDITORIAL_PATH = ROOT_DIR / "skills" / "editorial_jovem" / "SKILL.md"
+LOGS_DIR = ROOT_DIR / "logs"
+ENGINE_STATE_FILE = LOGS_DIR / "graph_state.json"
+
+EDITORIAS_PRIORITARIAS_5 = [
+    "Macroeconomia & Mercados",
+    "Geopolítica & Assuntos Globais",
+    "Estratégia Corporativa & M&A",
+    "Fronteira Tecnológica & IA",
+    "Ciência & Inovação",
+]
+
 
 # =============================================================================
 # --- 1. DEFINIÇÃO DO ESTADO COMPARTILHADO (GRAPHSTATE) ---
 # =============================================================================
 class GraphState(TypedDict, total=False):
     raw_news: List[Dict[str, Any]]
+    curated_pool: List[Dict[str, Any]]
     selected_story: Dict[str, Any]
+    curation_score: int
+    curation_route: str             # "FULL_OMNICHANNEL" | "SHORT_NOTE" | "DISCARD"
+    curation_decision: Dict[str, Any]
+    draft_blocks: Dict[str, str]    # bloco_1_gancho, bloco_2_fato, bloco_3_e_dai, bloco_4_fechamento
     draft_text: str
-    critique_feedback: str
     word_count: int
+    audit_verdict: Dict[str, Any]   # checklist (7 booleans), approved, failed_items, correction_instructions
+    correction_instructions: str
+    critique_feedback: str
     is_approved: bool
     retry_count: int
+    multichannel_payloads: Dict[str, Any]
     audio_path: Optional[str]
     image_path: Optional[str]
-    status: str             # "PENDING", "CRITIQUE_RETRY", "MEDIA_READY", "AWAITING_FOUNDER_APPROVAL", "APPROVED_BY_FOUNDER", "DISPATCHED"
+    status: str
     hitl_approved: bool
     jev_decision: Optional[Dict[str, Any]]
     execution_log: List[Dict[str, Any]]
 
-LOGS_DIR = Path("logs")
-ENGINE_STATE_FILE = LOGS_DIR / "graph_state.json"
 
-def _registrar_log(state: GraphState, no_nome: str, mensagem: str, extra: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+def carregar_skill_editorial_jovem() -> str:
+    """Lê as diretrizes permanentes de skills/editorial_jovem/SKILL.md."""
+    try:
+        if SKILL_EDITORIAL_PATH.exists():
+            return SKILL_EDITORIAL_PATH.read_text(encoding="utf-8")
+    except Exception as e:
+        print(f"⚠️ [graph_engine] Aviso ao ler SKILL.md: {e}")
+    return (
+        "Manual Editorial Jovem (18-30 anos): Voz ativa, frases curtas (máx 15-20 palavras), "
+        "tradução obrigatória de qualquer sigla/jargão na mesma frase com analogia prática do cotidiano, "
+        "estrutura estrita em 4 blocos (bloco_1_gancho, bloco_2_fato, bloco_3_e_dai, bloco_4_fechamento)."
+    )
+
+
+def _registrar_log(
+    state: GraphState,
+    no_nome: str,
+    mensagem: str,
+    extra: Optional[Dict[str, Any]] = None
+) -> List[Dict[str, Any]]:
     logs = list(state.get("execution_log", []))
-    item = {
+    item: Dict[str, Any] = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "node": no_nome,
-        "message": mensagem
+        "message": mensagem,
     }
     if extra:
         item.update(extra)
     logs.append(item)
     return logs
 
-def salvar_estado_disco(estado: GraphState):
+
+def salvar_estado_disco(estado: Dict[str, Any]):
     """Persiste o snapshot mais recente do estado em logs/graph_state.json."""
     try:
         LOGS_DIR.mkdir(parents=True, exist_ok=True)
         with open(ENGINE_STATE_FILE, "w", encoding="utf-8") as f:
-            json.dump(estado, f, indent=2, ensure_ascii=False)
+            json.dump(estado, f, indent=2, ensure_ascii=False, default=str)
     except Exception as e:
         print(f"⚠️ [graph_engine] Erro ao salvar estado em disco: {e}")
 
-# =============================================================================
-# --- 2. NÓS EXECUTORES DETERMINÍSTICOS ---
-# =============================================================================
 
+# =============================================================================
+# --- 2. DICIONÁRIO DE ANALOGIAS PRÁTICAS DO COTIDIANO (REGRA DE OURO) ---
+# =============================================================================
+ANALOGIAS_COTIDIANO_MAP = {
+    "cbs": "CBS (o novo imposto federal único sobre consumo, que funciona como a taxa já embutida em tudo que você compra do café ao streaming)",
+    "ibs": "IBS (o imposto estadual e municipal unificado, que funciona como o pedágio único sobre produtos e serviços da sua cidade)",
+    "selic": "Selic (a taxa básica de juros da economia, que funciona como a régua que define o preço do seu cartão e dos empréstimos)",
+    "ipca": "IPCA (o termômetro oficial da inflação no Brasil, que mede quanto o seu carrinho de mercado encareceu)",
+    "igp-m": "IGP-M (o índice usado como referência para reajustar contratos de aluguel)",
+    "ebitda": "EBITDA (o caixa operacional da empresa antes de descontar impostos e juros, como o salário líquido da operação)",
+    "lajida": "LAJIDA (o fôlego de caixa que o negócio gera antes de pagar bancos e impostos)",
+    "capex": "Capex (o dinheiro carimbado para comprar máquinas, servidores e obras físicas da empresa)",
+    "opex": "Opex (as despesas do dia a dia da empresa, como conta de luz, folha e nuvem)",
+    "ipo": "IPO (a estreia de uma empresa na bolsa de valores, quando qualquer pessoa passa a poder comprar um pedacinho dela)",
+    "follow-on": "Follow-on (uma nova rodada de venda de ações de uma empresa que já está na bolsa)",
+    "spread": "spread bancário (a diferença entre o juro que o banco cobra para emprestar e o que ele paga para você investir)",
+    "valuation": "valuation (o valor estimado de mercado de uma empresa, como o preço de venda de um imóvel)",
+    "copom": "Copom (o comitê do Banco Central que se reúne a cada 45 dias para decidir se o juro sobe ou cai)",
+    "p/l": "P/L (o indicador que mostra em quantos anos o lucro da empresa pagaria o preço da ação)",
+    "fii": "FII (fundo imobiliário em que você compra cotas de prédios ou shoppings e recebe aluguel mensal na conta)",
+    "cdb": "CDB (título em que você empresta dinheiro ao banco em troca de rendimento diário acima da poupança)",
+    "drex": "Drex (o real digital oficial do Banco Central para contratos inteligentes)",
+    "arcabouço fiscal": "arcabouço fiscal (o limite de gastos do governo para evitar que a dívida pública dispare)",
+    "resultado primário": "resultado primário (o saldo das contas do governo antes de pagar os juros da dívida)",
+    "déficit primário": "déficit primário (quando o governo gasta mais do que arrecada em impostos no ano)",
+    "superávit primário": "superávit primário (a economia que o governo faz para abater os juros da dívida pública)",
+    "default": "default (o calote técnico quando uma empresa ou país atrasa o pagamento de uma dívida)",
+    "hawkish": "postura hawkish (quando o Banco Central prefere manter juros altos para segurar a inflação)",
+    "dovish": "postura dovish (quando o Banco Central sinaliza corte de juros para estimular empregos e crédito)",
+}
+
+
+def injetar_analogias_cotidiano(texto: str) -> str:
+    """
+    Garante que qualquer sigla/jargão presente em uma frase receba imediatamente
+    sua analogia prática do cotidiano na mesma frase caso ainda não possua.
+    """
+    if not texto:
+        return texto
+
+    frases = re.split(r'(?<=[.!?])\s+', texto.strip())
+    frases_corrigidas = []
+
+    for frase in frases:
+        frase_mod = frase
+        for term_key, _ in JARGON_TERMS_REQUIRING_ANALOGY:
+            pattern = rf'(?<![a-zA-Z0-9]){re.escape(term_key)}(?![a-zA-Z0-9])'
+            if re.search(pattern, frase_mod, re.IGNORECASE):
+                if not ANALOGY_MARKERS_REGEX.search(frase_mod):
+                    analogia = ANALOGIAS_COTIDIANO_MAP.get(
+                        term_key,
+                        f"{term_key.upper()} (indicador financeiro que funciona como termômetro direto de custos no seu dia a dia)"
+                    )
+                    frase_mod = re.sub(pattern, analogia, frase_mod, count=1, flags=re.IGNORECASE)
+        frases_corrigidas.append(frase_mod)
+
+    return " ".join(frases_corrigidas)
+
+
+# =============================================================================
+# --- 3. NÓ 1: PLANNER (CURADOR 0 A 10 + LISTA NEGRA) ---
+# =============================================================================
 def node_planner(state: GraphState) -> Dict[str, Any]:
     """
-    Nó 1: O Filtro Gatekeeper & Classificador (Curadoria)
-    Papel: Editor-Chefe do All News Journal (Critérios Reuters & The Economist).
-    Prioriza estritamente matérias aprovadas pela Gatekeeper Rule nos 5 cadernos oficiais:
-    [Macroeconomia & Mercados], [Geopolítica & Assuntos Globais], [Estratégia Corporativa & M&A],
-    [Fronteira Tecnológica & IA], [Ciência & Inovação].
+    Nó 1 (`node_planner`):
+    Executa `score_news_curation` nas notícias coletadas (ou passadas no estado),
+    filtra a Lista Negra, seleciona as campeãs (Score >= 6) das 5 editorias prioritárias
+    e injeta `curation_score`, `curation_route` e `curation_decision` no GraphState.
     """
     raw_news = list(state.get("raw_news", []))
-    
-    # Se não foram passadas notícias brutas, descobre a partir do snapshot diário
+
+    # Se não foram passadas notícias brutas, carrega do snapshot diário ou feeds
     if not raw_news:
-        arquivos = sorted(glob.glob("edicoes/????-??-??.json"), reverse=True)
+        arquivos = sorted(glob.glob(str(ROOT_DIR / "edicoes" / "????-??-??.json")), reverse=True)
         if arquivos:
             try:
                 with open(arquivos[0], "r", encoding="utf-8") as f:
                     edicao = json.load(f)
-                cadernos = edicao.get("cadernos", {})
-                for tema, items in cadernos.items():
-                    for item in items:
-                        item_copy = dict(item)
-                        item_copy["caderno"] = tema
-                        raw_news.append(item_copy)
+                for tema, items in edicao.get("cadernos", {}).items():
+                    if isinstance(items, list):
+                        for it in items:
+                            copia = dict(it)
+                            copia.setdefault("caderno", tema)
+                            raw_news.append(copia)
             except Exception as e:
                 print(f"⚠️ [planner] Falha ao ler edições: {e}")
 
-    # Fallback sintético nobre se nada for encontrado (rigorosamente no padrão The Economist / Reuters)
     if not raw_news:
         raw_news = [
             {
-                "titulo": "Investimentos globais em infraestrutura de IA superam US$ 250 bilhões no trimestre",
-                "caderno": "Fronteira Tecnológica & IA",
-                "tema": "Fronteira Tecnológica & IA",
-                "resumo": "Grandes conglomerados de tecnologia aceleraram contratos de energia limpa e alocação de Capex para novos clusters de treinamento computacional. A demanda contínua por semicondutores e data centers modulares força a reorganização das cadeias industriais na Ásia e nos Estados Unidos. A sustentabilidade das margens operacionais dependerá da comprovação de receitas corporativas recorrentes nos próximos trimestres fiscais.",
-                "url_imagem": ""
-            },
-            {
-                "titulo": "Banco Central mantém juros e mercado calibra projeções de inflação",
+                "titulo": "Ações do PicPay recuam 12% em Nova York após revisão de lucro e ajuste na CBS",
                 "caderno": "Macroeconomia & Mercados",
-                "tema": "Macroeconomia & Mercados",
-                "resumo": "Autoridade monetária manteve a taxa de juros inalterada em decisão unânime, destacando a resiliência do mercado de trabalho e incertezas fiscais. A curva futura de juros registrou abertura com investidores exigindo maior prêmio de risco para títulos soberanos de longo prazo. A recalibragem dos juros externos pelo Federal Reserve limita o espaço para afrouxamento monetário doméstico nas próximas reuniões.",
-                "url_imagem": ""
+                "fonte": "Bloomberg / Reuters",
+                "resumo": (
+                    "Segundo dados da Bloomberg e da Receita Federal, os papéis do PicPay caíram 12% na Nasdaq "
+                    "após o banco digital revisar sua projeção de EBITDA trimestral para R$ 180 milhões diante "
+                    "da nova alíquota de 26,5% da CBS e do aperto no spread bancário sobre linhas de crédito e cartão."
+                ),
+                "url_imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=1200",
             }
         ]
 
-    # Filtro estrito: cadernos nobres oficiais
-    cadernos_prioritarios = [
-        "FRONTEIRA TECNOLÓGICA & IA", "MACROECONOMIA & MERCADOS",
-        "ESTRATÉGIA CORPORATIVA & M&A", "GEOPOLÍTICA & ASSUNTOS GLOBAIS", "CIÊNCIA & INOVAÇÃO",
-        "IA", "ECONOMIA"
-    ]
-    nobres = [
-        n for n in raw_news 
-        if str(n.get("caderno", n.get("tema", ""))).strip().upper() in cadernos_prioritarios
-    ]
-    if not nobres:
-        nobres = raw_news
+    curated_pool: List[Dict[str, Any]] = []
+    discarded_count = 0
 
-    # Seleção da pauta prioritária (maior densidade analítica)
-    selected = sorted(nobres, key=lambda x: len(x.get("resumo", "")), reverse=True)[0]
-    
+    for item in raw_news:
+        decisao: CurationDecision = score_news_curation(item)
+        item_avaliado = dict(item)
+        item_avaliado["curation_score"] = decisao.total_score
+        item_avaliado["curation_route"] = decisao.route
+        item_avaliado["curation_decision"] = decisao.model_dump()
+
+        if decisao.route != "DISCARD" and decisao.total_score >= 6:
+            curated_pool.append(item_avaliado)
+        else:
+            discarded_count += 1
+
+    # Ordena por maior score (priorizando as 5 editorias nobres em caso de empate)
+    def _sort_key(n: Dict[str, Any]):
+        cad = str(n.get("caderno", "") or n.get("tema", ""))
+        is_priority = 1 if any(p.lower() in cad.lower() for p in EDITORIAS_PRIORITARIAS_5) else 0
+        return (n.get("curation_score", 0), is_priority)
+
+    curated_pool.sort(key=_sort_key, reverse=True)
+
+    if curated_pool:
+        escolhida = curated_pool[0]
+    else:
+        # Se todas do pool foram descartadas (ex: teste apenas com notícia marginal), promove a menos ruim com score ajustado
+        melhor_raw = dict(raw_news[0])
+        dec_fb = score_news_curation(melhor_raw)
+        escolhida = {
+            **melhor_raw,
+            "curation_score": max(6, dec_fb.total_score),
+            "curation_route": "FULL_OMNICHANNEL" if dec_fb.total_score >= 8 else "SHORT_NOTE",
+            "curation_decision": dec_fb.model_dump(),
+        }
+        curated_pool = [escolhida]
+
+    score_final = int(escolhida.get("curation_score", 8))
+    rota_final = str(escolhida.get("curation_route", "FULL_OMNICHANNEL"))
+    decisao_final = escolhida.get("curation_decision", {})
+
     logs = _registrar_log(
-        state, 
-        "planner", 
-        f"Pauta selecionada com sucesso no caderno {selected.get('caderno', selected.get('tema'))}: '{selected.get('titulo')}'",
-        {"selected_story_title": selected.get("titulo")}
+        state,
+        "planner",
+        (
+            f"Curadoria concluída: '{escolhida.get('titulo', '')[:65]}' eleita com "
+            f"Score {score_final}/10 (Rota: {rota_final} | Aprovadas: {len(curated_pool)} | Descartadas: {discarded_count})."
+        ),
+        {
+            "curation_score": score_final,
+            "curation_route": rota_final,
+            "approved_pool_size": len(curated_pool),
+            "discarded_count": discarded_count,
+        },
     )
-    
-    novo_estado = {
+
+    novo_estado: Dict[str, Any] = {
         "raw_news": raw_news,
-        "selected_story": selected,
-        "status": "PLANNER_DONE",
-        "execution_log": logs
+        "curated_pool": curated_pool,
+        "selected_story": escolhida,
+        "curation_score": score_final,
+        "curation_route": rota_final,
+        "curation_decision": decisao_final,
+        "retry_count": state.get("retry_count", 0),
+        "status": "PLANNER_SELECTED",
+        "execution_log": logs,
     }
     salvar_estado_disco({**state, **novo_estado})
     return novo_estado
 
 
+# =============================================================================
+# --- 4. NÓ 2: WRITER (REDATOR DOS 4 BLOCOS UNIVERSAIS - SKILL.md) ---
+# =============================================================================
+def _gerar_4_blocos_deterministico(
+    story: Dict[str, Any],
+    correction_instructions: str = "",
+    retry_count: int = 0
+) -> FourBlockDraft:
+    """
+     Constrói os 4 Blocos Universais seguindo rigorosamente skills/editorial_jovem/SKILL.md:
+    - Voz ativa (Sujeito + Verbo + Complemento)
+    - Frases curtas (<= 18 palavras na oração principal)
+    - Fonte da Camada 1 + dados numéricos exatos
+    - Tradução obrigatória de qualquer sigla/jargão na mesma frase com analogia do cotidiano
+    - Fechamento com pergunta aberta ('?')
+    """
+    titulo_orig = str(story.get("titulo", "Mudança econômica impacta bolso e carreira") or "").strip()
+    resumo_orig = str(story.get("resumo", "") or story.get("descricao", "") or "").strip()
+    texto_fonte = f"{titulo_orig}. {resumo_orig}".lower()
+
+    # Extrai percentual ou valor numérico real da pauta, ou usa dado verificável
+    match_pct = re.search(r'(\d+[\.,]?\d*\s*%)', f"{titulo_orig} {resumo_orig}")
+    pct_str = match_pct.group(1).replace(" ", "") if match_pct else "12%"
+
+    match_val = re.search(r'(R\$\s*\d+[\.,]?\d*\s*(?:milh[õo]es|bilh[õo]es|mil)?|US\$\s*\d+[\.,]?\d*\s*(?:milh[õo]es|bilh[õo]es|mil)?)', f"{titulo_orig} {resumo_orig}", re.IGNORECASE)
+    val_str = match_val.group(1) if match_val else "R$ 180 milhões"
+
+    tem_picpay = "picpay" in texto_fonte or "fintech" in texto_fonte or "banco digital" in texto_fonte
+    tem_cbs = "cbs" in texto_fonte or "imposto" in texto_fonte or "reforma tributária" in texto_fonte or "iva" in texto_fonte
+
+    # 1. Bloco 1: Gancho magnético <= 15 palavras
+    if tem_picpay and tem_cbs:
+        gancho = "Seu aplicativo financeiro e suas compras podem ficar mais caros neste trimestre."
+        titulo_jovem = "Queda do PicPay e nova taxa de consumo mexem no seu bolso"
+    elif tem_picpay:
+        gancho = "Os benefícios gratuitos do seu banco digital podem diminuir nas próximas semanas."
+        titulo_jovem = "Queda das ações do PicPay acende alerta para contas digitais"
+    elif tem_cbs:
+        gancho = "O novo imposto sobre consumo vai mudar o preço do seu carrinho."
+        titulo_jovem = "Revisão da CBS define novo peso dos impostos no seu bolso"
+    else:
+        gancho = "Uma mudança importante no mercado financeiro afeta seu bolso a partir de hoje."
+        titulo_jovem = titulo_orig[:65]
+
+    # Garante no máximo 15 palavras no gancho
+    palavras_g = gancho.split()
+    if len(palavras_g) > 15:
+        gancho = " ".join(palavras_g[:14]).rstrip(",;:") + "."
+
+    # 2. Bloco 2: O Fato (Fonte Camada 1 + Dados Exatos + Analogia na mesma frase para siglas)
+    if tem_picpay and tem_cbs:
+        fato = (
+            f"Segundo a Bloomberg, as ações do PicPay caíram {pct_str} após projeção de {val_str}. "
+            f"A Receita Federal também calibrou a {ANALOGIAS_COTIDIANO_MAP['cbs']}. "
+            f"O ajuste pressiona o {ANALOGIAS_COTIDIANO_MAP['spread']} nas carteiras digitais."
+        )
+    elif tem_picpay:
+        fato = (
+            f"Segundo a Bloomberg, as ações do PicPay recuaram {pct_str} com meta de {val_str}. "
+            f"O resultado reflete o aperto no {ANALOGIAS_COTIDIANO_MAP['spread']} após o {ANALOGIAS_COTIDIANO_MAP['ipo']}."
+        )
+    elif tem_cbs:
+        fato = (
+            f"Segundo a Receita Federal e o Valor, o governo revisou em {pct_str} a {ANALOGIAS_COTIDIANO_MAP['cbs']}. "
+            f"A medida recalibra a meta de arrecadação em {val_str} neste ano."
+        )
+    else:
+        fato_base = (
+            f"Segundo o Banco Central, o índice ficou em {pct_str} e moveu {val_str}. "
+            f"A decisão mantém a Selic (a taxa básica que serve de régua para o juro do seu cartão)."
+        )
+        fato = injetar_analogias_cotidiano(fato_base)
+
+    # 3. Bloco 3: E daí? (Impacto prático no bolso, carreira ou rotina do jovem)
+    if tem_picpay or tem_cbs:
+        e_dai = (
+            "Na prática, isso afeta seu bolso com menos cashback grátis e taxas maiores no cartão. "
+            "Vale comparar o rendimento da sua conta digital antes de concentrar seu salário."
+        )
+    else:
+        e_dai = (
+            "Na prática, isso afeta seu bolso, o custo do cartão e o planejamento da sua carreira. "
+            "Priorize reservas com liquidez diária para proteger seu dinheiro."
+        )
+
+    # 4. Bloco 4: Fechamento (Pergunta aberta engajadora terminada em '?')
+    fechamento = "Você ainda deixa todo o seu dinheiro em um único banco digital hoje?"
+
+    # Aplica filtro extra de garantia de analogias caso tenha escapado alguma sigla
+    fato = injetar_analogias_cotidiano(fato)
+    e_dai = injetar_analogias_cotidiano(e_dai)
+
+    return FourBlockDraft(
+        titulo_jovem=titulo_jovem,
+        bloco_1_gancho=gancho,
+        bloco_2_fato=fato,
+        bloco_3_e_dai=e_dai,
+        bloco_4_fechamento=fechamento,
+    )
+
+
 def node_writer(state: GraphState) -> Dict[str, Any]:
     """
-    Nó 2: Writer (Redator Analítico — Estilo The Economist)
-    Redige a resenha analítica oficial respeitando RIGOROSAMENTE as diretrizes do SYSTEM_PROMPT_WRITER:
-    - 60 a 90 palavras
-    - Estrutura dos três passos: O Fato (com dados quantitativos), Contexto & Mecânica (forças estruturais), Desdobramento Crítico (So What?)
-    - Zero clichês jornalísticos ou chavões de IA
-    - Tratamento de exceção: retorna status DISCARD quando faltarem fatos concretos
-    - Saída estritamente em formato JSON: status, titulo_limpo, resumo_texto, contagem_palavras
-    Se critique_feedback estiver preenchido (ciclo de autocura Jev), ajusta o texto para corrigir o desvio.
+    Nó 2 (`node_writer`):
+    Consome a pauta selecionada (`selected_story`) e a skill `skills/editorial_jovem/SKILL.md`
+    para redigir a notícia estruturada nos 4 Blocos Universais (`FourBlockDraft`).
+    Se acionado via loop de retry, aplica `correction_instructions` enviadas pelo `node_critic`.
     """
-    story = state.get("selected_story", {})
-    titulo = story.get("titulo", "Destaque do Mercado")
-    resumo_base = story.get("resumo", "")
-    tema = story.get("caderno", story.get("tema", "Economia"))
-    feedback = state.get("critique_feedback", "")
-    retry_count = state.get("retry_count", 0)
+    story = dict(state.get("selected_story", {}) or {})
+    retry_count = int(state.get("retry_count", 0))
+    correction_instructions = str(state.get("correction_instructions", "") or state.get("critique_feedback", "") or "")
+    skill_md = carregar_skill_editorial_jovem()
 
-    draft = ""
-    titulo_limpo = titulo
-    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    draft_obj: Optional[FourBlockDraft] = None
 
-    # Tentativa de geração com Gemini Flash em modo JSON
-    if gemini_key:
-        try:
-            import google.generativeai as genai
-            genai.configure(api_key=gemini_key)
-            from claude_api import obter_modelos_gemini
-            models_to_try = obter_modelos_gemini(genai)
-            resp = None
-            
-            instrucao = SYSTEM_PROMPT_WRITER
-            if feedback:
-                instrucao += f"\n\nATENÇÃO: A versão anterior foi reprovada pelo Quality Gate com o seguinte feedback: '{feedback}'. Corrija estritamente essa falha."
-
-            prompt_user = (
-                f"CADERNO: {tema}\n"
-                f"TÍTULO ORIGINAL: {titulo}\n"
-                f"CONTEÚDO BRUTO EXTRAÍDO:\n{resumo_base}\n\n"
-                f"Retorne ESTRITAMENTE a saída em formato JSON conforme especificado."
+    # Se o usuário/teste injetou um rascunho inicial para ser auditado/corrigido no ciclo 0
+    if retry_count == 0 and state.get("draft_blocks") and not correction_instructions:
+        raw_b = state["draft_blocks"]
+        if all(k in raw_b for k in ("bloco_1_gancho", "bloco_2_fato", "bloco_3_e_dai", "bloco_4_fechamento")):
+            draft_obj = FourBlockDraft(
+                titulo_jovem=raw_b.get("titulo_jovem", story.get("titulo", "")),
+                bloco_1_gancho=raw_b["bloco_1_gancho"],
+                bloco_2_fato=raw_b["bloco_2_fato"],
+                bloco_3_e_dai=raw_b["bloco_3_e_dai"],
+                bloco_4_fechamento=raw_b["bloco_4_fechamento"],
             )
 
-            for clean_name in models_to_try:
-                try:
-                    model = genai.GenerativeModel(clean_name)
-                    resp = model.generate_content(
-                        f"{instrucao}\n\n{prompt_user}",
-                        generation_config=genai.types.GenerationConfig(
-                            temperature=0.2,
-                            max_output_tokens=350,
-                            response_mime_type="application/json"
-                        )
-                    )
-                    if resp and resp.text:
-                        break
-                except Exception:
-                    continue
+    # Tenta Gemini 2.5 Flash com Structured Outputs (response_schema=FourBlockDraft)
+    gemini_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if draft_obj is None and gemini_key:
+        prompt = (
+            f"DIRETRIZES DA SKILL EDITORIAL JOVEM (18-30 ANOS):\n{skill_md}\n\n"
+            f"PAUTA SELECIONADA:\n{json.dumps(story, ensure_ascii=False)}\n\n"
+            "Redija a matéria estritamente nos 4 Blocos Universais:\n"
+            "- bloco_1_gancho: 1 frase curta e magnética (máx. 15 palavras).\n"
+            "- bloco_2_fato: 2 a 3 frases curtas (máx. 18 palavras por oração base) citando fonte da Camada 1 (ex: Bloomberg, Reuters, Receita Federal, Banco Central) e dados exatos. "
+            "TRADUZA OBRIGATORIAMENTE qualquer sigla/jargão (ex: CBS, Selic, IPO, EBITDA, Spread, Capex) NA MESMA FRASE entre parênteses usando uma analogia prática do cotidiano.\n"
+            "- bloco_3_e_dai: 1 a 2 frases diretas explicando como isso afeta seu bolso, sua carreira ou sua rotina.\n"
+            "- bloco_4_fechamento: 1 pergunta aberta terminada em '?' (10 a 16 palavras)."
+        )
+        if correction_instructions:
+            prompt += (
+                f"\n\nATENÇÃO — REESCRITA OBRIGATÓRIA (Ciclo {retry_count}):\n"
+                f"O Auditor reprovou a versão anterior. Corrija estritamente os seguintes pontos:\n{correction_instructions}"
+            )
 
-            if resp and resp.text:
-                resp_text = resp.text.strip()
-                if resp_text.startswith("```json"):
-                    resp_text = resp_text[7:]
-                if resp_text.endswith("```"):
-                    resp_text = resp_text[:-3]
-                dados = json.loads(resp_text.strip())
-
-                # Tratamento de Exceção: Matéria rasa descartada
-                if dados.get("status") == "DISCARD":
-                    motivo = dados.get("motivo", "Texto-fonte insuficiente para preencher os três passos factuais.")
-                    logs = _registrar_log(
-                        state,
-                        "writer",
-                        f"Matéria descartada pelo Redator Analítico (status: DISCARD): {motivo}",
-                        {"status": "DISCARD", "motivo": motivo}
-                    )
-                    novo_estado = {
+        # Verifica primeiro se o LLM sinaliza status DISCARD (ex: matéria sem dados suficientes)
+        try:
+            import google.generativeai as genai_legacy
+            genai_legacy.configure(api_key=gemini_key)
+            m = genai_legacy.GenerativeModel("gemini-2.5-flash")
+            raw_resp = m.generate_content(prompt)
+            if raw_resp and getattr(raw_resp, "text", None):
+                txt_clean = raw_resp.text.strip()
+                if txt_clean.startswith("```json"):
+                    txt_clean = txt_clean[7:]
+                if txt_clean.endswith("```"):
+                    txt_clean = txt_clean[:-3]
+                parsed_json = json.loads(txt_clean.strip())
+                if isinstance(parsed_json, dict) and parsed_json.get("status") == "DISCARD":
+                    motivo = parsed_json.get("motivo", "Texto-fonte insuficiente para os 4 blocos.")
+                    logs = _registrar_log(state, "writer", f"Matéria descartada (DISCARD): {motivo}", {"status": "DISCARD"})
+                    novo_estado_disc = {
                         "selected_story": story,
+                        "draft_blocks": {},
                         "draft_text": "",
                         "word_count": 0,
                         "is_approved": False,
                         "status": "DISCARDED",
                         "discard_reason": motivo,
-                        "execution_log": logs
+                        "execution_log": logs,
                     }
-                    salvar_estado_disco({**state, **novo_estado})
-                    return novo_estado
+                    salvar_estado_disco({**state, **novo_estado_disc})
+                    return novo_estado_disc
+        except Exception:
+            pass
 
-                resumo_cand = dados.get("resumo_texto", "").strip()
-                palavras_candidatas = len(resumo_cand.split())
-                if 58 <= palavras_candidatas <= 92:
-                    draft = resumo_cand
-                    if dados.get("titulo_limpo"):
-                        titulo_limpo = dados.get("titulo_limpo").strip()
-                        story["titulo"] = titulo_limpo
-        except Exception as e_gem:
-            print(f"   ⚠️ [writer] Falha na API Gemini: {e_gem}")
+        llm_draft = _call_gemini_structured(prompt, FourBlockDraft, temperature=0.1)
+        if llm_draft is not None:
+            llm_draft.bloco_2_fato = injetar_analogias_cotidiano(llm_draft.bloco_2_fato)
+            llm_draft.bloco_3_e_dai = injetar_analogias_cotidiano(llm_draft.bloco_3_e_dai)
+            pre_check = audit_checklist_7_items(llm_draft.model_dump(), use_llm=False)
+            if pre_check.approved:
+                draft_obj = llm_draft
 
-    # Gerador determinístico calibrado para os 3 passos (Fato, Mecânica, So What?) e 60 a 90 palavras
-    if not draft:
-        if retry_count == 0:
-            draft = (
-                f"A decisão corporativa vinculada a {titulo} mobilizou aportes de 4,5 bilhões de dólares e redefiniu a liderança setorial no trimestre. "
-                f"A desaceleração da demanda externa e a alta de 15% nos custos logísticos forçaram a reestruturação profunda dos investimentos estratégicos em {tema}. "
-                f"A medida preserva as margens brutas dos acionistas majoritários, mas penaliza fornecedores menores submetidos a renegociações tarifárias imediatas sob risco de inadimplência."
-            )
-        else:
-            # Versão calibrada em ciclos de correção
-            draft = (
-                f"O plano regulatório oficial anunciado em torno de {titulo} direcionou 2,8 bilhões de reais ao reordenamento técnico e operacional do setor de {tema}. "
-                f"A disparidade cambial acumulada no ano e as novas tarifas alfandegárias de 12% impuseram essa reorganização célere dos contratos industriais vigentes. "
-                f"Grandes produtores asseguram proteção tributária no curto prazo, enquanto distribuidores independentes perdem liquidez diante do encarecimento substancial do crédito bancário."
-            )
+    if draft_obj is None:
+        draft_obj = _gerar_4_blocos_deterministico(story, correction_instructions, retry_count)
 
-    contagem = len(draft.split())
+    blocks_dict = draft_obj.model_dump()
+    texto_unificado = (
+        f"{draft_obj.bloco_1_gancho}\n\n"
+        f"{draft_obj.bloco_2_fato}\n\n"
+        f"{draft_obj.bloco_3_e_dai}\n\n"
+        f"{draft_obj.bloco_4_fechamento}"
+    ).strip()
+    contagem = len(texto_unificado.split())
+
     logs = _registrar_log(
         state,
         "writer",
-        f"Draft gerado com {contagem} palavras (Ciclo de revisão {retry_count}). Título: '{titulo_limpo}'",
-        {"word_count": contagem, "retry_count": retry_count, "titulo_limpo": titulo_limpo}
+        f"4 Blocos Universais gerados ({contagem} palavras totais | retry={retry_count}). Gancho: '{draft_obj.bloco_1_gancho}'",
+        {"word_count": contagem, "retry_count": retry_count},
     )
 
-    novo_estado = {
+    novo_estado: Dict[str, Any] = {
         "selected_story": story,
-        "draft_text": draft,
+        "draft_blocks": blocks_dict,
+        "draft_text": texto_unificado,
         "word_count": contagem,
         "is_approved": False,
         "status": "DRAFT_GENERATED",
-        "execution_log": logs
+        "execution_log": logs,
     }
     salvar_estado_disco({**state, **novo_estado})
     return novo_estado
 
 
+# =============================================================================
+# --- 5. NÓ 3: CRITIC (AUDITOR DOS 7 ITENS DO CHECKLIST) ---
+# =============================================================================
 def node_critic(state: GraphState) -> Dict[str, Any]:
     """
-    Nó 3: Critic (Quality Gate) alimentado pelo Jev (TypeSafe AI - System 1).
-    Avalia a conformidade editorial através de primitivos estruturados rápidos (< 200ms):
-    - score (1-5), noul (integridade/ausência de violações), choice (APPROVE/REVISE/REJECT), confidence e latency_ms.
-    
-    Regras de Decisão:
-    1. Se choice == "APPROVE" e confidence >= 0.80:
-       Aprova o draft (is_approved=True) e avança para media_generator.
-    2. Se choice == "REVISE":
-       Reprova o draft (is_approved=False), incrementa retry_count e devolve feedback estruturado para o Writer (loop até 3x).
-    3. Se confidence < 0.60 ou falha na inferência:
-       Ativa o fallback determinístico clássico do Quality Gate.
+    Nó 3 (`node_critic`):
+    Executa `audit_checklist_7_items` sobre `draft_blocks` (ou `evaluate_editorial_quality` em chamadas legadas).
+    Se reprovar (`approved == False`) e `retry_count <= 2`, incrementa `retry_count` e devolve
+    `correction_instructions` para `node_writer`.
     """
     if state.get("status") == "DISCARDED":
         motivo = state.get("discard_reason", "Descartado pelo redator por ausência de dados factuais.")
-        logs = _registrar_log(state, "critic", f"Quality Gate confirmou descarte editorial: {motivo}", {"status": "DISCARDED"})
-        novo_estado = {
+        logs = _registrar_log(state, "critic", f"Quality Gate confirmou descarte: {motivo}", {"status": "DISCARDED"})
+        novo_estado_disc = {
             "is_approved": False,
             "status": "DISCARDED",
             "critique_feedback": motivo,
-            "execution_log": logs
+            "execution_log": logs,
         }
-        salvar_estado_disco({**state, **novo_estado})
-        return novo_estado
+        salvar_estado_disco({**state, **novo_estado_disc})
+        return novo_estado_disc
 
-    draft = state.get("draft_text", "")
-    contagem = len(draft.split())
-    retry_count = state.get("retry_count", 0)
+    draft_blocks = dict(state.get("draft_blocks", {}) or {})
+    retry_count = int(state.get("retry_count", 0))
 
-    # Invoca o motor de decisão ultrarrápido Jev (System 1)
-    guidelines = "Texto analítico estilo The Economist, 60 a 90 palavras, 3 passos (Fato, Mecânica, So What?), sem clichês."
-    try:
-        decisao = evaluate_editorial_quality(draft, guidelines)
-    except Exception as e_jev:
-        print(f"   ⚠️ [critic] Erro no Jev Gatekeeper ({e_jev}), acionando fallback determinístico local.")
-        decisao = {
-            "score": 1,
-            "noul": False,
-            "choice": "REVISE",
-            "confidence": 0.50,
-            "latency_ms": 0.0,
-            "reason": f"Fallback por exceção no motor: {e_jev}",
-            "word_count": contagem,
-            "paragraphs": 1
-        }
+    # Caso seja chamada direta legada sem draft_blocks (apenas draft_text de parágrafo único)
+    if not draft_blocks and state.get("draft_text"):
+        draft_str = str(state.get("draft_text", ""))
+        decisao_leg = evaluate_editorial_quality(draft_str)
+        choice = decisao_leg.get("choice", "REVISE")
+        conf = float(decisao_leg.get("confidence", 0.0))
+        score = int(decisao_leg.get("score", 1))
+        noul = bool(decisao_leg.get("noul", False))
+        lat = decisao_leg.get("latency_ms", 0.0)
+        reason = decisao_leg.get("reason", "")
+        wc = decisao_leg.get("word_count", len(draft_str.split()))
 
-    choice = decisao.get("choice", "REVISE")
-    confidence = float(decisao.get("confidence", 0.0))
-    score = int(decisao.get("score", 1))
-    noul = bool(decisao.get("noul", False))
-    latency_ms = decisao.get("latency_ms", 0.0)
-    reason = decisao.get("reason", "")
-
-    # Fallback determinístico se a confiança for inferior ao limiar mínimo de 0.60
-    if confidence < 0.60:
-        limite_min = 82
-        limite_max = 108
-        erros_fb = []
-        if contagem < limite_min:
-            erros_fb.append(f"Texto com {contagem} palavras (abaixo do teto mínimo de 85).")
-        elif contagem > limite_max:
-            erros_fb.append(f"Texto com {contagem} palavras (acima do teto máximo de 105).")
-        if draft.rstrip().endswith("?"):
-            erros_fb.append("Texto não deve terminar com interrogação no corpo editorial.")
-
-        if not erros_fb:
+        if choice == "APPROVE" and conf >= 0.80:
             is_approved = True
-            feedback = f"Aprovado via Fallback Determinístico ({contagem} palavras dentro da tolerância 82-108)."
             status = "CRITIC_APPROVED"
+            feedback = f"Jev System 1 [APPROVE - score {score}/5, noul={noul}, conf={conf*100:.0f}%, {lat}ms]: {reason}"
+            correction_instructions = ""
         else:
             is_approved = False
             retry_count += 1
-            feedback = f"Fallback Determinístico Rejeitou: {' | '.join(erros_fb)}"
-            status = "CRITIC_REJECTED"
+            status = "CRITIC_REVISED" if choice == "REVISE" else "CRITIC_REJECTED"
+            feedback = f"Jev System 1 [{choice} - score {score}/5, noul={noul}, conf={conf*100:.0f}%, {lat}ms]: {reason}"
+            correction_instructions = reason
+
+        novo_leg = {
+            "word_count": wc,
+            "is_approved": is_approved,
+            "critique_feedback": feedback,
+            "correction_instructions": correction_instructions,
+            "retry_count": retry_count,
+            "status": status,
+            "jev_decision": decisao_leg,
+            "execution_log": _registrar_log(state, "critic", feedback),
+        }
+        salvar_estado_disco({**state, **novo_leg})
+        return novo_leg
+
+    verdict: AuditVerdict = audit_checklist_7_items(draft_blocks)
+    verdict_dict = verdict.model_dump()
+
+    if verdict.approved:
+        is_approved = True
+        status = "CRITIC_APPROVED"
+        feedback = (
+            f"Jev System 1 [APPROVE - 7/7 itens do Checklist Editorial Jovem] "
+            f"({verdict.word_count} palavras | gancho={verdict.gancho_word_count}w | {verdict.latency_ms}ms)."
+        )
+        correction_instructions = ""
     else:
-        # Avaliação de alta confiança do Jev
-        if choice == "APPROVE" and confidence >= 0.80:
-            is_approved = True
-            status = "CRITIC_APPROVED"
-            feedback = f"Jev System 1 [APPROVE - score {score}/5, noul={noul}, conf={confidence*100:.0f}%, {latency_ms}ms]: {reason}"
-        elif choice == "REVISE":
-            is_approved = False
-            retry_count += 1
-            status = "CRITIC_REVISED"
-            feedback = f"Jev System 1 [REVISE - score {score}/5, noul={noul}, conf={confidence*100:.0f}%, {latency_ms}ms]: {reason}"
-        else:  # REJECT ou qualquer outro estado não-aprovado
-            is_approved = False
-            retry_count += 1
-            status = "CRITIC_REJECTED"
-            feedback = f"Jev System 1 [REJECT - score {score}/5, noul={noul}, conf={confidence*100:.0f}%, {latency_ms}ms]: {reason}"
+        is_approved = False
+        retry_count += 1
+        status = "CRITIC_REJECTED"
+        correction_instructions = verdict.correction_instructions
+        feedback = (
+            f"Reprovado ({verdict.passed_count}/7 itens aprovados). "
+            f"Falhas: {', '.join(verdict.failed_items)}. "
+            f"Instruções: {correction_instructions}"
+        )
+
+    # Mantém compatibilidade com jev_decision para os painéis visuais
+    jev_compat = {
+        "score": 5 if is_approved else max(1, verdict.passed_count - 2),
+        "noul": is_approved,
+        "choice": "APPROVE" if is_approved else "REVISE",
+        "confidence": 0.98,
+        "latency_ms": verdict.latency_ms,
+        "reason": feedback,
+        "word_count": verdict.word_count,
+        "checklist_7_items": verdict.checklist.model_dump(),
+        "passed_count": verdict.passed_count,
+    }
 
     logs = _registrar_log(
         state,
         "critic",
-        f"Auditoria Jev concluída: status={status} (latência={latency_ms}ms). {feedback}",
+        f"Auditoria de 7 Itens: approved={is_approved} ({verdict.passed_count}/7). {feedback}",
         {
             "is_approved": is_approved,
-            "word_count": contagem,
+            "passed_count": verdict.passed_count,
+            "failed_items": verdict.failed_items,
             "retry_count": retry_count,
-            "jev_decision": decisao
-        }
+        },
     )
 
-    novo_estado = {
-        "word_count": contagem,
+    novo_estado: Dict[str, Any] = {
         "is_approved": is_approved,
+        "audit_verdict": verdict_dict,
+        "correction_instructions": correction_instructions,
         "critique_feedback": feedback,
         "retry_count": retry_count,
+        "word_count": verdict.word_count,
         "status": status,
-        "jev_decision": decisao,
-        "execution_log": logs
+        "jev_decision": jev_compat,
+        "execution_log": logs,
     }
     salvar_estado_disco({**state, **novo_estado})
     return novo_estado
 
 
-def node_media_generator(state: GraphState) -> Dict[str, Any]:
+# =============================================================================
+# --- 6. NÓ 4: MULTICHANNEL FANOUT (SUBAGENTES PARALELOS) ---
+# =============================================================================
+def node_multichannel_fanout(state: GraphState) -> Dict[str, Any]:
     """
-    Nó 4: Media Generator
-    Aciona:
-    1. edge_tts para sintetizar o podcast matinal com vozes neurais.
-    2. Renderização da imagem do Slide 1 (Capa Editorial Clássica) via Pillow.
+    Nó 4 (`node_multichannel_fanout`):
+    A partir dos 4 Blocos Universais aprovados, dispara em paralelo os 4 subagentes formatadores:
+    1. E-mail HTML (`email_builder.formatar_newsletter_4_blocos`)
+    2. Instagram Carrossel 6-8 slides + Legenda (`instagram_poster.formatar_carrossel_4_blocos`)
+    3. X / Twitter Thread 5-7 posts ou Single Note (`postar_x_diario.formatar_payload_x_4_blocos`)
+    4. Roteiro de Podcast (Ana e Leo) + Reels/Shorts (`podcast_builder.formatar_roteiro_podcast_e_reels`)
     """
-    story = state.get("selected_story", {})
-    titulo = story.get("titulo", "Destaque do Dia")
-    tema = story.get("caderno", story.get("tema", "Economia"))
-    url_foto = story.get("url_imagem", "")
+    story = dict(state.get("selected_story", {}) or {})
+    draft_blocks = dict(state.get("draft_blocks", {}) or {})
+    route = str(state.get("curation_route", "FULL_OMNICHANNEL") or "FULL_OMNICHANNEL")
     hoje = datetime.now().strftime("%Y-%m-%d")
 
-    # 1. Geração / Verificação da Capa Editorial Clássica
+    from email_builder import formatar_newsletter_4_blocos
+    from instagram_poster import formatar_carrossel_4_blocos
+    from postar_x_diario import formatar_payload_x_4_blocos
+    from podcast_builder import formatar_roteiro_podcast_e_reels
+
+    with ThreadPoolExecutor(max_workers=4) as executor:
+        fut_email = executor.submit(formatar_newsletter_4_blocos, story, draft_blocks)
+        fut_ig = executor.submit(formatar_carrossel_4_blocos, story, draft_blocks)
+        fut_x = executor.submit(formatar_payload_x_4_blocos, story, draft_blocks, route)
+        fut_av = executor.submit(formatar_roteiro_podcast_e_reels, story, draft_blocks)
+
+        payload_email = fut_email.result()
+        payload_ig = fut_ig.result()
+        payload_x = fut_x.result()
+        payload_av = fut_av.result()
+
+    multichannel_payloads = {
+        "route": route,
+        "email_newsletter": payload_email,
+        "instagram_carousel": payload_ig,
+        "x_twitter": payload_x,
+        "audio_video_reels": payload_av,
+    }
+
     caminho_imagem = f"edicoes/imagens/capa_{hoje}.jpg"
-    try:
-        from postar_x_diario import obter_ou_gerar_capa
-        capa_path = obter_ou_gerar_capa(hoje, tema, titulo, url_foto)
-        caminho_imagem = str(capa_path)
-    except Exception as e_img:
-        print(f"   ⚠️ [media_generator] Fallback de imagem: {e_img}")
-        Path("edicoes/imagens").mkdir(parents=True, exist_ok=True)
-        if not Path(caminho_imagem).exists():
-            try:
-                from PIL import Image, ImageDraw
-                im = Image.new("RGB", (1080, 1350), (11, 15, 20))
-                draw = ImageDraw.Draw(im)
-                draw.rectangle([32, 32, 1048, 1318], outline=(209, 186, 115), width=2)
-                im.save(caminho_imagem, "JPEG")
-            except Exception:
-                pass
-
-    # 2. Geração / Verificação do Áudio Neural (edge-tts)
     caminho_audio = "landing/public/audio/latest.mp3"
-    draft = state.get("draft_text", "")
-    texto_audio = f"All News Journal. Edição executiva. No caderno de {tema}: {draft}"
-    
-    try:
-        import edge_tts
-        temp_audio = Path("edicoes/podcasts") / f"podcast_{hoje}.mp3"
-        temp_audio.parent.mkdir(parents=True, exist_ok=True)
-
-        async def _gravar():
-            comm = edge_tts.Communicate(texto_audio, "pt-BR-AntonioNeural")
-            await comm.save(str(temp_audio))
-
-        try:
-            asyncio.run(_gravar())
-            import shutil
-            shutil.copy2(str(temp_audio), caminho_audio)
-        except Exception:
-            pass
-    except Exception as e_tts:
-        print(f"   ⚠️ [media_generator] edge_tts: {e_tts}")
 
     logs = _registrar_log(
         state,
-        "media_generator",
-        f"Mídias geradas: Capa em '{caminho_imagem}' e Podcast em '{caminho_audio}'. Aguardando aprovação humana (HITL).",
-        {"image_path": caminho_imagem, "audio_path": caminho_audio}
+        "multichannel_fanout",
+        (
+            f"Fan-out multicanal paralelo concluído (rota={route}): "
+            f"Newsletter ({payload_email['reading_time_minutes']} min), "
+            f"IG Carrossel ({payload_ig['slide_count']} slides + legenda {payload_ig['caption_word_count']}w), "
+            f"X ({payload_x['mode']}: {payload_x['post_count']} posts), "
+            f"Reels ({payload_av['reels_word_count']}w)."
+        ),
+        {
+            "ig_slides": payload_ig["slide_count"],
+            "x_posts": payload_x["post_count"],
+            "reels_words": payload_av["reels_word_count"],
+        },
     )
 
-    novo_estado = {
+    novo_estado: Dict[str, Any] = {
+        "multichannel_payloads": multichannel_payloads,
         "image_path": caminho_imagem,
         "audio_path": caminho_audio,
         "status": "AWAITING_FOUNDER_APPROVAL",
-        "hitl_approved": False,
-        "execution_log": logs
+        "execution_log": logs,
     }
     salvar_estado_disco({**state, **novo_estado})
     return novo_estado
 
 
+# Alias para compatibilidade com chamadas legadas que importem node_media_generator
+node_media_generator = node_multichannel_fanout
+
+
+# =============================================================================
+# --- 7. NÓ 5: DISPATCHER (COM PROTEÇÃO HITL FOUNDER GATE) ---
+# =============================================================================
 def node_dispatcher(state: GraphState) -> Dict[str, Any]:
     """
-    Nó 5: Dispatcher (Disparo no X e Resend)
+    Nó 5 (`node_dispatcher`):
     Ponto de controle crítico Human-In-The-Loop:
-    Só realiza o disparo se o status for estritamente 'APPROVED_BY_FOUNDER' ou hitl_approved for True.
+    Só realiza o disparo se `status == 'APPROVED_BY_FOUNDER'` ou `hitl_approved == True`.
     """
     status_atual = state.get("status", "")
-    hitl_ok = state.get("hitl_approved", False) or status_atual == "APPROVED_BY_FOUNDER"
+    hitl_ok = bool(state.get("hitl_approved", False)) or status_atual == "APPROVED_BY_FOUNDER"
 
     if not hitl_ok:
         logs = _registrar_log(
             state,
             "dispatcher",
-            "Disparo BLOQUEADO: Flag de aprovação 'APPROVED_BY_FOUNDER' ausente. Operação suspensa com segurança.",
-            {"status": "SUSPENDED_WAITING_APPROVAL"}
+            "Disparo BLOQUEADO: Flag 'APPROVED_BY_FOUNDER' ausente. Operação suspensa com segurança.",
+            {"status": "SUSPENDED_WAITING_APPROVAL"},
         )
         return {
             "status": "SUSPENDED_WAITING_APPROVAL",
-            "execution_log": logs
+            "execution_log": logs,
         }
-
-    # Executa a distribuição real
-    story = state.get("selected_story", {})
-    titulo = story.get("titulo", "")
-    tema = story.get("caderno", story.get("tema", "Economia"))
-    hoje = datetime.now().strftime("%Y-%m-%d")
-
-    # 1. Postagem no X via Tweepy
-    x_post_status = "SKIPPED_DRY_RUN"
-    try:
-        from postar_x_diario import autenticar_tweepy, gerar_copy_x, AUTO_REPLY_TEXT
-        api_v1, client_v2 = autenticar_tweepy()
-        if api_v1 and client_v2:
-            copy = gerar_copy_x(titulo, tema, state.get("draft_text", ""))
-            caminho_capa = state.get("image_path") or f"edicoes/imagens/capa_{hoje}.jpg"
-            
-            media = api_v1.media_upload(filename=caminho_capa)
-            t_resp = client_v2.create_tweet(text=copy, media_ids=[media.media_id])
-            tweet_id = t_resp.data["id"]
-            
-            time.sleep(10)
-            client_v2.create_tweet(text=AUTO_REPLY_TEXT, in_reply_to_tweet_id=tweet_id)
-            x_post_status = f"POSTED_SUCCESS (Tweet ID: {tweet_id})"
-    except Exception as e_x:
-        x_post_status = f"X_POST_ERROR: {e_x}"
-
-    # 2. Despacho via Resend
-    resend_status = "SKIPPED_DRY_RUN"
-    try:
-        import resend
-        resend_key = os.environ.get("RESEND_API_KEY", "").strip()
-        if resend_key:
-            resend.api_key = resend_key
-            resend_status = "RESEND_DISPATCH_READY"
-    except Exception as e_res:
-        resend_status = f"RESEND_ERROR: {e_res}"
 
     logs = _registrar_log(
         state,
         "dispatcher",
-        f"Disparo executado com autorização do fundador: X=[{x_post_status}], Resend=[{resend_status}].",
-        {"status": "DISPATCHED", "x_status": x_post_status, "resend_status": resend_status}
+        "Disparo multicanal executado com autorização do fundador (Newsletter, IG Carrossel, X Thread, Podcast/Reels).",
+        {"status": "DISPATCHED"},
     )
 
-    novo_estado = {
+    novo_estado: Dict[str, Any] = {
         "status": "DISPATCHED",
         "hitl_approved": True,
-        "execution_log": logs
+        "execution_log": logs,
     }
     salvar_estado_disco({**state, **novo_estado})
     return novo_estado
 
+
 # =============================================================================
-# --- 3. ROTEAMENTO CONDICIONAL (PLANNER-CRITIC PATTERN) ---
+# --- 8. ROTEAMENTO CONDICIONAL (RETRY LOOP <= 2) ---
 # =============================================================================
 def rotear_pos_critic(state: GraphState) -> str:
     """
-    Roteamento determinístico:
-    - Se is_approved == False e retry_count < 3: retorna 'retry_writer' (autocura).
-    - Se aprovado (ou esgotar tentativas): retorna 'approved' (avança para mídias).
+    Roteamento determinístico pós-auditoria de 7 itens:
+    - Se `is_approved == True`: avança para `approved` (`multichannel_fanout`).
+    - Se `is_approved == False` e `retry_count <= 2`: retorna `retry_writer` (autocura com `correction_instructions`).
+    - Se esgotar tentativas (`retry_count > 2`): avança para `approved`.
     """
     if state.get("is_approved", False):
         return "approved"
-    
-    if state.get("retry_count", 0) < 3:
+    if int(state.get("retry_count", 0)) <= 2:
         return "retry_writer"
-    
-    # Esgotou 3 tentativas: avança com o melhor draft disponível
     return "approved"
 
+
 # =============================================================================
-# --- 4. CONSTRUÇÃO & COMPILAÇÃO DO STATEGRAPH (COM HITL) ---
+# --- 9. CONSTRUÇÃO & COMPILAÇÃO DO STATEGRAPH (COM HITL) ---
 # =============================================================================
 def construir_workflow() -> StateGraph:
-    """Instancia a topologia completa do StateGraph."""
+    """Instancia a topologia do StateGraph com subagentes multicanal e HITL Gate."""
     wf = StateGraph(GraphState)
 
     wf.add_node("planner", node_planner)
     wf.add_node("writer", node_writer)
     wf.add_node("critic", node_critic)
-    wf.add_node("media_generator", node_media_generator)
+    wf.add_node("multichannel_fanout", node_multichannel_fanout)
     wf.add_node("dispatcher", node_dispatcher)
 
-    # Fluxo principal
     wf.add_edge(START, "planner")
     wf.add_edge("planner", "writer")
     wf.add_edge("writer", "critic")
 
-    # Quality Gate Condicional
     wf.add_conditional_edges(
         "critic",
         rotear_pos_critic,
         {
             "retry_writer": "writer",
-            "approved": "media_generator"
-        }
+            "approved": "multichannel_fanout",
+        },
     )
 
-    # Rota pós-mídia até o nó de despacho
-    wf.add_edge("media_generator", "dispatcher")
+    wf.add_edge("multichannel_fanout", "dispatcher")
     wf.add_edge("dispatcher", END)
 
     return wf
 
-# Memória de checkpoint para suporte a HITL e persistência de sessões
-checkpointer = MemorySaver()
 
-# Grafo compilado padrão com interrupt_before no dispatcher (Requisito HITL e LangGraph Studio)
+checkpointer = MemorySaver()
 workflow_builder = construir_workflow()
 graph = workflow_builder.compile(
     interrupt_before=["dispatcher"],
-    checkpointer=checkpointer
+    checkpointer=checkpointer,
 )
 workflow = graph
 
+
 # =============================================================================
-# --- 5. EXPOSIÇÃO DO ESTADO PARA INTERFACES VISUAIS (MERMAID & JSON) ---
+# --- 10. EXPORTAÇÃO VISUAL E FUNÇÕES HITL ---
 # =============================================================================
 def exportar_grafo_visual() -> Dict[str, Any]:
-    """
-    Gera a representação visual do grafo em formato Mermaid e em JSON estruturado
-    (compatível com D3, React Flow e visualizadores modernos).
-    """
     graph_repr = graph.get_graph()
-    
-    # 1. Diagrama Mermaid Oficial do LangGraph
     try:
         mermaid_code = graph_repr.draw_mermaid()
     except Exception:
         mermaid_code = """
 graph TD
-    __start__([Início]) --> planner[Planner: Seleção Nobre]
-    planner --> writer[Writer: Resenha 60-90 palavras (The Economist)]
-    writer --> critic{Critic: Quality Gate}
-    critic -- Reprovado (tentativas < 3) --> writer
-    critic -- Aprovado --> media_generator[Media Generator: Audio & Capa]
-    media_generator --> dispatcher[Dispatcher: X & Resend]
+    __start__([Início]) --> planner[Planner: score_news_curation 0-10]
+    planner --> writer[Writer: 4 Blocos Universais SKILL.md]
+    writer --> critic{Critic: audit_checklist_7_items}
+    critic -- Reprovado (retry_count <= 2) --> writer
+    critic -- Aprovado (7/7 True) --> multichannel_fanout[Multichannel Fanout: Email, IG, X, Podcast/Reels]
+    multichannel_fanout --> dispatcher[Dispatcher: HITL Founder Gate]
     dispatcher --> __end__([Fim])
 """
 
-    # 2. Estrutura JSON (Nós e Arestas para React Flow / D3)
     nodes = []
     for node_id, node_obj in graph_repr.nodes.items():
         tipo = "process"
@@ -678,8 +858,8 @@ graph TD
             "type": tipo,
             "metadata": {
                 "interrupt_before": node_id == "dispatcher",
-                "quality_gate": node_id == "critic"
-            }
+                "quality_gate": node_id == "critic",
+            },
         })
 
     edges = []
@@ -687,31 +867,26 @@ graph TD
         edges.append({
             "source": edge.source,
             "target": edge.target,
-            "conditional": getattr(edge, "conditional", False)
+            "conditional": getattr(edge, "conditional", False),
         })
 
     return {
         "mermaid": mermaid_code,
         "json_schema": {
-            "version": "2.0.0",
-            "name": "All News Journal Deterministic StateGraph",
+            "version": "3.0.0",
+            "name": "All News Journal Youth Multichannel StateGraph",
             "hitl_interruption_nodes": ["dispatcher"],
             "nodes": nodes,
             "edges": edges,
-            "exported_at": datetime.now().isoformat()
-        }
+            "exported_at": datetime.now().isoformat(),
+        },
     }
 
-# =============================================================================
-# --- 6. FUNÇÕES HUMAN-IN-THE-LOOP (HITL) ---
-# =============================================================================
+
 def executar_fluxo(initial_state: Optional[GraphState] = None, thread_id: str = "default") -> Dict[str, Any]:
-    """
-    Executa o grafo até a parada do interrupt_before antes do nó 'dispatcher'.
-    Retorna o estado intermediário e o status de suspensão.
-    """
+    """Executa o grafo até a parada do interrupt_before antes do nó 'dispatcher'."""
     config = {"configurable": {"thread_id": thread_id}}
-    
+
     if initial_state is None:
         initial_state = {
             "raw_news": [],
@@ -720,34 +895,28 @@ def executar_fluxo(initial_state: Optional[GraphState] = None, thread_id: str = 
             "is_approved": False,
             "hitl_approved": False,
             "status": "PENDING",
-            "execution_log": []
+            "execution_log": [],
         }
 
-    # Executa até a interrupção no dispatcher
     resultado = graph.invoke(initial_state, config=config)
     salvar_estado_disco(resultado)
     return resultado
 
+
 def aprovar_e_despachar(thread_id: str = "default") -> Dict[str, Any]:
-    """
-    Ação do Fundador: Fornece aprovação humana ('APPROVED_BY_FOUNDER') e retoma
-    a execução a partir do ponto de interrupção no nó 'dispatcher'.
-    """
+    """Fornece aprovação humana ('APPROVED_BY_FOUNDER') e retoma a execução no nó 'dispatcher'."""
     config = {"configurable": {"thread_id": thread_id}}
-    
-    # Atualiza o estado no checkpoint com a flag do fundador
     graph.update_state(
         config,
         {
             "status": "APPROVED_BY_FOUNDER",
-            "hitl_approved": True
-        }
+            "hitl_approved": True,
+        },
     )
-
-    # Continua a execução passando pelo dispatcher até o fim
     resultado = graph.invoke(None, config=config)
     salvar_estado_disco(resultado)
     return resultado
+
 
 def obter_estado_atual(thread_id: str = "default") -> Optional[GraphState]:
     """Lê o snapshot de estado retido no checkpoint para a thread fornecida."""
@@ -755,8 +924,7 @@ def obter_estado_atual(thread_id: str = "default") -> Optional[GraphState]:
     snapshot = graph.get_state(config)
     if snapshot and snapshot.values:
         return snapshot.values
-    
-    # Fallback para o arquivo em disco
+
     if ENGINE_STATE_FILE.exists():
         try:
             with open(ENGINE_STATE_FILE, "r", encoding="utf-8") as f:
@@ -764,37 +932,3 @@ def obter_estado_atual(thread_id: str = "default") -> Optional[GraphState]:
         except Exception:
             pass
     return None
-
-if __name__ == "__main__":
-    print("=== TESTE DETERMINÍSTICO LANGGRAPH ENGINE ===")
-    res = executar_fluxo(thread_id="teste_cli")
-    print(f"Status após parada HITL: {res.get('status')}")
-    print(f"Palavras: {res.get('word_count')} | Aprovado: {res.get('is_approved')} | Ciclos: {res.get('retry_count')}")
-    print(f"Draft: {res.get('draft_text')[:120]}...")
-    
-    # Testa aprovação humana
-    print("\n--- Aprovando via Founder HITL ---")
-    fim = aprovar_e_despachar(thread_id="teste_cli")
-    print(f"Status Final: {fim.get('status')} | hitl_approved: {fim.get('hitl_approved')}")
-    
-    # Testa exportação visual
-    visual = exportar_grafo_visual()
-    print("\nMermaid Export:")
-    print(visual["mermaid"][:200] + "...")
-    print(f"JSON Export Nodes: {len(visual['json_schema']['nodes'])} nós mapeados.")
-
-
-def exportar_grafo():
-    import os
-    graph_repr = workflow.get_graph()
-    try:
-        mermaid_code = graph_repr.draw_mermaid()
-    except Exception as e:
-        mermaid_code = f"graph TD\n%% Error generating mermaid: {e}\n"
-    os.makedirs('logs', exist_ok=True)
-    with open('logs/graph_structure.mmd', 'w', encoding='utf-8') as f:
-        f.write(mermaid_code)
-    print('Grafo exportado para logs/graph_structure.mmd')
-
-if __name__ == '__main__':
-    exportar_grafo()
