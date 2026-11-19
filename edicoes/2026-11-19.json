@@ -1,0 +1,30 @@
+{
+ "data": "2026-11-19",
+ "data_extenso": "Quinta-feira, 19 de Novembro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "Ajuste Fiscal Modesto Pressiona Juros e Desvaloriza Ativos Brasileiros",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Ajuste Fiscal Modesto Pressiona Juros e Desvaloriza Ativos Brasileiros",
+    "link": "https://www.infomoney.com.br/mercados/pacote-fiscal-timido-impede-avanco-do-ibovespa/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/12/Captura-de-tela-2025-12-10-110600.png",
+    "resumo": "O Ibovespa caiu 0.93% para 165.998 pontos, refletindo a aprovação de um pacote fiscal modesto pelo Senado, que reduziu a economia projetada para R$50 bilhões em 2027. A dinâmica regulatória, com um ajuste fiscal considerado insuficiente para estabilizar a dívida, pressiona a política monetária, limitando o espaço para cortes da Selic e desvalorizando o real. Investidores perdem confiança na gestão fiscal, enquanto o risco imediato é a manutenção de juros elevados e a desvalorização cambial, impactando o crescimento econômico."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Google lança Gemini 4 Neon, elevando capacidade de IA para programação e análise",
+    "link": "https://olhardigital.com.br/2026/11/18/inteligencia-artificial/gemini-4-neon-conheca-a-nova-ia-do-google-para-programacao-e-analise/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/gemini-2.jpg",
+    "resumo": "O Google lançou o Gemini 4 Neon, um modelo de IA com janela de contexto de um milhão de tokens, projetado para programação e análise de dados complexas, alcançando 65,2% no Terminal-Bench 4.1. Este lançamento intensifica a corrida por modelos de fronteira, visando capturar o mercado corporativo com soluções multimodais e de alta capacidade computacional, justificando uma estrutura de custos por token. Google consolida sua oferta empresarial, pressionando concorrentes em capacidade de contexto e especialização, mas o custo elevado por token de saída pode restringir a adoção em larga escala."
+   },
+   {
+    "titulo": "Nvidia corta chips de IA para China sob pressão regulatória e geopolítica",
+    "link": "https://olhardigital.com.br/2026/11/18/pro/nvidia-interrompe-envio-de-chips-de-ia-hopper-para-a-china/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/nvidia_china.jpg",
+    "resumo": "Nvidia interrompeu o envio de chips de IA Hopper para a China, impactando um mercado que gerou US$ 2,4 bilhões em vendas no terceiro trimestre. A decisão alinha-se às novas restrições americanas visando dificultar o acesso chinês a semicondutores avançados, fechando brechas regulatórias e respondendo a um escândalo de espionagem. Essa medida fortalece o controle tecnológico dos EUA, penaliza a Nvidia com a perda de um mercado bilionário e intensifica a fragmentação da cadeia global de suprimentos de IA."
+   }
+  ]
+ }
+}

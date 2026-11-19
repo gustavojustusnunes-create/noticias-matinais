@@ -1,5 +1,11 @@
 [
  {
+  "data": "2026-11-19",
+  "data_extenso": "Quinta-feira, 19 de Novembro de 2026",
+  "manchete": "Ajuste Fiscal Modesto Pressiona Juros e Desvaloriza Ativos Brasileiros",
+  "arquivo_html": "2026-11-19.html"
+ },
+ {
   "data": "2026-11-18",
   "data_extenso": "Quarta-feira, 18 de Novembro de 2026",
   "manchete": "Bolsas Europeias Recuam: Juros EUA e Inflação Pressionam Mercados",
@@ -352,11 +358,5 @@
   "data_extenso": "Quinta-feira, 17 de Setembro de 2026",
   "manchete": "Rei Charles III alerta sobre riscos da IA e pede medidas de executivos antes que seja 'tarde demais'",
   "arquivo_html": "2026-09-17.html"
- },
- {
-  "data": "2026-09-16",
-  "data_extenso": "Quarta-feira, 16 de Setembro de 2026",
-  "manchete": "Papa Leão diz que conflitos no Oriente Médio pressionam relações entre judeus e cristãos",
-  "arquivo_html": "2026-09-16.html"
  }
 ]

@@ -450,5 +450,12 @@
       <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/edicoes/podcasts/podcast_2026-11-18.mp3" length="1178732" type="audio/mpeg"/>
       <guid isPermaLink="false">anj-2026-11-18</guid>
     </item>
+    <item>
+      <title>Edição de 2026-11-19</title>
+      <description>As notícias desta manhã: 2026-11-19. Apresentado por Leo e Ana.</description>
+      <pubDate>Thu, 19 Nov 2026 17:30:17 +0000</pubDate>
+      <enclosure url="https://raw.githubusercontent.com/gustavojustusnunes-create/noticias-matinais/main/edicoes/podcasts/podcast_2026-11-19.mp3" length="599660" type="audio/mpeg"/>
+      <guid isPermaLink="false">anj-2026-11-19</guid>
+    </item>
   </channel>
 </rss>
