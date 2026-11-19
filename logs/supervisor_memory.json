@@ -1430,6 +1430,62 @@
             "texto_original": "A atuação de Cristiano Cozer, Procurador-Geral do Banco Central, emergiu como ponto focal nas investigações que culminaram na liquidação do conglomerado financeiro de Daniel Vorcaro, o Banco Master. Co",
             "motivo_falha": "Subdimensionado: 29 palavras (mínimo obrigatório: 60 palavras). | A frase final não termina com ponto final. | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
             "correcao_aplicada": "A atuação de Cristiano Cozer, Procurador-Geral do Banco Central, foi central nas investigações que c..."
+        },
+        {
+            "data": "2026-11-19T17:34:11.012188",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A estreia da Anthropic no mercado de ações norte-americano, marcada por um desempenho robusto, não foi suficiente para sustentar o Índice Composto da Nasdaq, que encerrou a quinta-feira (19) em queda",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 31 palavras, violando o limite mínimo obrigatório de 60 palavras, terminava sem pontuação final e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Índice Composto da Nasdaq registrou uma queda de 0,8% na quinta-feira (19), apesar da estreia robu..."
+        },
+        {
+            "data": "2026-11-19T17:35:49.033198",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Anthropic, desenvolvedora do modelo de linguagem Claude, realizou sua aguardada oferta pública inicial (IPO) na Nasdaq sob o código ANT, com as ações precificadas em US$ 83. No dia da",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 31 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Anthropic realizou sua oferta pública inicial na Nasdaq sob o código ANT, com ações precificadas e..."
+        },
+        {
+            "data": "2026-11-19T17:36:09.300256",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Alfama Foods avança em sua estratégia de internacionalização com um investimento de 13,57 milhões de euros (aproximadamente R$ 87,3 milhões) na construção de sua primeira fábrica fora do Brasil, localizada em Mação, Portugal. O projeto, que recebeu um incentivo não reembolsável de 6,06 milhões de euros (R$ 39 milhões) do Fundo Europeu de Desenvolvimento Regional (Feder) via Portugal 2030, prevê o início das operações em 2028. A unidade terá capacidade para produzir até 5",
+            "motivo_falha": "O texto original estava incompleto, terminando abruptamente sem pontuação final, e carecia do desdobramento crítico (Passo 3) da estrutura analítica de três passos do padrão The Economist. Além disso, a contagem de palavras estava no limite inferior da tolerância operacional.",
+            "correcao_aplicada": "A Alfama Foods investirá 13,57 milhões de euros (R$ 87,3 milhões) na construção de sua primeira fábr..."
+        },
+        {
+            "data": "2026-11-19T17:36:40.536518",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O Itaú BBA reiterou sua recomendação de compra para as ações da JBS (JBSS3), projetando um preço-alvo de US$ 18 para os papéis listados na NYSE até o final",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 29 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Itaú BBA reiterou sua recomendação de compra para as ações da JBS (JBSS3), projetando um preço-alv..."
+        },
+        {
+            "data": "2026-11-19T17:38:07.772451",
+            "tema": "Macroeconomia",
+            "texto_original": "A indústria manufatureira e de logística dos Estados Unidos está acelerando a adoção de robôs industriais, uma resposta estratégica e urgente às crescentes pressões de custos operacionais e à persistente escassez de mão de obra",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 35 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer do desdobramento crítico completo.",
+            "correcao_aplicada": "A indústria manufatureira e de logística dos Estados Unidos acelerou a adoção de robôs industriais, ..."
+        },
+        {
+            "data": "2026-11-19T17:38:29.117717",
+            "tema": "Macroeconomia",
+            "texto_original": "Associações setoriais apresentaram à Câmara dos Deputados, em 19 de novembro de 2026, dados que sinalizam sérias preocupações empresariais quanto à viabilidade de aplicação de",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 25 palavras, violando o limite mínimo obrigatório de 60 palavras, além de estar incompleto, terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Associações setoriais apresentaram à Câmara dos Deputados, em 19 de novembro de 2026, dados que apon..."
+        },
+        {
+            "data": "2026-11-19T17:40:05.507517",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "As principais criptomoedas registraram perdas acentuadas neste domingo, 15, consolidando uma semana de forte desvalorização. O Bitcoin (BTC) recuou 2,52% nas últimas",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin recuou 2,52% nas últimas vinte e quatro horas deste domingo, cotado a patamares inferiores..."
+        },
+        {
+            "data": "2026-11-19T17:41:37.557177",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) negocia atualmente em torno de US$ 70 mil, representando uma queda de mais de 40% em relação à sua máxima histórica de US$ 126 mil, alcançada em",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Bitcoin negocia atualmente em torno de US$ 70 mil, registrando uma retração superior a 40% em rela..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-18"

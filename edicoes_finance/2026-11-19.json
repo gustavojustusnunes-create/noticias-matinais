@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Apesar da estreia das ações da Anthropic acima do preço do IPO, Nasdaq cai",
+      "link": "https://www.moneytimes.com.br/apesar-da-estreia-das-acoes-da-anthropic-acima-do-preco-do-ipo-nasdaq-cai-mlem/",
+      "resumo": "O Índice Composto da Nasdaq registrou uma queda de 0,8% na quinta-feira (19), apesar da estreia robusta da Anthropic no mercado de ações, cujas ações negociaram acima do preço de IPO. Este declínio reflete uma pressão vendedora mais ampla no setor de tecnologia, impulsionada por preocupações persistentes com a inflação e a perspectiva de taxas de juros elevadas, que impactam as avaliações de empresas de alto crescimento. Assim, investidores em tecnologia enfrentam um cenário de maior volatilidade, com o risco de correções mais profundas caso as condições macroeconômicas não melhorem, penalizando empresas com valuations esticados.",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=0_476",
+      "fonte": "Money Times",
+      "data": "2026-11-19"
+    },
+    {
+      "titulo": "Anthropic estreia na Nasdaq; ações da companhia disparam 21%",
+      "link": "https://www.moneytimes.com.br/anthropic-estreia-na-nasdaq-acoes-da-companhia-disparam-30/",
+      "resumo": "A Anthropic realizou sua oferta pública inicial na Nasdaq sob o código ANT, com ações precificadas em US$ 83 e alta de 21% na estreia. A listagem reflete a intensa corrida por capital na inteligência artificial generativa, impulsionada por custos operacionais massivos e pela necessidade de expandir a infraestrutura de servidores. Investidores institucionais garantem liquidez imediata para a expansão do modelo Claude, enquanto concorrentes tradicionais enfrentam pressões severas sobre margens de lucro e retenção de talentos no setor.",
+      "imagem": "https://www.moneytimes.com.br/uploads/2026/11/image-25.png",
+      "fonte": "Money Times",
+      "data": "2026-11-19"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Alfama Foods acelera internacionalização com construção de fábrica em Portugal",
+      "link": "https://www.moneytimes.com.br/alfama-foods-acelera-internacionalizacao-com-construcao-de-fabrica-em-portugal-pads/",
+      "resumo": "A Alfama Foods investirá 13,57 milhões de euros (R$ 87,3 milhões) na construção de sua primeira fábrica fora do Brasil, em Mação, Portugal. O projeto, com início de operações previsto para 2028, recebeu um incentivo não reembolsável de 6,06 milhões de euros do Fundo Europeu de Desenvolvimento Regional. Essa expansão visa otimizar a logística e acesso ao mercado europeu. A medida posiciona a empresa para competir diretamente com produtores locais, elevando a pressão sobre os custos de distribuição na região.",
+      "imagem": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800&sig=0_753",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-19"
+    },
+    {
+      "titulo": "JBS (JBSS3): Itaú BBA vê recuperação dos resultados em 2027 e mantém ação como favorita do setor",
+      "link": "https://www.moneytimes.com.br/jbs-jbss3-itau-bba-ve-recuperacao-dos-resultados-em-2027-mantem-acao-como-favorita-do-setor-pads/",
+      "resumo": "O Itaú BBA reiterou sua recomendação de compra para as ações da JBS (JBSS3), projetando um preço-alvo de US$ 18 para os papéis listados na NYSE e prevendo recuperação dos resultados em 2027. A expectativa de melhora no ciclo do gado nos Estados Unidos e a estabilização dos custos de grãos impulsionam essa projeção, consolidando a empresa como favorita do setor. Investidores que apostam na tese de recuperação podem se beneficiar, mas a volatilidade do mercado de commodities e o câmbio permanecem como riscos a monitorar.",
+      "imagem": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800&sig=1_878",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-19"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Empresas dos EUA recorrem a robôs para enfrentar falta de mão de obra",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/negocios/2026/11/empresas-dos-eua-recorrem-a-robos-para-enfrentar-falta-de-mao-de-obra.shtml",
+      "resumo": "A indústria manufatureira e de logística dos Estados Unidos acelerou a adoção de robôs industriais, registrando um aumento de 18% nas encomendas no último trimestre para combater a persistente escassez de mão de obra. Essa corrida tecnológica é impulsionada pelo encarecimento contínuo da folha salarial e por gargalos estruturais na cadeia de suprimentos pós-pandemia. Fabricantes de automação colhem lucros recordes, enquanto trabalhadores não qualificados enfrentam riscos crescentes de substituição operacional a ser monitorada.",
+      "imagem": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800&sig=0_640",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-19"
+    },
+    {
+      "titulo": "Entidades apresentam dados alarmantes na Câmara sobre fim da escala 6x1",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/colunas/painelsa/2026/11/entidades-apresentam-dados-alarmantes-na-camara-sobre-fim-da-escala-6x1.shtml",
+      "resumo": "Associações setoriais apresentaram à Câmara dos Deputados, em 19 de novembro de 2026, dados que apontam a inviabilidade econômica da aplicação do fim da escala de trabalho 6x1. A proposta regulatória, embora busque melhores condições para trabalhadores, impõe um aumento substancial nos custos operacionais para setores como varejo e serviços, exigindo contratações adicionais ou reestruturação de turnos. Este cenário eleva o risco de demissões e repasse de custos ao consumidor, ameaçando a competitividade e a estabilidade de empresas já fragilizadas.",
+      "imagem": "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&q=80&w=800&sig=1_578",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-19"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "Bitcoin recua neste domingo (15) e acumula perdas na semana; veja os preços das criptomoedas",
+      "link": "https://www.moneytimes.com.br/bitcoin-recua-neste-domingo-15-e-acumula-perdas-na-semana-veja-os-precos-das-criptomoedas-lmrs/",
+      "resumo": "O Bitcoin recuou 2,52% nas últimas vinte e quatro horas deste domingo, cotado a patamares inferiores e consolidando uma semana inteira de forte desvalorização nos mercados globais de ativos digitais. A queda reflete o aumento da aversão ao risco entre investidores institucionais diante de incertezas macroeconômicas persistentes sobre as taxas de juros americanas. Pequenos investidores enfrentam liquidações forçadas de posições alavancadas, enquanto plataformas de câmbio monitoram riscos de volatilidade sistêmica iminente.",
+      "imagem": "https://images.unsplash.com/photo-1622630998477-20b41cd0e0b2?auto=format&fit=crop&q=80&w=800&sig=0_174",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-19"
+    },
+    {
+      "titulo": "Preço do bitcoin (BTC) segue 40% abaixo da máxima histórica, enquanto Black Friday da Empiricus abre acesso a três IAs para o mercado cripto",
+      "link": "https://www.moneytimes.com.br/mais-de-um-ano-depois-preco-do-bitcoin-segue-40-abaixo-da-maxima-historica-enquanto-black-friday-da-empiricus-abre-acesso-a-tres-ias-para-o-mercado-cripto-lbrdgm106/",
+      "resumo": "O Bitcoin negocia atualmente em torno de US$ 70 mil, registrando uma retração superior a 40% em relação à sua máxima histórica de US$ 126 mil. Essa desvalorização decorre da forte pressão macroeconômica global, marcada por taxas de juros restritivas nos Estados Unidos e pela retração na liquidez de ativos de risco. Investidores institucionais enfrentam alocações mais cautelosas, enquanto plataformas de análise buscam capitalizar o momento oferecendo ferramentas automatizadas de inteligência artificial para tentar mitigar a volatilidade futura.",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=1_594",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-19"
+    }
+  ],
+  "data": "2026-11-19"
+}
