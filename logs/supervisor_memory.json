@@ -1,7 +1,5 @@
 {
     "imagens_recentes": [
-        "https://www.infomoney.com.br/wp-content/uploads/2026/01/dolar_moeda_0803221210.webp",
-        "https://olhardigital.com.br/wp-content/uploads/2026/08/anthropic_ipo.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/06/2026-06-03T151306Z_320774065_RC2CMLA7G0G8_RTRMADP_3_USA-TRUMP-TARIFFS-BRAZIL.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/10/china-ia-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2026/04/2026-04-23T223943Z_1_LYNXMPEM3M1IY_RTROPTP_4_IRAN-ECONOMY.jpg",
@@ -49,7 +47,9 @@
         "https://www.infomoney.com.br/wp-content/uploads/2025/11/2025-11-04T150523Z_788084831_RC2PPHA66QD7_RTRMADP_3_EUROPE-STOCKS.jpg",
         "https://olhardigital.com.br/wp-content/uploads/2026/11/microsoft-1.jpg",
         "https://www.infomoney.com.br/wp-content/uploads/2025/12/Captura-de-tela-2025-12-10-110600.png",
-        "https://olhardigital.com.br/wp-content/uploads/2026/11/gemini-2.jpg"
+        "https://olhardigital.com.br/wp-content/uploads/2026/11/gemini-2.jpg",
+        "https://www.infomoney.com.br/wp-content/uploads/2026/02/2026-02-14T010442Z_1598249736_RC23FJAYGXUA_RTRMADP_3_USA-TRUMP-UAE-DEMOCRATS.jpg",
+        "https://img.odcdn.com.br/wp-content/uploads/2026/11/ipo-anthropic-1-1.jpg"
     ],
     "erros": [
         {
