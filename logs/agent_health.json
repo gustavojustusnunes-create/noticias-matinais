@@ -1,6 +1,6 @@
 {
-    "timestamp_scan": "2026-11-19T15:30:29.168391-03:00",
-    "data_hoje": "2026-11-19",
+    "timestamp_scan": "2026-11-20T14:56:05.957679-03:00",
+    "data_hoje": "2026-11-20",
     "sistema_geral": "HEALTHY",
     "incidentes": [],
     "auto_recuperacoes": [],
@@ -9,7 +9,7 @@
             "nome": "All News Journal (Edição Diária)",
             "status": "ONLINE",
             "detalhe": "Edição publicada com sucesso (3 notícias).",
-            "ultima_edicao": "2026-11-19",
+            "ultima_edicao": "2026-11-20",
             "horario_previsto": "05:20 BRT",
             "total_itens": 3
         },
@@ -17,29 +17,29 @@
             "nome": "All News Finance",
             "status": "ONLINE",
             "detalhe": "Edição de mercado publicada (0 análises).",
-            "ultima_edicao": "2026-11-19",
+            "ultima_edicao": "2026-11-20",
             "horario_previsto": "05:25 BRT",
             "total_itens": 0
         },
         "instagram": {
             "nome": "Instagram Daily Posts",
             "status": "PENDING",
-            "detalhe": "Ainda não postou a edição de hoje (2026-11-19).",
+            "detalhe": "Ainda não postou a edição de hoje (2026-11-20).",
             "ultima_edicao": "2026-11-18",
             "horario_previsto": "09:15 BRT"
         },
         "supervisor": {
             "nome": "AI Quality Supervisor",
             "status": "ONLINE",
-            "detalhe": "Auditoria cognitiva ativa. 205 lições de aprendizado acumuladas.",
-            "licoes_aprendidas": 205,
+            "detalhe": "Auditoria cognitiva ativa. 208 lições de aprendizado acumuladas.",
+            "licoes_aprendidas": 208,
             "fotos_rastreadas": 50
         },
         "watchdog": {
             "nome": "Watchdog Sentinela",
             "status": "ACTIVE",
             "detalhe": "Monitoramento em tempo real operando com sucesso.",
-            "ultimo_scan": "2026-11-19 15:30 BRT",
+            "ultimo_scan": "2026-11-20 14:56 BRT",
             "incidentes_abertos": 0
         }
     }
