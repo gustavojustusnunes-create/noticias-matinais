@@ -1486,6 +1486,27 @@
             "texto_original": "O Bitcoin (BTC) negocia atualmente em torno de US$ 70 mil, representando uma queda de mais de 40% em relação à sua máxima histórica de US$ 126 mil, alcançada em",
             "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, incompleto sem pontuação final, e carecia da estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "O Bitcoin negocia atualmente em torno de US$ 70 mil, registrando uma retração superior a 40% em rela..."
+        },
+        {
+            "data": "2026-11-20T17:07:41.739875",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Uma onda de protestos e greves varreu a Europa, culminando em uma paralisação nacional na Itália nesta sexta-feira, 20, que interrompeu serviços essenciais. Trabalhadores e estudantes mobilizar",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, terminava sem pontuação final e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Milhares de jovens e trabalhadores europeus protestaram contra o alto custo de vida, com a Itália re..."
+        },
+        {
+            "data": "2026-11-20T17:07:59.383048",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A XP Investimentos revisou para baixo o preço-alvo do Banco do Brasil (BBAS3) para R$ 15 por ação até o final de 2027, ante R$ 21 anteriormente,",
+            "motivo_falha": "Subdimensionado: 27 palavras (mínimo obrigatório: 60 palavras). | A frase final não termina com ponto final. | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "A XP Investimentos reduziu o preço-alvo das ações do Banco do Brasil (BBAS3) de R$ 21 para R$ 15 por..."
+        },
+        {
+            "data": "2026-11-20T17:09:47.820099",
+            "tema": "Macroeconomia",
+            "texto_original": "Três diretores e acionistas minoritários da Kitchens, renomada fabricante de móveis de luxo, iniciaram uma ação judicial contra as sócias majoritárias e as quatro empresas que compõem o grupo",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 29 palavras, violando o limite mínimo obrigatório de 60 palavras, e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Três diretores e acionistas minoritários da Kitchens, fabricante de móveis de luxo, iniciaram uma aç..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-18"
