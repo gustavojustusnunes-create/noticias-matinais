@@ -1,0 +1,22 @@
+{
+ "data": "2026-11-21",
+ "data_extenso": "Sábado, 21 de Novembro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "Editora brasileira processa OpenAI por uso de obras em treinamento de IA",
+ "cadernos": {
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "Editora brasileira processa OpenAI por uso de obras em treinamento de IA",
+    "link": "https://olhardigital.com.br/2026/11/20/inteligencia-artificial/editora-brasileira-aciona-justica-contra-openai-por-uso-de-livros/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/openai-livros.jpg",
+    "resumo": "A editora brasileira L&PM acionou a OpenAI na Justiça por uso não autorizado do Dicionário Aulete de Bolso, parte de 196,4 mil livros pirateados na base Books3, para treinar o ChatGPT. Esta ação reflete a crescente pressão regulatória sobre modelos de IA que se beneficiaram de vastos acervos sem licenciamento, com outras empresas como Meta e Anthropic também implicadas. O litígio estabelece um precedente crucial para a remuneração de criadores e a transparência dos dados de treinamento, elevando o risco de custos de licenciamento e indenizações para a indústria de IA."
+   },
+   {
+    "titulo": "IA Claude: Prova da Hipótese de Riemann Desafia Validação Científica",
+    "link": "https://olhardigital.com.br/2026/11/20/inteligencia-artificial/claude-teria-ajudado-a-resolver-um-dos-maiores-enigmas-da-matematica/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/ia-matematica.jpg",
+    "resumo": "O matemático Levent Alpöge, da Anthropic, publicou um documento afirmando ter provado a hipótese de Riemann, um dos sete Problemas do Milênio com recompensa de US$ 1 milhão, com auxílio da IA Claude. A alegação, ainda sem verificação independente, surge em meio ao avanço acelerado de sistemas de IA na produção de resultados matemáticos, exigindo anos de análise para reconhecimento formal. O risco imediato reside na credibilidade das alegações de IA sem crivo científico rigoroso, potencialmente gerando disputas e desvalorizando o processo de validação tradicional."
+   }
+  ]
+ }
+}

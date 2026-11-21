@@ -1,29 +1,21 @@
 {
- "data": "2026-11-20",
- "data_extenso": "Sexta-feira, 20 de Novembro de 2026",
- "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
- "manchete": "Tesouro dos EUA Pressiona Fed por Juros Moderados, Cita Energia",
+ "data": "2026-11-21",
+ "data_extenso": "Sábado, 21 de Novembro de 2026",
+ "editorial": "Uma curadoria exclusiva com os temas que mais importam para você hoje.",
+ "manchete": "Editora brasileira processa OpenAI por uso de obras em treinamento de IA",
  "cadernos": {
-  "Macroeconomia & Mercados": [
-   {
-    "titulo": "Tesouro dos EUA Pressiona Fed por Juros Moderados, Cita Energia",
-    "link": "https://www.infomoney.com.br/economia/bessent-defende-alta-mais-moderada-dos-juros-pelo-fed-e-cita-choque-de-energia/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/02/2026-02-14T010442Z_1598249736_RC23FJAYGXUA_RTRMADP_3_USA-TRUMP-UAE-DEMOCRATS.jpg",
-    "resumo": "O Secretário do Tesouro dos EUA, Scott Bessent, defendeu publicamente uma elevação mais moderada da taxa de juros pelo Federal Reserve, contrapondo-se a propostas de aumentos maiores. Sua argumentação baseia-se no choque de oferta energética e na queda dos preços de entrega do petróleo bruto, sugerindo pressões inflacionárias menos demand-driven. Ele criticou a inconsistência de alguns dirigentes do Fed. A divergência pública entre o Tesouro e o Fed sinaliza atrito político-monetário, com risco de desancorar expectativas de mercado e prolongar a volatilidade sobre a trajetória dos juros."
-   },
-   {
-    "titulo": "Mercados Globais Recuam: Tecnologia e IA Sob Pressão de Juros e Regulação",
-    "link": "https://www.infomoney.com.br/mercados/nasdaq-registra-queda-seguindo-baixa-de-acoes-da-anthropic/",
-    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/10/2026-10-26T100021Z_1199777547_RC2G8OARKJXV_RTRMADP_3_USA-FED-REGULATION.jpg",
-    "resumo": "Os principais índices acionários americanos registraram quedas acentuadas, com o Nasdaq Composite recuando 3,3% e o S&P 500 caindo 2%, a maior desvalorização desde 2020. A euforia pós-IPO no setor de inteligência artificial cedeu a dúvidas sobre a sustentabilidade dos gastos e o impacto de juros mais altos, impulsionando a busca por ativos de refúgio. Investidores migram para títulos do Tesouro e ações defensivas, enquanto o risco de correção se aprofunda nos mercados emergentes e no setor de tecnologia, exigindo monitoramento da política monetária."
-   }
-  ],
   "Fronteira Tecnológica & IA": [
    {
-    "titulo": "Anthropic recua na Nasdaq: setor de IA sob pressão regulatória e de capex",
-    "link": "https://olhardigital.com.br/2026/11/20/pro/acoes-da-anthropic-caem-quase-6-apos-estreia-recorde-na-nasdaq/",
-    "imagem": "https://img.odcdn.com.br/wp-content/uploads/2026/11/ipo-anthropic-1-1.jpg",
-    "resumo": "Anthropic, desenvolvedora de IA, viu suas ações caírem 6,36% na Nasdaq, um dia após sua estreia recorde com valorização de 17%. Este recuo reflete uma onda de vendas no setor de inteligência artificial, impulsionada por preocupações com o alto capex em infraestrutura e o endurecimento das restrições de exportação dos EUA sobre chips para a Ásia, além de questionamentos sobre a conformidade da AMD. Investidores perdem confiança no ritmo de crescimento do setor, com fabricantes de chips e desenvolvedoras de IA enfrentando riscos regulatórios e de demanda."
+    "titulo": "Editora brasileira processa OpenAI por uso de obras em treinamento de IA",
+    "link": "https://olhardigital.com.br/2026/11/20/inteligencia-artificial/editora-brasileira-aciona-justica-contra-openai-por-uso-de-livros/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/openai-livros.jpg",
+    "resumo": "A editora brasileira L&PM acionou a OpenAI na Justiça por uso não autorizado do Dicionário Aulete de Bolso, parte de 196,4 mil livros pirateados na base Books3, para treinar o ChatGPT. Esta ação reflete a crescente pressão regulatória sobre modelos de IA que se beneficiaram de vastos acervos sem licenciamento, com outras empresas como Meta e Anthropic também implicadas. O litígio estabelece um precedente crucial para a remuneração de criadores e a transparência dos dados de treinamento, elevando o risco de custos de licenciamento e indenizações para a indústria de IA."
+   },
+   {
+    "titulo": "IA Claude: Prova da Hipótese de Riemann Desafia Validação Científica",
+    "link": "https://olhardigital.com.br/2026/11/20/inteligencia-artificial/claude-teria-ajudado-a-resolver-um-dos-maiores-enigmas-da-matematica/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/11/ia-matematica.jpg",
+    "resumo": "O matemático Levent Alpöge, da Anthropic, publicou um documento afirmando ter provado a hipótese de Riemann, um dos sete Problemas do Milênio com recompensa de US$ 1 milhão, com auxílio da IA Claude. A alegação, ainda sem verificação independente, surge em meio ao avanço acelerado de sistemas de IA na produção de resultados matemáticos, exigindo anos de análise para reconhecimento formal. O risco imediato reside na credibilidade das alegações de IA sem crivo científico rigoroso, potencialmente gerando disputas e desvalorizando o processo de validação tradicional."
    }
   ]
  }

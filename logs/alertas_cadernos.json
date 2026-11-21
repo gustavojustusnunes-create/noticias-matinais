@@ -91,5 +91,19 @@
       "Por que debate entre Lula e Flávio pode atrair audiência, mas não deve mudar eleição"
     ],
     "timestamp": "2026-10-18T09:41:02.970557-03:00"
+  },
+  {
+    "data": "2026-11-21",
+    "caderno": "Macroeconomia & Mercados",
+    "status": "SUPPRESSED",
+    "motivo": "Nenhuma das 5 matérias coletadas atingiu o padrão de relevância analítica (nota de corte 8.0/10). Maior nota alcançada: 5.5/10.",
+    "exemplos_descartados": [
+      "Lula: falei para Putin, Trump e Xi para se reunirem; por coincidência, se reuniram",
+      "México prende um dos 10 mais procurados pelo FBI após confronto com traficantes",
+      "Moraes vê risco de obstrução após fuga de Flávio Bolsonaro e mantém restrições",
+      "Incêndio em usina de energia em Basra, no Iraque, mata ao menos 4 pessoas",
+      "PF prende namorada de “Chico Trader”, investigado por esquema de R$ 600 milhões"
+    ],
+    "timestamp": "2026-11-21T13:15:30.988173-03:00"
   }
 ]
