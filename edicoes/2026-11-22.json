@@ -1,0 +1,30 @@
+{
+ "data": "2026-11-22",
+ "data_extenso": "Domingo, 22 de Novembro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "Chile: PIB em Queda e Recuperação Lenta Pressionam Política Monetária",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Chile: PIB em Queda e Recuperação Lenta Pressionam Política Monetária",
+    "link": "https://www.infomoney.com.br/economia/chile-tem-maior-tombo-do-pib-desde-2020-e-bc-ve-recuperacao-mais-lenta/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/476021145.jpg",
+    "resumo": "O Chile enfrenta o maior tombo do PIB desde 2020, com a presidente do Banco Central, Rosanna Costa, projetando uma recuperação econômica mais lenta. A desaceleração é atribuída à baixa confiança empresarial, adiamento de investimentos e desempenho aquém do esperado na mineração, somados a desemprego e eventos climáticos. O Banco Central mantém juros em 4,5%, sem flexibilização monetária. Investidores confrontam um ambiente de menor crescimento e incerteza, enquanto o governo aposta em estímulos fiscais. O risco imediato é a prolongada inatividade econômica, pressionando a estabilidade fiscal."
+   },
+   {
+    "titulo": "China intensifica campanha secreta por chips avançados, desafiando controles dos EUA",
+    "link": "https://www.infomoney.com.br/business/global/espioes-chips-e-a-nvidia-a-campanha-secreta-da-china-para-driblar-os-eua/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/2026-11-20T084313Z_232863446_RC25Y5AG9MO8_RTRMADP_3_CHINA-REGULATION-OFFSHORE-LISTINGS.jpg",
+    "resumo": "A agência de espionagem chinesa, MSS, intensificou uma campanha de dois anos para adquirir semicondutores avançados, essenciais para IA, contornando as proibições de exportação dos EUA. A iniciativa reflete a pressão geopolítica de Pequim para superar \"estrangulamentos\" tecnológicos impostos por Washington, visando a soberania em IA e a resiliência da cadeia de suprimentos. Empresas ocidentais de chips, como a Nvidia, enfrentam riscos crescentes de roubo de propriedade intelectual e desvio de tecnologia, intensificando a guerra tecnológica global."
+   }
+  ],
+  "Geopolítica & Assuntos Globais": [
+   {
+    "titulo": "COP31: Fósseis Impedem Consenso Climático, Aprofundando Divisão Global",
+    "link": "https://www.bbc.com/portuguese/articles/cq742zpk1ln4o?at_medium=RSS&at_campaign=rss",
+    "imagem": "https://ichef.bbci.co.uk/news/1200/branded_portuguese/1b90/live/7378ca40-e689-11f1-99a1-253766e7ad8b.png",
+    "resumo": "A COP31 encerrou sem consenso, com a quarta versão do texto final omitindo a eliminação progressiva dos combustíveis fósseis. Este impasse reflete a profunda clivagem entre nações produtoras e consumidoras, que resistem a compromissos vinculativos devido a imperativos econômicos e energéticos. A dependência global de hidrocarbonetos continua a moldar a agenda climática. O resultado favorece economias extrativistas, enquanto a credibilidade da diplomacia climática global diminui, elevando o risco de metas ambientais serem postergadas indefinidamente."
+   }
+  ]
+ }
+}
