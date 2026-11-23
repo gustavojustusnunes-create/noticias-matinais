@@ -1507,6 +1507,27 @@
             "texto_original": "Três diretores e acionistas minoritários da Kitchens, renomada fabricante de móveis de luxo, iniciaram uma ação judicial contra as sócias majoritárias e as quatro empresas que compõem o grupo",
             "motivo_falha": "O texto original estava subdimensionado com apenas 29 palavras, violando o limite mínimo obrigatório de 60 palavras, e carecia da estrutura analítica de três passos do padrão The Economist.",
             "correcao_aplicada": "Três diretores e acionistas minoritários da Kitchens, fabricante de móveis de luxo, iniciaram uma aç..."
+        },
+        {
+            "data": "2026-11-23T20:30:32.999660",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O plano de capitalização da Raízen (RAIZ55) deve alcançar a faixa superior de sua meta, contudo, a participação do cofundador Rubens Ometto é improvável nas atuais condições de mercado, o",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 29 palavras, violando o limite mínimo obrigatório de 60 palavras. Além disso, terminava sem pontuação final e carecia da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O plano de capitalização da Raízen (RAIZ55) projeta alcançar a faixa superior de sua meta, visando f..."
+        },
+        {
+            "data": "2026-11-23T20:31:23.858626",
+            "tema": "Macroeconomia",
+            "texto_original": "A escassez de mão de obra qualificada no setor contábil de São Paulo atinge 87% dos escritórios, conforme a Sondagem de RH Contábil da Omie em parceria com o Sescon-SP. Este cenário emerge em um momento crítico, às vésperas da implementação da reforma tributária, que promete reestruturar significativamente o sistema fiscal brasileiro. A dificuldade em preencher vagas, que já era um desafio, intensifica-se diante da expectativa de maior demanda por profissionais especializados em legislação tributária e conformidade fiscal, essenciais para a adaptação das empresas às novas regras.\n\nA carência de talentos no segmento contábil representa um risco substancial para o ambiente de negócios. Empresas de diversos portes, desde startups a grandes corporações, dependem diretamente da expertise desses escritórios para garantir a conformidade fiscal",
+            "motivo_falha": "O texto original ultrapassava o limite máximo de palavras, estava incompleto e carecia da pontuação final adequada.",
+            "correcao_aplicada": "A escassez de mão de obra qualificada atinge 87% dos escritórios contábeis em São Paulo, conforme le..."
+        },
+        {
+            "data": "2026-11-23T20:34:23.703900",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) opera abaixo de US$ 65 mil, negociado na casa dos US$ 64 mil, acumulando perdas de 13% nos últimos sete dias e 26,6",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer do desdobramento crítico completo.",
+            "correcao_aplicada": "O Bitcoin recuou para a faixa de US$ 64 mil, acumulando perdas de 13% em sete dias e provocando um v..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-18"
