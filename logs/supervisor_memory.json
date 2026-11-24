@@ -1528,6 +1528,41 @@
             "texto_original": "O Bitcoin (BTC) opera abaixo de US$ 65 mil, negociado na casa dos US$ 64 mil, acumulando perdas de 13% nos últimos sete dias e 26,6",
             "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer do desdobramento crítico completo.",
             "correcao_aplicada": "O Bitcoin recuou para a faixa de US$ 64 mil, acumulando perdas de 13% em sete dias e provocando um v..."
+        },
+        {
+            "data": "2026-11-24T19:39:44.735849",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Os Estados Unidos bloquearam nesta terça-feira o pedido do Brasil na Organização Mundial do Comércio (OMC) para a criação de um painel que avaliaria a legalidade de tarifas adicionais impostas sobre produtos brasileiros.",
+            "motivo_falha": "Subdimensionado: 33 palavras (mínimo obrigatório: 60 palavras). | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "Os Estados Unidos bloquearam o pedido do Brasil na Organização Mundial do Comércio (OMC) para contes..."
+        },
+        {
+            "data": "2026-11-24T19:42:09.444288",
+            "tema": "Macroeconomia",
+            "texto_original": "A confiança do consumidor nos Estados Unidos atingiu em novembro seu patamar mais elevado em quase dois anos, conforme revelado por pesquisa divulgada nesta terça-feira. Este avanço reflete um otimismo crescente em relação às condições do",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 36 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar abruptamente sem pontuação final e carecer do desdobramento crítico completo.",
+            "correcao_aplicada": "A confiança do consumidor nos Estados Unidos atingiu em novembro seu patamar mais elevado em quase d..."
+        },
+        {
+            "data": "2026-11-24T19:43:51.543159",
+            "tema": "Macroeconomia",
+            "texto_original": "A Etesco Construções e Comércios solicitou ao Tribunal de Contas da União (TCU), em caráter de urgência, a retirada de pauta do julgamento referente ao seu próprio pedido de reexame do contrato",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 31 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem pontuação final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Etesco Construções e Comércios solicitou ao Tribunal de Contas da União, em caráter de urgência, a..."
+        },
+        {
+            "data": "2026-11-24T19:45:43.598247",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Departamento de Justiça dos Estados Unidos (DOJ) iniciou uma ação de confisco para recuperar mais de US$ 1,1 bilhão em criptomoedas, supostamente roubadas por hackers norte-coreanos da",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, violando o limite mínimo de 60 palavras e carecendo da estrutura analítica de três passos.",
+            "correcao_aplicada": "O Departamento de Justiça dos Estados Unidos ajuizou uma ação de confisco civil para recuperar US$ 1..."
+        },
+        {
+            "data": "2026-11-24T19:47:40.648262",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O Bitcoin (BTC) registrou nova desvalorização, sendo negociado abaixo de US$ 60 mil nesta terça-feira (24), acumulando uma queda superior a 7% nos últimos sete dias. O mercado",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer do desdobramento crítico completo.",
+            "correcao_aplicada": "O Bitcoin recuou para a faixa de US$ 59 mil nesta terça-feira, acumulando uma desvalorização superio..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-18"
