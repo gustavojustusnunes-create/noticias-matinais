@@ -1563,6 +1563,41 @@
             "texto_original": "O Bitcoin (BTC) registrou nova desvalorização, sendo negociado abaixo de US$ 60 mil nesta terça-feira (24), acumulando uma queda superior a 7% nos últimos sete dias. O mercado",
             "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer do desdobramento crítico completo.",
             "correcao_aplicada": "O Bitcoin recuou para a faixa de US$ 59 mil nesta terça-feira, acumulando uma desvalorização superio..."
+        },
+        {
+            "data": "2026-11-25T18:54:17.084257",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O governo brasileiro decidiu pelo não retorno definitivo do embaixador Julio Bitelli à Argentina, rebaixando as relações diplomáticas bilaterais ao nível de encarregado de negócios. Esta medida, que encerra a missão do embaixador",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 33 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer da estrutura analítica de três passos.",
+            "correcao_aplicada": "O governo brasileiro decidiu pelo não retorno definitivo do embaixador Julio Bitelli a Buenos Aires,..."
+        },
+        {
+            "data": "2026-11-25T18:55:53.416237",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "O UBS Global Wealth Management (UBS WM) emite um alerta ao Brasil, desaconselhando a adoção de restrições à saída de dólares como medida para conter a desvalorização do real. A instituição aval",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 32 palavras, terminava sem pontuação final e carecia da estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "O UBS Global Wealth Management alertou o governo brasileiro contra a imposição de restrições cambiai..."
+        },
+        {
+            "data": "2026-11-25T18:56:41.446538",
+            "tema": "Empresas & Negócios",
+            "texto_original": "A Raízen (RAIZ55) divulgou esclarecimentos cruciais sobre o exercício do direito de preferência em seu aumento de capital privado, uma operação que pode totalizar R$ 39,8",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "A Raízen (RAIZ55) divulgou esclarecimentos detalhados sobre o exercício do direito de preferência em..."
+        },
+        {
+            "data": "2026-11-25T18:57:41.046459",
+            "tema": "Macroeconomia",
+            "texto_original": "O Banco Central do Brasil (BC) está prestes a implementar uma medida significativa no setor de crédito, com a expectativa de elevar as alíquotas de capital mínimo regulatório para emissores de cartão de crédito. A",
+            "motivo_falha": "Subdimensionado: 29 palavras (mínimo obrigatório: 60 palavras). | A frase final não termina com ponto final. | O texto carecia de contexto e desdobramento crítico, violando a estrutura de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Banco Central do Brasil (BC) planeja elevar as alíquotas de capital mínimo regulatório para emisso..."
+        },
+        {
+            "data": "2026-11-25T18:58:30.343362",
+            "tema": "Macroeconomia",
+            "texto_original": "Em uma noite de outubro, centenas de supermercados na França foram alvo de um ataque cibernético sem precedentes, onde hackers manipularam os sistemas de refrigeração, elevando temperaturas e resultando na destruição",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 31 palavras, violando o limite mínimo de 60 palavras e carecendo da estrutura analítica de três passos do The Economist.",
+            "correcao_aplicada": "Hackers patrocinados pelo governo do Irã invadiram e manipularam os sistemas de refrigeração de cent..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-18"
