@@ -1,0 +1,22 @@
+{
+ "data": "2026-11-25",
+ "data_extenso": "Quarta-feira, 25 de Novembro de 2026",
+ "editorial": "Aqui estão os principais destaques selecionados para você hoje.",
+ "manchete": "JP Morgan alerta para risco de recessão no Brasil em 2027",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "JP Morgan alerta para risco de recessão no Brasil em 2027",
+    "link": "https://www.infomoney.com.br/economia/jp-morgan-diz-que-risco-de-uma-recessao-no-brasil-no-proximo-ano-e-real/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2019/06/economia-brasil-bolsa-mercado.jpg",
+    "resumo": "O JP Morgan projeta um risco real de recessão no Brasil em 2027, impulsionado por um crescimento de produtividade de apenas 0,5% ao ano e o comprometimento de 40% da renda familiar com dívidas. A economia opera próxima dos limites de capacidade, com desemprego em mínimas históricas e o canal de crédito sob tensão severa, sinalizando o fim de um ciclo de expansão insustentável. A contração abrupta do crédito e o aumento da inadimplência ameaçam o investimento e o consumo, com o governo enfrentando pressão fiscal e o setor privado, um cenário de estagnação."
+   },
+   {
+    "titulo": "UBS: Controles de Capital Atrasam Ajuste e Geram Instabilidade",
+    "link": "https://www.infomoney.com.br/mercados/controle-de-capitais-no-forno-medida-nao-segura-dolar-e-encarece-ajuste-diz-ubs/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2025/02/2025-02-18T125211Z_1_LYNXNPEL1H0E8_RTROPTP_3_DOLAR-FECHA.jpg?fit=800%2C493&quality=70&strip=all",
+    "resumo": "O UBS Global Wealth Management alerta que a imposição de controles de capital, em meio à recente pressão cambial e intervenções do Banco Central de US$ 2 bilhões, apenas adia e encarece o ajuste macroeconômico. A análise surge em um cenário de especulação governamental sobre medidas cambiais e fragilidade fiscal, onde a literatura acadêmica predominantemente desfavorece a eficácia de tais restrições. O risco imediato é a antecipação de remessas por investidores e a proliferação de taxas de câmbio paralelas, como visto na Argentina, minando a confiança e aprofundando a instabilidade."
+   }
+  ]
+ }
+}
