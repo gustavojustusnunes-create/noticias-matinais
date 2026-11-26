@@ -1,0 +1,30 @@
+{
+ "data": "2026-11-26",
+ "data_extenso": "Quinta-feira, 26 de Novembro de 2026",
+ "editorial": "Sua dose diária de informação essencial, direto ao ponto.",
+ "manchete": "Setores Produtivos Acionam STF por Adiamento da Reforma Tributária",
+ "cadernos": {
+  "Macroeconomia & Mercados": [
+   {
+    "titulo": "Setores Produtivos Acionam STF por Adiamento da Reforma Tributária",
+    "link": "https://www.infomoney.com.br/brasil/entidades-do-agro-comercio-e-transporte-acionam-stf-para-adiar-reforma-tributaria/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2024/02/justica-stf.png",
+    "resumo": "Três confederações setoriais acionaram o Supremo Tribunal Federal para postergar a implementação da reforma tributária, prevista para 1º de janeiro de 2027, alegando apenas 17 dias para adequação. A ação reflete a insegurança jurídica gerada pela ausência de regulamentação detalhada e o prazo exíguo para que empresas se adaptem às novas alíquotas, especialmente a CBS, cuja definição pelo Senado ocorre a poucos dias da vigência. A decisão do STF determinará se a previsibilidade fiscal prevalece sobre a urgência arrecadatória, com risco de judicialização e impacto na confiança do investimento."
+   },
+   {
+    "titulo": "XP Asset: Consolidação e Diversificação em Cenário de Juros Altos",
+    "link": "https://www.infomoney.com.br/onde-investir/xp-asset-300-bilhoes-sob-gestao-expansao-diversificacao/",
+    "imagem": "https://www.infomoney.com.br/wp-content/uploads/2026/11/xp-asset1.jpg",
+    "resumo": "A XP Asset, com R$ 300 bilhões sob gestão, registrou crescimento anual de 30% nos últimos cinco anos, expandindo suas verticais de investimento. A persistência de juros elevados e a volatilidade do CDI desde 2019 redefiniu a indústria, impulsionando gestoras à diversificação de ativos e à profissionalização da gestão. Empresas com portfólios amplos e governança robusta consolidam ganhos, enquanto as concentradas encolhem, intensificando a pressão sobre a liquidez e a estrutura de capital do setor."
+   }
+  ],
+  "Fronteira Tecnológica & IA": [
+   {
+    "titulo": "OpenAI: Limites de Uso do GPT-6.2 Aceleram, Gerando Dúvidas sobre Capacidade",
+    "link": "https://olhardigital.com.br/2026/11/26/inteligencia-artificial/openai-corrige-erro-no-gpt-6-2-e-muda-limites-de-uso-dos-planos/",
+    "imagem": "https://olhardigital.com.br/wp-content/uploads/2026/09/OpenAI-GPT-6-Astra-scaled.jpg",
+    "resumo": "OpenAI ajustou a contabilização de uso dos modelos GPT-6.2 Astra e Sol, fazendo com que assinantes atinjam os limites de consumo 40% e 25% mais rápido, respectivamente. A correção reverte um desconto indevido, mas levanta questões sobre a gestão da capacidade computacional para modelos de fronteira, impactando a percepção de valor. Usuários intensivos perdem valor na assinatura, enquanto a OpenAI mitiga a insatisfação com um reset pontual. O risco imediato é a erosão da confiança e a percepção de limites arbitrários."
+   }
+  ]
+ }
+}
