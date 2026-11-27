@@ -1626,6 +1626,62 @@
             "texto_original": "O Departamento de Justiça dos Estados Unidos (DOJ) iniciou uma ação de confisco para reaver mais de US$ 1,1 bilhão em criptomoedas, supostamente subtraídas da plataforma Binance por hackers",
             "motivo_falha": "O texto original continha apenas 34 palavras, violando o limite mínimo obrigatório de 60 palavras, além de carecer da estrutura analítica de três passos exigida e terminar sem ponto final.",
             "correcao_aplicada": "O Departamento de Justiça dos Estados Unidos ajuizou uma ação de confisco civil para recuperar US$ 1..."
+        },
+        {
+            "data": "2026-11-27T18:27:14.066083",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "Wall Street encerrou a sessão de sexta-feira (24) em alta, impulsionada pelo setor de tecnologia, especialmente fabricantes de semicondutores, mesmo em um pregão mais curto e com incertezas persistentes",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 30 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer do desdobramento crítico completo.",
+            "correcao_aplicada": "Os principais índices de Wall Street encerraram a sessão de sexta-feira em alta firme, impulsionados..."
+        },
+        {
+            "data": "2026-11-27T18:30:23.136380",
+            "tema": "Mercado & Bolsa",
+            "texto_original": "A Espanha realiza eleições antecipadas neste domingo, com potencial para uma significativa guinada política e econômica. As pesquisas indicam a provável queda do primeiro-ministro socialista Pedro Sánchez, abrindo caminho para uma coalizão entre",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 34 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar abruptamente sem ponto final e carecer do desdobramento crítico completo.",
+            "correcao_aplicada": "A Espanha realiza eleições gerais antecipadas neste domingo, com pesquisas indicando a provável derr..."
+        },
+        {
+            "data": "2026-11-27T18:31:16.714697",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O Citi analisou o potencial impacto de uma eventual nomeação de Luiz Carlos Trabuco para o Ministério da Fazenda, identificando ações brasileiras com potencial de valorização. A tese central, denominada \"trade Trabuco",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 32 palavras, terminava sem ponto final e carecia da estrutura analítica de três passos exigida pelo padrão The Economist.",
+            "correcao_aplicada": "O Citi mapeou as ações brasileiras com maior potencial de valorização caso Luiz Carlos Trabuco assum..."
+        },
+        {
+            "data": "2026-11-27T18:32:17.993606",
+            "tema": "Empresas & Negócios",
+            "texto_original": "O GPA (PCAR3) confirmou estar em negociação com a Procuradoria-Geral da Fazenda Nacional (PGFN) e a Receita Federal para uma transação tributária envolvendo débitos e contingências fiscais",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 31 palavras, violando o limite mínimo de 60 palavras, além de terminar sem ponto final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O GPA (PCAR3) confirmou estar em negociação com a Procuradoria-Geral da Fazenda Nacional e a Receita..."
+        },
+        {
+            "data": "2026-11-27T18:33:07.652665",
+            "tema": "Macroeconomia",
+            "texto_original": "O ministro Luiz Fux, do Supremo Tribunal Federal, determinou a extensão por quinze dias do contrato firmado entre o Banco de Brasília, listado sob os códigos BSLI3 e BSLI4, e o Tribunal de Justiça do Estado da Bahia. A medida revisa entendimento anterior que previa a rescisão imediata da parceria e abre prazo regulamentar para manifestação da Caixa Econômica Federal. O processo centraliza a disputa pela gestão financeira das contas, folha de pagamentos e movimentações de custódia da corte estadual, um ativo institucional relevante para o setor bancário público.\n\nA controvérsia jurídica decorre de questionamentos da Caixa sobre a legitimidade da contratação do banco distrital sem certame licitatório amplo, além da prerrogativa legal sobre a retenção de disponibilidades financeiras do Judiciário estadual. O diferimento concedido pelo relator tem como objetivo evitar a descontin",
+            "motivo_falha": "O texto original estava incompleto na última frase, carecendo de fechamento com ponto final, e precisava de ajustes na contagem de palavras para o padrão de 60 a 90 palavras.",
+            "correcao_aplicada": "O ministro Luiz Fux, do Supremo Tribunal Federal, determinou a extensão por quinze dias do contrato ..."
+        },
+        {
+            "data": "2026-11-27T18:34:00.389384",
+            "tema": "Macroeconomia",
+            "texto_original": "A França entrou oficialmente em recessão técnica, conforme anunciado nesta sexta-feira, 27 de novembro de 2026, pelo instituto oficial de estatísticas Insee. Este cenário se configura após o Produto Interno Bruto",
+            "motivo_falha": "O texto original estava incompleto e subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "O Produto Interno Bruto da França registrou queda de 0,2% no terceiro trimestre de 2026, acumulando ..."
+        },
+        {
+            "data": "2026-11-27T18:34:48.381915",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "A busca por valorizações exponenciais no mercado de criptoativos tem direcionado investidores a projetos de menor capitalização, conhecidos como \"nanocoins\". Inspirados pela trajetória do Bitcoin, que valorizou de centavos para",
+            "motivo_falha": "O texto original estava subdimensionado com apenas 27 palavras, violando o limite mínimo obrigatório de 60 palavras, além de terminar sem ponto final e carecer da estrutura analítica de três passos do padrão The Economist.",
+            "correcao_aplicada": "Investidores de criptoativos têm direcionado recursos para as chamadas nanocoins em busca de valoriz..."
+        },
+        {
+            "data": "2026-11-27T18:35:34.482314",
+            "tema": "Cripto & FinTechs",
+            "texto_original": "O mercado de criptoativos registra um alívio pontual nesta sessão, com o Bitcoin (BTC) operando em alta de 1,19 nas últimas vinte e quatro horas e cotado a 61.609 dólares, impulsionado por um movimento de caça às barganhas após uma sequência recente de perdas. O desempenho positivo reverbera entre as principais altcoins, destacando-se a Solana com ganho de 3,27 a 73,39 dólares, o Ethereum com alta de 1,43 a 1.727,11 dólares e o XRP com valorização de 2,58 a 0,978 dólar. Contudo, a liquidez reduzida em função do feriado de Ação de Graças nos Estados Unidos limita o fôlego da recuperação, mantendo os investidores em estado de cautela diante de patamares técnicos frágeles e do risco de testes na região de suporte dos 60.000 dólares.\n\nApesar da alta diária, o cenário estrutural permanece pressionado por fortes ventos contrários institucionais e macroeconômicos. Os fundos negociados em bolsa de bitcoin à vista caminham para o pior mês de sua história, acumulando saídas líquidas de 5,39 bilhões de dólares em novembro, o que evidencia uma intensa pressão vendedora. No front analítico, o JPMorgan apontou para um processo de capitulação do ativo, lastreado na queda recorde do múltiplo de valor patrimonial líquido da Strategy, enquanto a Galaxy Research revisou sua tese anterior e alertou para riscos de desvalorizações mais profundas caso a criptomoeda perca o suporte crítico de 58.525 dólares.\n\nDo ponto de vista técnico e de sentimento, o mercado exibe sinais evidentes de estresse. O bitcoin lida com uma formação gráfica de cruz da morte, classificada como baixista, enquanto o índice de força relativa permanece em zona de fraqueza. Paralelamente, o índice de Medo e Ganância persiste em território de aversão ao risco, refletindo a cautela com a política de juros nos Estados Unidos e a menor disposição institucional para novas posições compradas no curto prazo.",
+            "motivo_falha": "O texto original estava superdimensionado com 303 palavras, violando o teto regulamentar de 90 palavras, além de apresentar prolixidade técnica que diluía a objetividade da análise econômica.",
+            "correcao_aplicada": "O Bitcoin avançou 1,19% para a faixa de US$ 61,6 mil nesta quinta-feira, impulsionado por compras po..."
         }
     ],
     "ultima_edicao_instagram": "2026-11-18"

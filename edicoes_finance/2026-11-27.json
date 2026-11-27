@@ -1,0 +1,75 @@
+{
+  "Mercado & Bolsa": [
+    {
+      "titulo": "Wall Street fecha em alta com impulso do setor de tecnologia",
+      "link": "https://www.moneytimes.com.br/wall-street-fecha-em-alta-em-sessao-mais-curta-impulsionada-pelo-setor-de-tecnologia-davs/",
+      "resumo": "Os principais índices de Wall Street encerraram a sessão de sexta-feira em alta firme, impulsionados pela recuperação acentuada das ações de semicondutores e gigantes de tecnologia. O movimento reflete o otimismo renovado dos investidores com a resiliência da demanda global por inteligência artificial, superando as pressões exercidas pelos rendimentos elevados dos títulos do Tesouro americano. Com o avanço, os grandes fundos de hedge ampliam a exposição ao setor de crescimento, enquanto os pequenos acionistas enfrentam riscos crescentes de volatilidade ante a proximidade da próxima reunião do Federal Reserve.",
+      "imagem": "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&q=80&w=800&sig=0_584",
+      "fonte": "Money Times",
+      "data": "2026-11-27"
+    },
+    {
+      "titulo": "Espanha vai às urnas no domingo e eleição pode derrubar Pedro Sánchez, desafeto de Trump",
+      "link": "https://www.moneytimes.com.br/espanha-vai-as-urnas-no-domingo-e-eleicao-pode-derrubar-pedro-sanchez-desafeto-de-trump-ccgg/",
+      "resumo": "A Espanha realiza eleições gerais antecipadas neste domingo, com pesquisas indicando a provável derrota do primeiro-ministro socialista Pedro Sánchez frente a uma coalizão conservadora. A insatisfação popular com a inflação persistente e os acordos com partidos separatistas catalães alimentam a mudança no cenário político. Investidores estrangeiros apostam em uma pauta fiscal mais austera, enquanto o governo de esquerda tenta reverter a desvantagem nas urnas para evitar o colapso de sua base parlamentar.",
+      "imagem": "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?auto=format&fit=crop&q=80&w=800&sig=1_857",
+      "fonte": "Money Times",
+      "data": "2026-11-27"
+    }
+  ],
+  "Empresas & Negócios": [
+    {
+      "titulo": "Citi elege as ações que podem disparar com Trabuco na Fazenda; confira os papéis para surfar o rali",
+      "link": "https://www.moneytimes.com.br/citi-elege-as-acoes-que-podem-disparar-com-trabuco-na-fazenda-confira-os-papeis-para-surfar-o-rali-miql/",
+      "resumo": "O Citi mapeou as ações brasileiras com maior potencial de valorização caso Luiz Carlos Trabuco assuma o Ministério da Fazenda. A tese aposta em um perfil fiscalista moderado capaz de destravar investimentos represados na infraestrutura e no setor financeiro. Investidores tradicionais capturam ganhos imediatos com a redução do prêmio de risco soberano, enquanto o risco fiscal de longo prazo permanece totalmente atrelado à disciplina dos gastos públicos.",
+      "imagem": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=800&sig=0_313",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-27"
+    },
+    {
+      "titulo": "GPA (PCAR3) diz que negocia acordo para passivos fiscais com a Receita, mas nega acordo vinculante",
+      "link": "https://www.moneytimes.com.br/gpa-pcar3-diz-que-negocia-transacao-tributaria-com-receita-mas-nega-acordo-vinculante-miql/",
+      "resumo": "O GPA (PCAR3) confirmou estar em negociação com a Procuradoria-Geral da Fazenda Nacional e a Receita Federal para uma transação tributária envolvendo débitos e contingências fiscais multibilionárias. A varejista busca aliviar sua alavancagem financeira por meio de deságios e parcelamentos de longo prazo concedidos pelo programa federal de conformidade. Caso o acordo seja formalizado nos próximos meses, os credores recuperarão a confiança na liquidez da companhia, enquanto acionistas minoritários enfrentarão diluição caso novas emissões de ações sejam exigidas para cobrir o saldo remanescente.",
+      "imagem": "https://images.unsplash.com/photo-1556761175-5973dc0f32b7?auto=format&fit=crop&q=80&w=800&sig=1_217",
+      "fonte": "Money Times Empresas",
+      "data": "2026-11-27"
+    }
+  ],
+  "Macroeconomia": [
+    {
+      "titulo": "Fux prorroga contrato do BRB com TJ-BA por 15 dias e abre prazo para manifestação da Caixa",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://c-level.folha.uol.com.br/financas/2026/11/fux-prorroga-contrato-do-brb-com-tj-ba-por-15-dias-e-abre-prazo-para-manifestacao-da-caixa.shtml",
+      "resumo": "O ministro Luiz Fux, do Supremo Tribunal Federal, determinou a extensão por quinze dias do contrato entre o Banco de Brasília (BSLI3) e o Tribunal de Justiça da Bahia, abrindo prazo para manifestação da Caixa Econômica Federal. A controvérsia jurídica decorre de questionamentos da Caixa sobre a contratação sem licitação ampla para gerir as contas da corte. A decisão evita a descontinuidade operacional imediata enquanto o tribunal avalia a legalidade da disputa.",
+      "imagem": "https://images.unsplash.com/photo-1604594849809-dfedbc827105?auto=format&fit=crop&q=80&w=800&sig=0_362",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-27"
+    },
+    {
+      "titulo": "PIB da França recua pelo segundo trimestre seguido e país entra em recessão",
+      "link": "https://redir.folha.com.br/redir/online/mercado/rss091/*https://www1.folha.uol.com.br/mercado/2026/11/pib-da-franca-recua-pelo-segundo-trimestre-seguido-e-pais-entra-em-recessao.shtml",
+      "resumo": "O Produto Interno Bruto da França registrou queda de 0,2% no terceiro trimestre de 2026, acumulando dois períodos consecutivos de retração e confirmando a entrada do país em recessão técnica. A derrocada econômica decorre da estagnação industrial prolongada na Alemanha e dos cortes drásticos de gastos públicos impostos pelo governo para conter o déficit fiscal recorde. Com o desemprego em alta e a confiança empresarial deprimida, os exportadores franceses perdem margem de lucro, enquanto o Banco Central Europeu enfrenta forte pressão para acelerar os cortes na taxa básica de juros.",
+      "imagem": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&q=80&w=800&sig=1_634",
+      "fonte": "Folha Mercado",
+      "data": "2026-11-27"
+    }
+  ],
+  "Cripto & FinTechs": [
+    {
+      "titulo": "‘Nanocoins’: Quais são os riscos e as vantagens de investir em criptomoedas com menor valor de mercado?",
+      "link": "https://www.moneytimes.com.br/nanocoins-quais-sao-os-riscos-e-as-vantagens-de-investir-em-criptomoedas-com-menor-valor-de-mercado-lbrdgm111/",
+      "resumo": "Investidores de criptoativos têm direcionado recursos para as chamadas nanocoins em busca de valorizações exponenciais, apostando em projetos de baixíssima capitalização de mercado. Esse movimento é impulsionado pela alta liquidez especulativa e pela promessa de retornos rápidos, em um cenário de juros globais elevados. Pequenos investidores capturam lucros expressivos, mas enfrentam riscos severos de manipulação de preços e fraudes do tipo pump and dump, exigindo monitoramento rigoroso dos órgãos reguladores.",
+      "imagem": "https://www.moneytimes.com.br/uploads/2026/11/captura-de-tela-2026-11-26-151853.png",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-27"
+    },
+    {
+      "titulo": "Bitcoin (BTC) sobe e volta a US$ 61,6 mil com alívio no mercado, mas ETFs pressionam preços; veja",
+      "link": "https://www.moneytimes.com.br/bitcoin-btc-sobe-e-volta-a-us-616-mil-com-alivio-no-mercado-mas-etfs-pressionam-precos-veja-rens/",
+      "resumo": "O Bitcoin avançou 1,19% para a faixa de US$ 61,6 mil nesta quinta-feira, impulsionado por compras pontuais de pechincha após sucessivas perdas semanais. No entanto, a recuperação enfrenta forte resistência estrutural com os ETFs à vista de criptoativos registrando saídas líquidas recordes de US$ 5,39 bilhões em novembro, pressionados pelos juros elevados nos Estados Unidos. Esse movimento favorece posições defensivas em dólar, enquanto operadores alavancados enfrentam risco iminente de liquidação caso o suporte técnico de US$ 58,5 mil seja rompido.",
+      "imagem": "https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&q=80&w=800&sig=1_920",
+      "fonte": "Money Times Cripto",
+      "data": "2026-11-27"
+    }
+  ],
+  "data": "2026-11-27"
+}
